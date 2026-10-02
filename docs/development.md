@@ -37,6 +37,32 @@ preserve that selection. Changes to the dynamic package version also require
 The changelog's `<!-- version list -->` marker is required by the configured
 semantic-release update template. Preserve it so new release sections are inserted.
 
+## RunEngine abort-test teardown message
+
+Bluesky 1.14.6 can report `Future exception was never retrieved` after the
+abort/retention test passes. The expected `AcquisitionAborted` is propagated as
+`FailedStatus`, but a second internal Future carrying that exception was not
+retrieved. This was reproduced locally on Python 3.12, so Python 3.14 is not the
+cause. The [upstream fix](https://github.com/bluesky/bluesky/pull/1972) shipped
+in Bluesky 1.15.0 and is present in the project's new locked version, 1.15.1.
+
+After unpacking the dependency-fix overlay, run:
+
+```bash
+uv sync --locked
+uv run --locked pytest tests/contract
+```
+
+The dependency range is now `bluesky>=1.15.1,<1.16`. The abort test must still
+raise `FailedStatus`, emit a failed Stop document and preserve its partial data;
+only the duplicate unretrieved-Future diagnostic disappears. The new regression
+test checks a subprocess through process exit, with asyncio debugging enabled.
+It does not suppress logging or patch RunEngine internals.
+
+For the documented development Python explicitly use `uv sync --locked --python 3.12`.
+Python 3.14 remains outside this project's current 3.11–3.13 CI matrix;
+the dependency fix does not establish full project compatibility with 3.14.
+
 ## Reference implementation and adaptations
 
 Reviewed on 2026-10-02:

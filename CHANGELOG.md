@@ -4,6 +4,11 @@
 
 ## Unreleased
 
+- Require Bluesky >=1.15.1,<1.16 and update the lockfile to include the upstream
+  fix for unretrieved failed-Status Futures at RunEngine teardown.
+- Add a subprocess regression test that checks process-exit logging while
+  preserving FailedStatus propagation, failed run outcome and retained partial data.
+
 - Implement M2 independent virtual-clock simulation and typed fake transport:
   finite playback, READY/START/ABORT, local timeout, synthetic aperture averages,
   coherent snapshots, frozen chunks and checksummed retained-data export.

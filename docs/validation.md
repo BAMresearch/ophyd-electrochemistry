@@ -2,6 +2,31 @@
 
 Date: 2026-10-02. Scope: contract template, not operational 2460 behavior.
 
+## RunEngine failed-Status teardown fix
+
+Reproduced the user's `Future exception was never retrieved` message on local
+Python 3.12.14 with locked Bluesky 1.14.6, after all six existing RunEngine tests
+reported success. Earlier test counts below did not detect this teardown logging
+defect. The expected failed acquisition and retained partial data were correct;
+the duplicate Future diagnostic was an upstream RunEngine issue.
+
+Updated the dependency range to `bluesky>=1.15.1,<1.16` and lock to 1.15.1,
+which includes [upstream fix #1972](https://github.com/bluesky/bluesky/pull/1972).
+The new subprocess regression checks the unchanged abort/retention test through
+process exit under asyncio debugging. It requires both expected failure semantics
+and absence of unretrieved Future/Task messages; no runtime monkey patch or log
+filter is used.
+
+Confirmed the new regression fails with Bluesky 1.14.6 in an isolated environment
+and passes with 1.15.1. Validated locally with Python 3.12.14: 180 tests pass,
+including the new regression, Ruff lint/format, strict source/release-helper mypy,
+locked dependency check, strict MkDocs, uv build and strict Twine metadata checks.
+The project retains its 3.11–3.13 CI target; the user's macOS/Python 3.14.5 setup
+was not reproduced locally. All hardware gates remain NOT RUN.
+
+The fix `.tgz` is an overlay relative to M2; package version and contract revision
+remain the unreleased `0.0.0` and `0.2` respectively.
+
 ## M2 implementation validation
 
 This increment follows M1 and adds an independent event-clock runtime, ideal

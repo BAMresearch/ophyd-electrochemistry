@@ -37,8 +37,11 @@ maintained `tm_devices` command documentation, whose upstream provenance is [S9]
 Verify exact constants, parameters, block limits, ports, and interlock behavior
 against the target firmware/manual before any runtime is implemented or loaded.
 
-The installed local API check used Bluesky 1.14.6 and ophyd 1.11.2. No claim is
-made that the conference's complete leader/follower workflow was reproduced.
+The initial local API check used Bluesky 1.14.6 and ophyd 1.11.2. The later
+[RunEngine teardown fix](development.md#runengine-abort-test-teardown-message)
+updates the runtime dependency/lock to Bluesky 1.15.1 and revalidates the contract
+tests. No claim is made that the conference's complete leader/follower workflow
+was reproduced.
 
 ## Primary sources
 

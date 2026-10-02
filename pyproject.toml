@@ -8,7 +8,7 @@ dynamic = ["version"]
 description = "Contract template for Bluesky electrochemistry and a Keithley 2460 backend"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["bluesky>=1.14.6,<1.15", "ophyd>=1.11.2,<2", "event-model>=1.23,<2"]
+dependencies = ["bluesky>=1.15.1,<1.16", "ophyd>=1.11.2,<2", "event-model>=1.23,<2"]
 classifiers = ["Development Status :: 1 - Planning", "Programming Language :: Python :: 3"]
 
 [project.optional-dependencies]
