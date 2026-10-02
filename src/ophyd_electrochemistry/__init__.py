@@ -9,7 +9,8 @@ from .protocols import (
 )
 from .state import DeviceState
 
-__version__ = "0.0.0.dev0"
+# SemVer bootstrap sentinel; not a release. PSR prepares the first 0.1.0 PR.
+__version__ = "0.0.0"
 CONTRACT_REVISION = "0.1"
 
 __all__ = [

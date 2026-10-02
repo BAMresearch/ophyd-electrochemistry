@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ophyd-electrochemistry"
-version = "0.0.0.dev0"
+dynamic = ["version"]
 description = "Contract template for Bluesky electrochemistry and a Keithley 2460 backend"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -13,7 +13,25 @@ classifiers = ["Development Status :: 1 - Planning", "Programming Language :: Py
 
 [project.optional-dependencies]
 visa = ["pyvisa>=1.14,<2", "pyvisa-py>=0.7,<1"]
-dev = ["pytest>=8,<10", "ruff>=0.11,<1", "mypy>=1.15,<3", "mkdocs>=1.6,<2", "build>=1.2,<2"]
+
+[project.urls]
+repository = "https://github.com/BAMresearch/ophyd-electrochemistry"
+issues = "https://github.com/BAMresearch/ophyd-electrochemistry/issues"
+
+[dependency-groups]
+test = ["pytest>=8,<10"]
+lint = ["ruff>=0.11,<1", "mypy>=1.15,<3"]
+docs = ["mkdocs>=1.6,<2"]
+build = ["twine>=6,<7"]
+release = ["python-semantic-release==10.7.0"]
+dev = [{include-group = "test"}, {include-group = "lint"}, {include-group = "docs"}, {include-group = "build"}]
+
+[tool.uv]
+required-version = ">=0.12.19"
+build-constraint-dependencies = ["setuptools==84.0.0", "wheel==0.48.0"]
+
+[tool.setuptools.dynamic]
+version = {attr = "ophyd_electrochemistry.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -23,6 +41,7 @@ ophyd_electrochemistry = ["py.typed", "keithley/k2460/tsp/*.tsp"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 addopts = "-ra --strict-markers -m 'not hardware'"
 markers = ["hardware: explicit bench tests requiring a commissioned 2460 and a dummy load"]
 
@@ -43,3 +62,33 @@ strict = true
 [[tool.mypy.overrides]]
 module = ["bluesky.*", "ophyd.*"]
 follow_untyped_imports = true
+
+# Same single-source version and commit types as McSAS3/MoDaCor.
+# Release metadata goes through a PR; no direct version commits to main.
+[tool.semantic_release]
+allow_zero_version = true
+major_on_zero = false
+tag_format = "v{version}"
+version_variables = ["src/ophyd_electrochemistry/__init__.py:__version__"]
+commit_parser = "conventional"
+
+[tool.semantic_release.branches.main]
+match = "^main$"
+prerelease = false
+
+[tool.semantic_release.commit_parser_options]
+allowed_tags = ["build", "chore", "ci", "docs", "feat", "enh", "fix", "perf", "style", "refactor", "test"]
+minor_tags = ["feat", "enh"]
+patch_tags = ["fix", "perf"]
+
+[tool.semantic_release.changelog]
+mode = "update"
+insertion_flag = "<!-- version list -->"
+exclude_commit_patterns = ["^chore", ".*\\bGHA\\b.*", ".*\\b[gG][hH] actions?\\b.*"]
+
+[tool.semantic_release.changelog.default_templates]
+changelog_file = "CHANGELOG.md"
+mask_initial_release = false
+
+[tool.semantic_release.publish]
+upload_to_vcs_release = false

@@ -2,6 +2,7 @@ site_name: ophyd-electrochemistry contract
 theme: readthedocs
 nav:
   - Overview: index.md
+  - Development and releases: development.md
   - Contract: implementation-contract.md
   - Evidence: assumptions.md
   - Architecture: architecture.md

@@ -1,6 +1,6 @@
 # ophyd-electrochemistry
 
-**Contract template, version 0.0.0.dev0 — no operational instrument driver yet.**
+**Development template — no operational instrument driver yet.**
 
 A Python library for instrument-owned electrochemistry acquisition through
 classic ophyd and Bluesky. The first backend is the Keithley 2460 over Ethernet
@@ -26,23 +26,49 @@ contracts, exceptions, and explicit implementation placeholders. It cannot
 connect to or energize a sourcemeter. The tests use a **test-only lifecycle
 witness**, not an instrument simulator or a proof of physical behavior.
 
-## Development
+## QuickStart with uv
 
-Python 3.11–3.13 is the initial CI target. The template was locally checked on
-Python 3.12 with Bluesky 1.14.6 and ophyd 1.11.2. Dependency ranges define the
-intended support window; CI must establish compatibility for each environment.
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/) first.
+The project pins Python 3.12 for development, supports Python 3.11–3.13, and
+commits `uv.lock`. `uv sync` creates `.venv` and installs the package in editable
+mode; no manual activation or pip bootstrap is needed.
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -e '.[dev]'
-ruff check .
-ruff format --check .
-mypy src
-pytest
-mkdocs build --strict
-python -m build
+git clone https://github.com/BAMresearch/ophyd-electrochemistry.git
+cd ophyd-electrochemistry
+uv python install
+uv sync --locked
+uv run --locked pytest
+uv run --locked ruff check .
+uv run --locked ruff format --check .
+uv run --locked mypy src scripts
+uv run --locked mkdocs build --strict
+uv build
+uv run --locked twine check --strict dist/*
 ```
+
+In VS Code, open this directory and select its `.venv` Python interpreter.
+For an existing checkout, start at `uv python install`. Inspect package intent
+without hardware using:
+
+```bash
+uv run --locked python -c "from examples.request import request; print(request)"
+```
+
+Use `uv sync --locked --extra visa` when developing the future PyVISA backend.
+For a lean runtime environment, use `uv sync --locked --no-default-groups`.
+Development tools are dependency groups, not published package extras.
+
+`uvx` runs standalone tools in isolation. For example, preview the next release
+without changing files, tags, or GitHub:
+
+```bash
+uvx --from python-semantic-release==10.7.0 semantic-release version --print
+```
+
+Project tests need the project environment, so run them with `uv run`, not
+isolated `uvx pytest`. See [development and releases](docs/development.md) for
+locking, commit conventions, CI, and one-time repository setup.
 
 Start modes are explicit: `prepare(request)` leaves output OFF; immediate
 `kickoff()` starts the finite program, while external `kickoff()` arms the
@@ -52,15 +78,19 @@ Bluesky and documented prominently in [triggering](docs/triggering.md).
 
 ## Git and documentation
 
-This snapshot includes a local Git repository on `main`, an initial commit,
-and tag `contract-v0.1`. No remote repository has been created or configured.
-The archive also contains the complete source tree, so it can be imported as a
-new repository if its embedded history is not wanted.
+The canonical repository is
+[BAMresearch/ophyd-electrochemistry](https://github.com/BAMresearch/ophyd-electrochemistry).
+Chat development updates are overlays containing only changed/new files with
+repository-relative paths. Unpack into your checkout, review the diff, and commit
+through your normal workflow. An update never replaces `.git` or `.venv`.
 
 All changes to public behavior must update the contract, evidence/acceptance
 records, tests, and changelog together; see [CONTRIBUTING](CONTRIBUTING.md).
-The runtime ABI has its own version and digest. The library version alone does
-not establish runtime compatibility.
+The package version has one source, `src/ophyd_electrochemistry/__init__.py`.
+Python Semantic Release prepares the version/changelog/lockfile in a PR; CI tags
+the merged and tested commit. The initial `0.0.0` is a bootstrap sentinel, not a
+released operational driver. The contract revision and runtime ABI/digest are
+independent of the package version.
 
 Licensing is an unresolved project-owner decision; see [LICENSE](LICENSE.md).
 No upstream manuals or example implementations are redistributed.

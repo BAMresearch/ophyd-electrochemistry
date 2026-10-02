@@ -2,6 +2,30 @@
 
 Date: 2026-10-02. Scope: contract template, not operational 2460 behavior.
 
+## uv and release-workflow update
+
+Baseline: GitHub `main` commit `f8e5e555228d8700fa08f1f23782237fd0bb0688`.
+Compared the current McSAS3/MoDaCor pyprojects and reusable release/CI workflows.
+Validated with uv 0.12.19 and Python 3.12.14:
+
+- `uv lock --check` and locked environment creation/sync.
+- Ruff lint/formatting and strict mypy checks for source and release helper.
+- Twelve tests: the six original RunEngine contract checks plus six isolated
+  Git/metadata release-gating tests. These never push or publish.
+- Strict MkDocs build; isolated uv wheel/sdist build and strict Twine checks.
+- Actionlint 1.7.12, invoked with `uvx --from actionlint-py==1.7.12.25 actionlint`,
+  validates all six workflows and local reusable-workflow references.
+- Disposable-checkout release preparation: actual Python Semantic Release 10.7.0
+  stamps `0.1.0`, inserts its changelog section and permits a fresh matching lock.
+  A local `v0.1.0` tag plus a subsequent `fix:` commit correctly previews `0.1.1`.
+  Later commits with an already-tagged version do not qualify for republishing.
+
+No remote mutation, Actions run, release creation, or publishing was performed.
+The matrix targets Python 3.11–3.13 on Linux and Python 3.12 on macOS/Windows;
+those additional environments are configured, not claimed as locally tested.
+PyPI setup and the optional release-PR token remain repository-owner configuration.
+The supplied overlay has only changed/new files at repository-relative paths.
+
 ## Source review
 
 The official datasheet, official 2460 pulse example, Tektronix's maintained
