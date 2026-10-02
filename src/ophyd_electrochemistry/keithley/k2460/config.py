@@ -1,7 +1,10 @@
-"""Inert physical configuration templates; all fields require backend validation."""
+"""Validated configuration intent; commissioning and compiler checks remain mandatory."""
 
 from dataclasses import dataclass, field
 from typing import Literal
+
+from ...exceptions import ValidationError
+from ...validation import integer, numeric_fields, positive, text
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -16,6 +19,27 @@ class DigitalIOConfig:
     abort_edge: Literal["rising", "falling"] = "rising"
     external_abort_enabled: bool = False
 
+    def __post_init__(self) -> None:
+        lines = (self.ready, self.busy, self.start) + (() if self.abort is None else (self.abort,))
+        for line in lines:
+            integer(line, "digital line")
+            if line > 6:
+                raise ValidationError("Digital lines must be in 1..6")
+        if len(set(lines)) != len(lines):
+            raise ValidationError("Digital lines must be unique")
+        for value in (self.ready_asserted_level, self.busy_asserted_level):
+            if type(value) is not int or value not in (0, 1):
+                raise ValidationError("Output assertion levels must be integer 0 or 1")
+        if self.start_edge not in ("rising", "falling") or self.abort_edge not in (
+            "rising",
+            "falling",
+        ):
+            raise ValidationError("Unsupported digital edge")
+        if type(self.external_abort_enabled) is not bool:
+            raise ValidationError("external_abort_enabled must be boolean")
+        if self.external_abort_enabled and self.abort is None:
+            raise ValidationError("External abort requires an allocated line")
+
 
 @dataclass(frozen=True, kw_only=True)
 class SafetyConfig:
@@ -26,6 +50,17 @@ class SafetyConfig:
     power_abs_max_w: float
     source_off_mode: str
 
+    def __post_init__(self) -> None:
+        numeric_fields(self, ("voltage_min_v", "voltage_max_v"))
+        if self.voltage_min_v >= self.voltage_max_v:
+            raise ValidationError("Safety voltage_min_v must be below voltage_max_v")
+        numeric_fields(
+            self,
+            ("charge_current_max_a", "discharge_current_max_a", "power_abs_max_w"),
+            positive_only=True,
+        )
+        text(self.source_off_mode, "source_off_mode")
+
 
 @dataclass(frozen=True, kw_only=True)
 class TimingPolicy:
@@ -34,6 +69,34 @@ class TimingPolicy:
     shutdown_timeout_s: float
     poll_period_s: float
     required_abort_latency_s: float
+    required_cutoff_latency_s: float
+    source_period_tolerance_s: float = 0.0
+    measurement_period_tolerance_s: float = 0.0
+    duration_tolerance_s: float = 0.0
+    frequency_tolerance_hz: float = 0.0
+    scan_rate_tolerance_v_per_s: float = 0.0
+
+    def __post_init__(self) -> None:
+        numeric_fields(
+            self,
+            (
+                "command_timeout_s",
+                "external_start_timeout_s",
+                "shutdown_timeout_s",
+                "poll_period_s",
+                "required_abort_latency_s",
+                "required_cutoff_latency_s",
+            ),
+            positive_only=True,
+        )
+        for name in (
+            "source_period_tolerance_s",
+            "measurement_period_tolerance_s",
+            "duration_tolerance_s",
+            "frequency_tolerance_hz",
+            "scan_rate_tolerance_v_per_s",
+        ):
+            object.__setattr__(self, name, positive(getattr(self, name), name, zero=True))
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -44,3 +107,12 @@ class Keithley2460Config:
     source_terminal: Literal["front", "rear"]
     sense: Literal["local", "remote"]
     io: DigitalIOConfig = field(default_factory=DigitalIOConfig)
+
+    def __post_init__(self) -> None:
+        text(self.visa_resource, "visa_resource")
+        if not isinstance(self.safety, SafetyConfig) or not isinstance(self.timing, TimingPolicy):
+            raise ValidationError("safety/timing require validated configuration objects")
+        if not isinstance(self.io, DigitalIOConfig):
+            raise ValidationError("io requires DigitalIOConfig")
+        if self.source_terminal not in ("front", "rear") or self.sense not in ("local", "remote"):
+            raise ValidationError("Unsupported terminals or sense mode")

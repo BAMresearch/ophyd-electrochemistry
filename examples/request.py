@@ -1,4 +1,4 @@
-"""Construct intent only: this does not validate, connect, or energize hardware."""
+"""Construct structurally validated intent; no physical approval or hardware access."""
 
 from ophyd_electrochemistry import AcquisitionRequest, CyclicVoltammetry, StartMode
 

@@ -58,7 +58,7 @@ or stop metadata because initial configuration cannot foresee an abort.
 
 ## Waveform provenance and sample mapping
 
-For the planned PRBS/arbitrary/multisine programs in contract revision 0.2,
+For PRBS/arbitrary/multisine programs in contract revision 0.2,
 retain both generator intent and the exact expanded/compiled schedule. A request
 hash identifies intent; a distinct compiled-program hash covers actual source
 levels, dwells, repeats, source/measurement schedule, compiler version and relevant
@@ -82,6 +82,12 @@ Crossing an edge
 requires overlap information or an explicit ambiguous/invalid mapping flag;
 unknown phase must not be represented as a valid index. Fields needed to expose
 this mapping are finalized with their fixed descriptor schema at M5.
+
+M1 exposes planning metadata, generator provenance and scheduled sample mappings
+in `CompiledProgram`; see the [implemented schema](m1-compiler.md). Planned tick
+associations do not constitute observed transition timestamps or the M5 electrical
+record schema. `canonical_program_json` is the exportable plan; no acquisition
+or waveform artifact is written implicitly by compilation.
 
 A slower measurement schedule may span multiple source points. Requested
 setpoints remain distinct from measurements and source readback; record source

@@ -4,6 +4,15 @@
 
 ## Unreleased
 
+- Implement M1: validated finite SI intent/configuration, first-class PRBS and
+  arbitrary waveforms, coherent multisine generation and canonical request round trips.
+- Add an explicit-profile pure compiler producing bounded finite IR with separate
+  source/measurement schedules, aperture mapping, CV endpoints, resource budgets
+  and generator/request/plan hashes. No network or executable TSP is generated.
+- Include offline example and unit coverage for independent PRBS vectors, DFT
+  tone recovery, cutoff latency, unsafe/unsupported requests and deterministic plans.
+- Align exported contract revision with the documented 0.2 contract; retain the
+  package's unreleased 0.0.0 semantic-release sentinel.
 - Expand implementation contract to revision 0.2: first-class PRBS and generic
   finite arbitrary-waveform intent; multisine lowers through the shared mechanism.
 - Specify deterministic generation, separate source/measurement timing, waveform

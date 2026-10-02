@@ -5,6 +5,7 @@ nav:
   - Development and releases: development.md
   - Contract: implementation-contract.md
   - Waveforms: waveforms.md
+  - M1 compiler: m1-compiler.md
   - Evidence: assumptions.md
   - Architecture: architecture.md
   - Triggering: triggering.md

@@ -13,14 +13,18 @@
 
 | Path | Purpose/status |
 |---|---|
-| `src/ophyd_electrochemistry/protocols.py` | Immutable CV/hold/pulse models; validation still to implement |
+| `src/ophyd_electrochemistry/protocols.py` | Immutable structurally validated CV/hold/pulse models and program union |
+| `src/ophyd_electrochemistry/waveforms.py` | PRBS/arbitrary/multisine intent and deterministic pure generators |
+| `src/ophyd_electrochemistry/serialization.py` | Canonical request JSON/hash and validating allowlisted decoder |
 | `src/ophyd_electrochemistry/acquisition.py` | Start mode and request independent of protocol |
 | `src/ophyd_electrochemistry/interfaces.py` | Typed Device/Flyer contract |
 | `src/ophyd_electrochemistry/keithley/k2460/config.py` | Hardware and timing policy configuration |
-| `.../compiler.py`, `.../transport.py` | Pure compiler / transport protocols |
+| `.../capabilities.py`, `.../compiler.py` | Explicit capability profiles and concrete pure planning compiler |
+| `.../transport.py` | Future transport protocol; no connection implementation |
 | `.../device.py`, `.../io.py` | Explicit placeholders; no operational code |
 | `.../tsp/runtime.tsp` | Deliberately non-operational placeholder resource |
 | `tests/contract/` | Real RunEngine operating a test-only lifecycle witness |
+| `tests/unit/` | M1 models, waveform properties/independent vectors, budgets, timing and serialization |
 | `tests/simulator/` | Future independent fake transport/instrument |
 | `tests/hardware/` | Future explicitly enabled bench tests |
 | `docs/` | Contract, evidence, commissioning record, roadmap, ADRs |
@@ -28,13 +32,13 @@
 
 ## Waveform extension in revision 0.2
 
-The intent layer will gain `PRBSWaveform` and `ArbitraryWaveform` in M1. A pure
+The intent layer now includes `PRBSWaveform` and `ArbitraryWaveform`. A pure
 multisine generator retains `MultisineSpec` and emits `ArbitraryWaveform`; all
 waveforms lower to the same finite instrument-local execution representation.
-The public program union and existing `CompiledProgram` template must be expanded
-for waveform provenance, independent source/measurement periods, logical indices
-and timing/resource budgets before those capabilities are advertised. No waveform
-dataclasses, generator implementation or new runtime path are added here.
+The program union and `CompiledProgram` now include waveform provenance,
+independent source/measurement timing, logical indices and planning budgets.
+The finite IR is not TSP/TriggerFlow or a hardware capability approval. No new
+runtime path is implemented; [M1](m1-compiler.md) documents current boundaries.
 
 PRBS remains a first-class public intent even if internally expanded into a list.
 Deterministic generators may run on the host before preparation; they never drive

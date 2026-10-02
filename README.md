@@ -1,6 +1,6 @@
 # ophyd-electrochemistry
 
-**Development template — no operational instrument driver yet.**
+**M1 pure models/compiler implemented — no operational instrument driver yet.**
 
 A Python library for instrument-owned electrochemistry acquisition through
 classic ophyd and Bluesky. The first backend is the Keithley 2460 over Ethernet
@@ -12,7 +12,8 @@ owns the 2460 connection.
 ## Start here
 
 - [Implementation contract](docs/implementation-contract.md): normative behavior.
-- [Waveform contract](docs/waveforms.md): planned first-class PRBS, arbitrary playback and multisine generation.
+- [Waveform contract](docs/waveforms.md): first-class PRBS, arbitrary-waveform intent and multisine generation.
+- [M1 compiler](docs/m1-compiler.md): implemented API, offline example, timing rules and planning limits.
 - [Assumptions and evidence](docs/assumptions.md): supported facts, corrections,
   and hardware acceptance gates.
 - [Architecture](docs/architecture.md): ownership and repository map.
@@ -22,15 +23,15 @@ owns the 2460 connection.
 - [Implementation roadmap](docs/roadmap.md): ordered work and acceptance criteria.
 - [Validation record](docs/validation.md): checks performed on this template.
 
-The `src/` tree contains inert immutable configuration models, typed interface
-contracts, exceptions, and explicit implementation placeholders. It cannot
-connect to or energize a sourcemeter. The tests use a **test-only lifecycle
-witness**, not an instrument simulator or a proof of physical behavior.
+The `src/` tree contains structurally validated immutable models, deterministic
+waveform generators, canonical serialization and a pure bounded planning compiler.
+It cannot connect to or energize a sourcemeter. The tests cover pure M1 behavior
+and a **test-only lifecycle witness**, not an instrument simulator or physical proof.
 
 Contract revision **0.2** includes first-class PRBS intent and a shared finite
 arbitrary-waveform mechanism. Multisine is generated into that same representation
 with explicit tones/phases and preserved provenance. These models/generators
-enter M1; this update specifies them without adding executable waveform support.
+and pure planning now exist; instrument playback and the simulator remain future work.
 Source updates, electrical measurement and detector exposure have separate
 timing requirements. Supported waveform rates remain hardware acceptance gates.
 
@@ -62,6 +63,16 @@ without hardware using:
 ```bash
 uv run --locked python -c "from examples.request import request; print(request)"
 ```
+
+Compile a PRBS plan with an explicit synthetic profile, without hardware:
+
+```bash
+uv run --locked python -m examples.compile_program
+```
+
+The result reports `hardware_ready: false`. The example's timings/limits are
+test fixtures, not instrument specifications or cell-safe defaults. See the
+[M1 guide](docs/m1-compiler.md) for the public compiler and serialization APIs.
 
 Use `uv sync --locked --extra visa` when developing the future PyVISA backend.
 For a lean runtime environment, use `uv sync --locked --no-default-groups`.

@@ -17,8 +17,11 @@ time waveform steps through network writes and sleeps.
 `prepare(request)` MUST validate finite numbers, duration, sampling feasibility,
 voltage/current/power limits, line uniqueness/range, requested capabilities, and
 buffer/TriggerFlow/configuration-list budgets. It MUST reject unsupported
-features explicitly. Protocol dataclasses in this template are inert data
-containers: their construction is **not validation**.
+features explicitly. M1 model construction validates structure, finite SI values
+and intrinsic consistency. It does **not** establish cell safety, physical
+feasibility or commissioned capabilities; the pure compiler adds explicit
+profile/configuration checks. Operational `prepare` must still validate its
+actual hardware/runtime configuration before arming.
 
 An invalid request MUST NOT energize output. A valid preparation MUST apply
 instrument compliance and the selected terminals/sense configuration, allocate

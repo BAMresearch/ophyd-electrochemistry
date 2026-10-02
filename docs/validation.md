@@ -2,6 +2,37 @@
 
 Date: 2026-10-02. Scope: contract template, not operational 2460 behavior.
 
+## M1 implementation validation
+
+This increment is relative to the uv/release and waveform-contract overlays.
+M1 now has structurally validated immutable SI models/configuration, first-class
+PRBS/arbitrary intent, pure coherent multisine generation, canonical request
+round trips and explicit-profile bounded planning compilation.
+
+Validated locally with uv 0.12.19 / Python 3.12.14:
+
+- 112 tests: 100 M1 unit cases plus the prior twelve RunEngine/release cases.
+  PRBS checks include full-vector fixtures independently calculated from polynomial
+  bit recurrences for every order 2–10, cyclic state uniqueness/balance/correlation
+  and fixed seed/phase vectors. Multisine recovery uses an independent DFT.
+- Timing/feasibility tests cover CV endpoint/cycle joins, finite pulse/baseline
+  dwell, independent aperture mapping, source/list/record/block/byte budgets,
+  cutoff cadence, unsupported modes/abort, conservative cell/power limits and hashes.
+- Strict source/release-helper typing, Ruff lint/format, locked dependency check,
+  strict MkDocs and local Markdown target/anchor checks.
+- Offline PRBS example, isolated uv wheel/sdist build, strict Twine metadata and
+  packaged resource/unit-test/example inspection.
+
+`hardware_ready=False` is returned for every compiled plan, including declared
+bench profiles. Output is finite planning IR, not TSP/TriggerFlow. Source schedules
+and cutoff/abort declarations are not measured physical evidence. Firmware-specific
+lowering, transport, independent simulator, Device and data acquisition are not
+implemented; all bench gates remain NOT RUN. Other CI platforms/Python versions
+are configured, not claimed as locally tested. No remote mutation was performed.
+
+The update archive is `.tgz`, containing only changed/new repository-relative
+files after the previous overlay, without Git history or generated/environment files.
+
 ## Waveform contract update — revision 0.2
 
 This documentation-only increment is relative to the previously delivered

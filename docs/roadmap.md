@@ -1,6 +1,7 @@
 # Implementation roadmap
 
-The contract is ready for implementation of pure models and simulator work.
+M1 pure models/generators and bounded planning compilation are implemented;
+M2 independent simulation is next. Actual TSP/TriggerFlow lowering remains later work.
 It is not an operational-hardware approval or a promise that every feature is
 available on the instrument.
 
@@ -15,11 +16,11 @@ available on the instrument.
 | M7 — Protocol expansion | Commission finite arbitrary current playback, first-class PRBS and multisine through that shared path; CV/current cutoffs, cycling, pulse and voltage waveform variants | Each protocol proves limits, timing, abort latency and storage budget; waveform fidelity/phase requires G08 |
 | M8 — Two-QueueServer integration | Separate startup environments, leader/follower plans, experiment linking, failure propagation | Timeouts, manual abort, missing START, leader/follower restarts, catalog correlation |
 
-Current inert public models cover CV, voltage/current holds, and current pulses.
-Revision 0.2 explicitly adds planned `PRBSWaveform` and `ArbitraryWaveform` models
-and a pure multisine generator retaining `MultisineSpec`; M1 adds them to the
-public program union and expands the compiler result for independent source/
-measurement timing. They are not implemented by this documentation update.
+Current structurally validated models cover CV, voltage/current holds, current
+pulses, `PRBSWaveform` and `ArbitraryWaveform`. A pure multisine generator retains
+`MultisineSpec`. M1 expands the compiler result for independent source/measurement
+timing, canonical hashes, scheduled aperture mapping and explicit capability budgets.
+Only planning is implemented; there is no instrument execution or M2 simulator yet.
 Charge/discharge cycling and voltage-pulse models remain extension work.
 Chronoamperometry/chronopotentiometry can be
 aliases/compositions of validated step/hold protocols rather than redundant APIs.

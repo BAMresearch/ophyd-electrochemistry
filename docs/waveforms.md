@@ -1,9 +1,10 @@
 # PRBS, arbitrary waveforms and multisine
 
-Contract revision 0.2 adds these **intended implementation requirements**.
-The names and fields below describe the planned API; they are not importable
-classes or executable examples in the current template. The existing CV/hold/
-pulse dataclasses and `ElectrochemicalProgram` union remain unchanged until M1.
+Contract revision 0.2 defines waveform intent and future instrument execution.
+M1 now implements `PRBSWaveform`, `ArbitraryWaveform`, `MultisineSpec`, pure
+generation and planning compilation; the public program union includes PRBS
+and arbitrary intent. No instrument playback is implemented. See the
+[M1 API and runnable example](m1-compiler.md) for exact current behavior.
 
 ## Shared execution model
 
@@ -13,7 +14,7 @@ an `ArbitraryWaveform` with retained generator provenance. All three use the
 same compiler, instrument-local runtime, Device/Flyer lifecycle and protections.
 Generation may happen in Python before preparation; playback timing may not.
 
-| Planned parameter | Meaning and validation |
+| Parameter / execution requirement | Meaning and validation |
 |---|---|
 | `source_function` | Exactly `current` or `voltage`, fixed during an acquisition |
 | Source levels / bias / amplitudes | SI amperes for current sourcing or SI volts for voltage sourcing; source function determines units |
@@ -185,8 +186,9 @@ The [official 10 ms pulse example](https://www.tek.com/en/support/faqs/model-246
 does not include simultaneous electrical measurement or prove arbitrary-list
 timing under our ranges/load. Gates G02/G03/G04/G08 remain NOT RUN.
 
-M1 implements models, deterministic expansion, hashes and resource/timing
-validation. M2 adds independent simulated execution/fault injection. After the
+M1 implements models, deterministic expansion, hashes and pure resource/timing
+planning against explicit profiles. Actual firmware/TSP code generation remains
+unimplemented. M2 adds independent simulated execution/fault injection. After the
 minimal hold runtime proof, M7 commissions arbitrary current playback, PRBS,
 multisine and voltage variants through the shared path. See [roadmap](roadmap.md),
 [ADR 0002](adr/0002-finite-waveforms.md) and [hardware acceptance](hardware-acceptance.md).
