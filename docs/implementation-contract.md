@@ -1,4 +1,4 @@
-# Implementation contract — revision 0.1
+# Implementation contract — revision 0.2
 
 MUST is required behavior; SHOULD permits a documented alternative. This file
 defines intended behavior. Current implementation coverage is in
@@ -111,3 +111,63 @@ Runtime ABI and digest checks MUST precede arming. Code that blocks the interpre
 from servicing control/abort is unacceptable without a tested independent path.
 No continuous/pulse/measurement speed, paired-V/I simultaneity, emergency-stop
 classification, or clock synchronization guarantee may be claimed without evidence.
+
+## C09 — Generic finite arbitrary waveforms
+
+The public intent layer MUST support a finite `ArbitraryWaveform` containing
+explicit current or voltage levels, a uniform requested source-update period,
+and a positive finite repeat count. One source function MUST remain fixed for
+the acquisition. Each point is a zero-order hold; the final point has a full
+dwell, and repetition MUST NOT add or duplicate an endpoint. Infinite playback,
+host-paced streaming, implicit interpolation, and source-function changes are
+outside this revision. The detailed planned schema is in [waveforms](waveforms.md).
+
+Source updates and electrical measurements MUST have separate timing
+specifications. The compiler MUST validate their joint schedule, declared timing
+tolerances, all points/transitions, complementary compliance, cell cutoffs, and
+finite runtime/storage budgets before output. It MUST reject an unachievable
+request rather than silently clip, rescale, resample, drop points, or slow it down.
+Playback MUST use a fully prepared instrument-local program and inherit C03–C08,
+including both start modes, abort responsiveness, output OFF on termination,
+and retained partial records. A zero setpoint MUST NOT be interpreted as OFF.
+
+Requested, compiled and observed timing MUST remain distinct. The compiled
+waveform, its digest, generator provenance and record-to-waveform mapping MUST
+be reproducible/exportable under the [data contract](data-contract.md).
+Model availability MUST NOT imply a backend capability has passed acceptance.
+
+## C10 — PRBS as a first-class waveform
+
+The public intent layer MUST include a first-class `PRBSWaveform`, rather than
+requiring users to construct an unlabelled arbitrary list. Its finite two-level
+sequence MUST specify source function, low/high levels, bit period, generator
+identifier/version, supported order, nonzero initial register seed and repeats.
+The initial generator family MUST use validated maximal-length binary LFSR
+sequences of length `2**order - 1`, with fixed documented tap, shift, output-bit
+and update conventions. Unsupported orders/generators/seeds MUST be rejected.
+
+The pure generator/compiler MUST preserve the expanded sequence and hash.
+Every bit consumes one dwell, even when adjacent bits have the same level;
+any execution optimization MUST preserve bit timing and logical indices.
+Repeats restart the same sequence. Finite-sequence mean and commanded integrated
+charge MUST be reported for current excitation; balanced-looking levels MUST
+NOT be assumed to produce zero net charge. No random reseeding, clipping or
+automatic balancing is permitted. See [PRBS semantics](waveforms.md#prbswaveform).
+
+## C11 — Multisine through the arbitrary-waveform mechanism
+
+Multisine MUST be a pure deterministic waveform generator that returns an
+`ArbitraryWaveform` plus a retained `MultisineSpec`; it MUST NOT introduce a
+second transport/runtime execution path. The specification MUST include source
+function, DC bias, explicit tone frequencies, peak amplitudes and phases, sample
+period, finite sample count and repeats. Random phases, if offered later, MUST
+be resolved and preserved before compilation.
+
+The initial generator MUST use coherent tones on integer bins of the finite
+waveform period, exclude DC/Nyquist tones, and reject duplicate/out-of-band tones.
+It MUST validate the summed waveform and between-sample safety envelope, not
+just individual amplitudes. No clipping or silent normalization is allowed.
+Requested tones/phases and achieved frequencies, quantization, mean, peak/RMS
+excitation and crest factor MUST be recorded. Sampled playback is a staircase
+approximation; continuous sinusoidal fidelity or calibrated impedance MUST NOT
+be claimed from successful compilation. See [multisine semantics](waveforms.md#multisine-generator).

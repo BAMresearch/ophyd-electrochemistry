@@ -50,3 +50,20 @@ possible and invoke bounded shutdown even when collection fails. Device
 power loss or a killed worker. Pause aborts the acquisition; resume never replays
 it. Outcome, abort reason, and records survive recovery until explicitly
 archived/discarded. Repeated abort and recovery must not erase evidence.
+
+## Waveform-specific validation
+
+PRBS/arbitrary/multisine share these protection layers; generator validity is
+not battery safety. Check both PRBS levels, every arbitrary sample/transition,
+the multisine sum and conservative envelope, repeat boundaries, total duration,
+commanded charge and applicable sourcing/sinking/power limits before output.
+Positive/negative symmetric PRBS levels need not give zero finite-sequence charge.
+Commanded charge does not replace measured current integration or cell monitoring.
+
+Compliance and voltage/current cutoffs remain distinct. A waveform request must
+declare applicable cell cutoffs and their termination policy; the backend rejects
+it if that policy cannot be enforced locally within its validated latency.
+Protection or deadline faults preserve partial data and mark the waveform
+incomplete. A locally generated list must not monopolize control/abort handling.
+No clipping, waveform normalization or source-OFF substitution is an implicit
+safety fallback. See [waveform semantics](waveforms.md) and gate G08.

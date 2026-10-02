@@ -2,6 +2,25 @@
 
 Date: 2026-10-02. Scope: contract template, not operational 2460 behavior.
 
+## Waveform contract update — revision 0.2
+
+This documentation-only increment is relative to the previously delivered
+uv/semantic-release overlay. It adds planned first-class PRBS, finite arbitrary
+waveforms and a pure multisine generator sharing arbitrary playback, with ADR
+0002, provenance, M1/M2 acceptance and hardware gate G08.
+
+Reviewed Tektronix's function-generation brief and official 10 ms pulse example.
+Configuration-list waveform generation supports the architecture; PRBS/multisine
+lowering is a design inference. The simple pulse example contains no measurement.
+Neither source establishes our waveform timing, paired measurement, storage,
+phase fidelity or abort latency. All hardware gates, including G08, are NOT RUN.
+
+Validation: strict locked-uv MkDocs build, local Markdown targets/anchors and
+contract/gate references, whitespace and changed-files archive contents.
+No Python/API/lockfile/workflow changes or new waveform execution tests are
+included. The prior twelve-test result below is from the uv update, not evidence
+of newly implemented waveform support. No remote mutations were performed.
+
 ## uv and release-workflow update
 
 Baseline: GitHub `main` commit `f8e5e555228d8700fa08f1f23782237fd0bb0688`.

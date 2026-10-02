@@ -56,6 +56,51 @@ ABI/version/digest; contract revision; clock mapping and uncertainty; outcome,
 termination cause, and complete/partial status. Outcomes require terminal records
 or stop metadata because initial configuration cannot foresee an abort.
 
+## Waveform provenance and sample mapping
+
+For the planned PRBS/arbitrary/multisine programs in contract revision 0.2,
+retain both generator intent and the exact expanded/compiled schedule. A request
+hash identifies intent; a distinct compiled-program hash covers actual source
+levels, dwells, repeats, source/measurement schedule, compiler version and relevant
+capability/configuration inputs. Requested and compiled values must not overwrite
+each other. Preserve actual generated floating-point values in a documented
+canonical encoding so a digest can be checked without regenerating trigonometry.
+
+| Waveform | Required additional provenance |
+|---|---|
+| All | Source function/units, unique list and total logical point count, repeats, requested/achieved source period and measurement schedule, duration, timing tolerances, quantization, range/compliance/cutoff policy, schedule encoding/digest and resource budget |
+| PRBS | Generator/version, order, polynomial/taps, register/shift/output convention, seed, bit-to-level mapping, expanded sequence/digest, bit period, exact finite mean and commanded charge for current sourcing |
+| Multisine | Generator/version, bias, tone bins/frequencies, peak amplitudes, explicit phases, point count, requested/achieved frequencies, actual samples/digest, mean/AC RMS/AC crest factor and analytical safety envelope |
+| Terminal outcome | Executed point/bit/repeat extent, source/measurement deadline faults, cutoff/compliance events, last confirmed output transition and timing, incomplete waveform and retained-record extent |
+
+Waveform acquisitions must provide a reproducible mapping from each electrical
+record to logical waveform point/PRBS bit and repeat, relative to actual execution
+START. The descriptor must declare the sample timestamp's physical reference
+and aperture. A single point index is valid as a dwell association only when
+its integration aperture lies within that dwell; the reading is still integrated.
+Crossing an edge
+requires overlap information or an explicit ambiguous/invalid mapping flag;
+unknown phase must not be represented as a valid index. Fields needed to expose
+this mapping are finalized with their fixed descriptor schema at M5.
+
+A slower measurement schedule may span multiple source points. Requested
+setpoints remain distinct from measurements and source readback; record source
+schedule uncertainty and any observed timing evidence rather than treating the
+compiled timetable as a measured transition trace. Electrical data alone does
+not prove per-point detector correlation or waveform fidelity.
+
+The waveform/schedule must be exportable with the acquisition. Small schedules
+may be configuration metadata; large arrays need a checksummed associated
+artifact, referenced by immutable identifier/path with acquisition/experiment
+IDs. A digest alone is insufficient. Archive the schedule with the measurements,
+including diagnostic export on failure; do not place an unbounded array in every
+event. This does not introduce streaming external-asset support into version one.
+
+Detector correlation retains exposure start/end, phase and clock uncertainty
+through the facility's separate run/experiment linkage. Detector frame rate
+does not set source-update rate; integrated SAXS/WAXS frames must not be labelled
+as resolved individual PRBS bits without validated timing/exposure evidence.
+
 ## Storage lifecycle
 
 No buffer wrap/overwrite is permitted. Estimate required storage before arm;

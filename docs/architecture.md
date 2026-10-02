@@ -26,6 +26,23 @@
 | `docs/` | Contract, evidence, commissioning record, roadmap, ADRs |
 | `.github/workflows/ci.yml` | Lint/typing/tests/docs/package checks |
 
+## Waveform extension in revision 0.2
+
+The intent layer will gain `PRBSWaveform` and `ArbitraryWaveform` in M1. A pure
+multisine generator retains `MultisineSpec` and emits `ArbitraryWaveform`; all
+waveforms lower to the same finite instrument-local execution representation.
+The public program union and existing `CompiledProgram` template must be expanded
+for waveform provenance, independent source/measurement periods, logical indices
+and timing/resource budgets before those capabilities are advertised. No waveform
+dataclasses, generator implementation or new runtime path are added here.
+
+PRBS remains a first-class public intent even if internally expanded into a list.
+Deterministic generators may run on the host before preparation; they never drive
+point-by-point network timing. Large schedules use associated checksummed exports,
+not an array duplicated in every electrical event. The existing four-line I/O
+and separate-QueueServer run model remain applicable. See [waveforms](waveforms.md)
+and [ADR 0002](adr/0002-finite-waveforms.md).
+
 ## Two QueueServers
 
 Both workers have their own RunEngine, run UID, document subscriptions, and

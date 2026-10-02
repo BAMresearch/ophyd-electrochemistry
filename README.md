@@ -12,6 +12,7 @@ owns the 2460 connection.
 ## Start here
 
 - [Implementation contract](docs/implementation-contract.md): normative behavior.
+- [Waveform contract](docs/waveforms.md): planned first-class PRBS, arbitrary playback and multisine generation.
 - [Assumptions and evidence](docs/assumptions.md): supported facts, corrections,
   and hardware acceptance gates.
 - [Architecture](docs/architecture.md): ownership and repository map.
@@ -25,6 +26,13 @@ The `src/` tree contains inert immutable configuration models, typed interface
 contracts, exceptions, and explicit implementation placeholders. It cannot
 connect to or energize a sourcemeter. The tests use a **test-only lifecycle
 witness**, not an instrument simulator or a proof of physical behavior.
+
+Contract revision **0.2** includes first-class PRBS intent and a shared finite
+arbitrary-waveform mechanism. Multisine is generated into that same representation
+with explicit tones/phases and preserved provenance. These models/generators
+enter M1; this update specifies them without adding executable waveform support.
+Source updates, electrical measurement and detector exposure have separate
+timing requirements. Supported waveform rates remain hardware acceptance gates.
 
 ## QuickStart with uv
 

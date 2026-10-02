@@ -4,6 +4,7 @@ nav:
   - Overview: index.md
   - Development and releases: development.md
   - Contract: implementation-contract.md
+  - Waveforms: waveforms.md
   - Evidence: assumptions.md
   - Architecture: architecture.md
   - Triggering: triggering.md
@@ -12,4 +13,6 @@ nav:
   - Roadmap: roadmap.md
   - Hardware acceptance: hardware-acceptance.md
   - Validation: validation.md
-  - Decision record: adr/0001-contract-baseline.md
+  - Decision records:
+      - Contract baseline: adr/0001-contract-baseline.md
+      - Finite waveforms: adr/0002-finite-waveforms.md

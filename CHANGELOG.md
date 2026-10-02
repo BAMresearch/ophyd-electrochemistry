@@ -4,6 +4,11 @@
 
 ## Unreleased
 
+- Expand implementation contract to revision 0.2: first-class PRBS and generic
+  finite arbitrary-waveform intent; multisine lowers through the shared mechanism.
+- Specify deterministic generation, separate source/measurement timing, waveform
+  provenance and M1/M2 acceptance; add G08 for hardware waveform fidelity/phase.
+- No waveform Python models, generators, runtime or driver implementation added.
 - Adopt uv/uvx setup, a committed cross-platform lockfile and dependency groups.
 - Use a single dynamic version source and Python Semantic Release commit rules.
 - Add reusable CI jobs and release preparation PRs based on MoDaCor/McSAS3.
