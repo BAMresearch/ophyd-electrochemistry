@@ -1,6 +1,6 @@
 # ophyd-electrochemistry
 
-**M1 pure models/compiler implemented — no operational instrument driver yet.**
+**M1 compiler and M2 independent simulator implemented — no operational instrument driver yet.**
 
 A Python library for instrument-owned electrochemistry acquisition through
 classic ophyd and Bluesky. The first backend is the Keithley 2460 over Ethernet
@@ -14,6 +14,7 @@ owns the 2460 connection.
 - [Implementation contract](docs/implementation-contract.md): normative behavior.
 - [Waveform contract](docs/waveforms.md): first-class PRBS, arbitrary-waveform intent and multisine generation.
 - [M1 compiler](docs/m1-compiler.md): implemented API, offline example, timing rules and planning limits.
+- [M2 simulator](docs/m2-simulator.md): virtual playback, triggering, faults and retained evidence.
 - [Assumptions and evidence](docs/assumptions.md): supported facts, corrections,
   and hardware acceptance gates.
 - [Architecture](docs/architecture.md): ownership and repository map.
@@ -24,14 +25,15 @@ owns the 2460 connection.
 - [Validation record](docs/validation.md): checks performed on this template.
 
 The `src/` tree contains structurally validated immutable models, deterministic
-waveform generators, canonical serialization and a pure bounded planning compiler.
-It cannot connect to or energize a sourcemeter. The tests cover pure M1 behavior
-and a **test-only lifecycle witness**, not an instrument simulator or physical proof.
+waveform generators, canonical serialization, a pure bounded planning compiler,
+and an independent virtual-clock runtime/fake transport. It cannot connect to or
+energize a sourcemeter. Tests cover M1, M2 simulation and a separate **test-only
+RunEngine lifecycle witness**; they do not establish physical behavior.
 
 Contract revision **0.2** includes first-class PRBS intent and a shared finite
 arbitrary-waveform mechanism. Multisine is generated into that same representation
 with explicit tones/phases and preserved provenance. These models/generators
-and pure planning now exist; instrument playback and the simulator remain future work.
+and pure planning now exist, with simulated execution; instrument playback remains future work.
 Source updates, electrical measurement and detector exposure have separate
 timing requirements. Supported waveform rates remain hardware acceptance gates.
 
@@ -73,6 +75,16 @@ uv run --locked python -m examples.compile_program
 The result reports `hardware_ready: false`. The example's timings/limits are
 test fixtures, not instrument specifications or cell-safe defaults. See the
 [M1 guide](docs/m1-compiler.md) for the public compiler and serialization APIs.
+
+Run that plan through the independent simulator, without hardware:
+
+```bash
+uv run --locked python -m examples.simulate_program
+```
+
+See the [M2 guide](docs/m2-simulator.md) for simulation APIs, synthetic data origin,
+failure injection and retention. Reviewed packaged TSP programs remain planned;
+user-written TSP upload/execution is outside the current scope.
 
 Use `uv sync --locked --extra visa` when developing the future PyVISA backend.
 For a lean runtime environment, use `uv sync --locked --no-default-groups`.

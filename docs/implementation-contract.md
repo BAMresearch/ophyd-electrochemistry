@@ -115,6 +115,10 @@ from servicing control/abort is unacceptable without a tested independent path.
 No continuous/pulse/measurement speed, paired-V/I simultaneity, emergency-stop
 classification, or clock synchronization guarantee may be claimed without evidence.
 
+Only packaged, reviewed, version-controlled TSP programs and their compiled
+parameters are in scope. User-written TSP upload/execution is outside the current
+scope. M2's typed simulator has no raw-script API and does not implement TSP.
+
 ## C09 — Generic finite arbitrary waveforms
 
 The public intent layer MUST support a finite `ArbitraryWaveform` containing

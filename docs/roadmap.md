@@ -1,7 +1,8 @@
 # Implementation roadmap
 
-M1 pure models/generators and bounded planning compilation are implemented;
-M2 independent simulation is next. Actual TSP/TriggerFlow lowering remains later work.
+M1 pure models/generators and bounded planning compilation, and M2 independent
+simulation are implemented. M3 transport characterization is next.
+Actual TSP/TriggerFlow lowering remains later work.
 It is not an operational-hardware approval or a promise that every feature is
 available on the instrument.
 
@@ -20,7 +21,8 @@ Current structurally validated models cover CV, voltage/current holds, current
 pulses, `PRBSWaveform` and `ArbitraryWaveform`. A pure multisine generator retains
 `MultisineSpec`. M1 expands the compiler result for independent source/measurement
 timing, canonical hashes, scheduled aperture mapping and explicit capability budgets.
-Only planning is implemented; there is no instrument execution or M2 simulator yet.
+Planning and [M2 simulated execution](m2-simulator.md) are implemented;
+there is no instrument execution yet.
 Charge/discharge cycling and voltage-pulse models remain extension work.
 Chronoamperometry/chronopotentiometry can be
 aliases/compositions of validated step/hold protocols rather than redundant APIs.
@@ -49,6 +51,9 @@ hardware defaults. See [waveform specification](waveforms.md).
 Record actual unit firmware/serial, VISA backend, DUT terminals/sense wiring,
 cell-specific limits/off-mode behavior, leader logic interface, required worst-case
 abort latency, detector timing precision, and licensing. These do not block M1/M2.
+
+Packaged, reviewed TSP programs remain in scope for M4/M7. User-written TSP
+upload/execution is outside the current scope; the simulator has no raw-script API.
 
 ## Completion rule
 

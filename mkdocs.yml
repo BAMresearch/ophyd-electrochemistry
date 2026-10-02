@@ -6,6 +6,7 @@ nav:
   - Contract: implementation-contract.md
   - Waveforms: waveforms.md
   - M1 compiler: m1-compiler.md
+  - M2 simulator: m2-simulator.md
   - Evidence: assumptions.md
   - Architecture: architecture.md
   - Triggering: triggering.md

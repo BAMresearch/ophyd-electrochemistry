@@ -89,6 +89,12 @@ associations do not constitute observed transition timestamps or the M5 electric
 record schema. `canonical_program_json` is the exportable plan; no acquisition
 or waveform artifact is written implicitly by compilation.
 
+M2 adds explicitly synthetic aperture-average records, local virtual ticks,
+source traces and a checksummed simulation diagnostic export. These are not
+observed hardware records or calibrated epoch timestamps. The [M2 guide](m2-simulator.md)
+defines their schema, fault/retention semantics and simulated field origin;
+the operational M5 schema remains pending.
+
 A slower measurement schedule may span multiple source points. Requested
 setpoints remain distinct from measurements and source readback; record source
 schedule uncertainty and any observed timing evidence rather than treating the

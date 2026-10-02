@@ -8,6 +8,7 @@
 | 2460 compiler | Feasible discrete steps, bounds, storage estimates | Network access |
 | Packaged TSP runtime | TriggerFlow, local timing, handshake and proven shutdown path | RunEngine documents |
 | PyVISA transport | Locked bounded command/response operations | Experimental decisions |
+| M2 simulator | Independent event clock, fake circuit/host link, fault and retention tests | Firmware interpretation or physical evidence |
 
 ## Module locations
 
@@ -23,9 +24,10 @@
 | `.../transport.py` | Future transport protocol; no connection implementation |
 | `.../device.py`, `.../io.py` | Explicit placeholders; no operational code |
 | `.../tsp/runtime.tsp` | Deliberately non-operational placeholder resource |
+| `src/ophyd_electrochemistry/simulation/` | Implemented independent virtual-clock runtime and typed fake transport |
 | `tests/contract/` | Real RunEngine operating a test-only lifecycle witness |
 | `tests/unit/` | M1 models, waveform properties/independent vectors, budgets, timing and serialization |
-| `tests/simulator/` | Future independent fake transport/instrument |
+| `tests/simulator/` | Independent reference traces, aperture integrals, state races, faults and retention |
 | `tests/hardware/` | Future explicitly enabled bench tests |
 | `docs/` | Contract, evidence, commissioning record, roadmap, ADRs |
 | `.github/workflows/ci.yml` | Lint/typing/tests/docs/package checks |
@@ -38,7 +40,8 @@ waveforms lower to the same finite instrument-local execution representation.
 The program union and `CompiledProgram` now include waveform provenance,
 independent source/measurement timing, logical indices and planning budgets.
 The finite IR is not TSP/TriggerFlow or a hardware capability approval. No new
-runtime path is implemented; [M1](m1-compiler.md) documents current boundaries.
+hardware runtime path is implemented; [M1](m1-compiler.md) and
+[M2](m2-simulator.md) document planning/simulation boundaries.
 
 PRBS remains a first-class public intent even if internally expanded into a list.
 Deterministic generators may run on the host before preparation; they never drive

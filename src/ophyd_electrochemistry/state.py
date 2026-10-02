@@ -1,4 +1,4 @@
-"""Intended state vocabulary; transition logic is not implemented."""
+"""Shared lifecycle vocabulary; M2 simulation implements transitions, hardware is pending."""
 
 from enum import StrEnum
 

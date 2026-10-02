@@ -4,6 +4,14 @@
 
 ## Unreleased
 
+- Implement M2 independent virtual-clock simulation and typed fake transport:
+  finite playback, READY/START/ABORT, local timeout, synthetic aperture averages,
+  coherent snapshots, frozen chunks and checksummed retained-data export.
+- Exercise independent reference traces, state/input races, timing/buffer/cutoff
+  faults, uncertain shutdown, ambiguous replies and reconnect without command replay.
+- Add an offline uv simulator example and clarify packaged TSP program scope;
+  user-written TSP upload/execution remains outside the current scope.
+
 - Implement M1: validated finite SI intent/configuration, first-class PRBS and
   arbitrary waveforms, coherent multisine generation and canonical request round trips.
 - Add an explicit-profile pure compiler producing bounded finite IR with separate

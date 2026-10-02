@@ -2,8 +2,9 @@
 
 M1 implements immutable structurally validated models, deterministic PRBS and
 multisine generation, canonical request round trips, and a pure bounded planning
-compiler. No device, transport, TSP code generation or independent simulator is
-implemented. M2 is next. All hardware gates remain NOT RUN.
+compiler. [M2](m2-simulator.md) adds independent simulated execution over this IR.
+No operational device, VISA transport or TSP code generation is implemented.
+M3 transport characterization is next. All hardware gates remain NOT RUN.
 
 ## Try the offline example
 

@@ -2,6 +2,38 @@
 
 Date: 2026-10-02. Scope: contract template, not operational 2460 behavior.
 
+## M2 implementation validation
+
+This increment follows M1 and adds an independent event-clock runtime, ideal
+synthetic circuit, typed transaction-locked fake transport and frozen retained
+records. Both start modes, source/measurement clocks, input races, idempotent
+abort/recovery and host reconciliation are implemented in simulation only.
+
+Validated locally with uv 0.12.19 / Python 3.12.14:
+
+- 179 tests pass: 67 new M2 simulator cases plus the prior 112 M1/contract/release
+  cases. Only this local Python/platform combination was executed.
+- Independent expected source traces and aperture integrals, including PRBS
+  equal adjacent bits, multisine through arbitrary playback, pulse baselines,
+  CV cycles/endpoints, full final dwells and exact/cross-edge apertures.
+- READY/stale/held/coincident input races, local START timeout, abort during wait,
+  playback/aperture/overhead, deadline/sensor/buffer/cutoff faults and compliance
+  provenance. Complete/partial records survive shutdown and explicit recovery.
+- Coherent immutable snapshots, bounded frozen chunks, digest-checked full
+  diagnostic export, explicit retained-data disposition, ambiguous mutations,
+  lost replies/chunks, reconnect without START replay and bounded polling.
+- Ruff lint/format, strict source/release-helper mypy, locked dependency check,
+  strict MkDocs, offline simulator example, uv wheel/sdist build and strict Twine
+  metadata checks. The package still uses the unreleased `0.0.0` sentinel.
+
+Simulation does not interpret TSP or implement the operational ophyd Device,
+PyVISA framing, real clocks, analog settling, paired V/I measurements or physical
+shutdown latency. Reviewed packaged TSP programs remain planned; user-written TSP
+execution is outside scope. All hardware gates remain NOT RUN.
+
+The M2 `.tgz` contains only changed/new repository-relative files after M1.
+The M1 validation entry below records the prior increment's coverage.
+
 ## M1 implementation validation
 
 This increment is relative to the uv/release and waveform-contract overlays.
@@ -26,8 +58,8 @@ Validated locally with uv 0.12.19 / Python 3.12.14:
 `hardware_ready=False` is returned for every compiled plan, including declared
 bench profiles. Output is finite planning IR, not TSP/TriggerFlow. Source schedules
 and cutoff/abort declarations are not measured physical evidence. Firmware-specific
-lowering, transport, independent simulator, Device and data acquisition are not
-implemented; all bench gates remain NOT RUN. Other CI platforms/Python versions
+lowering, transport, independent simulator, Device and data acquisition were not
+implemented at M1; all bench gates remained NOT RUN. Other CI platforms/Python versions
 are configured, not claimed as locally tested. No remote mutation was performed.
 
 The update archive is `.tgz`, containing only changed/new repository-relative

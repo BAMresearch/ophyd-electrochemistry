@@ -5,8 +5,9 @@ This documentation specifies the intended implementation of
 revision: **0.2**, updated **2026-10-02** from the 0.1 baseline.
 
 M1 pure validation, waveform generation, canonical serialization and bounded
-planning compilation are implemented. No instrument driver, TSP runtime or
-independent simulator is implemented. Documentation/pure tests do not replace
+planning compilation are implemented, together with M2's independent virtual-clock
+runtime and typed fake transport. No instrument driver or executable TSP runtime
+is implemented. Documentation and simulation tests do not replace
 target-firmware and bench validation.
 
 Begin with the [contract](implementation-contract.md) and
@@ -18,4 +19,6 @@ multisine generated through the same playback mechanism. Read the
 [waveform specification](waveforms.md) and [decision record](adr/0002-finite-waveforms.md)
 for semantics, provenance and acceptance requirements. The current Python API
 includes waveform intent and pure generators; the [M1 guide](m1-compiler.md)
-describes the implemented compiler. M2 independent simulation is next.
+describes the implemented compiler. The [M2 guide](m2-simulator.md) describes
+simulated execution, faults and retained evidence. M3 transport characterization
+on the actual unit is next.
