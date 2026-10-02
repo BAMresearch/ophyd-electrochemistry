@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ophyd-electrochemistry"
+version = "0.0.0.dev0"
+description = "Contract template for Bluesky electrochemistry and a Keithley 2460 backend"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["bluesky>=1.14.6,<1.15", "ophyd>=1.11.2,<2", "event-model>=1.23,<2"]
+classifiers = ["Development Status :: 1 - Planning", "Programming Language :: Python :: 3"]
+
+[project.optional-dependencies]
+visa = ["pyvisa>=1.14,<2", "pyvisa-py>=0.7,<1"]
+dev = ["pytest>=8,<10", "ruff>=0.11,<1", "mypy>=1.15,<3", "mkdocs>=1.6,<2", "build>=1.2,<2"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ophyd_electrochemistry = ["py.typed", "keithley/k2460/tsp/*.tsp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers -m 'not hardware'"
+markers = ["hardware: explicit bench tests requiring a commissioned 2460 and a dummy load"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["examples", "ophyd_electrochemistry"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["bluesky.*", "ophyd.*"]
+follow_untyped_imports = true

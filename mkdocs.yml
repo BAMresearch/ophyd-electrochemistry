@@ -1,0 +1,14 @@
+site_name: ophyd-electrochemistry contract
+theme: readthedocs
+nav:
+  - Overview: index.md
+  - Contract: implementation-contract.md
+  - Evidence: assumptions.md
+  - Architecture: architecture.md
+  - Triggering: triggering.md
+  - Safety: safety.md
+  - Data: data-contract.md
+  - Roadmap: roadmap.md
+  - Hardware acceptance: hardware-acceptance.md
+  - Validation: validation.md
+  - Decision record: adr/0001-contract-baseline.md
