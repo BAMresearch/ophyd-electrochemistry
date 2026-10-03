@@ -82,4 +82,4 @@ docs/reference/autosummary
 example_notebook/playground.ipynb
 example_notebook/profile.html
 example_notebook/mydask.html
-uv.lock
+# uv.lock
