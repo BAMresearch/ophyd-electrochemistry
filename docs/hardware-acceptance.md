@@ -118,3 +118,29 @@ The guarded reproduction is
 These results strengthen polarity, pairing, linearity, and repeatability
 evidence, but the uncalibrated resistor still prevents an accuracy claim and no
 hardware gate is promoted.
+
+## Buffer and exception-cleanup test — 2026-10-05
+
+The guarded `notebooks/keithley_2460_buffer_cleanup.ipynb` ran with +1 mA, a
+0.2 V limit, front-terminal four-wire voltage sense, and 1 NPLC. It created a
+unique 32-reading fill-once buffer, acquired 20 readings, switched output off,
+verified buffer count/start/end, and retrieved source readback, voltage, relative
+time, source status, and measurement status.
+
+All 20 records were recovered. Mean source readback was 0.999998004 mA, mean
+voltage was 102.489834 mV, and mean V/I was 102.490038 ohm. Relative timestamps
+spanned 1.568821 s; the mean interval was 82.5695 ms (12.1110 Hz), with 2.943 µs
+sample standard deviation. All measurement-status values identified the front
+terminals and none set the questionable-measurement bit.
+
+The instrument already contained two errors, which the user identified as the
+09:30 LAN events “invalid IP address” and “lan configuration was reset.” They
+were preserved. The error count remained two after configuration, acquisition,
+retrieval, deliberate host-side exception, cleanup, and temporary-buffer
+deletion. A new session independently confirmed output OFF, front terminals,
+programmed current 0 A, and the unchanged error count.
+
+The complete record is [the buffer/cleanup evidence](evidence/k2460-2026-10-05-buffer-cleanup.json).
+This is useful G03/G05 and ordinary exception-cleanup evidence, but it does not
+test process death, Ethernet loss, retrieval interruption, abort starvation, or
+instrument-local watchdog behavior. No hardware gate is promoted to PASS.

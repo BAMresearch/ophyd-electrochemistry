@@ -116,6 +116,22 @@ The guarded procedure is
 `notebooks/keithley_2460_resistor_bipolar_sweep.ipynb`.
 This remains a bounded commissioning test rather than G05 acceptance.
 
+## Buffered acquisition and host-exception cleanup
+
+The guarded `notebooks/keithley_2460_buffer_cleanup.ipynb` completed a 20-reading
+user-buffer acquisition followed by a deliberate host-side exception. All five
+fields per record were retrieved, buffer bounds matched 1–20, output was off
+before retrieval, and the unique temporary buffer was deleted. Mean readback was
+0.999998004 mA and mean voltage was 102.489834 mV. Relative timestamps gave an
+82.5695 ms mean interval over 1.568821 s.
+
+The exception path and final independent session both confirmed OFF and 0 A.
+The two user-reviewed historical LAN errors were preserved and the error count
+did not increase. See the
+[complete JSON evidence](evidence/k2460-2026-10-05-buffer-cleanup.json).
+This does not cover process termination, Ethernet loss, interrupted retrieval,
+abort starvation, or instrument-local timeout, so G05 remains open.
+
 ## Offline verification scope
 
 Mocked tests cover configuration bounds, exact parsing, wrong model/language,

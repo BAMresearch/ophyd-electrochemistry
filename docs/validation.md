@@ -60,8 +60,18 @@ Linear regression of four-wire voltage against measured current gave
 1.252 µV worst absolute residual. Output OFF was confirmed between points and
 again from an independent session. The full record is
 `docs/evidence/k2460-2026-10-05-resistor-bipolar-sweep.json`, with reproduction
-in `notebooks/keithley_2460_resistor_bipolar_sweep.ipynb`; the same uncalibrated-load
-and untested-failure-path limitations apply.
+in `notebooks/keithley_2460_resistor_bipolar_sweep.ipynb`; the same
+uncalibrated-load and untested-failure-path limitations apply.
+
+The buffer/cleanup procedure in `notebooks/keithley_2460_buffer_cleanup.ipynb`
+was first exercised offline, then run against the resistor. It recovered all 20
+five-field records and observed 0.999998004 mA mean source readback,
+102.489834 mV mean voltage, and an 82.5695 ms mean timestamp interval. The
+deliberate host exception, outer cleanup, and independent new session all
+confirmed output OFF and 0 A. A unique temporary buffer was deleted and the two
+pre-existing, user-reviewed LAN errors remained unchanged. Full data are in
+`docs/evidence/k2460-2026-10-05-buffer-cleanup.json`. Process death, Ethernet
+loss, and instrument-local watchdog behavior remain untested.
 
 ## RunEngine failed-Status teardown fix
 

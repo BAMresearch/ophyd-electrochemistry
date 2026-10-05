@@ -105,6 +105,9 @@ electrical isolation or pass G05.
 The guarded `notebooks/keithley_2460_resistor_smoke.ipynb` procedure is only for
 the stated front-terminal, four-wire, nominal 100 ohm load; it must not be run on
 a battery or unknown DUT.
+The guarded `notebooks/keithley_2460_buffer_cleanup.ipynb` reproduces the
+completed 20-reading buffer/retrieval and ordinary host-exception cleanup test.
+Its hardware confirmation remains off by default.
 For a lean runtime environment, use `uv sync --locked --no-default-groups`.
 Development tools are dependency groups, not published package extras.
 

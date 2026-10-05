@@ -16,6 +16,9 @@
 - Record a six-point, 30-reading bipolar resistor sweep with correct polarity,
   no compliance trips, and fitted linearity/repeatability evidence; hardware
   gates remain NOT RUN.
+- Add a guarded 20-reading buffer/retrieval and intentional host-exception
+  cleanup notebook; retain complete hardware evidence for buffer bounds, record
+  fields, timing, unchanged error count, OFF/0 A cleanup, and temporary deletion.
 
 - Require Bluesky >=1.15.1,<1.16 and update the lockfile to include the upstream
   fix for unretrieved failed-Status Futures at RunEngine teardown.

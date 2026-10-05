@@ -1,0 +1,198 @@
+{
+  "schema": "k2460-buffer-cleanup-v1",
+  "observed_at_utc": "2026-10-05T11:51:20.862850+00:00",
+  "resource_name": "TCPIP0::169.254.77.125::5025::SOCKET",
+  "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "buffer_name": "oe_m3_eb72a042d344",
+  "buffer_capacity": 32,
+  "sample_count": 20,
+  "source_current_a": 0.001,
+  "voltage_limit_v": 0.2,
+  "preexisting_error_count": 2,
+  "preexisting_error_context_user_reported": [
+    {
+      "observed_local_time": "2026-10-05T09:30:00+02:00",
+      "description": "invalid IP address"
+    },
+    {
+      "observed_local_time": "2026-10-05T09:30:00+02:00",
+      "description": "lan configuration was reset"
+    }
+  ],
+  "last_reading_raw": "9.999973699450493E-04,1.024898886680603E-01,1.568820820000000E+00",
+  "records": [
+    {
+      "source_current_a": 0.000999997602775693,
+      "measured_voltage_v": 0.1024896427989006,
+      "relative_time_s": 0.0,
+      "source_status": 200,
+      "measurement_status": 264
+    },
+    {
+      "source_current_a": 0.000999998301267624,
+      "measured_voltage_v": 0.1024908795952797,
+      "relative_time_s": 0.08256410000000002,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.000999997602775693,
+      "measured_voltage_v": 0.1024899333715439,
+      "relative_time_s": 0.16512972,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999992325901985,
+      "measured_voltage_v": 0.1024904772639275,
+      "relative_time_s": 0.247696,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999974863603711,
+      "measured_voltage_v": 0.1024895384907722,
+      "relative_time_s": 0.33026384,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999980684369802,
+      "measured_voltage_v": 0.1024904027581215,
+      "relative_time_s": 0.41283072,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999986505135894,
+      "measured_voltage_v": 0.1024899929761887,
+      "relative_time_s": 0.49539896,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999964386224747,
+      "measured_voltage_v": 0.1024881452322006,
+      "relative_time_s": 0.5779749,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999985340982676,
+      "measured_voltage_v": 0.102490171790123,
+      "relative_time_s": 0.6605442999999999,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999986505135894,
+      "measured_voltage_v": 0.1024907529354095,
+      "relative_time_s": 0.7431125,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999987669289112,
+      "measured_voltage_v": 0.1024909093976021,
+      "relative_time_s": 0.825681,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999971371144056,
+      "measured_voltage_v": 0.1024882942438126,
+      "relative_time_s": 0.90824976,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.000999998184852302,
+      "measured_voltage_v": 0.1024897620081902,
+      "relative_time_s": 0.9908207000000001,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999986505135894,
+      "measured_voltage_v": 0.1024903431534767,
+      "relative_time_s": 1.07338926,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999972535297275,
+      "measured_voltage_v": 0.1024889945983887,
+      "relative_time_s": 1.1559606,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999978356063366,
+      "measured_voltage_v": 0.1024897024035454,
+      "relative_time_s": 1.23853318,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999978356063366,
+      "measured_voltage_v": 0.1024892032146454,
+      "relative_time_s": 1.32110528,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999980684369802,
+      "measured_voltage_v": 0.1024896875023842,
+      "relative_time_s": 1.4036753,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999984176829457,
+      "measured_voltage_v": 0.1024899557232857,
+      "relative_time_s": 1.48624886,
+      "source_status": 200,
+      "measurement_status": 8
+    },
+    {
+      "source_current_a": 0.0009999973699450493,
+      "measured_voltage_v": 0.1024898886680603,
+      "relative_time_s": 1.56882082,
+      "source_status": 200,
+      "measurement_status": 8
+    }
+  ],
+  "summary": {
+    "mean_current_a": 0.0009999980044085532,
+    "mean_voltage_v": 0.10248983390629292,
+    "mean_resistance_ohm": 102.49003843417763,
+    "elapsed_s": 1.56882082,
+    "mean_interval_s": 0.08256951684210527,
+    "stdev_interval_s": 0.000002942986111328305,
+    "min_interval_s": 0.08256410000000002,
+    "max_interval_s": 0.08257593999999996,
+    "mean_rate_hz": 12.111007042856556
+  },
+  "intentional_exception_observed": true,
+  "exception_cleanup_output_off": true,
+  "exception_cleanup_current_a": 0.0,
+  "final_output_enabled": false,
+  "final_programmed_current_a": 0.0,
+  "temporary_buffer_deleted": true,
+  "independent_query_only_audit": {
+    "output_state_raw": "0",
+    "terminals_raw": "FRON",
+    "programmed_current_a_raw": "0",
+    "instrument_error_count_raw": "2"
+  },
+  "interpretation": {
+    "buffer_extent_verified": true,
+    "timestamps_monotonic": true,
+    "front_terminal_status_all_records": true,
+    "questionable_measurement_status_any_record": false,
+    "new_instrument_errors": false,
+    "ordinary_host_exception_cleanup_passed": true,
+    "process_death_or_network_loss_tested": false,
+    "hardware_gate_claimed": false
+  }
+}
