@@ -26,6 +26,15 @@
   blank-free paced wire form, short digest-prefix name, compile barrier, clean
   globals, non-rerunning reuse, symbolic TSP enum parsing, and separate OFF-only
   initialization. No finite hold or source-output enablement was performed.
+- Remove unsupported `math.huge` use found by the first target prepare attempt;
+  the attempt failed before configuration or sourcing and force-safe confirmed
+  output OFF with a programmed 0 A level.
+- Track commanded READY/BUSY levels in the runtime status instead of reading
+  output-configured digital pins, avoiding firmware warning 1808.
+- Record two +1 mA, 0.2 V-limit, 250 ms immediate local holds on the nominal
+  100 ohm resistor, including PREPARED/RUNNING/COMPLETE states, warning-free
+  confirmation, and independent IDLE/OFF/0 A cleanup. No electrical samples or
+  independent timing trace were collected.
 - Keep external ABORT disabled and G01/G02/G07 NOT RUN pending command-language
   transition, target compilation, READY-boundary traces, and failure testing.
 

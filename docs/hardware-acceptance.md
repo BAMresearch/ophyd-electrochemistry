@@ -145,7 +145,7 @@ This is useful G03/G05 and ordinary exception-cleanup evidence, but it does not
 test process death, Ethernet loss, retrieval interruption, abort starvation, or
 instrument-local watchdog behavior. No hardware gate is promoted to PASS.
 
-## M4 runtime installation — PASS; sourcing NOT RUN
+## M4 runtime installation and immediate hold — PASS within narrow scope
 
 The exact-artifact loader, packaged finite-current-hold TSP runtime, typed host
 adapter, and guarded commissioning notebook are implemented. After the retained
@@ -163,11 +163,24 @@ name to a 24-hex-character digest prefix, and require clean runtime globals for 
 first install. The full SHA-256 remains host-verified. Conflicting globals require
 a reboot and an existing matching script is not rerun.
 
-Initial live scope is restricted to the connected nominal 100 ohm resistor,
-front terminals, four-wire sense, NORMAL output-off mode, +1 mA, 0.2 V limit,
-and short finite holds. Before any sourcing, the TSP session must independently
-confirm identity, firmware, command language, and output OFF. Those checks and
-target compilation now pass; the first finite-hold execution remains pending.
+The user reconfirmed the nominal 100 ohm resistor, front terminals, four-wire
+sense, and physical OUTPUT-off state. The first prepare attempt failed before
+arming because firmware TSP lacks `math.huge`; force-safe and an independent
+session confirmed output OFF and 0 A. After removing that unsupported check, one
++1 mA, 0.2 V-limit, 250 ms immediate hold reached PREPARED with output off,
+RUNNING at the local delay block with BUSY/output on, COMPLETE at terminal block
+6 with BUSY/output off, then recovered to IDLE and 0 A.
+
+Status reads initially posted warning 1808 because READY/BUSY output pins were
+read back. The runtime now reports its software-tracked commanded levels. A
+second identical hold completed with warning and error counts unchanged; two
+informational events were added. Final independent queries confirmed IDLE,
+`smu.OFF`, and 0 A. The full record is
+[M4 immediate-hold evidence](evidence/k2460-2026-10-05-m4-immediate-hold.json).
+
+This proves the narrow local immediate TriggerFlow path, not electrical current,
+voltage, or duration accuracy: this M4 runtime does not acquire readings and no
+independent timing trace was taken.
 
 External START and READY/BUSY require verified DB-9 wiring and timing capture,
 which are not available yet. External ABORT remains disabled. Process death,

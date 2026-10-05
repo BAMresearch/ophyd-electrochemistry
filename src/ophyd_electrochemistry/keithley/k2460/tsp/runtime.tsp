@@ -15,12 +15,14 @@ oe_m4_busy_line = 2
 oe_m4_start_line = 3
 oe_m4_ready_asserted = 1
 oe_m4_busy_asserted = 1
+oe_m4_ready_level = -1
+oe_m4_busy_level = -1
 oe_m4_complete_block = 0
 oe_m4_timeout_block = 0
 
 local function oe_m4_require_number(value, name)
-    if type(value) ~= "number" or value ~= value or value == math.huge or value == -math.huge then
-        error(name .. " must be a finite number")
+    if type(value) ~= "number" or value ~= value then
+        error(name .. " must be a real number")
     end
 end
 
@@ -68,8 +70,10 @@ local function oe_m4_mask()
 end
 
 local function oe_m4_set_flags(ready, busy)
-    digio.line[oe_m4_ready_line].state = oe_m4_level(ready, oe_m4_ready_asserted)
-    digio.line[oe_m4_busy_line].state = oe_m4_level(busy, oe_m4_busy_asserted)
+    oe_m4_ready_level = oe_m4_level(ready, oe_m4_ready_asserted)
+    oe_m4_busy_level = oe_m4_level(busy, oe_m4_busy_asserted)
+    digio.line[oe_m4_ready_line].state = oe_m4_ready_level
+    digio.line[oe_m4_busy_line].state = oe_m4_busy_level
 end
 
 local function oe_m4_model_active()
@@ -289,8 +293,8 @@ function oe_m4_status()
         model_substate,
         block,
         smu.source.output,
-        digio.line[oe_m4_ready_line].state,
-        digio.line[oe_m4_busy_line].state,
+        oe_m4_ready_level,
+        oe_m4_busy_level,
         start_state,
         start_overrun,
         trigger.timer[1].start.overrun

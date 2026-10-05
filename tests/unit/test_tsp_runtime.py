@@ -123,6 +123,11 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     assert "trigger.model.abort()" in artifact.source
     assert "delay(" not in artifact.source
     assert "smu.source.offmode = smu.OFFMODE_NORMAL" in artifact.source
+    assert "math.huge" not in artifact.source
+    assert "oe_m4_ready_level" in artifact.source
+    assert "oe_m4_busy_level" in artifact.source
+    assert "digio.line[oe_m4_ready_line].state," not in artifact.source
+    assert "digio.line[oe_m4_busy_line].state," not in artifact.source
     assert not artifact.source.rstrip().endswith("oe_m4_initialize()")
     assert "\n\n" not in artifact.source
 
@@ -158,6 +163,8 @@ def test_runtime_status_parser_is_strict_and_typed():
     assert parse_runtime_status(symbolic).ready_level == 1
     assert parse_runtime_status(symbolic).busy_level == 0
     assert parse_runtime_status(symbolic).start_level == 0
+    unknown_flags = parse_runtime_status(status_line("idle", ready=-1, busy=-1))
+    assert unknown_flags.ready_level == unknown_flags.busy_level == -1
 
     with pytest.raises(TransportProtocolError, match="11"):
         parse_runtime_status("too\tshort")

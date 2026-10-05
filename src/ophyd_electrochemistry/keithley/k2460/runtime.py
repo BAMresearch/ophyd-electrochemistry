@@ -137,9 +137,9 @@ def parse_runtime_status(response: str) -> RuntimeStatus:
         state = RuntimeState(state_raw)
         last_block = int(fields[4])
         output_enabled = parse_source_output_enabled(fields[5])
-        ready = _parse_binary(fields[6], "READY")
-        busy = _parse_binary(fields[7], "BUSY")
-        start = -1 if fields[8] == "-1" else _parse_binary(fields[8], "START")
+        ready = _parse_digital_level(fields[6], "READY", allow_unknown=True)
+        busy = _parse_digital_level(fields[7], "BUSY", allow_unknown=True)
+        start = _parse_digital_level(fields[8], "START", allow_unknown=True)
         start_overrun = _parse_boolean(fields[9], "START overrun")
         timer_overrun = _parse_boolean(fields[10], "timer overrun")
     except ValueError as exc:
@@ -162,11 +162,18 @@ def parse_runtime_status(response: str) -> RuntimeStatus:
 
 
 def _parse_binary(value: str, label: str) -> int:
+    return _parse_digital_level(value, label, allow_unknown=False)
+
+
+def _parse_digital_level(value: str, label: str, *, allow_unknown: bool) -> int:
+    if allow_unknown and value == "-1":
+        return -1
     if value in ("0", "digio.STATE_LOW"):
         return 0
     if value in ("1", "digio.STATE_HIGH"):
         return 1
-    raise TransportProtocolError(f"M4 {label} field must be a digital LOW/HIGH state")
+    suffix = " or -1" if allow_unknown else ""
+    raise TransportProtocolError(f"M4 {label} field must be a digital LOW/HIGH state{suffix}")
 
 
 def _parse_boolean(value: str, label: str) -> bool:

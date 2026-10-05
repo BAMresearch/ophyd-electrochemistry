@@ -115,6 +115,16 @@ G01 race to measure; local process-kill, network-loss, timeout, abort latency,
 and electrical OFF behavior remain G02/G07 evidence. No hardware gate is
 promoted by installation alone.
 
+The first target prepare exposed unsupported `math.huge` before arming or
+sourcing; force-safe left output OFF and 0 A. With the dialect fix, a +1 mA,
+0.2 V-limit, 250 ms immediate hold progressed through PREPARED, RUNNING local
+delay block 3, COMPLETE terminal block 6, and recovery to IDLE/OFF/0 A. Warning
+1808 from reading READY/BUSY output pins was removed by tracking commanded
+levels in software. A second identical hold added no warnings or errors, and an
+independent session confirmed the final safe state. See
+`docs/evidence/k2460-2026-10-05-m4-immediate-hold.json`. No electrical sample or
+independent timing trace was collected, so G01/G02/G07 remain NOT RUN.
+
 A retained SCPI query-only preflight reached serial 04686198 at
 2026-10-05T14:25:58Z and reconfirmed firmware 1.7.16a, SCPI mode, and output OFF.
 No mutating command was sent. The result is retained in

@@ -46,6 +46,12 @@ script returned under a 29-character diagnostic name. Production names are
 therefore 30 characters (`oe_m4_` plus 24 hexadecimal digest characters), while
 the complete digest is still checked before upload.
 
+The first guarded prepare attempt exposed another dialect difference: this TSP
+runtime does not provide Lua's `math.huge`. No output was enabled and force-safe
+confirmed OFF/0 A. The runtime now rejects non-numbers and NaN directly; every
+accepted numeric argument then passes a bounded range check that also rejects
+positive or negative infinity.
+
 `CurrentHoldProof` applies hard backstops independently of the caller's safety
 configuration:
 
@@ -77,8 +83,11 @@ the trigger model, disables the timer, sets output OFF, deasserts flags, and
 programs 0 A.
 
 The host's status query reports the runtime ABI/state, both trigger-model state
-values, last block, output state, READY/BUSY/START levels, and detector overruns.
-Polling observes behavior; it does not pace the hold or provide its timeout.
+values, last block, output state, commanded READY/BUSY levels, START input, and
+detector overruns. Commanded output levels are tracked in software instead of
+read back from output-configured pins because firmware 1.7.16a posts warning
+1808 for such reads. Polling observes behavior; it does not pace the hold or
+provide its timeout.
 
 ## Evidence boundary
 

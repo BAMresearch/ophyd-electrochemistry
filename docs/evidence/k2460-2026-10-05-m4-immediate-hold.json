@@ -1,0 +1,114 @@
+{
+  "schema": "k2460-m4-immediate-hold-v1",
+  "observed_at_utc": "2026-10-05T15:56:08Z",
+  "instrument": {
+    "identity_raw": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "serial_number": "04686198",
+    "firmware_version": "1.7.16a",
+    "resource_name": "TCPIP0::169.254.113.151::5025::SOCKET",
+    "command_language": "TSP"
+  },
+  "physical_setup": {
+    "load": "user-supplied nominal 100 ohm resistor",
+    "terminals": "front",
+    "sense": "four-wire",
+    "physical_output_indicator_confirmed_off_before_test": true
+  },
+  "initial_prepare_attempt": {
+    "result": "REJECTED BEFORE PREPARED OR ARMED",
+    "event": "TSP runtime error at line 19: attempt to perform arithmetic on field 'huge' (a nil value)",
+    "cause": "firmware TSP dialect does not provide math.huge",
+    "sourcing_performed": false,
+    "cleanup": {
+      "runtime_state": "aborted",
+      "trigger_model_state": "trigger.STATE_EMPTY",
+      "output_state": "smu.OFF",
+      "source_level_a": 0.0
+    }
+  },
+  "first_complete_hold": {
+    "runtime_sha256": "62b0f6bcab73f6f194940c3a13dfb8fd36489483c998c3858a3532afeda03d5c",
+    "request": {
+      "current_a": 0.001,
+      "source_range_a": 0.001,
+      "voltage_limit_v": 0.2,
+      "duration_s": 0.25,
+      "start_mode": "immediate",
+      "off_mode": "normal"
+    },
+    "prepared": {
+      "state": "prepared",
+      "model_state": "trigger.STATE_BUILDING",
+      "output_enabled": false,
+      "ready_level": 0,
+      "busy_level": 0
+    },
+    "running_observation": {
+      "state": "running",
+      "model_state": "trigger.STATE_RUNNING",
+      "last_block": 3,
+      "output_enabled": true,
+      "ready_level": 0,
+      "busy_level": 1
+    },
+    "completion": {
+      "state": "complete",
+      "model_state": "trigger.STATE_IDLE",
+      "last_block": 6,
+      "output_enabled": false,
+      "ready_level": 0,
+      "busy_level": 0
+    },
+    "recovery": {
+      "state": "idle",
+      "output_state": "smu.OFF",
+      "source_level_a": 0.0
+    },
+    "commissioning_warning": "Warning 1808: attempting to read digital I/O line when configured as an output"
+  },
+  "warning_free_confirmation_hold": {
+    "runtime_sha256": "8924d1be32487f70ae85896658ea5e31ce6d41b0a708ed7e667e3f37319f88f1",
+    "script_name": "oe_m4_8924d1be32487f70ae858966",
+    "change": "status reports software-tracked commanded READY/BUSY levels instead of reading output pins",
+    "same_request_as_first_complete_hold": true,
+    "all_state_and_output_assertions_passed": true,
+    "event_counts_before": {
+      "all": 21,
+      "warnings": 16,
+      "errors": 1
+    },
+    "event_counts_after": {
+      "all": 23,
+      "warnings": 16,
+      "errors": 1
+    },
+    "new_warning_events": 0,
+    "new_error_events": 0,
+    "new_informational_events": 2
+  },
+  "final_independent_confirmation": {
+    "runtime_state": "idle",
+    "model_state": "trigger.STATE_IDLE",
+    "last_block": 6,
+    "output_state": "smu.OFF",
+    "source_level_a": 0.0,
+    "ready_level": 0,
+    "busy_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "timer_overrun": false
+  },
+  "runtime_replacement": {
+    "reboot_required": false,
+    "preconditions": "responsive runtime, trigger model idle or empty, output OFF, source level 0 A",
+    "method": "force-safe, script.delete on the owned volatile script, set the runtime-owned globals to nil, verify absence/OFF/0 A, install new digest"
+  },
+  "evidence_limits": {
+    "electrical_current_or_voltage_sampled_during_hold": false,
+    "duration_measured_independently": false,
+    "external_start_tested": false,
+    "programmatic_abort_latency_tested": false,
+    "network_loss_tested": false,
+    "hardware_gate_promoted": false
+  }
+}
