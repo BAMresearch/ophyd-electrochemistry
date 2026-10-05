@@ -149,5 +149,5 @@ the merged and tested commit. The initial `0.0.0` is a bootstrap sentinel, not a
 released operational driver. The contract revision and runtime ABI/digest are
 independent of the package version.
 
-Licensing is an unresolved project-owner decision; see [LICENSE](LICENSE.md).
-No upstream manuals or example implementations are redistributed.
+This project is licensed under the [BSD 3-Clause License](LICENSE.md). No
+upstream manuals or example implementations are redistributed.

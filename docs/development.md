@@ -126,8 +126,8 @@ repository Contents/Pull requests write access. Otherwise run the test workflow
 on the release branch, or push a human-authored change to trigger PR checks;
 follow the branch's configured protection requirements.
 
-For PyPI, first replace the pending license, create the `pypi` environment, and
-register a Trusted Publisher for owner `BAMresearch`, repository
+For PyPI, create the `pypi` environment and register a Trusted Publisher for
+owner `BAMresearch`, repository
 `ophyd-electrochemistry`, workflow `ci.yml`, environment `pypi`. Then set repository
 variable `PUBLISH_PYPI=true`. No long-lived PyPI credential is required. Until
 then tests, docs, build, release preparation and GitHub versioning can run.

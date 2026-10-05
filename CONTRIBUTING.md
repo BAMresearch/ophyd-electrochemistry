@@ -51,6 +51,6 @@ review. `uvx --from python-semantic-release==10.7.0 semantic-release version --p
 is a read-only preview. GitHub Releases receive the exact tested distributions.
 PyPI Trusted Publishing is configured but runs only after the repository variable
 `PUBLISH_PYPI` is explicitly enabled and its environment/publisher is configured.
-Resolve the pending license before enabling public package distribution. Document
+Public distributions use the BSD 3-Clause license in `LICENSE.md`. Document
 uncommissioned capabilities rather than claiming hardware acceptance from CI.
 See [development and releases](docs/development.md) for setup and recovery details.
