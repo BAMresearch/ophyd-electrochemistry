@@ -1,0 +1,66 @@
+{
+  "schema": "k2460-m4-runtime-install-v1",
+  "observed_at_utc": "2026-10-05T15:33:54Z",
+  "instrument": {
+    "identity_raw": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "serial_number": "04686198",
+    "firmware_version": "1.7.16a",
+    "resource_name": "TCPIP0::169.254.113.151::5025::SOCKET",
+    "backend": "@py",
+    "command_language": "TSP"
+  },
+  "artifact": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v1",
+    "sha256": "40e2e8ddf503dbd52d6093cdcfae1cadc5f6b566da720453b9c4561adf088750",
+    "script_name": "oe_m4_40e2e8ddf503dbd52d6093cd",
+    "wire_lines": 301,
+    "blank_wire_lines": 0,
+    "script_line_delay_s": 0.01,
+    "saved_nonvolatile": false
+  },
+  "preconditions": {
+    "output_state_raw": "smu.OFF",
+    "script_absent": true,
+    "runtime_globals_absent": true
+  },
+  "installed_status_raw": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t0\tsmu.OFF\tdigio.STATE_HIGH\tdigio.STATE_HIGH\t-1\tfalse\tfalse",
+  "installed_status": {
+    "state": "idle",
+    "model_state": "trigger.STATE_EMPTY",
+    "model_substate": "trigger.STATE_EMPTY",
+    "last_block": 0,
+    "output_enabled": false,
+    "ready_level": 1,
+    "busy_level": 1,
+    "start_level": -1,
+    "start_overrun": false,
+    "timer_overrun": false
+  },
+  "reuse_check": {
+    "existing_script_reused_without_top_level_rerun": true,
+    "state": "idle",
+    "output_state_raw": "smu.OFF"
+  },
+  "commissioning_findings": [
+    "Firmware 1.7.16a produced a compiled script that remained running when blank messages were included inside loadscript.",
+    "The same firmware remained running when a 70-character full-digest script name was invoked.",
+    "Redefining globals from an earlier diagnostic script also remained running.",
+    "Blank-free 301-line upload, 30-character digest-prefix name, clean globals, definitions-only top level, and separate initializer returned normally."
+  ],
+  "safety_boundary": {
+    "runtime_prepared": false,
+    "runtime_armed": false,
+    "source_output_enabled": false,
+    "sourcing_performed": false,
+    "event_log_cleared": false,
+    "external_abort_enabled": false
+  },
+  "acceptance": {
+    "target_compile_load_initialize": "PASS",
+    "finite_hold_execution": "NOT RUN",
+    "G01": "NOT RUN",
+    "G02": "NOT RUN",
+    "G07": "NOT RUN"
+  }
+}

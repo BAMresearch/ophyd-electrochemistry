@@ -13,12 +13,13 @@ from importlib.metadata import PackageNotFoundError, version
 from time import monotonic
 
 from ... import __version__
-from ...exceptions import ElectrochemistryError, TransportProtocolError
+from ...exceptions import ElectrochemistryError
 from .transport import (
     CommandLanguage,
     PyVisaKeithley2460Transport,
     ResourceManagerFactory,
     VisaTransportConfig,
+    parse_source_output_enabled,
 )
 
 _REVIEWED_COMMON_QUERIES = ("*IDN?", "*LANG?")
@@ -83,7 +84,7 @@ def run_read_only_diagnostic(
         backend_description = transport.backend_description
         output_state_query = _SCPI_OUTPUT_QUERY if command_language == "SCPI" else _TSP_OUTPUT_QUERY
         output_state_raw = transport.query(output_state_query)
-        output_enabled = _parse_output_enabled(output_state_raw)
+        output_enabled = parse_source_output_enabled(output_state_raw)
         return CommissioningReport(
             schema="k2460-read-only-diagnostic-v2",
             observed_at_utc=datetime.now(UTC).isoformat(),
@@ -125,14 +126,6 @@ def _distribution_version(package: str) -> str:
         return version(package)
     except PackageNotFoundError:
         return "not-installed"
-
-
-def _parse_output_enabled(response: str) -> bool:
-    if response in ("0", "OFF"):
-        return False
-    if response in ("1", "ON"):
-        return True
-    raise TransportProtocolError(f"Unsupported source-output state response {response!r}")
 
 
 def _parser() -> argparse.ArgumentParser:

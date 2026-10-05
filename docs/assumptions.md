@@ -2,7 +2,7 @@
 
 **Supported** means primary documentation establishes a capability, not that the
 target unit was tested. **Design** is our chosen contract. **Open** requires
-firmware/bench evidence. No instrument was connected during this task.
+firmware/bench evidence. Target-unit results are identified separately below.
 
 | ID | Assumption | Assessment and implementation consequence |
 |---|---|---|
@@ -26,6 +26,8 @@ firmware/bench evidence. No instrument was connected during this task.
 | A18 | Multisine can share arbitrary-waveform playback | **Design inference** from local list generation [S10]. Pure coherent generation and provenance are specified; usable tone bandwidth, amplitude/phase fidelity and measurement aperture require G03/G04/G08. No calibrated EIS claim. |
 | A19 | A 10 ms pulse proves 10 ms waveform updates with measurements | **Not established.** The official 10 ms example switches output on/off without measurement [S3]. List recall, load/range settling, measurement and abort behavior need independent G02/G04/G08 evidence. |
 | A20 | A 10 frames/s detector resolves individual 10 ms bits | **Not established.** Ten bits fit one 100 ms frame interval; exposure integration, phase and clock uncertainty determine resolution. Source/electrical/detector schedules stay distinct; G06 applies. |
+| A21 | A finite TriggerFlow hold shuts down after host loss | **Supported architecture, open on target.** Rev. C documents abortable delay and source-output blocks plus local trigger timers [S11]. The M4 proof uses explicit terminal OFF blocks, but process-kill/network-loss behavior and electrical OFF remain G02/G07. |
+| A22 | READY can prove the START wait is already race-free | **Open.** Digital-I/O blocks and event detectors are documented [S11], but detector clear, model initiation, READY assertion and first branch are distinct actions. Repeated boundary traces are required by G01. |
 
 ## Evidence limits
 
@@ -34,9 +36,11 @@ The official 43 MB Rev. C reference PDF was downloaded and reviewed locally on
 2026-10-05. It documents raw socket port 5025, VXI-11, query-only `*IDN?`,
 `*LANG?`, and `:OUTPut:STATe?`; the target unit returned model, serial, firmware,
 SCPI mode and output state OFF over both explicit VISA resources [S11]. This does
-not validate runtime constants, block limits, interlock behavior, electrical
-OFF-mode behavior, or operational TSP semantics. Verify those details before any
-runtime is implemented or loaded.
+not validate runtime block execution, arm ordering, interlock behavior,
+electrical OFF-mode behavior, or shutdown latency. The exact-artifact M4 runtime
+has compiled, loaded, initialized, and reported idle/output-OFF on the target.
+No finite hold, timing path, abort behavior, or electrical OFF property has yet
+been accepted.
 
 The initial local API check used Bluesky 1.14.6 and ophyd 1.11.2. The later
 [RunEngine teardown fix](development.md#runengine-abort-test-teardown-message)

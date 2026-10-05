@@ -11,6 +11,7 @@ import pytest
 from ophyd_electrochemistry.exceptions import (
     AmbiguousTransportError,
     IncompatibleInstrumentError,
+    ShutdownUnconfirmed,
     TransportConnectionError,
     TransportProtocolError,
     TransportResponseTooLarge,
@@ -19,6 +20,7 @@ from ophyd_electrochemistry.exceptions import (
     ValidationError,
 )
 from ophyd_electrochemistry.keithley.k2460.commissioning import run_read_only_diagnostic
+from ophyd_electrochemistry.keithley.k2460.runtime import packaged_runtime
 from ophyd_electrochemistry.keithley.k2460.transport import (
     PyVisaKeithley2460Transport,
     VisaTransportConfig,
@@ -122,6 +124,7 @@ def config(**changes: object) -> VisaTransportConfig:
     values: dict[str, object] = {
         "resource_name": "TCPIP0::192.0.2.1::5025::SOCKET",
         "backend": "@py",
+        "script_line_delay_s": 0,
     }
     values.update(changes)
     return VisaTransportConfig(**values)  # type: ignore[arg-type]
@@ -336,15 +339,16 @@ def test_read_only_diagnostic_records_raw_evidence_and_closes():
     assert resource.closed and manager.closed
 
 
-def test_tsp_diagnostic_reads_output_attribute_without_setting_it():
-    resource = FakeResource(IDENTITY, b"TSP\n", b"1\n")
+@pytest.mark.parametrize(("raw", "enabled"), [(b"smu.OFF\n", False), (b"smu.ON\n", True)])
+def test_tsp_diagnostic_reads_output_attribute_without_setting_it(raw, enabled):
+    resource = FakeResource(IDENTITY, b"TSP\n", raw)
     manager = FakeManager(resource)
     report = run_read_only_diagnostic(config(), resource_manager_factory=FakeFactory(manager))
 
     assert report.command_language == "TSP"
     assert report.output_state_query == "print(smu.source.output)"
-    assert report.output_state_raw == "1"
-    assert report.output_enabled is True
+    assert report.output_state_raw == raw.decode("ascii").removesuffix("\n")
+    assert report.output_enabled is enabled
     assert resource.writes == ["*IDN?", "*LANG?", "print(smu.source.output)"]
 
 
@@ -367,7 +371,96 @@ def test_connect_open_failure_is_typed_and_closes_manager():
     assert manager.closed and not transport.connected
 
 
-def test_runtime_upload_remains_explicitly_disabled():
+def test_runtime_upload_rejects_every_source_except_packaged_artifact():
     transport, _, _ = transport_with(FakeResource())
-    with pytest.raises(UnsupportedCapabilityError, match="remains disabled"):
+    with pytest.raises(UnsupportedCapabilityError, match="exact packaged"):
         transport.load_runtime("print('not sent')", abi="x", sha256="0" * 64)
+
+
+def test_runtime_upload_is_serialized_verified_and_leaves_output_off():
+    artifact = packaged_runtime()
+    resource = FakeResource(
+        IDENTITY,
+        b"TSP\n",
+        b"smu.OFF\n",
+        b"true\n",
+        b"true\n",
+        b"false\n",
+        f"{artifact.abi}\n".encode(),
+        f"{artifact.build}\n".encode(),
+        b"function\n",
+        b"smu.OFF\n",
+    )
+    transport, _, _ = transport_with(resource, required_language="TSP")
+    transport.connect()
+
+    transport.load_runtime(artifact.source, abi=artifact.abi, sha256=artifact.sha256)
+
+    assert f"loadscript {artifact.script_name}" in resource.writes
+    assert "endscript" in resource.writes
+    assert f"{artifact.script_name}.run()" in resource.writes
+    load_index = resource.writes.index(f"loadscript {artifact.script_name}")
+    end_index = resource.writes.index("endscript")
+    assert "\n".join(resource.writes[load_index + 1 : end_index]) + "\n" == artifact.source
+    assert resource.writes[-5:] == [
+        "print(oe_m4_runtime_abi)",
+        "print(oe_m4_runtime_build)",
+        "print(type(oe_m4_initialize))",
+        "oe_m4_initialize()",
+        "print(smu.source.output)",
+    ]
+    assert resource.writes[end_index + 1] == f"print({artifact.script_name} == nil)"
+
+
+def test_runtime_upload_reuses_digest_named_runtime_without_replacing_it():
+    artifact = packaged_runtime()
+    resource = FakeResource(
+        IDENTITY,
+        b"TSP\n",
+        b"smu.OFF\n",
+        b"false\n",
+        f"{artifact.abi}\n".encode(),
+        f"{artifact.build}\n".encode(),
+        b"function\n",
+        b"0\n",
+    )
+    transport, _, _ = transport_with(resource, required_language="TSP")
+    transport.connect()
+
+    transport.load_runtime(artifact.source, abi=artifact.abi, sha256=artifact.sha256)
+
+    assert not any(command.startswith("loadscript ") for command in resource.writes)
+    assert f"{artifact.script_name}.run()" not in resource.writes
+
+
+def test_runtime_upload_rejects_stale_globals_before_loading_new_digest():
+    artifact = packaged_runtime()
+    resource = FakeResource(
+        IDENTITY,
+        b"TSP\n",
+        b"smu.OFF\n",
+        b"true\n",
+        b"false\n",
+    )
+    transport, _, _ = transport_with(resource, required_language="TSP")
+    transport.connect()
+
+    with pytest.raises(IncompatibleInstrumentError, match="globals already exist"):
+        transport.load_runtime(artifact.source, abi=artifact.abi, sha256=artifact.sha256)
+
+    assert not any(command.startswith("loadscript ") for command in resource.writes)
+
+
+def test_runtime_upload_rejects_scpi_and_output_on_before_any_script_write():
+    artifact = packaged_runtime()
+    scpi, _, _ = transport_with(FakeResource(IDENTITY, b"SCPI\n"))
+    scpi.connect()
+    with pytest.raises(IncompatibleInstrumentError, match="TSP"):
+        scpi.load_runtime(artifact.source, abi=artifact.abi, sha256=artifact.sha256)
+
+    output_on_resource = FakeResource(IDENTITY, b"TSP\n", b"1\n")
+    output_on, _, _ = transport_with(output_on_resource, required_language="TSP")
+    output_on.connect()
+    with pytest.raises(ShutdownUnconfirmed, match="output OFF"):
+        output_on.load_runtime(artifact.source, abi=artifact.abi, sha256=artifact.sha256)
+    assert not any(command.startswith("loadscript ") for command in output_on_resource.writes)

@@ -24,7 +24,7 @@
 | `.../transport.py` | Implemented serialized, bounded optional PyVISA transport |
 | `.../commissioning.py` | Implemented read-only identity/language/output-state diagnostic and JSON report |
 | `.../device.py`, `.../io.py` | Explicit placeholders; no operational code |
-| `.../tsp/runtime.tsp` | Deliberately non-operational placeholder resource |
+| `.../runtime.py`, `.../tsp/runtime.tsp` | Offline-reviewed M4 finite-current-hold proof; exact packaged artifact only, not an acquisition backend |
 | `src/ophyd_electrochemistry/simulation/` | Implemented independent virtual-clock runtime and typed fake transport |
 | `tests/contract/` | Real RunEngine operating a test-only lifecycle witness |
 | `tests/unit/` | M1 models, waveform properties/independent vectors, budgets, timing and serialization |
@@ -40,8 +40,9 @@ multisine generator retains `MultisineSpec` and emits `ArbitraryWaveform`; all
 waveforms lower to the same finite instrument-local execution representation.
 The program union and `CompiledProgram` now include waveform provenance,
 independent source/measurement timing, logical indices and planning budgets.
-The finite IR is not TSP/TriggerFlow or a hardware capability approval. No new
-hardware runtime path is implemented; [M1](m1-compiler.md) and
+The finite IR is not TSP/TriggerFlow or a hardware capability approval. The
+[M4 proof runtime](m4-runtime.md) implements only one bounded current hold and
+does not lower general M1 programs; [M1](m1-compiler.md) and
 [M2](m2-simulator.md) document planning/simulation boundaries.
 
 PRBS remains a first-class public intent even if internally expanded into a list.

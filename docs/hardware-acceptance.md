@@ -144,3 +144,32 @@ The complete record is [the buffer/cleanup evidence](evidence/k2460-2026-10-05-b
 This is useful G03/G05 and ordinary exception-cleanup evidence, but it does not
 test process death, Ethernet loss, retrieval interruption, abort starvation, or
 instrument-local watchdog behavior. No hardware gate is promoted to PASS.
+
+## M4 runtime installation — PASS; sourcing NOT RUN
+
+The exact-artifact loader, packaged finite-current-hold TSP runtime, typed host
+adapter, and guarded commissioning notebook are implemented. After the retained
+[SCPI preflight](evidence/k2460-2026-10-05-m4-preflight.json), the user selected
+TSP at the front panel and rebooted. Serial 04686198 then compiled, loaded, and
+initialized ABI `oe-k2460-m4-hold-v1` from volatile memory. The typed state was
+`idle`, the trigger model was empty, and output was `smu.OFF`. Reuse verified the
+same ABI/build without rerunning the script top level. No hold was prepared or
+armed, and no source output was enabled. The complete record is
+[M4 runtime-install evidence](evidence/k2460-2026-10-05-m4-runtime-install.json).
+
+Commissioning exposed three firmware-1.7.16a constraints now enforced by the
+loader: omit blank messages within `loadscript`, keep the instrument-side script
+name to a 24-hex-character digest prefix, and require clean runtime globals for a
+first install. The full SHA-256 remains host-verified. Conflicting globals require
+a reboot and an existing matching script is not rerun.
+
+Initial live scope is restricted to the connected nominal 100 ohm resistor,
+front terminals, four-wire sense, NORMAL output-off mode, +1 mA, 0.2 V limit,
+and short finite holds. Before any sourcing, the TSP session must independently
+confirm identity, firmware, command language, and output OFF. Those checks and
+target compilation now pass; the first finite-hold execution remains pending.
+
+External START and READY/BUSY require verified DB-9 wiring and timing capture,
+which are not available yet. External ABORT remains disabled. Process death,
+Ethernet loss, programmatic abort latency, and start-timeout behavior still need
+separate evidence. G01, G02, and G07 therefore remain **NOT RUN**.

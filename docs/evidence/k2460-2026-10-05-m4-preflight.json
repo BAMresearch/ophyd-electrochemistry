@@ -1,0 +1,42 @@
+{
+  "schema": "k2460-read-only-diagnostic-v2",
+  "observed_at_utc": "2026-10-05T14:25:58.876793+00:00",
+  "resource_name": "TCPIP0::169.254.77.125::5025::SOCKET",
+  "backend_specification": "@py",
+  "backend_description": "Visa Library at py",
+  "identity_raw": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "manufacturer": "KEITHLEY INSTRUMENTS",
+  "model": "2460",
+  "serial_number": "04686198",
+  "firmware_version": "1.7.16a",
+  "command_language_raw": "SCPI",
+  "command_language": "SCPI",
+  "output_state_query": ":OUTPut:STATe?",
+  "output_state_raw": "0",
+  "output_enabled": false,
+  "reviewed_queries": [
+    "*IDN?",
+    "*LANG?",
+    ":OUTPut:STATe?"
+  ],
+  "mutating_commands_sent": false,
+  "output_state_checked": true,
+  "elapsed_s": 0.06372787500004051,
+  "open_timeout_ms": 3000,
+  "io_timeout_ms": 5000,
+  "read_termination": "\n",
+  "write_termination": "\n",
+  "chunk_size_bytes": 4096,
+  "max_response_bytes": 65536,
+  "python_version": "3.12.13",
+  "platform": "macOS-26.1-arm64-arm-64bit",
+  "package_version": "0.0.0",
+  "pyvisa_version": "1.16.2",
+  "pyvisa_py_version": "0.8.1",
+  "interpretation": {
+    "pre_tsp_change_only": true,
+    "runtime_loaded": false,
+    "source_enabled": false,
+    "hardware_gate_claimed": false
+  }
+}

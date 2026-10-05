@@ -7,8 +7,9 @@ revision: **0.2**, updated **2026-10-02** from the 0.1 baseline.
 M1 pure validation, waveform generation, canonical serialization and bounded
 planning compilation are implemented, together with M2's independent virtual-clock
 runtime and typed fake transport. M3 adds bounded PyVISA transactions and a
-read-only identity/language/output-state diagnostic; no sourcing driver or executable TSP runtime is
-implemented. Documentation, mock tests and identity queries do not replace
+read-only identity/language/output-state diagnostic. A narrow executable M4 TSP
+runtime has target compile/load/idle evidence but no finite-hold evidence or
+operational sourcing driver. Documentation, mock tests and identity queries do not replace
 target-firmware and bench validation.
 
 Begin with the [contract](implementation-contract.md) and

@@ -8,6 +8,7 @@ nav:
   - M1 compiler: m1-compiler.md
   - M2 simulator: m2-simulator.md
   - M3 transport: m3-transport.md
+  - M4 local runtime: m4-runtime.md
   - Evidence: assumptions.md
   - Architecture: architecture.md
   - Triggering: triggering.md

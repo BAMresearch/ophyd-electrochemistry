@@ -1,6 +1,6 @@
 # ophyd-electrochemistry
 
-**M1 compiler, M2 simulator and bounded M3 transport implemented — no operational sourcing driver yet.**
+**M1–M3 implemented; narrow M4 runtime target-loaded, finite hold not yet run — no operational driver yet.**
 
 A Python library for instrument-owned electrochemistry acquisition through
 classic ophyd and Bluesky. The first backend is the Keithley 2460 over Ethernet
@@ -16,6 +16,7 @@ owns the 2460 connection.
 - [M1 compiler](docs/m1-compiler.md): implemented API, offline example, timing rules and planning limits.
 - [M2 simulator](docs/m2-simulator.md): virtual playback, triggering, faults and retained evidence.
 - [M3 transport](docs/m3-transport.md): bounded PyVISA transactions and read-only commissioning.
+- [M4 runtime](docs/m4-runtime.md): packaged finite-hold TSP proof and live-test boundary.
 - [Assumptions and evidence](docs/assumptions.md): supported facts, corrections,
   and hardware acceptance gates.
 - [Architecture](docs/architecture.md): ownership and repository map.
@@ -27,11 +28,12 @@ owns the 2460 connection.
 
 The `src/` tree contains structurally validated immutable models, deterministic
 waveform generators, canonical serialization, a pure bounded planning compiler,
-an independent virtual-clock runtime/fake transport, and a bounded PyVISA backend
-with a read-only commissioning diagnostic. It has no operational acquisition or
-sourcing driver. A guarded notebook performs only the documented 100 ohm resistor
-smoke test. Tests cover M1, M2, mocked M3 framing and a separate **test-only
-RunEngine lifecycle witness**; they do not establish general physical behavior.
+an independent virtual-clock runtime/fake transport, a bounded PyVISA backend,
+and a narrow packaged M4 finite-hold proof runtime. It has no operational
+acquisition or ophyd sourcing driver. Guarded notebooks limit live commissioning
+to the documented nominal 100 ohm resistor setup. Tests cover M1, M2, mocked
+transport/runtime behavior and a separate **test-only RunEngine lifecycle
+witness**; they do not establish general physical behavior.
 
 Contract revision **0.2** includes first-class PRBS intent and a shared finite
 arbitrary-waveform mechanism. Multisine is generated into that same representation
@@ -86,8 +88,8 @@ uv run --locked python -m examples.simulate_program
 ```
 
 See the [M2 guide](docs/m2-simulator.md) for simulation APIs, synthetic data origin,
-failure injection and retention. Reviewed packaged TSP programs remain planned;
-user-written TSP upload/execution is outside the current scope.
+failure injection and retention. The M4 loader accepts only the exact packaged
+finite-hold TSP artifact; user-written TSP upload/execution remains out of scope.
 
 Use `uv sync --locked --extra visa` for the PyVISA backend. The safe initial
 command requires an explicit VISA resource/backend and sends only `*IDN?`,
@@ -108,6 +110,9 @@ a battery or unknown DUT.
 The guarded `notebooks/keithley_2460_buffer_cleanup.ipynb` reproduces the
 completed 20-reading buffer/retrieval and ordinary host-exception cleanup test.
 Its hardware confirmation remains off by default.
+The guarded `notebooks/keithley_2460_m4_runtime.ipynb` prepares the next step and
+stops before changing the instrument from SCPI to TSP. Read the
+[M4 guide](docs/m4-runtime.md) before proceeding.
 For a lean runtime environment, use `uv sync --locked --no-default-groups`.
 Development tools are dependency groups, not published package extras.
 

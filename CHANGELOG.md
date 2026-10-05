@@ -19,6 +19,15 @@
 - Add a guarded 20-reading buffer/retrieval and intentional host-exception
   cleanup notebook; retain complete hardware evidence for buffer bounds, record
   fields, timing, unchanged error count, OFF/0 A cleanup, and temporary deletion.
+- Implement the M4 finite-current-hold proof: an exact-artifact-only TSP
+  loader, versioned/digested packaged runtime, local finite/source-OFF and START
+  timeout TriggerFlow paths, typed host adapter, and guarded preflight notebook.
+- Record target TSP compile/load/idle evidence and harden firmware-1.7.16a upload:
+  blank-free paced wire form, short digest-prefix name, compile barrier, clean
+  globals, non-rerunning reuse, symbolic TSP enum parsing, and separate OFF-only
+  initialization. No finite hold or source-output enablement was performed.
+- Keep external ABORT disabled and G01/G02/G07 NOT RUN pending command-language
+  transition, target compilation, READY-boundary traces, and failure testing.
 
 - Require Bluesky >=1.15.1,<1.16 and update the lockfile to include the upstream
   fix for unretrieved failed-Status Futures at RunEngine teardown.

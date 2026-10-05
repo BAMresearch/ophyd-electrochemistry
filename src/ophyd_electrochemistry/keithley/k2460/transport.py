@@ -13,11 +13,13 @@ from contextlib import suppress
 from dataclasses import dataclass
 from importlib import import_module
 from threading import RLock
+from time import sleep
 from typing import Literal, Protocol, cast
 
 from ...exceptions import (
     AmbiguousTransportError,
     IncompatibleInstrumentError,
+    ShutdownUnconfirmed,
     TransportConnectionError,
     TransportError,
     TransportProtocolError,
@@ -26,7 +28,7 @@ from ...exceptions import (
     UnsupportedCapabilityError,
     ValidationError,
 )
-from ...validation import integer, text
+from ...validation import integer, number, text
 
 CommandLanguage = Literal["SCPI", "TSP"]
 
@@ -63,6 +65,7 @@ class _ResourceManager(Protocol):
 
 
 ResourceManagerFactory = Callable[[str], _ResourceManager]
+Sleeper = Callable[[float], None]
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -78,6 +81,7 @@ class VisaTransportConfig:
     chunk_size_bytes: int = 4_096
     max_response_bytes: int = 65_536
     max_command_bytes: int = 16_384
+    script_line_delay_s: float = 0.01
     expected_model: str = "2460"
     required_language: CommandLanguage | None = None
 
@@ -102,6 +106,13 @@ class VisaTransportConfig:
             )
         if self.chunk_size_bytes > self.max_response_bytes + 1:
             raise ValidationError("chunk_size_bytes must not exceed max_response_bytes + 1")
+        object.__setattr__(
+            self,
+            "script_line_delay_s",
+            number(self.script_line_delay_s, "script_line_delay_s"),
+        )
+        if not 0 <= self.script_line_delay_s <= 0.1:
+            raise ValidationError("script_line_delay_s must be in 0..0.1 s")
         for name in ("read_termination", "write_termination"):
             value = getattr(self, name)
             if value not in ("\n", "\r\n"):
@@ -191,6 +202,16 @@ def parse_command_language(response: str) -> CommandLanguage:
     return cast(CommandLanguage, response)
 
 
+def parse_source_output_enabled(response: str) -> bool:
+    """Parse the documented numeric or TSP-enum source-output reply."""
+
+    if response in ("0", "OFF", "smu.OFF"):
+        return False
+    if response in ("1", "ON", "smu.ON"):
+        return True
+    raise TransportProtocolError(f"Unsupported source-output state response {response!r}")
+
+
 class PyVisaKeithley2460Transport:
     """One-owner VISA session with whole-transaction locking and hard bounds.
 
@@ -203,11 +224,13 @@ class PyVisaKeithley2460Transport:
         config: VisaTransportConfig,
         *,
         resource_manager_factory: ResourceManagerFactory | None = None,
+        sleeper: Sleeper = sleep,
     ) -> None:
         if not isinstance(config, VisaTransportConfig):
             raise ValidationError("config must be VisaTransportConfig")
         self.config = config
         self._factory = resource_manager_factory or _default_resource_manager_factory
+        self._sleeper = sleeper
         self._lock = RLock()
         self._manager: _ResourceManager | None = None
         self._resource: _MessageResource | None = None
@@ -301,22 +324,24 @@ class PyVisaKeithley2460Transport:
         """Send one mutation once; an uncertain delivery is never replayed."""
 
         with self._lock:
-            resource = self._require_resource_locked()
-            message_bytes = self._validate_command(command)
-            expected_bytes = len(message_bytes) + len(self.config.write_termination.encode("ascii"))
-            try:
-                written = resource.write(command)
-            except Exception as exc:
-                self._invalidate_locked()
-                raise AmbiguousTransportError(
-                    "Mutating command delivery is uncertain; inspect instrument state "
-                    "before recovery"
-                ) from exc
-            if written < expected_bytes:
-                self._invalidate_locked()
-                raise AmbiguousTransportError(
-                    "Mutating command reported a partial write; do not retry automatically"
-                )
+            self._write_locked(command)
+
+    def _write_locked(self, command: str, *, allow_empty: bool = False) -> None:
+        resource = self._require_resource_locked()
+        message_bytes = b"" if allow_empty and command == "" else self._validate_command(command)
+        expected_bytes = len(message_bytes) + len(self.config.write_termination.encode("ascii"))
+        try:
+            written = resource.write(command)
+        except Exception as exc:
+            self._invalidate_locked()
+            raise AmbiguousTransportError(
+                "Mutating command delivery is uncertain; inspect instrument state before recovery"
+            ) from exc
+        if written < expected_bytes:
+            self._invalidate_locked()
+            raise AmbiguousTransportError(
+                "Mutating command reported a partial write; do not retry automatically"
+            )
 
     def query(self, command: str) -> str:
         with self._lock:
@@ -366,9 +391,66 @@ class PyVisaKeithley2460Transport:
         return decoded
 
     def load_runtime(self, source: str, *, abi: str, sha256: str) -> None:
-        raise UnsupportedCapabilityError(
-            "Runtime upload remains disabled until the packaged M4 runtime is reviewed"
-        )
+        """Load only the exact packaged M4 runtime while output is confirmed OFF.
+
+        The script name contains a source-digest prefix. A failed or partial
+        upload invalidates the session and is never retried automatically.
+        """
+
+        from .runtime import packaged_runtime
+
+        artifact = packaged_runtime()
+        if (source, abi, sha256) != (artifact.source, artifact.abi, artifact.sha256):
+            raise UnsupportedCapabilityError(
+                "Only the exact packaged, reviewed M4 runtime may be loaded"
+            )
+        with self._lock:
+            self._require_resource_locked()
+            if self._command_language != "TSP":
+                raise IncompatibleInstrumentError("Runtime upload requires TSP command language")
+            output = self._query_locked("print(smu.source.output)")
+            if parse_source_output_enabled(output):
+                raise ShutdownUnconfirmed(
+                    f"Runtime upload requires confirmed output OFF; received {output!r}"
+                )
+            absent = self._query_locked(f"print({artifact.script_name} == nil)")
+            if absent not in ("true", "false"):
+                raise TransportProtocolError(
+                    f"Could not determine whether runtime exists: {absent!r}"
+                )
+            if absent == "true":
+                globals_absent = self._query_locked(
+                    "print(oe_m4_runtime_abi == nil and oe_m4_initialize == nil)"
+                )
+                if globals_absent != "true":
+                    raise IncompatibleInstrumentError(
+                        "M4 runtime globals already exist without the expected digest-named "
+                        "script; reboot before installation"
+                    )
+                self._write_locked(f"loadscript {artifact.script_name}")
+                for line in source.splitlines():
+                    self._write_locked(line, allow_empty=True)
+                    self._sleeper(self.config.script_line_delay_s)
+                self._write_locked("endscript")
+                compiled_absent = self._query_locked(f"print({artifact.script_name} == nil)")
+                if compiled_absent != "false":
+                    raise IncompatibleInstrumentError(
+                        "Runtime did not compile into the expected digest-named script"
+                    )
+                self._write_locked(f"{artifact.script_name}.run()")
+            loaded_abi = self._query_locked("print(oe_m4_runtime_abi)")
+            loaded_build = self._query_locked("print(oe_m4_runtime_build)")
+            initializer_type = self._query_locked("print(type(oe_m4_initialize))")
+            if loaded_abi != artifact.abi or loaded_build != artifact.build:
+                raise IncompatibleInstrumentError(
+                    "Loaded runtime ABI/build does not match the packaged artifact"
+                )
+            if initializer_type != "function":
+                raise IncompatibleInstrumentError("Loaded runtime initializer is unavailable")
+            self._write_locked("oe_m4_initialize()")
+            final_output = self._query_locked("print(smu.source.output)")
+            if parse_source_output_enabled(final_output):
+                raise ShutdownUnconfirmed("Runtime initialization did not leave output OFF")
 
     def close(self) -> None:
         with self._lock:

@@ -1,9 +1,10 @@
 # Implementation roadmap
 
 M1 pure models/generators and bounded planning compilation, M2 independent
-simulation, and the offline/read-only parts of M3 are implemented. Full G05
-transport characterization remains open.
-Actual TSP/TriggerFlow lowering remains later work.
+simulation, M3 bounded transport, and the narrow M4 finite-hold proof are
+implemented. M4 now has target compile/load/idle evidence, while finite-hold,
+timing, and failure-path evidence remain open. Full G05 transport
+characterization and general TSP/TriggerFlow lowering remain later work.
 It is not an operational-hardware approval or a promise that every feature is
 available on the instrument.
 
@@ -12,7 +13,7 @@ available on the instrument.
 | M1 — Pure validation/compiler | Finite SI models including first-class PRBS and arbitrary waveforms; deterministic PRBS/multisine generation; request/compiled hashes; range/resource budgets; CV and waveform timing rules | Independent PRBS vectors, coherent tone/peak tests, finite budgets, invalid requests rejected; no network code |
 | M2 — Independent simulation | Fake transport/runtime with START/ABORT, partial buffers, state races, waveform playback and failure injection | Both start modes; repeated abort; failed shutdown; buffer retention; snapshot consistency; source/measurement timing and phase mapping |
 | M3 — Transport characterization | **Implemented:** PyVISA backend, identity/firmware/language/output-state checks, read-only diagnostic, bounded framing/chunks/errors. **Open:** retrieval/abort fairness and complete target-unit G05 evidence | G05 on dummy load; no ambiguous command retries |
-| M4 — Local runtime proof | Minimal finite hold plus READY/BUSY/START and local timeout | G01, G02, G07; output remains off before START; external-abort capability rejected if unproven |
+| M4 — Local runtime proof | **Implemented and target-loaded:** exact-artifact TSP loader, minimal finite current hold, READY/BUSY/START model, local timeout, host adapter, target compile/load/idle proof. **Open:** first finite hold and all timing/failure evidence | G01, G02, G07; output remains off before START; external-abort capability rejected until proven |
 | M5 — Acquisition and data | Measured/readback V/I record schema, aperture/phase mapping, timing, frozen-buffer and waveform provenance export | G03, G04, G06; known physical origin, capacity and clock uncertainty |
 | M6 — Classic ophyd Device/Flyer | Status/state monitor, config metadata, read/describe, complete/collect, stop/unstage | Real RunEngine + simulator; then all relevant bench gates |
 | M7 — Protocol expansion | Commission finite arbitrary current playback, first-class PRBS and multisine through that shared path; CV/current cutoffs, cycling, pulse and voltage waveform variants | Each protocol proves limits, timing, abort latency and storage budget; waveform fidelity/phase requires G08 |
@@ -22,10 +23,12 @@ Current structurally validated models cover CV, voltage/current holds, current
 pulses, `PRBSWaveform` and `ArbitraryWaveform`. A pure multisine generator retains
 `MultisineSpec`. M1 expands the compiler result for independent source/measurement
 timing, canonical hashes, scheduled aperture mapping and explicit capability budgets.
-Planning, [M2 simulated execution](m2-simulator.md), and [M3 bounded
-communication](m3-transport.md) are implemented. The only instrument execution
-so far is a guarded two-point nominal-100-ohm smoke test; there is no operational
-runtime, acquisition, or ophyd device yet.
+Planning, [M2 simulated execution](m2-simulator.md), [M3 bounded
+communication](m3-transport.md), and the [M4 finite-hold proof](m4-runtime.md)
+are implemented. Live instrument execution so far comprises guarded resistor
+sourcing, bipolar, and buffer tests in SCPI mode plus volatile TSP runtime
+installation/idle verification. The first TSP finite hold has not run, and there
+is no acquisition or ophyd device yet.
 Charge/discharge cycling and voltage-pulse models remain extension work.
 Chronoamperometry/chronopotentiometry can be
 aliases/compositions of validated step/hold protocols rather than redundant APIs.

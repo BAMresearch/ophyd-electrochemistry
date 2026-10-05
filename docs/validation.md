@@ -10,7 +10,8 @@ backend, LF/CRLF framing, finite open/I/O timeouts, bounded chunks and hard
 command/response byte limits. Whole write/read transactions share one lock. Any
 timeout, partial write, malformed or oversized reply invalidates the session.
 Mutating writes are never retried and uncertain delivery raises a dedicated
-ambiguity error. Runtime upload remains disabled.
+ambiguity error. Arbitrary runtime upload remains disabled; M4 permits only the
+exact packaged source/ABI/digest while in TSP mode with output confirmed OFF.
 
 Thirty-two mocked transport tests cover concurrent callers, connection failure,
 timeout classification, missing termination, non-ASCII/empty/oversized replies,
@@ -72,6 +73,59 @@ confirmed output OFF and 0 A. A unique temporary buffer was deleted and the two
 pre-existing, user-reviewed LAN errors remained unchanged. Full data are in
 `docs/evidence/k2460-2026-10-05-buffer-cleanup.json`. Process death, Ethernet
 loss, and instrument-local watchdog behavior remain untested.
+
+## M4 finite-hold runtime and target installation
+
+Implemented the M4 proof runtime with ABI `oe-k2460-m4-hold-v1`. The
+PyVISA loader rejects arbitrary source, verifies the exact packaged digest,
+requires TSP and output OFF, serializes the complete `loadscript` transaction,
+does not save to nonvolatile memory, verifies ABI/build afterward, and never
+retries an ambiguous partial upload.
+
+The packaged TSP constructs finite TriggerFlow paths for immediate current hold
+and external START. Both normal and start-timeout terminal paths contain explicit
+source-OFF and flag-deassertion blocks. Programmatic abort separately aborts the
+model, disables its timer, switches output off, deasserts flags, and programs
+0 A. Hard runtime bounds are 10 mA, 2 V, and 60 s; the host further applies the
+explicit directional-current, voltage-envelope, and power limits. External
+ABORT, measurement-derived cutoffs, acquisition buffers, general program
+lowering, and ophyd integration are intentionally absent.
+
+Offline unit tests cover artifact identity/digest, exact source framing,
+arbitrary-source rejection, SCPI/output-ON rejection, existing digest reuse,
+parameter/safety bounds, strict status parsing, command construction, and
+abort/force-safe/recovery confirmation. The source structure is checked for
+local TriggerFlow timing and explicit ON/OFF blocks without a blocking host/TSP
+`delay()` call.
+
+The target was changed to TSP from the front panel and rebooted. The exact
+blank-free wire artifact compiled, installed in volatile memory, initialized,
+and returned typed `idle` status with an empty trigger model and output OFF.
+Reusing the matching script did not rerun its top level. No hold was prepared or
+armed and no sourcing occurred. Evidence is retained in
+`docs/evidence/k2460-2026-10-05-m4-runtime-install.json`.
+
+Live diagnosis found firmware-specific failure modes for blank `loadscript`
+messages, a 70-character full-digest script name, and overwriting globals from a
+prior diagnostic script. The loader now uses the exact blank-free 301-line wire
+form, a 30-character name containing a 96-bit digest prefix, paced writes, a
+compile barrier, and a clean-global precondition. The host still verifies the
+full SHA-256. External START's clear/initiate/READY boundary remains a specific
+G01 race to measure; local process-kill, network-loss, timeout, abort latency,
+and electrical OFF behavior remain G02/G07 evidence. No hardware gate is
+promoted by installation alone.
+
+A retained SCPI query-only preflight reached serial 04686198 at
+2026-10-05T14:25:58Z and reconfirmed firmware 1.7.16a, SCPI mode, and output OFF.
+No mutating command was sent. The result is retained in
+`docs/evidence/k2460-2026-10-05-m4-preflight.json`; live work stopped before the
+front-panel command-set change. Later TSP preflight and installation used
+`TCPIP0::169.254.113.151::5025::SOCKET`.
+
+The complete offline suite now has 228 passing tests on macOS/Python 3.12.13.
+Ruff lint/format, strict source/script mypy, lock consistency, strict MkDocs,
+notebook JSON/offline artifact execution, and package metadata checks are the
+required final validation set for this increment.
 
 ## RunEngine failed-Status teardown fix
 
