@@ -160,8 +160,10 @@ armed, and no source output was enabled. The complete record is
 Commissioning exposed three firmware-1.7.16a constraints now enforced by the
 loader: omit blank messages within `loadscript`, keep the instrument-side script
 name to a 24-hex-character digest prefix, and require clean runtime globals for a
-first install. The full SHA-256 remains host-verified. Conflicting globals require
-a reboot and an existing matching script is not rerun.
+first install. The full SHA-256 remains host-verified and an existing matching
+script is not rerun. Stuck scripts required reboot, but responsive idle/aborted
+versions were replaced in place using force-safe, deletion of the owned volatile
+script, explicit removal of its globals, and OFF/0 A verification.
 
 The user reconfirmed the nominal 100 ohm resistor, front terminals, four-wire
 sense, and physical OUTPUT-off state. The first prepare attempt failed before

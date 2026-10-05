@@ -1,6 +1,6 @@
 # ophyd-electrochemistry
 
-**M1–M3 implemented; narrow M4 runtime target-loaded, finite hold not yet run — no operational driver yet.**
+**M1–M3 implemented; narrow M4 immediate-hold state path proven on target — no operational driver yet.**
 
 A Python library for instrument-owned electrochemistry acquisition through
 classic ophyd and Bluesky. The first backend is the Keithley 2460 over Ethernet

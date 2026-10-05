@@ -115,6 +115,12 @@ G01 race to measure; local process-kill, network-loss, timeout, abort latency,
 and electrical OFF behavior remain G02/G07 evidence. No hardware gate is
 promoted by installation alone.
 
+Responsive obsolete runtimes were subsequently replaced without reboot by
+requiring an idle/empty trigger model, output OFF and 0 A, issuing force-safe,
+deleting the owned volatile script, setting its known globals to `nil`, and
+verifying absence plus OFF/0 A before installing the new digest. Reboot remains
+the recovery for a script that is stuck running and cannot accept cleanup.
+
 The first target prepare exposed unsupported `math.huge` before arming or
 sourcing; force-safe left output OFF and 0 A. With the dialect fix, a +1 mA,
 0.2 V-limit, 250 ms immediate hold progressed through PREPARED, RUNNING local
@@ -132,7 +138,7 @@ No mutating command was sent. The result is retained in
 front-panel command-set change. Later TSP preflight and installation used
 `TCPIP0::169.254.113.151::5025::SOCKET`.
 
-The complete offline suite now has 228 passing tests on macOS/Python 3.12.13.
+The complete offline suite now has 230 passing tests on macOS/Python 3.12.13.
 Ruff lint/format, strict source/script mypy, lock consistency, strict MkDocs,
 notebook JSON/offline artifact execution, and package metadata checks are the
 required final validation set for this increment.

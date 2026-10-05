@@ -1,12 +1,12 @@
 # M4 finite local runtime proof
 
 M4 has an offline-reviewed implementation with successful target
-compile/load/initialize and idle-status evidence. Its finite current hold has
-**not yet been prepared or armed on the instrument**. The implementation is
-deliberately smaller than the eventual acquisition backend: one bounded current
-hold, NORMAL output-off mode, immediate or digital START, and programmatic abort.
-It does not collect measurements, enforce measurement-derived voltage cutoffs,
-play arbitrary waveforms, or expose an ophyd Device.
+compile/load/initialize, idle-status, and narrow immediate-hold state-path
+evidence. The implementation is deliberately smaller than the eventual
+acquisition backend: one bounded current hold, NORMAL output-off mode, immediate
+or digital START, and programmatic abort. It does not collect measurements,
+enforce measurement-derived voltage cutoffs, play arbitrary waveforms, or expose
+an ophyd Device.
 
 ## Packaged runtime and host adapter
 
@@ -37,8 +37,11 @@ The same firmware also remained running when a second script redefined the
 runtime globals established by an earlier diagnostic script. A first install
 therefore requires both the digest-named script and its globals to be absent. An
 already-installed matching script is verified and initialized without rerunning
-its top level. Conflicting globals require a reboot; they are never overwritten
-automatically.
+its top level. Conflicting globals are never overwritten automatically. A stuck
+script requires a reboot, but a responsive idle/aborted runtime can be replaced
+without reboot: force-safe, delete the owned volatile script, set its known
+globals to `nil`, verify script/global absence plus OFF/0 A, then install the new
+digest.
 
 Firmware 1.7.16a also remained running when the 70-character name containing a
 full SHA-256 was invoked, despite the documented 256-character limit. The same
@@ -95,8 +98,9 @@ The implementation follows the Model 2460 Reference Manual Rev. C, which applies
 to firmware 1.7.0 and later. The reviewed commands are `loadscript`/`endscript`,
 digital-line mode/state and event detection, trigger timer 1, and TriggerFlow
 digital-I/O, notify, branch, delay, source-output, and abort operations. The
-target unit runs firmware 1.7.16a, but successful compilation and behavior on
-that unit remain untested.
+target unit runs firmware 1.7.16a. Compilation, initialization, and the
+immediate state path have run successfully; external START, abort/failure paths,
+electrical values, and independent timing remain untested.
 
 The external START construction necessarily clears the detector before
 initiating a model whose first block asserts READY. Bench traces must determine
@@ -105,11 +109,13 @@ be lost. Until repeated boundary tests prove the required ordering, external
 START is an experiment and G01 remains NOT RUN. External ABORT is absent rather
 than inferred from a sequential event branch.
 
-Likewise, local finite blocks are architecture evidence, not proof of electrical
-OFF, abort latency, process-kill behavior, or network-loss behavior. Initial live
-work therefore uses only the nominal 100 ohm front-terminal four-wire resistor,
-1 mA, 0.2 V, and short durations. G01, G02, and G07 remain NOT RUN until the
-required traces and failure tests exist.
+The immediate local path reached PREPARED/output-off, RUNNING/BUSY/output-on,
+COMPLETE/output-off, and recovery to IDLE/output-off/0 A on the nominal 100 ohm
+front-terminal four-wire resistor at +1 mA, 0.2 V limit, and 250 ms. This is
+state-path evidence, not proof of electrical current/voltage, duration accuracy,
+OFF impedance, abort latency, process-kill behavior, or network-loss behavior.
+G01, G02, and G07 remain NOT RUN until the required traces and failure tests
+exist.
 
 ## Command-language transition and live installation
 
@@ -120,10 +126,11 @@ TSP cannot be combined. The commissioning workflow therefore never sends
 `*LANG TSP` remotely.
 
 After reboot, the query-only diagnostic returned `TSP` and `smu.OFF`. The
-blank-free short-name runtime then compiled, initialized, and reported `idle`
-without preparing or arming a hold. The guarded
-`notebooks/keithley_2460_m4_runtime.ipynb` reproduces this boundary and does not
-clear the retained event log.
+blank-free short-name runtime then compiled, initialized, and reported `idle`.
+After a separate physical confirmation, the guarded immediate hold completed as
+described above. `notebooks/keithley_2460_m4_runtime.ipynb` reproduces both
+boundaries with independent opt-in flags and does not clear the retained event
+log.
 
 Primary source: [Tektronix Model 2460 Reference Manual Rev. C](https://download.tek.com/manual/2460-901-01C_Sept_2019_Ref.pdf),
 sections 2, 8, 13, 14, and 15.

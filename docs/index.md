@@ -8,9 +8,9 @@ M1 pure validation, waveform generation, canonical serialization and bounded
 planning compilation are implemented, together with M2's independent virtual-clock
 runtime and typed fake transport. M3 adds bounded PyVISA transactions and a
 read-only identity/language/output-state diagnostic. A narrow executable M4 TSP
-runtime has target compile/load/idle evidence but no finite-hold evidence or
-operational sourcing driver. Documentation, mock tests and identity queries do not replace
-target-firmware and bench validation.
+runtime has target compile/load/idle and immediate-hold state-path evidence but
+no acquisition or operational sourcing driver. Documentation, mock tests and
+identity queries do not replace target-firmware and bench validation.
 
 Begin with the [contract](implementation-contract.md) and
 [evidence table](assumptions.md). The [roadmap](roadmap.md) defines how
