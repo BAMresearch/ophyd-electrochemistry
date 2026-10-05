@@ -142,8 +142,8 @@ abort during waiting/playback/aperture/overhead, repeated cleanup, local START
 timeout, partial-buffer retention and snapshot consistency. Fake-link tests cover
 ambiguous mutations, disconnect, reconciliation, chunk loss and bounded polling.
 
-This completes the scoped M2 simulator. It does not implement instrument identity,
-TSP ABI/digest installation, real framing/timeouts, transport throughput, hardware
-I/O polarity, observed source timing, Bluesky Device integration or beamline runs.
-The next milestone is M3 transport characterization on the actual unit, initially
-without source output; see [hardware acceptance](hardware-acceptance.md).
+This completes the scoped M2 simulator. It does not implement TSP ABI/digest
+installation, hardware I/O polarity, observed source timing, Bluesky Device
+integration or beamline runs. M3 now provides separately tested real framing,
+timeouts and read-only identity commissioning; see the [M3 guide](m3-transport.md)
+and [hardware acceptance](hardware-acceptance.md). Operational runtime work remains M4.

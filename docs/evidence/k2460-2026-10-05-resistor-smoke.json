@@ -1,0 +1,64 @@
+{
+  "schema": "k2460-resistor-smoke-v1",
+  "observed_at_utc": "2026-10-05T10:17:42.183030+00:00",
+  "repository_commit_before_worktree_changes": "0e06c46ab81da3054f31439276d026a5fa5a0fda",
+  "resource_name": "TCPIP0::169.254.77.125::5025::SOCKET",
+  "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "command_language": "SCPI",
+  "wiring": {
+    "terminals": "FRON",
+    "sense": "four-wire voltage sense",
+    "load": "user-supplied nominal 100 ohm resistor",
+    "load_calibrated": false
+  },
+  "limits": {
+    "voltage_limit_v": 0.2,
+    "voltage_measure_range_v": 0.2,
+    "voltage_nplc": 1,
+    "measure_count": 1,
+    "source_readback": true,
+    "voltage_filter": false,
+    "voltage_relative_offset": false
+  },
+  "points": [
+    {
+      "requested_current_a": 0.0001,
+      "source_range_a": 0.0001,
+      "measured_current_a": 0.00009999917,
+      "measured_voltage_v": 0.01027817,
+      "resistance_ohm": 102.78255309519069,
+      "voltage_limit_tripped": false,
+      "output_off_confirmed_after_point": true
+    },
+    {
+      "requested_current_a": 0.001,
+      "source_range_a": 0.001,
+      "measured_current_a": 0.0009999969,
+      "measured_voltage_v": 0.1025312,
+      "resistance_ohm": 102.53151784770533,
+      "voltage_limit_tripped": false,
+      "output_off_confirmed_after_point": true
+    }
+  ],
+  "final_state_same_session": {
+    "output_enabled": false,
+    "programmed_current_a": 0.0
+  },
+  "independent_query_only_audit": {
+    "output_state_raw": "0",
+    "terminals_raw": "FRON",
+    "source_function_raw": "CURR",
+    "programmed_current_a_raw": "0",
+    "voltage_limit_v_raw": "0.2",
+    "remote_voltage_sense_setting_raw": "1"
+  },
+  "interpretation": {
+    "plausibility_window_ohm": [
+      80.0,
+      120.0
+    ],
+    "both_points_passed_plausibility_gate": true,
+    "accuracy_acceptance_claimed": false,
+    "hardware_gate_claimed": false
+  }
+}

@@ -1,6 +1,67 @@
 # Template validation record
 
-Date: 2026-10-02. Scope: contract template, not operational 2460 behavior.
+Date: 2026-10-05. Scope: contract, read-only transport commissioning, and one
+bounded nominal-100-ohm smoke test; not operational sourcing or acquisition.
+
+## M3 bounded transport and initial read-only commissioning
+
+Implemented an optional, lazy-loaded PyVISA backend with explicit resource,
+backend, LF/CRLF framing, finite open/I/O timeouts, bounded chunks and hard
+command/response byte limits. Whole write/read transactions share one lock. Any
+timeout, partial write, malformed or oversized reply invalidates the session.
+Mutating writes are never retried and uncertain delivery raises a dedicated
+ambiguity error. Runtime upload remains disabled.
+
+Thirty-two mocked transport tests cover concurrent callers, connection failure,
+timeout classification, missing termination, non-ASCII/empty/oversized replies,
+partial mutation writes, exact identity/language parsing, wrong model/mode,
+session invalidation, evidence fields and the disabled runtime path. The complete
+suite now has 212 passing tests on macOS/Python 3.12.13. Ruff lint/format, strict
+mypy, locked dependency validation and strict MkDocs also pass.
+
+The diagnostic was then run on 5 October 2026 using PyVISA 1.16.2 and pyvisa-py
+0.8.1 against both explicit resources. Raw socket and VXI-11 returned identical
+identity `KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a` and `SCPI` language.
+Only manual-reviewed query-only `*IDN?`, `*LANG?`, and `:OUTPut:STATe?` commands
+were sent. Both sessions reported source output `0` (OFF). Exact reports are retained in
+`docs/evidence/k2460-2026-10-05-connectivity.json`.
+
+This verifies initial reachability, framing, identity, and instrument-reported
+output state only. The DUT was the user's 3 V coin cell rather than a characterized
+dummy load; no source, measurement, transfer-abort/starvation, shutdown, timing,
+electrical safety, isolation, or OFF-mode loading behavior was tested. All hardware
+gates remain NOT RUN.
+
+## Preliminary 100 ohm resistor smoke test
+
+After the coin cell was removed, a user-supplied nominal 100 ohm resistor was
+connected to the front terminals with four-wire sense. The user confirmed the
+physical output indicator was off. The reviewed SCPI sequence configured current
+source and voltage measurement without reset, used source readback and remote
+sense, and imposed the instrument's minimum 0.2 V current-source voltage limit.
+
+At 100 µA, source readback was 99.99917 µA and measured voltage was 10.27817 mV
+(102.7826 ohm). At 1 mA, source readback was 0.9999969 mA and measured voltage
+was 102.5312 mV (102.5315 ohm). Neither point tripped the limit. Output OFF was
+confirmed after each point; cleanup programmed 0 A, and a separate query-only
+session confirmed output `0` and programmed current `0`.
+
+The guarded notebook and machine-readable record are
+`notebooks/keithley_2460_resistor_smoke.ipynb` and
+`docs/evidence/k2460-2026-10-05-resistor-smoke.json`. Because the resistor was
+not calibrated, these values are plausibility evidence rather than accuracy
+acceptance. No abort, disconnect, transfer fairness, timing, OFF-mode impedance,
+or failure path was tested, so every hardware gate remains NOT RUN.
+
+A follow-up bipolar sweep took five readings at each of six setpoints from
+−1 mA to +1 mA. All 30 readings had the expected polarity and no limit trip.
+Linear regression of four-wire voltage against measured current gave
+102.502310 ohm slope, −33.020 µV intercept, R-squared 0.999999999914, and a
+1.252 µV worst absolute residual. Output OFF was confirmed between points and
+again from an independent session. The full record is
+`docs/evidence/k2460-2026-10-05-resistor-bipolar-sweep.json`, with reproduction
+in `notebooks/keithley_2460_resistor_bipolar_sweep.ipynb`; the same uncalibrated-load
+and untested-failure-path limitations apply.
 
 ## RunEngine failed-Status teardown fix
 

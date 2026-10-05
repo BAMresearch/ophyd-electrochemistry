@@ -21,7 +21,8 @@
 | `src/ophyd_electrochemistry/interfaces.py` | Typed Device/Flyer contract |
 | `src/ophyd_electrochemistry/keithley/k2460/config.py` | Hardware and timing policy configuration |
 | `.../capabilities.py`, `.../compiler.py` | Explicit capability profiles and concrete pure planning compiler |
-| `.../transport.py` | Future transport protocol; no connection implementation |
+| `.../transport.py` | Implemented serialized, bounded optional PyVISA transport |
+| `.../commissioning.py` | Implemented read-only identity/language/output-state diagnostic and JSON report |
 | `.../device.py`, `.../io.py` | Explicit placeholders; no operational code |
 | `.../tsp/runtime.tsp` | Deliberately non-operational placeholder resource |
 | `src/ophyd_electrochemistry/simulation/` | Implemented independent virtual-clock runtime and typed fake transport |

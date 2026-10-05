@@ -6,8 +6,9 @@ revision: **0.2**, updated **2026-10-02** from the 0.1 baseline.
 
 M1 pure validation, waveform generation, canonical serialization and bounded
 planning compilation are implemented, together with M2's independent virtual-clock
-runtime and typed fake transport. No instrument driver or executable TSP runtime
-is implemented. Documentation and simulation tests do not replace
+runtime and typed fake transport. M3 adds bounded PyVISA transactions and a
+read-only identity/language/output-state diagnostic; no sourcing driver or executable TSP runtime is
+implemented. Documentation, mock tests and identity queries do not replace
 target-firmware and bench validation.
 
 Begin with the [contract](implementation-contract.md) and
@@ -20,5 +21,5 @@ multisine generated through the same playback mechanism. Read the
 for semantics, provenance and acceptance requirements. The current Python API
 includes waveform intent and pure generators; the [M1 guide](m1-compiler.md)
 describes the implemented compiler. The [M2 guide](m2-simulator.md) describes
-simulated execution, faults and retained evidence. M3 transport characterization
-on the actual unit is next.
+simulated execution, faults and retained evidence. The [M3 guide](m3-transport.md)
+documents the implemented transport, safe diagnostic and incomplete G05 evidence.

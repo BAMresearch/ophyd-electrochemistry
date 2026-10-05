@@ -47,4 +47,74 @@ G06 and a validated facility timing scheme, without assuming spare I/O markers.
 An opt-in hardware fixture must require explicit resource/configuration and
 confirm the dummy-load setup. Future `pytest -m hardware` must fail if requested
 hardware or required evidence is absent; it must not silently report acceptance
-through skips. No hardware test code is present in this baseline.
+through skips. The guarded resistor-smoke notebook is a commissioning aid, not
+that acceptance fixture.
+
+## Initial communications evidence — 2026-10-05
+
+This is partial commissioning evidence, not a G05 result. From the user's macOS
+workstation, the link-local target answered ICMP and accepted HTTP, VXI-11 and raw
+socket connections. The bounded diagnostic queried the same Model 2460 over both
+explicit PyVISA resources using pyvisa-py:
+
+- `TCPIP0::169.254.77.125::5025::SOCKET`;
+- `TCPIP0::169.254.77.125::inst0::INSTR`.
+
+Both returned serial `04686198`, firmware `1.7.16a`, command language `SCPI`, and
+source-output state `0` (OFF).
+The exact JSON is retained in [the connectivity evidence](evidence/k2460-2026-10-05-connectivity.json),
+and the procedure is described in the [M3 guide](m3-transport.md) and repository
+notebook `notebooks/keithley_2460_connectivity.ipynb`.
+
+Only manual-reviewed `*IDN?`, `*LANG?`, and `:OUTPut:STATe?` queries were sent in
+that initial test. The connected DUT was the user's 3 V coin cell, not a
+characterized dummy load. Electrical OFF-mode behavior, partial transfers,
+retrieval/abort fairness, controller exclusion and shutdown behavior were not
+tested. G05 and every other gate therefore remain **NOT RUN**.
+
+## Preliminary resistor smoke test — 2026-10-05
+
+After the coin cell was removed, the user connected a nominal 100 ohm resistor
+to the front terminals using four-wire sense and confirmed the OUTPUT indicator
+was off. A bounded SCPI procedure then configured current source, voltage
+measurement, remote sense, a 0.2 V voltage limit, fixed ranges, source readback,
+one reading at 1 NPLC, and disabled filtering/relative offset. It did not send
+`*RST` or recall a saved setup.
+
+| Requested current | Source readback | Measured voltage | V/I result | Limit trip |
+|---:|---:|---:|---:|---:|
+| 100 µA | 99.99917 µA | 10.27817 mV | 102.7826 ohm | No |
+| 1 mA | 0.9999969 mA | 102.5312 mV | 102.5315 ohm | No |
+
+The output was switched off after each point. Cleanup programmed 0 A and
+confirmed output OFF; a new, query-only session independently returned output
+state `0`, front terminals, current-source mode, and programmed current `0`.
+The exact result is retained in [the resistor smoke evidence](evidence/k2460-2026-10-05-resistor-smoke.json),
+and the guarded reproduction procedure is in
+`notebooks/keithley_2460_resistor_smoke.ipynb`.
+
+The resistor was not calibrated, so this demonstrates plausible sourcing,
+four-wire voltage acquisition, source readback, compliance status, and bounded
+shutdown only. It is not an accuracy calibration and does not exercise abort,
+disconnect, OFF-mode impedance, timing, buffer transfer, or competing-controller
+behavior. No hardware acceptance gate is promoted from **NOT RUN**.
+
+### Bipolar linearity and repeatability follow-up
+
+The same physical setup was subsequently measured at −1 mA, −500 µA, −100 µA,
++100 µA, +500 µA, and +1 mA, with five readings per point. A fixed 1 mA source
+range and the same 0.2 V limit were used; output OFF was confirmed between every
+point. All 30 source-readback/voltage pairs had the expected polarity and no
+limit trip.
+
+A least-squares fit of sensed voltage against measured source-current readback
+gave a slope of 102.502310 ohm, an intercept of −33.020 µV,
+R-squared of 0.999999999914, and a maximum absolute residual of 1.252 µV. An
+independent session again confirmed output `0` and programmed current `0`.
+Full per-reading data are retained in
+[the bipolar sweep evidence](evidence/k2460-2026-10-05-resistor-bipolar-sweep.json).
+The guarded reproduction is
+`notebooks/keithley_2460_resistor_bipolar_sweep.ipynb`.
+These results strengthen polarity, pairing, linearity, and repeatability
+evidence, but the uncalibrated resistor still prevents an accuracy claim and no
+hardware gate is promoted.

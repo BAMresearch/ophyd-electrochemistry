@@ -4,6 +4,19 @@
 
 ## Unreleased
 
+- Implement the M3 serialized, bounded optional PyVISA transport with explicit
+  backend/resource/framing, strict 2460 identity/language validation, typed
+  failures, session invalidation, and no retries of ambiguous mutations.
+- Add a read-only commissioning command and notebook for identity, language and
+  source-output state, plus mocked concurrency/framing/failure tests and initial
+  raw-socket/VXI-11 output-OFF evidence. Hardware gate G05 remains NOT RUN.
+- Add a guarded, bounded front-terminal four-wire resistor-smoke notebook and
+  retain the two-point 100 µA/1 mA evidence. The uncalibrated load result does
+  not promote any hardware acceptance gate.
+- Record a six-point, 30-reading bipolar resistor sweep with correct polarity,
+  no compliance trips, and fitted linearity/repeatability evidence; hardware
+  gates remain NOT RUN.
+
 - Require Bluesky >=1.15.1,<1.16 and update the lockfile to include the upstream
   fix for unretrieved failed-Status Futures at RunEngine teardown.
 - Add a subprocess regression test that checks process-exit logging while

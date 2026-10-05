@@ -1,4 +1,4 @@
-# Assumption verification — 2026-10-02
+# Assumption verification — 2026-10-05
 
 **Supported** means primary documentation establishes a capability, not that the
 target unit was tested. **Design** is our chosen contract. **Open** requires
@@ -17,7 +17,7 @@ firmware/bench evidence. No instrument was connected during this task.
 | A09 | Flyer/prepare API fits | **Supported.** Bluesky defines prepare, kickoff/complete, and collect descriptors/events [S4, S5]. Local witness validates the sequence. |
 | A10 | External kickoff may return while waiting | **Design extension.** Define kickoff success as armed readiness, not first sourced sample. Test with pinned Bluesky. |
 | A11 | Two QueueServers share one Bluesky run | **Corrected.** Independent workers run Bluesky [S6]; design uses separate runs and a shared experiment ID. |
-| A12 | Ethernet/PyVISA/TSP is a suitable boundary | **Supported architecture** [S1, S7]; exact VISA backend, framing, socket port, abort starvation, and control ownership require G05. |
+| A12 | Ethernet/PyVISA/TSP is a suitable boundary | **Partly verified on target.** pyvisa-py reached firmware 1.7.16a over raw socket 5025 and VXI-11 with bounded LF framing [S11]; transfer/abort starvation and exclusive ownership still require G05. |
 | A13 | Instrument and detector clocks align | **Open.** Add measured mapping/uncertainty; no automatic synchronization claim. G06. |
 | A14 | 3.3 V/industrial I/O directly connects | **Corrected.** HIGH minimum is 3.7 V [S1]; electrical commissioning required. |
 | A15 | Disconnect/pause always turns output off | **Corrected.** Host cleanup is conditional; local bounded termination and tested physical shutdown are required. G07. |
@@ -30,12 +30,13 @@ firmware/bench evidence. No instrument was connected during this task.
 ## Evidence limits
 
 Reference manual landing page [S8] identifies Rev C and firmware 1.7.0+.
-The full 45 MB manual could not be retrieved by the web reader (size limit),
-and direct download returned HTTP 403. Therefore this review does not claim
-full-manual command validation. Commands were cross-checked in Tektronix's
-maintained `tm_devices` command documentation, whose upstream provenance is [S9].
-Verify exact constants, parameters, block limits, ports, and interlock behavior
-against the target firmware/manual before any runtime is implemented or loaded.
+The official 43 MB Rev. C reference PDF was downloaded and reviewed locally on
+2026-10-05. It documents raw socket port 5025, VXI-11, query-only `*IDN?`,
+`*LANG?`, and `:OUTPut:STATe?`; the target unit returned model, serial, firmware,
+SCPI mode and output state OFF over both explicit VISA resources [S11]. This does
+not validate runtime constants, block limits, interlock behavior, electrical
+OFF-mode behavior, or operational TSP semantics. Verify those details before any
+runtime is implemented or loaded.
 
 The initial local API check used Bluesky 1.14.6 and ophyd 1.11.2. The later
 [RunEngine teardown fix](development.md#runengine-abort-test-teardown-message)
@@ -55,6 +56,7 @@ was reproduced.
 - **S8:** [2460 reference manual landing page](https://www.tek.com/en/keithley-source-measure-units/keithley-smu-2400-graphical-series-sourcemeter-manual-8).
 - **S9:** [Tektronix tm_devices upstream](https://github.com/tektronix/tm_devices), maintained command documentation.
 - **S10:** [Tektronix function-generation technical brief](https://www.tek.com/en/documents/technical-brief/equipping-source-measure-units-with-function-generation-using-tsp-technology), current/voltage configuration-list waveforms and arbitrary-waveform app for the 2460. Reviewed 2026-10-02; used as architecture evidence, not timing, capacity or safe-abort acceptance.
+- **S11:** [Tektronix Model 2460 Reference Manual Rev. C](https://download.tek.com/manual/2460-901-01C_Sept_2019_Ref.pdf), sections 2 and 15; target-unit results are retained in [connectivity evidence](evidence/k2460-2026-10-05-connectivity.json).
 
 Keep these sources linked, not copied into the repository. Source review date
 is distinct from hardware commissioning date.

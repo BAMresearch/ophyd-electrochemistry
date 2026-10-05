@@ -18,6 +18,9 @@ visa = ["pyvisa>=1.14,<2", "pyvisa-py>=0.7,<1"]
 repository = "https://github.com/BAMresearch/ophyd-electrochemistry"
 issues = "https://github.com/BAMresearch/ophyd-electrochemistry/issues"
 
+[project.scripts]
+ophyd-electrochemistry-k2460-diagnose = "ophyd_electrochemistry.keithley.k2460.commissioning:main"
+
 [dependency-groups]
 test = ["pytest>=8,<10"]
 lint = ["ruff>=0.11,<1", "mypy>=1.15,<3"]

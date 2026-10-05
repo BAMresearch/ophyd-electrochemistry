@@ -17,6 +17,7 @@ versions in `tool.uv.build-constraint-dependencies`.
 |---|---|
 | Default development install | `uv sync --locked` |
 | PyVISA backend development | `uv sync --locked --extra visa` |
+| Read-only 2460 diagnostic | `uv run --locked --extra visa ophyd-electrochemistry-k2460-diagnose --resource '<explicit resource>' --backend '@py'` |
 | Tests | `uv run --locked pytest` |
 | Lint/type check | `uv run --locked ruff check .` / `uv run --locked mypy src scripts` |
 | Strict docs build | `uv run --locked mkdocs build --strict` |

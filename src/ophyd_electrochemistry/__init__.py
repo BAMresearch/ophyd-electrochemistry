@@ -1,4 +1,4 @@
-"""Pure validated models/generators; no operational instrument backend yet."""
+"""Validated models/generators and transport; no operational sourcing device yet."""
 
 from .acquisition import AcquisitionRequest, StartMode
 from .protocols import (
