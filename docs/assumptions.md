@@ -36,14 +36,14 @@ The official 43 MB Rev. C reference PDF was downloaded and reviewed locally on
 2026-10-05. It documents raw socket port 5025, VXI-11, query-only `*IDN?`,
 `*LANG?`, and `:OUTPut:STATe?`; the target unit returned model, serial, firmware,
 SCPI mode and output state OFF over both explicit VISA resources [S11]. This does
-not validate runtime block execution, arm ordering, interlock behavior,
-electrical OFF-mode behavior, or shutdown latency. The exact-artifact M4 runtime
-has compiled, loaded, initialized, and completed a narrow +1 mA immediate hold
-on the target. Its programmatic abort/repeated-abort/recovery state path has also
-completed with OFF/0 A confirmation. No independent electrical/timing trace,
-external START path, measured electrical abort latency, or electrical OFF
-property has yet been accepted. The unconnected-input no-START timeout state path
-has completed, but no external edge or READY-boundary timing has been tested.
+not validate interlock behavior, electrical OFF-mode behavior, or shutdown
+latency. The exact-artifact runtime has completed narrow +1 mA immediate and
+manual external-START holds, plus immediate and external-START buffered
+acquisitions, on the target. Programmatic abort/repeated-abort/recovery and
+unconnected-input no-START timeout state paths have also completed with OFF/0 A
+confirmation. No independent electrical/timing trace, READY-boundary race
+characterization, measured electrical abort latency, or electrical OFF property
+has yet been accepted.
 
 The initial local API check used Bluesky 1.14.6 and ophyd 1.11.2. The later
 [RunEngine teardown fix](development.md#runengine-abort-test-teardown-message)

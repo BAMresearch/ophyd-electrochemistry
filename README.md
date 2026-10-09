@@ -118,7 +118,7 @@ volatile runtime installation, immediate hold, programmatic abort, and the
 unconnected-input no-START timeout with independent opt-in flags. Read the [M4
 guide](docs/m4-runtime.md) before proceeding.
 The guarded `notebooks/keithley_2460_m5_buffer.ipynb` reproduces the bounded
-+1 mA exact-sized target-buffer proof and checksummed chunked archive, and keeps
++1 mA target-buffer proof and checksummed chunked archive, and keeps
 acquisition, audit, and destructive discard behind separate opt-in flags. Its
 host buffer and transfer ceilings are explicit and independent.
 It is only for the confirmed

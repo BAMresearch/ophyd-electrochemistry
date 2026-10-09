@@ -117,7 +117,7 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     artifact = packaged_runtime()
 
     assert artifact.abi == "oe-k2460-m4-hold-v1"
-    assert artifact.build == "m4-finite-current-hold-v10"
+    assert artifact.build == "m4-finite-current-hold-v12"
     assert artifact.sha256 == hashlib.sha256(artifact.source.encode("ascii")).hexdigest()
     assert artifact.script_name == f"oe_m4_{artifact.sha256[:24]}"
     assert len(artifact.script_name) == 30
@@ -141,7 +141,8 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     assert "if configured_edge == trigger.EDGE_EITHER then" in artifact.source
     assert "trigger.BLOCK_BRANCH_ALWAYS, 0" in artifact.source
     assert "block >= 7 and block <= oe_m4_complete_block" in artifact.source
-    assert "buffer.make(measurement_count, buffer.STYLE_STANDARD)" in artifact.source
+    assert "if allocation_count < 16 then" in artifact.source
+    assert "buffer.make(allocation_count, buffer.STYLE_STANDARD)" in artifact.source
     assert "buffer.delete(oe_m5_buffer)" in artifact.source
     assert "collectgarbage()" in artifact.source
     assert "oe_m5_buffer.fillmode = buffer.FILL_ONCE" in artifact.source
@@ -149,6 +150,8 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     assert "last_index - first_index + 1 > 4096" in artifact.source
     assert "trigger.BLOCK_BUFFER_CLEAR, oe_m5_buffer" in artifact.source
     assert "trigger.BLOCK_MEASURE_DIGITIZE, oe_m5_buffer, measurement_count" in artifact.source
+    assert "trigger.model.setblock(14, trigger.BLOCK_BRANCH_ALWAYS, 0)" in artifact.source
+    assert "oe_m4_timeout_block = 17" in artifact.source
     assert "oe_m5_buffer.sourcevalues" in artifact.source
     assert "oe_m5_buffer.relativetimestamps" in artifact.source
     assert "oe_m5_buffer.sourcestatuses" in artifact.source
@@ -189,6 +192,7 @@ def test_current_hold_proof_rejects_values_outside_hard_runtime_envelope(changes
         {"measurement_count": 0},
         {"measurement_count": 5_000_001},
         {"measurement_count": True},
+        {"start_mode": "immediate"},
     ],
 )
 def test_current_hold_acquisition_rejects_values_outside_proof_envelope(changes):
@@ -394,6 +398,47 @@ def test_exact_known_v9_empty_buffer_can_be_replaced_without_a_reboot():
     assert 'script.delete("oe_m4_6df8a9ae8a86703bedbd0bf2")' in transport.writes
 
 
+def test_exact_known_v10_empty_buffer_can_be_replaced_without_a_reboot():
+    transport = FakeRuntimeTransport(
+        status_line("idle", block=12),
+        "0",
+        "oe-k2460-m4-hold-v1",
+        "m4-finite-current-hold-v10",
+        "false",
+        "false",
+        "0\t0\t0\t0",
+        "true",
+        "true",
+        "smu.OFF",
+        "0",
+    )
+
+    artifact = M4RuntimeController(transport, runtime_config()).replace_known_runtime_and_install()
+
+    assert artifact == packaged_runtime()
+    assert 'script.delete("oe_m4_d2255a33f73e7d593a78ee80")' in transport.writes
+
+
+def test_exact_known_v11_empty_buffer_can_be_replaced_without_a_reboot():
+    transport = FakeRuntimeTransport(
+        status_line("idle", block=12),
+        "0",
+        "oe-k2460-m4-hold-v1",
+        "m4-finite-current-hold-v11",
+        "false",
+        "true",
+        "true",
+        "true",
+        "smu.OFF",
+        "0",
+    )
+
+    artifact = M4RuntimeController(transport, runtime_config()).replace_known_runtime_and_install()
+
+    assert artifact == packaged_runtime()
+    assert 'script.delete("oe_m4_f85daa49ffefcd782bb1f89b")' in transport.writes
+
+
 def test_known_v5_replacement_preserves_retained_records():
     transport = FakeRuntimeTransport(
         status_line("idle"),
@@ -465,7 +510,7 @@ def test_prepare_serializes_native_either_edge_start_mode():
 
 
 def test_prepare_acquisition_serializes_bounded_fixed_measurement_and_empty_buffer():
-    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t3")
+    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t16")
     controller = M4RuntimeController(transport, runtime_config())
     acquisition = CurrentHoldAcquisitionProof(
         current_a=0.001,
@@ -478,10 +523,45 @@ def test_prepare_acquisition_serializes_bounded_fixed_measurement_and_empty_buff
 
     assert status.state == RuntimeState.PREPARED
     assert transport.writes == [
-        "oe_m5_prepare_current_hold_acquisition(0.001,0.001,0.20000000000000001,3,2,0.01,1,1,1,2,3,1,1,1)",
+        "oe_m5_prepare_current_hold_acquisition(0.001,0.001,0.20000000000000001,3,0,2,0.01,1,1,1,2,3,1,1,1)",
         "print(oe_m4_status())",
         "print(oe_m5_buffer_status())",
     ]
+
+
+def test_prepare_acquisition_serializes_external_start_and_either_edge():
+    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t16")
+    config = runtime_config(io=DigitalIOConfig(start_edge="either"))
+    controller = M4RuntimeController(transport, config)
+    acquisition = CurrentHoldAcquisitionProof(
+        current_a=0.001,
+        source_range_a=0.001,
+        voltage_limit_v=0.2,
+        measurement_count=3,
+        start_mode=StartMode.EXTERNAL_TRIGGER,
+    )
+
+    controller.prepare_current_hold_acquisition(acquisition)
+
+    assert transport.writes[0] == (
+        "oe_m5_prepare_current_hold_acquisition("
+        "0.001,0.001,0.20000000000000001,3,1,2,0.01,1,1,1,2,3,1,1,2)"
+    )
+
+
+def test_prepare_acquisition_rejects_an_undersized_runtime_buffer():
+    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t2")
+    acquisition = CurrentHoldAcquisitionProof(
+        current_a=0.001,
+        source_range_a=0.001,
+        voltage_limit_v=0.2,
+        measurement_count=3,
+    )
+
+    with pytest.raises(TransportProtocolError, match="smaller than the requested count"):
+        M4RuntimeController(transport, runtime_config()).prepare_current_hold_acquisition(
+            acquisition
+        )
 
 
 def test_buffer_policy_and_controller_apply_separate_allocation_and_transfer_ceilings():

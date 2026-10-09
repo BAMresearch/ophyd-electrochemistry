@@ -201,6 +201,25 @@ ohm and warning/error counts stayed at 5/6. See the
 This adds exact-allocation, small fill-once and bounded-transfer evidence; it
 does not promote G03/G04 or validate the configured 250,000-record host ceiling.
 
+Runtime v12 then completed a five-reading externally started acquisition. With
+line 3 held to pin 9 through 1 kohm, arming reported WAITING_START/OFF/READY.
+Removing the resistor produced RUNNING/ON/BUSY at digitize block 10, followed by
+COMPLETE/OFF with both flags low at block 13. Extent 1–5 of the instrument's
+minimum 16-record user buffer contained five source-readback, voltage, timestamp,
+and status records; an offset retry was identical. The v2 archive retained the
+external start mode and passed its record and payload checksums. Mean V/I was
+102.5105 ohm. Warning/error counts remained 2/4 through the successful run.
+
+Recovery and an independent new session confirmed IDLE/OFF/0 A with the five
+records retained. Explicit discard after archive verification left the buffer
+empty and the source safe. The two extra pre-existing errors came from the
+immediately preceding v11 attempt, whose exact-capacity check did not account
+for the 2460's 16-record minimum; it retained no readings and ended output-off.
+See the [v12 run evidence](evidence/k2460-2026-10-09-m5-external-start-v12-evidence.json)
+and [raw archive](evidence/k2460-2026-10-09-m5-external-start-v12-archive.json).
+No independent edge-to-aperture or electrical timing trace was captured, so
+G01/G03/G04/G06 remain **NOT RUN**.
+
 ## M4 runtime installation, immediate hold, and programmatic abort — PASS within narrow scope
 
 The exact-artifact loader, packaged finite-current-hold TSP runtime, typed host

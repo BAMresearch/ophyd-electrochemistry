@@ -21,7 +21,7 @@ from .config import Keithley2460Config
 from .transport import CommandLanguage, parse_source_output_enabled
 
 RUNTIME_ABI = "oe-k2460-m4-hold-v1"
-RUNTIME_BUILD = "m4-finite-current-hold-v10"
+RUNTIME_BUILD = "m4-finite-current-hold-v12"
 RUNTIME_RESOURCE = "tsp/runtime.tsp"
 K2460_BUFFER_SCHEMA = "ophyd-electrochemistry/k2460-buffer-proof-v1"
 _MAX_CURRENT_A = 0.01
@@ -97,6 +97,16 @@ _REPLACEABLE_RUNTIMES = {
         _RUNTIME_GLOBALS_V5,
         True,
     ),
+    "m4-finite-current-hold-v10": (
+        "oe_m4_d2255a33f73e7d593a78ee80",
+        _RUNTIME_GLOBALS_V5,
+        True,
+    ),
+    "m4-finite-current-hold-v11": (
+        "oe_m4_f85daa49ffefcd782bb1f89b",
+        _RUNTIME_GLOBALS_V5,
+        True,
+    ),
 }
 
 
@@ -153,12 +163,13 @@ class CurrentHoldProof:
 
 @dataclass(frozen=True, kw_only=True)
 class CurrentHoldAcquisitionProof:
-    """Immediate-only, finite 1 NPLC resistor acquisition for M5 commissioning."""
+    """Finite 1 NPLC resistor acquisition for narrow M5 commissioning."""
 
     current_a: float
     source_range_a: float
     voltage_limit_v: float
     measurement_count: int
+    start_mode: StartMode = StartMode.IMMEDIATE
 
     def __post_init__(self) -> None:
         for name in ("current_a", "source_range_a", "voltage_limit_v"):
@@ -174,6 +185,8 @@ class CurrentHoldAcquisitionProof:
             raise ValidationError(
                 f"M5 measurement_count must not exceed {_MAX_MEASUREMENT_COUNT:,}"
             )
+        if not isinstance(self.start_mode, StartMode):
+            raise ValidationError("start_mode must be a StartMode")
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -586,6 +599,7 @@ class M4RuntimeController:
                     _tsp_number(acquisition.source_range_a),
                     _tsp_number(acquisition.voltage_limit_v),
                     str(acquisition.measurement_count),
+                    "1" if acquisition.start_mode == StartMode.EXTERNAL_TRIGGER else "0",
                     _tsp_number(self.config.timing.external_start_timeout_s),
                     _tsp_number(self.config.timing.poll_period_s),
                     "1" if self.config.source_terminal == "front" else "0",
@@ -605,8 +619,10 @@ class M4RuntimeController:
         if status.state != RuntimeState.PREPARED or status.output_enabled:
             raise TransportProtocolError("M5 runtime did not reach output-OFF PREPARED")
         info = self.buffer_info()
-        if info.record_count != 0 or info.capacity_records != acquisition.measurement_count:
-            raise TransportProtocolError("M5 runtime buffer is not empty or exactly sized")
+        if info.record_count != 0 or info.capacity_records < acquisition.measurement_count:
+            raise TransportProtocolError(
+                "M5 runtime buffer is not empty or is smaller than the requested count"
+            )
         return status
 
     def arm(self) -> RuntimeStatus:

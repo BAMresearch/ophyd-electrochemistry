@@ -1,8 +1,8 @@
 # M5 measurement records and retained buffers
 
 M5 has a hardware-neutral record contract plus a deliberately narrow target
-proof. The packaged Keithley runtime allocates an exact-sized fill-once buffer
-for an explicitly bounded number of immediate 1 NPLC readings and returns raw
+proof. The packaged Keithley runtime allocates a bounded fill-once buffer
+for an explicitly bounded number of immediate or externally started 1 NPLC readings and returns raw
 source readback, measured voltage, buffer-relative timestamp, source status and
 measurement status. This is commissioning code, not the operational acquisition
 backend.
@@ -88,24 +88,32 @@ not exactly-once.
 
 ## Narrow target proof
 
-Runtime build `m4-finite-current-hold-v6` provides
+Runtime build `m4-finite-current-hold-v12` provides
 `CurrentHoldAcquisitionProof`, `RuntimeBufferInfo`, `BufferedReading`, and
 `RuntimeRecordChunk`. Hard limits remain ±10 mA and 2 V, while configuration
 limits may be lower. The acquisition count has an explicit host ceiling
 (250,000 records by default) and a 5,000,000-record TSP backstop. The runtime
-allocates exactly the requested capacity, selects fill-once mode, configures
-voltage measurement at 1 NPLC, clears the buffer before output on, makes exactly
-the requested number of measurements, then turns output off locally. Retrieval
+allocates the requested capacity (or the instrument's 16-record minimum), selects
+fill-once mode, configures
+voltage measurement at 1 NPLC, and records immediate versus external start mode
+in the request. External mode keeps output OFF while READY is asserted; a START
+edge locally asserts BUSY, clears the buffer, turns output on, makes exactly the
+requested number of measurements, turns output off, and exits the successful
+path without entering timeout cleanup. An unanswered wait takes a separate local
+source-OFF timeout path and leaves the buffer empty. Immediate mode retains its
+existing behavior. Retrieval
 requires a terminal state and confirmed output off, and is separately bounded
 to at most 4,096 records per transfer (128 by default). A retained buffer blocks
 the next prepare until an explicit reason-bearing discard.
 
-`RuntimeBufferArchive` assembles a complete sequence of independently validated
+`RuntimeBufferArchive` v2 assembles a complete sequence of independently validated
 chunks without hiding gaps or overlaps. Its versioned plain-data payload fixes
 the runtime identity, request, instrument identity, capacity, timestamp origin
 and raw records. The record array retains its own SHA-256, while the enclosing
-JSON adds a checksum over the complete canonical payload. The allowlisted parser
-checks both. `write_runtime_buffer_archive()` uses exclusive creation and refuses
+JSON adds a checksum over the complete canonical payload. Version 2 records the
+request start mode; the allowlisted parser still reads existing v1 immediate-mode
+archives without changing their schema. It checks both checksums.
+`write_runtime_buffer_archive()` uses exclusive creation and refuses
 to overwrite an existing path; successful export does not itself authorize
 instrument-buffer discard.
 
@@ -163,6 +171,28 @@ left the exact-sized buffer empty. See the
 [raw archive](evidence/k2460-2026-10-09-m5-v6-exact-buffer-archive.json). This
 validates a small exact-size allocation and a transfer larger than the old
 eight-record ceiling, not a 250,000-record acquisition or multi-megabyte reply.
+
+Runtime v11 added external START to this buffer path, but its first five-record
+target attempt exposed an older small-count defect: it requested five physical
+buffer slots even though this 2460 applies a 16-record minimum. Preparation
+stopped with no buffer, and the inherited finite-hold path completed output-off
+without retaining readings. Runtime v12 allocates `max(requested count, 16)`,
+still digitizes exactly the requested count, and rejects a physical capacity
+smaller than the request.
+
+The corrected target run waited with READY high and output off. Removing the
+held 1 kohm START-to-ground resistor generated the accepted rising edge; the
+runtime reported RUNNING/output-on/BUSY at digitize block 10, then COMPLETE at
+block 13 with output and both flags low. Five records filled extent 1–5 of the
+16-record buffer. Retry retrieval was identical, the version-2 archive preserved
+`start_mode=external_trigger`, and warning/error counts did not change during
+the v12 run. Recovery and a new session confirmed IDLE/OFF/0 A while all records
+remained retained; explicit post-archive discard then emptied the buffer. Mean
+V/I was 102.5105 ohm on the uncalibrated resistor. See the
+[run evidence](evidence/k2460-2026-10-09-m5-external-start-v12-evidence.json)
+and [checked raw archive](evidence/k2460-2026-10-09-m5-external-start-v12-archive.json).
+This proves the narrow state/data path, not edge-to-aperture latency or electrical
+timing.
 
 The following remain open before M5 is complete:
 

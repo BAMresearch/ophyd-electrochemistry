@@ -4,6 +4,7 @@ import json
 
 import pytest
 
+from ophyd_electrochemistry.acquisition import StartMode
 from ophyd_electrochemistry.exceptions import RetainedDataError, ValidationError
 from ophyd_electrochemistry.keithley.k2460 import (
     K2460_BUFFER_ARCHIVE_SCHEMA,
@@ -87,6 +88,31 @@ def test_archive_is_canonical_checksummed_and_round_trips():
     assert runtime_buffer_archive_json(runtime_buffer_archive_from_json(encoded)) == encoded
 
 
+def test_archive_v2_preserves_external_start_and_reads_legacy_v1():
+    external = archive(
+        request=CurrentHoldAcquisitionProof(
+            current_a=0.001,
+            source_range_a=0.001,
+            voltage_limit_v=0.2,
+            measurement_count=3,
+            start_mode=StartMode.EXTERNAL_TRIGGER,
+        )
+    )
+    encoded = runtime_buffer_archive_json(external)
+    assert json.loads(encoded)["payload"]["request"]["start_mode"] == "external_trigger"
+    assert (
+        runtime_buffer_archive_from_json(encoded).request.start_mode == StartMode.EXTERNAL_TRIGGER
+    )
+
+    legacy = json.loads(runtime_buffer_archive_json(archive()))
+    legacy["payload"]["schema"] = "ophyd-electrochemistry/k2460-buffer-archive-v1"
+    del legacy["payload"]["request"]["start_mode"]
+    legacy["sha256"] = sha256_json(canonical_json(legacy["payload"]))
+    decoded = runtime_buffer_archive_from_json(canonical_json(legacy))
+    assert decoded.schema.endswith("v1")
+    assert decoded.request.start_mode == StartMode.IMMEDIATE
+
+
 def test_archive_accepts_current_and_predecessor_runtime_builds():
     assert archive().runtime_build == "m4-finite-current-hold-v5"
     assert archive(runtime_build="m4-finite-current-hold-v6").runtime_build.endswith("v6")
@@ -94,6 +120,8 @@ def test_archive_accepts_current_and_predecessor_runtime_builds():
     assert archive(runtime_build="m4-finite-current-hold-v8").runtime_build.endswith("v8")
     assert archive(runtime_build="m4-finite-current-hold-v9").runtime_build.endswith("v9")
     assert archive(runtime_build="m4-finite-current-hold-v10").runtime_build.endswith("v10")
+    assert archive(runtime_build="m4-finite-current-hold-v11").runtime_build.endswith("v11")
+    assert archive(runtime_build="m4-finite-current-hold-v12").runtime_build.endswith("v12")
 
 
 def test_archive_writer_exclusively_creates_and_never_overwrites(tmp_path):

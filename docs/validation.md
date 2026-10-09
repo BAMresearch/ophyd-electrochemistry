@@ -263,6 +263,38 @@ Validated locally with Python 3.12.13: 280 tests pass. Ruff lint/format and
 strict source mypy pass. The manual trace does not independently measure
 electrical timing or promote G01; race-boundary and repeated/fault cases remain.
 
+## External-START buffered acquisition
+
+Runtime v11 extended the M5 buffer path with the proven either-edge START wait,
+READY/BUSY signaling, local timeout and explicit successful exit. Its first
+five-reading target attempt exposed a small-count allocation defect inherited
+from v6: `buffer.make(5, ...)` did not satisfy the runtime's exact-capacity
+assumption because this instrument applies a 16-record minimum. The attempt
+retained no readings and ended with output off; two error events were retained.
+
+Runtime v12 allocates at least 16 physical slots while keeping the requested
+digitize count and host/TSP ceilings unchanged. The corrected run reported
+WAITING_START/OFF/READY until the user removed a held 1 kohm line-3-to-pin-9
+resistor. It then reported RUNNING/ON/BUSY at digitize block 10 and
+COMPLETE/OFF at block 13. Five records filled extent 1–5 of capacity 16. Their
+source statuses were 200, measurement statuses were 264 then 8, and mean V/I
+was 102.5105 ohm. Retry retrieval was identical and the v2 archive round-tripped
+with record SHA-256
+`a79b44b102dd7a90917c64d734f302fe1db411d9bea4add45f8035dd7760ded2`
+and payload SHA-256
+`ac539ebd333a6356bd01ce1ea4d3833161603456b1ccc85876dc68fefdfb3fb0`.
+The successful run added no warnings or errors. Recovery and a new session
+confirmed IDLE/OFF/0 A with the records retained; explicit post-archive discard
+left the buffer empty. Evidence is retained in
+[the run record](evidence/k2460-2026-10-09-m5-external-start-v12-evidence.json)
+and [raw archive](evidence/k2460-2026-10-09-m5-external-start-v12-archive.json).
+This does not establish START-to-aperture latency, electrical timing, no-wrap at
+scale, or any complete hardware gate.
+
+Validated locally with Python 3.12.13: 286 tests pass. Ruff lint/format, strict
+source mypy, notebook JSON/code compilation, archive round-trip parsing, and
+strict MkDocs all pass.
+
 ## RunEngine failed-Status teardown fix
 
 Reproduced the user's `Future exception was never retrieved` message on local

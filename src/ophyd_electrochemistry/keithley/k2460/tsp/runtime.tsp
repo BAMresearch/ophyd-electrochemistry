@@ -1,13 +1,13 @@
 -- ophyd-electrochemistry M4 finite-hold proof plus narrow M5 buffer proof.
 --
 -- This is intentionally not the operational acquisition runtime. It supports
--- only a bounded current hold and an immediate-only, explicitly bounded
--- buffer proof on an explicitly configured resistive commissioning load.
+-- only a bounded current hold and an explicitly bounded buffer proof on an
+-- explicitly configured resistive commissioning load.
 -- External ABORT, measurement cutoffs, and arbitrary waveforms remain disabled.
 -- The host accepts only this packaged source and verifies the ABI.
 
 oe_m4_runtime_abi = "oe-k2460-m4-hold-v1"
-oe_m4_runtime_build = "m4-finite-current-hold-v10"
+oe_m4_runtime_build = "m4-finite-current-hold-v12"
 
 oe_m4_state = "idle"
 oe_m4_mode = "none"
@@ -105,6 +105,7 @@ function oe_m5_prepare_current_hold_acquisition(
     source_range_a,
     voltage_limit_v,
     measurement_count,
+    external_start,
     start_timeout_s,
     event_poll_s,
     front_terminals,
@@ -130,7 +131,7 @@ function oe_m5_prepare_current_hold_acquisition(
         source_range_a,
         voltage_limit_v,
         0.001,
-        0,
+        external_start,
         start_timeout_s,
         event_poll_s,
         front_terminals,
@@ -142,18 +143,22 @@ function oe_m5_prepare_current_hold_acquisition(
         busy_asserted,
         start_edge_mode)
 
-    if oe_m5_buffer ~= nil and oe_m5_buffer.capacity ~= measurement_count then
+    local allocation_count = measurement_count
+    if allocation_count < 16 then
+        allocation_count = 16
+    end
+    if oe_m5_buffer ~= nil and oe_m5_buffer.capacity ~= allocation_count then
         buffer.delete(oe_m5_buffer)
         oe_m5_buffer = nil
         oe_m5_buffer_capacity = 0
         collectgarbage()
     end
     if oe_m5_buffer == nil then
-        oe_m5_buffer = buffer.make(measurement_count, buffer.STYLE_STANDARD)
+        oe_m5_buffer = buffer.make(allocation_count, buffer.STYLE_STANDARD)
     end
     oe_m5_buffer_capacity = oe_m5_buffer.capacity
-    if oe_m5_buffer_capacity ~= measurement_count then
-        error("M5 proof buffer capacity does not match the requested count")
+    if oe_m5_buffer_capacity < measurement_count then
+        error("M5 proof buffer capacity is smaller than the requested count")
     end
     oe_m5_buffer.fillmode = buffer.FILL_ONCE
     smu.measure.func = smu.FUNC_DC_VOLTAGE
@@ -166,16 +171,39 @@ function oe_m5_prepare_current_hold_acquisition(
     smu.measure.autozero.once()
 
     trigger.model.load("Empty")
-    trigger.model.setblock(1, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, true), oe_m4_mask())
-    trigger.model.setblock(2, trigger.BLOCK_BUFFER_CLEAR, oe_m5_buffer)
-    trigger.model.setblock(3, trigger.BLOCK_SOURCE_OUTPUT, smu.ON)
-    trigger.model.setblock(4, trigger.BLOCK_MEASURE_DIGITIZE, oe_m5_buffer, measurement_count)
-    trigger.model.setblock(5, trigger.BLOCK_SOURCE_OUTPUT, smu.OFF)
-    trigger.model.setblock(6, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, false), oe_m4_mask())
-    trigger.model.setblock(7, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY2)
-    oe_m4_mode = "immediate_acquisition"
-    oe_m4_complete_block = 7
-    oe_m4_timeout_block = 0
+    if external_start == 1 then
+        trigger.model.setblock(1, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(true, false), oe_m4_mask())
+        trigger.model.setblock(2, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY1)
+        trigger.model.setblock(3, trigger.BLOCK_BRANCH_ON_EVENT, trigger.EVENT_TIMER1, 15)
+        trigger.model.setblock(4, trigger.BLOCK_BRANCH_ON_EVENT, oe_m4_digio_event(start_line), 7)
+        trigger.model.setblock(5, trigger.BLOCK_DELAY_CONSTANT, event_poll_s)
+        trigger.model.setblock(6, trigger.BLOCK_BRANCH_ALWAYS, 3)
+        trigger.model.setblock(7, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, true), oe_m4_mask())
+        trigger.model.setblock(8, trigger.BLOCK_BUFFER_CLEAR, oe_m5_buffer)
+        trigger.model.setblock(9, trigger.BLOCK_SOURCE_OUTPUT, smu.ON)
+        trigger.model.setblock(10, trigger.BLOCK_MEASURE_DIGITIZE, oe_m5_buffer, measurement_count)
+        trigger.model.setblock(11, trigger.BLOCK_SOURCE_OUTPUT, smu.OFF)
+        trigger.model.setblock(12, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, false), oe_m4_mask())
+        trigger.model.setblock(13, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY2)
+        trigger.model.setblock(14, trigger.BLOCK_BRANCH_ALWAYS, 0)
+        trigger.model.setblock(15, trigger.BLOCK_SOURCE_OUTPUT, smu.OFF)
+        trigger.model.setblock(16, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, false), oe_m4_mask())
+        trigger.model.setblock(17, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY3)
+        oe_m4_mode = "external"
+        oe_m4_complete_block = 13
+        oe_m4_timeout_block = 17
+    else
+        trigger.model.setblock(1, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, true), oe_m4_mask())
+        trigger.model.setblock(2, trigger.BLOCK_BUFFER_CLEAR, oe_m5_buffer)
+        trigger.model.setblock(3, trigger.BLOCK_SOURCE_OUTPUT, smu.ON)
+        trigger.model.setblock(4, trigger.BLOCK_MEASURE_DIGITIZE, oe_m5_buffer, measurement_count)
+        trigger.model.setblock(5, trigger.BLOCK_SOURCE_OUTPUT, smu.OFF)
+        trigger.model.setblock(6, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, false), oe_m4_mask())
+        trigger.model.setblock(7, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY2)
+        oe_m4_mode = "immediate_acquisition"
+        oe_m4_complete_block = 7
+        oe_m4_timeout_block = 0
+    end
     oe_m5_measurement_count = measurement_count
     oe_m4_state = "prepared"
 end

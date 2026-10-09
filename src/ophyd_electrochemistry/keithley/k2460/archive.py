@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 
+from ...acquisition import StartMode
 from ...exceptions import RetainedDataError, ValidationError
 from ...serialization import canonical_json, sha256_json
 from ...validation import integer, text
@@ -19,7 +20,8 @@ from .runtime import (
     RuntimeRecordChunk,
 )
 
-K2460_BUFFER_ARCHIVE_SCHEMA = "ophyd-electrochemistry/k2460-buffer-archive-v1"
+K2460_BUFFER_ARCHIVE_SCHEMA = "ophyd-electrochemistry/k2460-buffer-archive-v2"
+_LEGACY_K2460_BUFFER_ARCHIVE_SCHEMA = "ophyd-electrochemistry/k2460-buffer-archive-v1"
 K2460_BUFFER_TIMESTAMP_ORIGIN = "relative-to-first-buffer-reading"
 _MAX_ARCHIVE_BYTES = 256 * 1024 * 1024
 _SUPPORTED_RUNTIME_BUILDS = {
@@ -28,6 +30,8 @@ _SUPPORTED_RUNTIME_BUILDS = {
     "m4-finite-current-hold-v7",
     "m4-finite-current-hold-v8",
     "m4-finite-current-hold-v9",
+    "m4-finite-current-hold-v10",
+    "m4-finite-current-hold-v11",
     RUNTIME_BUILD,
 }
 _ARCHIVE_PAYLOAD_KEYS = {
@@ -94,7 +98,10 @@ class RuntimeBufferArchive:
     schema: str = K2460_BUFFER_ARCHIVE_SCHEMA
 
     def __post_init__(self) -> None:
-        if self.schema != K2460_BUFFER_ARCHIVE_SCHEMA:
+        if self.schema not in (
+            _LEGACY_K2460_BUFFER_ARCHIVE_SCHEMA,
+            K2460_BUFFER_ARCHIVE_SCHEMA,
+        ):
             raise ValidationError("Unsupported K2460 buffer archive schema")
         if self.runtime_abi != RUNTIME_ABI:
             raise ValidationError("K2460 buffer archive runtime ABI is incompatible")
@@ -185,6 +192,14 @@ def _record_payload(record: BufferedReading) -> dict[str, int | float]:
 
 
 def _archive_payload(archive: RuntimeBufferArchive) -> dict[str, object]:
+    request: dict[str, object] = {
+        "current_a": archive.request.current_a,
+        "source_range_a": archive.request.source_range_a,
+        "voltage_limit_v": archive.request.voltage_limit_v,
+        "measurement_count": archive.request.measurement_count,
+    }
+    if archive.schema == K2460_BUFFER_ARCHIVE_SCHEMA:
+        request["start_mode"] = archive.request.start_mode.value
     return {
         "schema": archive.schema,
         "acquisition_id": archive.acquisition_id,
@@ -194,12 +209,7 @@ def _archive_payload(archive: RuntimeBufferArchive) -> dict[str, object]:
         "runtime_build": archive.runtime_build,
         "runtime_sha256": archive.runtime_sha256,
         "runtime_script_name": archive.runtime_script_name,
-        "request": {
-            "current_a": archive.request.current_a,
-            "source_range_a": archive.request.source_range_a,
-            "voltage_limit_v": archive.request.voltage_limit_v,
-            "measurement_count": archive.request.measurement_count,
-        },
+        "request": request,
         "capacity_records": archive.capacity_records,
         "record_count": len(archive.records),
         "records_sha256": archive.records_sha256,
@@ -243,13 +253,21 @@ def runtime_buffer_archive_from_json(encoded: str) -> RuntimeBufferArchive:
             raise RetainedDataError("K2460 archive payload checksum does not match")
         request = payload["request"]
         records = payload["records"]
-        if not isinstance(request, dict) or set(request) != {
+        request_keys = {
             "current_a",
             "source_range_a",
             "voltage_limit_v",
             "measurement_count",
-        }:
+        }
+        if payload["schema"] == K2460_BUFFER_ARCHIVE_SCHEMA:
+            request_keys.add("start_mode")
+        elif payload["schema"] != _LEGACY_K2460_BUFFER_ARCHIVE_SCHEMA:
+            raise ValidationError("Unsupported K2460 buffer archive schema")
+        if not isinstance(request, dict) or set(request) != request_keys:
             raise ValidationError("Invalid K2460 archive request")
+        decoded_request = dict(request)
+        if payload["schema"] == K2460_BUFFER_ARCHIVE_SCHEMA:
+            decoded_request["start_mode"] = StartMode(decoded_request["start_mode"])
         if not isinstance(records, list):
             raise ValidationError("Invalid K2460 archive records")
         decoded_record_list: list[BufferedReading] = []
@@ -269,7 +287,7 @@ def runtime_buffer_archive_from_json(encoded: str) -> RuntimeBufferArchive:
             runtime_build=payload["runtime_build"],
             runtime_sha256=payload["runtime_sha256"],
             runtime_script_name=payload["runtime_script_name"],
-            request=CurrentHoldAcquisitionProof(**request),
+            request=CurrentHoldAcquisitionProof(**decoded_request),
             capacity_records=payload["capacity_records"],
             records=decoded_records,
             records_sha256=payload["records_sha256"],

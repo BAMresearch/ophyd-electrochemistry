@@ -3,7 +3,7 @@
 M1 pure models/generators and bounded planning compilation, M2 independent
 simulation, M3 bounded transport, the narrow M4 finite-hold proof, and the first
 offline M5 data-contract slice are implemented. M4 now has target compile/load/idle plus narrow immediate-hold,
-active-hold abort, START-wait abort, and no-START timeout state-path proofs,
+manual external-START, active-hold abort, START-wait abort, and no-START timeout state-path proofs,
 while electrical timing and failure-path evidence remain open. Full G05 transport characterization and general
 TSP/TriggerFlow lowering remain later work.
 It is not an operational-hardware approval or a promise that every feature is
@@ -14,8 +14,8 @@ available on the instrument.
 | M1 — Pure validation/compiler | Finite SI models including first-class PRBS and arbitrary waveforms; deterministic PRBS/multisine generation; request/compiled hashes; range/resource budgets; CV and waveform timing rules | Independent PRBS vectors, coherent tone/peak tests, finite budgets, invalid requests rejected; no network code |
 | M2 — Independent simulation | Fake transport/runtime with START/ABORT, partial buffers, state races, waveform playback and failure injection | Both start modes; repeated abort; failed shutdown; buffer retention; snapshot consistency; source/measurement timing and phase mapping |
 | M3 — Transport characterization | **Implemented:** PyVISA backend, identity/firmware/language/output-state checks, read-only diagnostic, bounded framing/chunks/errors. **Open:** retrieval/abort fairness and complete target-unit G05 evidence | G05 on dummy load; no ambiguous command retries |
-| M4 — Local runtime proof | **Implemented and target-tested:** exact-artifact TSP loader, minimal finite current hold, READY/BUSY/START model, local timeout, host adapter, target compile/load/idle, immediate-hold, active-hold abort, START-wait abort, and no-START timeout state proofs. **Open:** electrical/timing and failure evidence | G01, G02, G07; output remains off before START; external-abort capability rejected until proven |
-| M5 — Acquisition and data | **In progress:** shared typed V/I schema plus narrow target acquisition, deterministic chunks and checksummed raw archive implemented; **open:** START/aperture mapping, capacity/clock proof and shared-record projection | G03, G04, G06; known physical origin, capacity and clock uncertainty |
+| M4 — Local runtime proof | **Implemented and target-tested:** exact-artifact TSP loader, minimal finite current hold, READY/BUSY/START model, local timeout, host adapter, target compile/load/idle, immediate and manual external-start holds, active-hold abort, START-wait abort, and no-START timeout state proofs. **Open:** electrical/timing, READY-boundary race, repeated-input and failure evidence | G01, G02, G07; output remains off before START; external-abort capability rejected until proven |
+| M5 — Acquisition and data | **In progress:** shared typed V/I schema, narrow immediate and external-start target acquisitions, deterministic chunks and checksummed raw archive implemented. **Open:** START/aperture mapping, capacity/clock proof and shared-record projection | G03, G04, G06; known physical origin, capacity and clock uncertainty |
 | M6 — Classic ophyd Device/Flyer | Status/state monitor, config metadata, read/describe, complete/collect, stop/unstage | Real RunEngine + simulator; then all relevant bench gates |
 | M7 — Protocol expansion | Commission finite arbitrary current playback, first-class PRBS and multisine through that shared path; CV/current cutoffs, cycling, pulse and voltage waveform variants | Each protocol proves limits, timing, abort latency and storage budget; waveform fidelity/phase requires G08 |
 | M8 — Two-QueueServer integration | Separate startup environments, leader/follower plans, experiment linking, failure propagation | Timeouts, manual abort, missing START, leader/follower restarts, catalog correlation |

@@ -1,0 +1,179 @@
+{
+  "schema": "k2460-m5-external-start-proof-v1",
+  "recorded_at_utc": "2026-10-09T14:48:59.171984Z",
+  "instrument": {
+    "identity_raw": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "serial_number": "04686198",
+    "firmware_version": "1.7.16a",
+    "resource_name": "TCPIP0::169.254.113.151::5025::SOCKET",
+    "command_language": "TSP"
+  },
+  "physical_setup": {
+    "load": "user-confirmed nominal 100 ohm resistor; not a calibrated standard",
+    "terminals": "front",
+    "sense": "four-wire",
+    "start_action": "user removed a held 1 kohm resistor from START line 3 to GND pin 9 after READY asserted",
+    "ready_line": 1,
+    "busy_line": 2,
+    "start_line": 3,
+    "start_edge": "either",
+    "physical_output_indicator_confirmed_off_before_session": true
+  },
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v12",
+    "sha256": "e77fb18fa6ca9f2849ef910a96ff42e4327fa4552f477fb44fc57f5849076666",
+    "script_name": "oe_m4_e77fb18fa6ca9f2849ef910a",
+    "replacement": "the exact idle/output-off/0 A v11 artifact with an empty buffer was allow-list replaced without reboot"
+  },
+  "request": {
+    "current_a": 0.001,
+    "source_range_a": 0.001,
+    "voltage_limit_v": 0.2,
+    "measurement_count": 5,
+    "measurement_nplc": 1,
+    "measure_autorange": false,
+    "measure_filter": false,
+    "measure_relative": false,
+    "measure_autozero": "once before arm, then disabled",
+    "start_mode": "external_trigger",
+    "external_start_timeout_s": 60,
+    "off_mode": "normal"
+  },
+  "state_path": {
+    "prepared": {
+      "runtime_state": "prepared",
+      "model_state": "trigger.STATE_BUILDING",
+      "last_block": 12,
+      "output_enabled": false,
+      "ready_level": 0,
+      "busy_level": 0
+    },
+    "armed": {
+      "runtime_state": "waiting_start",
+      "model_state": "trigger.STATE_RUNNING",
+      "last_block": 5,
+      "output_enabled": false,
+      "ready_level": 1,
+      "busy_level": 0
+    },
+    "running": {
+      "runtime_state": "running",
+      "model_state": "trigger.STATE_RUNNING",
+      "last_block": 10,
+      "output_enabled": true,
+      "ready_level": 0,
+      "busy_level": 1
+    },
+    "terminal": {
+      "runtime_state": "complete",
+      "model_state": "trigger.STATE_IDLE",
+      "last_block": 13,
+      "output_enabled": false,
+      "ready_level": 0,
+      "busy_level": 0,
+      "start_overrun": false,
+      "timer_overrun": false
+    },
+    "recovery": {
+      "runtime_state": "idle",
+      "model_state": "trigger.STATE_IDLE",
+      "last_block": 13,
+      "output_state": "smu.OFF",
+      "source_level_a": 0.0
+    }
+  },
+  "buffer": {
+    "style": "standard fill-once",
+    "requested_records": 5,
+    "capacity_records": 16,
+    "capacity_note": "the 2460 applies a 16-record minimum user-buffer allocation",
+    "record_count": 5,
+    "start_index": 1,
+    "end_index": 5,
+    "records_sha256": "a79b44b102dd7a90917c64d734f302fe1db411d9bea4add45f8035dd7760ded2",
+    "offset_retry_equal": true,
+    "retained_through_recovery": true,
+    "archive_schema": "ophyd-electrochemistry/k2460-buffer-archive-v2",
+    "archive_payload_sha256": "ac539ebd333a6356bd01ce1ea4d3833161603456b1ccc85876dc68fefdfb3fb0",
+    "archive_file": "k2460-2026-10-09-m5-external-start-v12-archive.json",
+    "archive_round_trip_verified": true
+  },
+  "derived_observations": {
+    "mean_source_current_a": 0.00100001294632,
+    "mean_measured_voltage_v": 0.10251183509799999,
+    "per_record_resistance_ohm": [
+      102.51148306239601,
+      102.51079167603629,
+      102.51033870631798,
+      102.50983801840485,
+      102.51008835733232
+    ],
+    "mean_resistance_ohm": 102.5105079640975,
+    "population_standard_deviation_ohm": 0.0005804919328263746,
+    "buffer_relative_span_s": 0.16333348,
+    "source_status_200_interpretation": "source readback + four-wire sense + output on during each reading",
+    "measurement_status_front_terminal_bit_present": true,
+    "first_record_measurement_status_256_interpretation": "first reading in a group",
+    "questionable_measurement_bit_present": false
+  },
+  "event_counts": {
+    "before_successful_v12_arm": {
+      "warnings": 2,
+      "errors": 4
+    },
+    "after_successful_v12_completion": {
+      "warnings": 2,
+      "errors": 4
+    },
+    "after_discard": {
+      "warnings": 2,
+      "errors": 4
+    },
+    "new_warnings_during_v12_proof": 0,
+    "new_errors_during_v12_proof": 0,
+    "event_log_not_cleared": true
+  },
+  "predecessor_correction": {
+    "runtime_build": "m4-finite-current-hold-v11",
+    "runtime_sha256": "f85daa49ffefcd782bb1f89ba50edcc84752fc766aa854cb3f0ecd62063ebf01",
+    "observed_problem": "a five-record request did not allocate a buffer because v11 incorrectly required an exact physical capacity below the instrument's 16-record minimum",
+    "observed_safe_terminal_state": "complete/output off with zero retained records",
+    "event_error_count_change": 2,
+    "correction": "v12 allocates max(requested count, 16), still digitizes exactly the requested count, and rejects any capacity smaller than that count"
+  },
+  "independent_new_session_audit": {
+    "runtime_state": "idle",
+    "model_state": "trigger.STATE_IDLE",
+    "last_block": 13,
+    "output_state": "smu.OFF",
+    "source_level_a": 0.0,
+    "buffer_record_count": 5,
+    "buffer_start_index": 1,
+    "buffer_end_index": 5,
+    "buffer_capacity_records": 16,
+    "event_warnings": 2,
+    "event_errors": 4
+  },
+  "explicit_post_archive_discard": {
+    "before_record_count": 5,
+    "after_record_count": 0,
+    "capacity_records": 16,
+    "runtime_state": "idle",
+    "model_state": "trigger.STATE_IDLE",
+    "last_block": 13,
+    "output_state": "smu.OFF",
+    "source_level_a": 0.0
+  },
+  "evidence_limits": {
+    "resistor_calibrated": false,
+    "buffer_timestamps_are_relative_to_first_reading_not_actual_start": true,
+    "instrument_clock_to_epoch_mapped": false,
+    "start_edge_to_first_aperture_latency_measured": false,
+    "capacity_limit_proven": false,
+    "buffer_wrap_tested": false,
+    "electrical_output_trace_captured": false,
+    "failure_injection_tested": false,
+    "hardware_gate_promoted": false
+  }
+}
