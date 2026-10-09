@@ -1,12 +1,13 @@
--- ophyd-electrochemistry M4 finite-hold proof runtime.
+-- ophyd-electrochemistry M4 finite-hold proof plus narrow M5 buffer proof.
 --
--- This is intentionally not the M5 acquisition runtime. It supports only a
--- bounded current hold on an explicitly configured resistive commissioning
--- load. External ABORT, measurement cutoffs, and arbitrary waveforms remain
--- disabled. The host accepts only this packaged source and verifies the ABI.
+-- This is intentionally not the operational acquisition runtime. It supports
+-- only a bounded current hold and an immediate-only, at-most-eight-reading
+-- buffer proof on an explicitly configured resistive commissioning load.
+-- External ABORT, measurement cutoffs, and arbitrary waveforms remain disabled.
+-- The host accepts only this packaged source and verifies the ABI.
 
 oe_m4_runtime_abi = "oe-k2460-m4-hold-v1"
-oe_m4_runtime_build = "m4-finite-current-hold-v4"
+oe_m4_runtime_build = "m4-finite-current-hold-v5"
 
 oe_m4_state = "idle"
 oe_m4_mode = "none"
@@ -20,6 +21,9 @@ oe_m4_busy_level = -1
 oe_m4_start_level = -1
 oe_m4_complete_block = 0
 oe_m4_timeout_block = 0
+oe_m5_buffer = nil
+oe_m5_buffer_capacity = 16
+oe_m5_measurement_count = 0
 
 local function oe_m4_require_number(value, name)
     if type(value) ~= "number" or value ~= value then
@@ -93,6 +97,122 @@ function oe_m4_initialize()
     oe_m4_state = "idle"
     oe_m4_mode = "none"
     oe_m4_start_level = -1
+    oe_m5_measurement_count = 0
+end
+
+function oe_m5_prepare_current_hold_acquisition(
+    current_a,
+    source_range_a,
+    voltage_limit_v,
+    measurement_count,
+    start_timeout_s,
+    event_poll_s,
+    front_terminals,
+    remote_sense,
+    ready_line,
+    busy_line,
+    start_line,
+    ready_asserted,
+    busy_asserted,
+    rising_start)
+
+    oe_m4_require_number(measurement_count, "measurement_count")
+    if measurement_count < 1 or measurement_count > 8 or
+        measurement_count ~= math.floor(measurement_count) then
+        error("M5 proof measurement count must be an integer in 1..8")
+    end
+    if oe_m5_buffer ~= nil and oe_m5_buffer.n > 0 then
+        error("retained M5 proof data must be explicitly discarded before prepare")
+    end
+
+    oe_m4_prepare_current_hold(
+        current_a,
+        source_range_a,
+        voltage_limit_v,
+        0.001,
+        0,
+        start_timeout_s,
+        event_poll_s,
+        front_terminals,
+        remote_sense,
+        ready_line,
+        busy_line,
+        start_line,
+        ready_asserted,
+        busy_asserted,
+        rising_start)
+
+    if oe_m5_buffer == nil then
+        oe_m5_buffer = buffer.make(oe_m5_buffer_capacity, buffer.STYLE_STANDARD)
+    end
+    smu.measure.func = smu.FUNC_DC_VOLTAGE
+    smu.measure.autorange = smu.OFF
+    smu.measure.range = voltage_limit_v
+    smu.measure.nplc = 1
+    smu.measure.filter.enable = smu.OFF
+    smu.measure.rel.enable = smu.OFF
+    smu.measure.autozero.enable = smu.OFF
+    smu.measure.autozero.once()
+
+    trigger.model.load("Empty")
+    trigger.model.setblock(1, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, true), oe_m4_mask())
+    trigger.model.setblock(2, trigger.BLOCK_BUFFER_CLEAR, oe_m5_buffer)
+    trigger.model.setblock(3, trigger.BLOCK_SOURCE_OUTPUT, smu.ON)
+    trigger.model.setblock(4, trigger.BLOCK_MEASURE_DIGITIZE, oe_m5_buffer, measurement_count)
+    trigger.model.setblock(5, trigger.BLOCK_SOURCE_OUTPUT, smu.OFF)
+    trigger.model.setblock(6, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, false), oe_m4_mask())
+    trigger.model.setblock(7, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY2)
+    oe_m4_mode = "immediate_acquisition"
+    oe_m4_complete_block = 7
+    oe_m4_timeout_block = 0
+    oe_m5_measurement_count = measurement_count
+    oe_m4_state = "prepared"
+end
+
+function oe_m5_buffer_status()
+    if oe_m5_buffer == nil or oe_m5_buffer.n == 0 then
+        return 0, 0, 0, oe_m5_buffer_capacity
+    end
+    return oe_m5_buffer.n,
+        oe_m5_buffer.startindex,
+        oe_m5_buffer.endindex,
+        oe_m5_buffer.capacity
+end
+
+function oe_m5_print_buffer(first_index, last_index)
+    oe_m4_require_number(first_index, "first_index")
+    oe_m4_require_number(last_index, "last_index")
+    if first_index ~= math.floor(first_index) or last_index ~= math.floor(last_index) then
+        error("M5 proof buffer indices must be integers")
+    end
+    if oe_m4_model_active() or smu.source.output ~= smu.OFF then
+        error("M5 proof buffer retrieval requires an inactive model and output off")
+    end
+    if oe_m5_buffer == nil or first_index < oe_m5_buffer.startindex or
+        last_index > oe_m5_buffer.endindex or first_index > last_index then
+        error("M5 proof buffer retrieval indices are out of range")
+    end
+    if last_index - first_index + 1 > 8 then
+        error("M5 proof buffer retrieval is limited to eight records")
+    end
+    printbuffer(
+        first_index,
+        last_index,
+        oe_m5_buffer.sourcevalues,
+        oe_m5_buffer.readings,
+        oe_m5_buffer.relativetimestamps,
+        oe_m5_buffer.sourcestatuses,
+        oe_m5_buffer.statuses)
+end
+
+function oe_m5_discard_buffer()
+    if oe_m4_model_active() or smu.source.output ~= smu.OFF then
+        error("M5 proof discard requires an inactive model and output off")
+    end
+    if oe_m5_buffer ~= nil then
+        oe_m5_buffer.clear()
+    end
+    oe_m5_measurement_count = 0
 end
 
 function oe_m4_prepare_current_hold(

@@ -145,6 +145,28 @@ This is useful G03/G05 and ordinary exception-cleanup evidence, but it does not
 test process death, Ethernet loss, retrieval interruption, abort starvation, or
 instrument-local watchdog behavior. No hardware gate is promoted to PASS.
 
+### Packaged-runtime retained-buffer proof — 2026-10-09
+
+Runtime build `m4-finite-current-hold-v5` acquired three 1 NPLC readings at
++1 mA with a 0.2 V limit into its 16-record standard fill-once buffer. Each
+record contained source-current readback, measured voltage, relative timestamp,
+source status and measurement status. The extent was 1–3, and retrying offset
+zero returned identical records and checksum. Source status 200 documented
+readback, four-wire sense and output on during each reading. Measurement status
+was 264 for the first reading (front terminal plus first-in-group) and 8 for the
+others; none carried the questionable bit. Mean V/I was 102.5112 ohm.
+
+Warnings and errors did not increase. Recovery and a new session independently
+confirmed IDLE, output `smu.OFF`, programmed current 0 A, and retained extent
+1–3. After the evidence was archived, explicit discard emptied the buffer and
+again confirmed IDLE/OFF/0 A. See the
+[complete M5 proof](evidence/k2460-2026-10-09-m5-buffer-proof.json).
+
+The load is uncalibrated and buffer timestamps are relative to the first reading,
+not an observed actual START. Capacity/no-wrap limits, calibrated accuracy,
+clock mapping, interruption behavior and larger transfers remain untested. This
+is useful partial G03/G04 evidence; neither gate is promoted.
+
 ## M4 runtime installation, immediate hold, and programmatic abort — PASS within narrow scope
 
 The exact-artifact loader, packaged finite-current-hold TSP runtime, typed host

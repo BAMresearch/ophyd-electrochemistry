@@ -10,6 +10,17 @@
 - Adapt frozen M2 records into that schema without weakening their synthetic
   provenance; retrying a lost offset-chunk reply no longer advances an implicit
   cursor. Target measurement and archive export remain open.
+- Add a narrow M5 target adapter and TSP buffer proof: at most eight immediate
+  1 NPLC readings in a 16-record fill-once buffer, raw paired source-readback/V
+  fields plus statuses, deterministic offset retrieval, and explicit discard.
+- Record three +1 mA four-wire readings on the nominal 100 ohm resistor. The
+  retained retry matched exactly, mean V/I was 102.5112 ohm, warning/error
+  counts were unchanged, and an independent session confirmed IDLE/OFF/0 A.
+  Timestamps remain relative to the first reading and no hardware gate is
+  promoted.
+- Allow-list replacement of only the exact idle/output-off/0 A v4 volatile
+  runtime, avoiding a reboot while retaining the loader's refusal to overwrite
+  unknown scripts or globals.
 
 - Implement the M3 serialized, bounded optional PyVISA transport with explicit
   backend/resource/framing, strict 2460 identity/language validation, typed

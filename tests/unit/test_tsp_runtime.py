@@ -15,6 +15,8 @@ from ophyd_electrochemistry.exceptions import (
     ValidationError,
 )
 from ophyd_electrochemistry.keithley.k2460 import (
+    K2460_BUFFER_SCHEMA,
+    CurrentHoldAcquisitionProof,
     CurrentHoldProof,
     Keithley2460Config,
     M4RuntimeController,
@@ -22,6 +24,8 @@ from ophyd_electrochemistry.keithley.k2460 import (
     SafetyConfig,
     TimingPolicy,
     packaged_runtime,
+    parse_buffered_readings,
+    parse_runtime_buffer_info,
     parse_runtime_status,
 )
 
@@ -111,7 +115,7 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     artifact = packaged_runtime()
 
     assert artifact.abi == "oe-k2460-m4-hold-v1"
-    assert artifact.build == "m4-finite-current-hold-v4"
+    assert artifact.build == "m4-finite-current-hold-v5"
     assert artifact.sha256 == hashlib.sha256(artifact.source.encode("ascii")).hexdigest()
     assert artifact.script_name == f"oe_m4_{artifact.sha256[:24]}"
     assert len(artifact.script_name) == 30
@@ -131,6 +135,14 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     assert "oe_m4_track_flags(false, true)" in artifact.source
     assert "digio.MODE_DIGITAL_IN" in artifact.source
     assert "expected_inactive = digio.STATE_HIGH" in artifact.source
+    assert "buffer.make(oe_m5_buffer_capacity, buffer.STYLE_STANDARD)" in artifact.source
+    assert "trigger.BLOCK_BUFFER_CLEAR, oe_m5_buffer" in artifact.source
+    assert "trigger.BLOCK_MEASURE_DIGITIZE, oe_m5_buffer, measurement_count" in artifact.source
+    assert "oe_m5_buffer.sourcevalues" in artifact.source
+    assert "oe_m5_buffer.relativetimestamps" in artifact.source
+    assert "oe_m5_buffer.sourcestatuses" in artifact.source
+    assert "oe_m5_buffer.statuses" in artifact.source
+    assert "retained M5 proof data must be explicitly discarded" in artifact.source
     assert "oe_m4_start_level = digio.line[oe_m4_start_line].state" in artifact.source
     assert "start_state = digio.line[oe_m4_start_line].state" not in artifact.source
     assert "digio.line[oe_m4_ready_line].state," not in artifact.source
@@ -154,6 +166,29 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
 def test_current_hold_proof_rejects_values_outside_hard_runtime_envelope(changes):
     with pytest.raises(ValidationError):
         hold(**changes)
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"current_a": 0.0101, "source_range_a": 0.0101},
+        {"source_range_a": 0.0001},
+        {"voltage_limit_v": 0.009},
+        {"voltage_limit_v": 2.01},
+        {"measurement_count": 0},
+        {"measurement_count": 9},
+        {"measurement_count": True},
+    ],
+)
+def test_current_hold_acquisition_rejects_values_outside_proof_envelope(changes):
+    values: dict[str, object] = {
+        "current_a": 0.001,
+        "source_range_a": 0.001,
+        "voltage_limit_v": 0.2,
+        "measurement_count": 3,
+    }
+    with pytest.raises(ValidationError):
+        CurrentHoldAcquisitionProof(**(values | changes))  # type: ignore[arg-type]
 
 
 def test_runtime_status_parser_is_strict_and_typed():
@@ -181,6 +216,25 @@ def test_runtime_status_parser_is_strict_and_typed():
         parse_runtime_status(status_line("idle").replace("\t0\t0\t0\t-1", "\t2\t0\t0\t-1"))
 
 
+def test_runtime_buffer_parsers_are_strict_and_keep_raw_timestamp_meaning():
+    info = parse_runtime_buffer_info("3\t1\t3\t16")
+    assert info.record_count == 3 and info.start_index == 1 and info.end_index == 3
+    assert parse_runtime_buffer_info("0\t0\t0\t16").start_index is None
+    records = parse_buffered_readings(
+        "0.000999998,0.10249,0,136,8, 0.000999997,0.10248,0.0825,136,8",
+        offset=2,
+        expected_count=2,
+    )
+    assert [record.sample_index for record in records] == [2, 3]
+    assert records[0].source_current_a == pytest.approx(0.000999998)
+    assert records[1].buffer_relative_time_s == pytest.approx(0.0825)
+    assert records[0].source_status == 136 and records[0].measurement_status == 8
+    with pytest.raises(TransportProtocolError, match="4 tab"):
+        parse_runtime_buffer_info("3\t1\t3")
+    with pytest.raises(TransportProtocolError, match="10"):
+        parse_buffered_readings("1,2,3", offset=0, expected_count=2)
+
+
 def test_controller_installs_only_the_packaged_artifact_and_requires_tsp():
     transport = FakeRuntimeTransport()
     controller = M4RuntimeController(transport, runtime_config())
@@ -194,6 +248,59 @@ def test_controller_installs_only_the_packaged_artifact_and_requires_tsp():
         ).install()
 
 
+def test_exact_known_v4_can_be_replaced_without_a_reboot():
+    transport = FakeRuntimeTransport(
+        status_line("idle"),
+        "0",
+        "oe-k2460-m4-hold-v1",
+        "m4-finite-current-hold-v4",
+        "false",
+        "true",
+        "true",
+        "smu.OFF",
+        "0",
+    )
+    controller = M4RuntimeController(transport, runtime_config())
+
+    artifact = controller.replace_known_v4_and_install()
+
+    assert artifact == packaged_runtime()
+    assert transport.load_arguments == (artifact.source, artifact.abi, artifact.sha256)
+    assert 'script.delete("oe_m4_ce741e17ffcdd7f55d489c7b")' in transport.writes
+    delete_index = transport.writes.index('script.delete("oe_m4_ce741e17ffcdd7f55d489c7b")')
+    assert transport.writes[delete_index + 1] == ("print(oe_m4_ce741e17ffcdd7f55d489c7b == nil)")
+    assert "oe_m4_runtime_abi = nil" in transport.writes
+    assert "oe_m4_initialize = nil" in transport.writes
+
+
+@pytest.mark.parametrize(
+    ("replies", "match"),
+    [
+        ((status_line("running", output=1),), "output-OFF IDLE"),
+        ((status_line("idle"), "0.001"), "zero programmed"),
+        (
+            (status_line("idle"), "0", "oe-k2460-m4-hold-v1", "unexpected-build"),
+            "exact replaceable",
+        ),
+        (
+            (
+                status_line("idle"),
+                "0",
+                "oe-k2460-m4-hold-v1",
+                "m4-finite-current-hold-v4",
+                "true",
+            ),
+            "not present",
+        ),
+    ],
+)
+def test_known_v4_replacement_refuses_any_precondition_mismatch(replies, match):
+    transport = FakeRuntimeTransport(*replies)
+    with pytest.raises(IncompatibleInstrumentError, match=match):
+        M4RuntimeController(transport, runtime_config()).replace_known_v4_and_install()
+    assert not any(command.startswith("script.delete") for command in transport.writes)
+
+
 def test_prepare_serializes_validated_parameters_and_confirms_output_off():
     transport = FakeRuntimeTransport(status_line("prepared"))
     controller = M4RuntimeController(transport, runtime_config())
@@ -205,6 +312,53 @@ def test_prepare_serializes_validated_parameters_and_confirms_output_off():
         "oe_m4_prepare_current_hold(0.001,0.001,0.20000000000000001,0.25,1,2,0.01,1,1,1,2,3,1,1,1)"
     )
     assert transport.writes[1] == "print(oe_m4_status())"
+
+
+def test_prepare_acquisition_serializes_bounded_fixed_measurement_and_empty_buffer():
+    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t16")
+    controller = M4RuntimeController(transport, runtime_config())
+    acquisition = CurrentHoldAcquisitionProof(
+        current_a=0.001,
+        source_range_a=0.001,
+        voltage_limit_v=0.2,
+        measurement_count=3,
+    )
+
+    status = controller.prepare_current_hold_acquisition(acquisition)
+
+    assert status.state == RuntimeState.PREPARED
+    assert transport.writes == [
+        "oe_m5_prepare_current_hold_acquisition(0.001,0.001,0.20000000000000001,3,2,0.01,1,1,1,2,3,1,1,1)",
+        "print(oe_m4_status())",
+        "print(oe_m5_buffer_status())",
+    ]
+
+
+def test_offset_buffer_chunks_are_retryable_and_discard_is_explicit():
+    data = "0.001,0.1025,0,136,8,0.001,0.1026,0.0825,136,8"
+    transport = FakeRuntimeTransport(
+        status_line("complete", block=7),
+        "3\t1\t3\t16",
+        data,
+        status_line("complete", block=7),
+        "3\t1\t3\t16",
+        data,
+        status_line("complete", block=7),
+        "0\t0\t0\t16",
+    )
+    controller = M4RuntimeController(transport, runtime_config())
+
+    first = controller.read_buffer_chunk(offset=0, max_records=2)
+    retry = controller.read_buffer_chunk(offset=0, max_records=2)
+    assert first == retry and first.schema == K2460_BUFFER_SCHEMA
+    assert first.next_offset == 2 and not first.final
+    assert len(first.records_sha256) == 64
+    assert controller.discard_buffer(reason="archived test record").record_count == 0
+    assert transport.writes[-3:] == [
+        "print(oe_m4_status())",
+        "oe_m5_discard_buffer()",
+        "print(oe_m5_buffer_status())",
+    ]
 
 
 def test_prepare_rejects_config_limits_off_mode_and_event_poll_before_write():

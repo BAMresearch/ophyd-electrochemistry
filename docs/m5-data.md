@@ -1,9 +1,10 @@
 # M5 measurement records and retained buffers
 
-M5 now has its first hardware-neutral implementation slice. It defines the
-meaning, validation and integrity boundaries for finite electrical records before
-the Keithley runtime is taught to acquire them. Nothing in this module connects
-to an instrument or enables output; target buffer acquisition remains open.
+M5 has a hardware-neutral record contract plus a deliberately narrow target
+proof. The packaged Keithley runtime can acquire at most eight immediate 1 NPLC
+readings into a 16-record fill-once buffer and return raw source readback,
+measured voltage, buffer-relative timestamp, source status and measurement
+status. This is commissioning code, not the operational acquisition backend.
 
 ## Public model
 
@@ -84,12 +85,41 @@ with no fabricated START timestamp. The legacy cursor-based `collect_chunk()`
 remains for compatibility and still demonstrates why lost cursor replies are
 not exactly-once.
 
+## Narrow target proof
+
+Runtime build `m4-finite-current-hold-v5` adds
+`CurrentHoldAcquisitionProof`, `RuntimeBufferInfo`, `BufferedReading`, and
+`RuntimeRecordChunk`. Hard limits remain ±10 mA and 2 V, while configuration
+limits may be lower. The acquisition path is immediate-only, configures voltage
+measurement at 1 NPLC, clears the bounded buffer before output on, makes exactly
+the requested number of measurements, then turns output off locally. Retrieval
+requires a terminal state and confirmed output off. A retained buffer blocks the
+next prepare until an explicit reason-bearing discard.
+
+On 9 October 2026, the target 2460 acquired three records at +1 mA with a 0.2 V
+limit from the front-terminal four-wire nominal 100 ohm resistor. Buffer extent
+was 1–3 of capacity 16. All source statuses were 200, carrying the source
+readback, four-wire-sense and output-on bits; all measurement statuses carried
+the front-terminal bit. Mean measured V/I was 102.5112 ohm. Repeating the same
+offset read returned the same records and SHA-256. Warning and error counts did
+not change, recovery reached IDLE/OFF/0 A, and a new VISA session independently
+confirmed that state while the three records remained retained. See the
+[complete evidence](evidence/k2460-2026-10-09-m5-buffer-proof.json) and guarded
+`notebooks/keithley_2460_m5_buffer.ipynb`.
+
+This does not yet instantiate `MeasurementRecord`: the 2460
+`relativetimestamps` field is zero at the first reading and therefore is not an
+observed actual-START reference. The resistor is uncalibrated. Measurement
+status 264 on the first record is the documented front-terminal bit plus the
+first-reading-in-group bit; subsequent records report only the front-terminal
+bit. No record has the questionable-measurement bit. These observations are not
+generalized beyond this evidence.
+
 The following remain open before M5 is complete:
 
-- implement instrument-local paired V/I acquisition in the packaged TSP runtime;
-- prove the 2460 buffer fields, status bits, timestamp reference and capacity on
-  the nominal resistor setup;
-- implement bounded offset-addressed target retrieval and full archive export;
+- map target timestamps/apertures to actual START without inventing precision;
+- prove buffer capacity, fill-once/no-wrap behavior and larger bounded transfers;
+- generalize bounded target retrieval and implement full archive export;
 - calibrate or explicitly decline instrument-clock-to-epoch mapping;
 - complete G03, G04 and G06 hardware evidence.
 

@@ -1,0 +1,164 @@
+{
+  "schema": "k2460-m5-buffer-proof-v1",
+  "recorded_at_utc": "2026-10-09T09:21:43Z",
+  "instrument": {
+    "identity_raw": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "serial_number": "04686198",
+    "firmware_version": "1.7.16a",
+    "resource_name": "TCPIP0::169.254.113.151::5025::SOCKET",
+    "command_language": "TSP"
+  },
+  "physical_setup": {
+    "load": "user-confirmed nominal 100 ohm resistor; not a calibrated standard",
+    "terminals": "front",
+    "sense": "four-wire",
+    "physical_output_indicator_confirmed_off_before_session": true
+  },
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v5",
+    "sha256": "083f3d3a4749ad9b8cb7a771dff2dd9cf12f2dd7da229d4a779d9f1539306b47",
+    "script_name": "oe_m4_083f3d3a4749ad9b8cb7a771",
+    "replacement": "the exact idle/output-off/0 A v4 artifact was allow-list replaced without reboot"
+  },
+  "request": {
+    "current_a": 0.001,
+    "source_range_a": 0.001,
+    "voltage_limit_v": 0.2,
+    "measurement_count": 3,
+    "measurement_nplc": 1,
+    "measure_autorange": false,
+    "measure_filter": false,
+    "measure_relative": false,
+    "measure_autozero": "once before arm, then disabled",
+    "start_mode": "immediate",
+    "off_mode": "normal"
+  },
+  "state_path": {
+    "initial": {
+      "runtime_state": "idle",
+      "model_state": "trigger.STATE_ABORTED",
+      "last_block": 5,
+      "output_enabled": false,
+      "source_level_a": 0.0
+    },
+    "prepared": {
+      "runtime_state": "prepared",
+      "model_state": "trigger.STATE_BUILDING",
+      "last_block": 5,
+      "output_enabled": false
+    },
+    "terminal": {
+      "runtime_state": "complete",
+      "model_state": "trigger.STATE_IDLE",
+      "last_block": 7,
+      "output_enabled": false
+    },
+    "recovery": {
+      "runtime_state": "idle",
+      "model_state": "trigger.STATE_IDLE",
+      "last_block": 7,
+      "output_state": "smu.OFF",
+      "source_level_a": 0.0
+    }
+  },
+  "buffer": {
+    "style": "standard fill-once",
+    "capacity_records": 16,
+    "record_count": 3,
+    "start_index": 1,
+    "end_index": 3,
+    "schema": "ophyd-electrochemistry/k2460-buffer-proof-v1",
+    "records_sha256": "8229269863a29deb2819203a7d6e05d56e9ee02708418e25b6c03c8949570c52",
+    "offset_retry_equal": true,
+    "retained_through_recovery": true,
+    "records": [
+      {
+        "sample_index": 0,
+        "source_current_a": 0.0010000136681,
+        "measured_voltage_v": 0.10251331329,
+        "buffer_relative_time_s": 0.0,
+        "source_status": 200,
+        "measurement_status": 264
+      },
+      {
+        "sample_index": 1,
+        "source_current_a": 0.0010000141338,
+        "measured_voltage_v": 0.10251283646,
+        "buffer_relative_time_s": 0.0408383,
+        "source_status": 200,
+        "measurement_status": 8
+      },
+      {
+        "sample_index": 2,
+        "source_current_a": 0.0010000136681,
+        "measured_voltage_v": 0.10251164436,
+        "buffer_relative_time_s": 0.0816767,
+        "source_status": 200,
+        "measurement_status": 8
+      }
+    ]
+  },
+  "derived_observations": {
+    "mean_source_current_a": 0.0010000138233333333,
+    "mean_measured_voltage_v": 0.10251259803666667,
+    "per_record_resistance_ohm": [
+      102.5119121469336,
+      102.51138758455016,
+      102.51024323974438
+    ],
+    "mean_resistance_ohm": 102.51118099040939,
+    "population_standard_deviation_ohm": 0.000696813535941072,
+    "source_status_200_interpretation": "source readback + four-wire sense + output on during each reading",
+    "measurement_status_front_terminal_bit_present": true,
+    "first_record_measurement_status_256_interpretation": "first reading in a group",
+    "questionable_measurement_bit_present": false
+  },
+  "event_counts": {
+    "before": {
+      "all": 22,
+      "warnings": 5,
+      "errors": 6
+    },
+    "after": {
+      "all": 24,
+      "warnings": 5,
+      "errors": 6
+    },
+    "new_warnings": 0,
+    "new_errors": 0,
+    "event_log_not_cleared": true
+  },
+  "independent_new_session_audit": {
+    "runtime_state": "idle",
+    "model_state": "trigger.STATE_IDLE",
+    "last_block": 7,
+    "output_state": "smu.OFF",
+    "source_level_a": 0.0,
+    "buffer_record_count": 3,
+    "buffer_start_index": 1,
+    "buffer_end_index": 3,
+    "event_warnings": 5,
+    "event_errors": 6
+  },
+  "explicit_post_archive_discard": {
+    "before_record_count": 3,
+    "after_record_count": 0,
+    "capacity_records": 16,
+    "runtime_state": "idle",
+    "model_state": "trigger.STATE_IDLE",
+    "last_block": 7,
+    "output_state": "smu.OFF",
+    "source_level_a": 0.0
+  },
+  "evidence_limits": {
+    "resistor_calibrated": false,
+    "buffer_timestamps_are_relative_to_first_reading_not_actual_start": true,
+    "instrument_clock_to_epoch_mapped": false,
+    "capacity_limit_proven": false,
+    "buffer_wrap_tested": false,
+    "electrical_output_trace_captured": false,
+    "failure_injection_tested": false,
+    "hardware_gate_promoted": false
+  }
+}

@@ -39,10 +39,10 @@ runtime globals established by an earlier diagnostic script. A first install
 therefore requires both the digest-named script and its globals to be absent. An
 already-installed matching script is verified and initialized without rerunning
 its top level. Conflicting globals are never overwritten automatically. A stuck
-script requires a reboot, but a responsive idle/aborted runtime can be replaced
-without reboot: force-safe, delete the owned volatile script, set its known
-globals to `nil`, verify script/global absence plus OFF/0 A, then install the new
-digest.
+script requires a reboot. The host now exposes one allow-listed no-reboot
+migration from the exact v4 digest/build: it requires IDLE, OFF, 0 A and the
+expected digest-named script before deletion, clears only the known v4 globals,
+verifies absence plus OFF/0 A, and then invokes the normal exact-artifact loader.
 
 Firmware 1.7.16a also remained running when the 70-character name containing a
 full SHA-256 was invoked, despite the documented 256-character limit. The same
@@ -156,6 +156,18 @@ reported ABORTED, and directly confirmed `smu.OFF`/0 A. Repeated abort was
 idempotent, recovery returned IDLE, the expected abort warning was added, and
 the retained error count did not change. This remains state-path rather than
 electrical-latency evidence.
+
+Runtime build v5 adds a separate immediate-only measurement proof without
+expanding the hold envelope. It uses a 16-record standard fill-once buffer,
+clears it before output on, takes no more than eight 1 NPLC voltage readings
+with source readback, turns output off, and retains the buffer through recovery.
+On the nominal resistor, three records were retrieved twice with identical
+content/checksum and an independent session confirmed IDLE/OFF/0 A. The raw
+timestamps are relative to the first record rather than actual START, so the
+proof does not yet satisfy the shared M5 timestamp contract or promote G03/G04.
+The [M5 guide](m5-data.md) and
+[evidence](evidence/k2460-2026-10-09-m5-buffer-proof.json) record the exact
+boundary.
 
 ## Command-language transition and live installation
 

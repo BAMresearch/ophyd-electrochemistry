@@ -1,7 +1,8 @@
 # Template validation record
 
-Date: 2026-10-05. Scope: contract, read-only transport commissioning, and one
-bounded nominal-100-ohm smoke test; not operational sourcing or acquisition.
+Updated: 2026-10-09. Scope: contracts, transport/runtime commissioning, bounded
+nominal-100-ohm tests, and a narrow target-buffer proof; not operational
+sourcing or acquisition.
 
 ## M3 bounded transport and initial read-only commissioning
 
@@ -199,12 +200,23 @@ simulated lost reply can therefore be retried without skipping samples. The M2
 adapter marks both electrical values and timing as synthetic and preserves an
 empty no-START terminal outcome without inventing a START timestamp.
 
-Validated locally with Python 3.12.13: 251 tests pass, including 21 new M5 model,
-integrity, simulator-adapter and lost-reply tests. Ruff lint/format, strict mypy,
-locked dependency validation and strict MkDocs also pass. These checks do not
-exercise the 2460. Target paired acquisition, status-bit interpretation, clock
-mapping, capacity evidence, archive export and hardware gates G03/G04/G06 remain
-open.
+The narrow target increment adds an immediate-only, maximum-eight-reading TSP
+path backed by a 16-record fill-once buffer. Three +1 mA records on the nominal
+100 ohm front-terminal four-wire resistor contained source readback, measured
+voltage, buffer-relative time and both status words. The same offset read was
+identical on retry. Source status confirmed readback, four-wire sense and output
+on during each aperture; measurement status identified front terminals and the
+first-reading-in-group marker, with no questionable bit. Mean V/I was 102.5112
+ohm. Warning/error counts were unchanged. Recovery and an independent session
+confirmed IDLE/OFF/0 A while the records remained retained; after archiving,
+explicit discard left the buffer empty and the source safe. The exact record is
+[retained](evidence/k2460-2026-10-09-m5-buffer-proof.json).
+
+Validated locally with Python 3.12.13: 266 tests pass. Ruff lint/format, strict
+mypy, notebook JSON/code compilation, and strict MkDocs also pass. The target
+proof does not map first-reading-relative timestamps to actual START, establish
+capacity/no-wrap behavior, calibrate the resistor, export the shared archive, or
+complete hardware gates G03/G04/G06.
 
 ## RunEngine failed-Status teardown fix
 

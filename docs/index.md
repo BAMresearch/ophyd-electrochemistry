@@ -10,8 +10,9 @@ runtime and typed fake transport. M3 adds bounded PyVISA transactions and a
 read-only identity/language/output-state diagnostic. A narrow executable M4 TSP
 runtime has target compile/load/idle, immediate-hold, active-hold abort,
 START-wait abort, and no-START timeout state-path evidence but no acquisition or
-operational sourcing driver. The first M5 slice adds a shared immutable record
-schema and deterministic frozen-buffer chunks; target data acquisition is open.
+operational sourcing driver. M5 adds a shared immutable record schema and a
+narrow three-record target-buffer proof with deterministic retry; operational
+target acquisition remains open.
 Documentation, mock tests and identity queries do not replace target-firmware
 and bench validation.
 
