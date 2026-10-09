@@ -20,7 +20,7 @@ from .config import Keithley2460Config
 from .transport import CommandLanguage, parse_source_output_enabled
 
 RUNTIME_ABI = "oe-k2460-m4-hold-v1"
-RUNTIME_BUILD = "m4-finite-current-hold-v1"
+RUNTIME_BUILD = "m4-finite-current-hold-v2"
 RUNTIME_RESOURCE = "tsp/runtime.tsp"
 _MAX_CURRENT_A = 0.01
 _MAX_VOLTAGE_LIMIT_V = 2.0

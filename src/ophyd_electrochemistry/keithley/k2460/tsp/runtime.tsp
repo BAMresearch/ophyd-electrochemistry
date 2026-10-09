@@ -6,7 +6,7 @@
 -- disabled. The host accepts only this packaged source and verifies the ABI.
 
 oe_m4_runtime_abi = "oe-k2460-m4-hold-v1"
-oe_m4_runtime_build = "m4-finite-current-hold-v1"
+oe_m4_runtime_build = "m4-finite-current-hold-v2"
 
 oe_m4_state = "idle"
 oe_m4_mode = "none"
@@ -69,9 +69,13 @@ local function oe_m4_mask()
     return oe_m4_bit(oe_m4_ready_line) + oe_m4_bit(oe_m4_busy_line)
 end
 
-local function oe_m4_set_flags(ready, busy)
+local function oe_m4_track_flags(ready, busy)
     oe_m4_ready_level = oe_m4_level(ready, oe_m4_ready_asserted)
     oe_m4_busy_level = oe_m4_level(busy, oe_m4_busy_asserted)
+end
+
+local function oe_m4_set_flags(ready, busy)
+    oe_m4_track_flags(ready, busy)
     digio.line[oe_m4_ready_line].state = oe_m4_ready_level
     digio.line[oe_m4_busy_line].state = oe_m4_busy_level
 end
@@ -275,6 +279,13 @@ function oe_m4_refresh_state()
         elseif model_state == trigger.STATE_FAILED then
             oe_m4_state = "error"
         end
+    end
+    if oe_m4_state == "waiting_start" then
+        oe_m4_track_flags(true, false)
+    elseif oe_m4_state == "running" then
+        oe_m4_track_flags(false, true)
+    else
+        oe_m4_track_flags(false, false)
     end
     return model_state, model_substate, block
 end

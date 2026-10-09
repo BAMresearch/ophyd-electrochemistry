@@ -145,7 +145,7 @@ This is useful G03/G05 and ordinary exception-cleanup evidence, but it does not
 test process death, Ethernet loss, retrieval interruption, abort starvation, or
 instrument-local watchdog behavior. No hardware gate is promoted to PASS.
 
-## M4 runtime installation and immediate hold — PASS within narrow scope
+## M4 runtime installation, immediate hold, and programmatic abort — PASS within narrow scope
 
 The exact-artifact loader, packaged finite-current-hold TSP runtime, typed host
 adapter, and guarded commissioning notebook are implemented. After the retained
@@ -184,7 +184,30 @@ This proves the narrow local immediate TriggerFlow path, not electrical current,
 voltage, or duration accuracy: this M4 runtime does not acquire readings and no
 independent timing trace was taken.
 
+On 2026-10-09, a query-only reconnect reconfirmed serial 04686198, firmware
+1.7.16a, TSP mode, and `smu.OFF`. After the user reconfirmed the same resistor,
+front-terminal four-wire wiring, and physical OUTPUT-off indicator, a 5 s
+maximum +1 mA hold reached RUNNING at delay block 3. A host-requested abort then
+reported ABORTED/output-off, deasserted READY/BUSY, and independently read
+`smu.OFF` and 0 A. Request-to-confirmation wall time was 0.196 s. A repeated
+abort remained safely ABORTED without an additional warning, and recovery
+returned IDLE/OFF/0 A. The active abort added the expected instrument warning
+“Trigger model path 1 has been aborted”; the error count remained zero. See
+[M4 programmatic-abort evidence](evidence/k2460-2026-10-09-m4-programmatic-abort.json).
+
+The 0.196 s observation includes host/VISA/query latency and is not an
+independent electrical measurement of output cutoff. It therefore establishes
+the programmatic-abort state path and idempotent repeated command, not G02/G07
+abort-latency or electrical-OFF acceptance.
+
+The first abort trace also exposed a status-only defect: after avoiding warning
+1808, software tracking did not follow READY/BUSY changes made inside
+TriggerFlow. Runtime build `m4-finite-current-hold-v2` derives the tracked levels
+from the lifecycle state without reading output-configured pins. It was replaced
+in place and the repeated bench run reported RUNNING/BUSY 1 followed by
+ABORTED/IDLE with READY/BUSY 0 and no new error.
+
 External START and READY/BUSY require verified DB-9 wiring and timing capture,
 which are not available yet. External ABORT remains disabled. Process death,
-Ethernet loss, programmatic abort latency, and start-timeout behavior still need
+Ethernet loss, electrical abort latency, and start-timeout behavior still need
 separate evidence. G01, G02, and G07 therefore remain **NOT RUN**.

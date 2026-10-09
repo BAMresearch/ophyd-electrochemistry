@@ -1,0 +1,118 @@
+{
+  "schema": "k2460-m4-programmatic-abort-v1",
+  "recorded_at_utc": "2026-10-09T07:53:48Z",
+  "instrument": {
+    "identity_raw": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "serial_number": "04686198",
+    "firmware_version": "1.7.16a",
+    "resource_name": "TCPIP0::169.254.113.151::5025::SOCKET",
+    "command_language": "TSP"
+  },
+  "query_only_preflight": {
+    "observed_at_utc": "2026-10-09T07:44:20.077293+00:00",
+    "output_state": "smu.OFF",
+    "mutating_commands_sent": false
+  },
+  "physical_setup": {
+    "load": "user-confirmed nominal 100 ohm resistor",
+    "terminals": "front",
+    "sense": "four-wire",
+    "physical_output_indicator_confirmed_off": true
+  },
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v2",
+    "sha256": "54605088b6cb182a9598502ed5d6c47e7f8794c30f937bd9662b1ffcb33fe966",
+    "script_name": "oe_m4_54605088b6cb182a9598502e"
+  },
+  "request": {
+    "current_a": 0.001,
+    "source_range_a": 0.001,
+    "voltage_limit_v": 0.2,
+    "maximum_duration_s": 5.0,
+    "abort_delay_host_s": 0.25,
+    "start_mode": "immediate",
+    "off_mode": "normal"
+  },
+  "state_path": {
+    "prepared": {
+      "runtime_state": "prepared",
+      "model_state": "trigger.STATE_BUILDING",
+      "output_enabled": false
+    },
+    "running": {
+      "runtime_state": "running",
+      "model_state": "trigger.STATE_RUNNING",
+      "last_block": 3,
+      "output_enabled": true,
+      "ready_level": 0,
+      "busy_level": 1
+    },
+    "active_abort": {
+      "runtime_state": "aborted",
+      "model_state": "trigger.STATE_ABORTED",
+      "last_block": 3,
+      "output_enabled": false,
+      "ready_level": 0,
+      "busy_level": 0,
+      "source_level_a": 0.0,
+      "host_request_to_confirmation_s": 0.19564575000549667
+    },
+    "repeated_abort": {
+      "runtime_state": "aborted",
+      "output_enabled": false,
+      "additional_warning": false
+    },
+    "recovery": {
+      "runtime_state": "idle",
+      "model_state": "trigger.STATE_ABORTED",
+      "output_state": "smu.OFF",
+      "source_level_a": 0.0,
+      "ready_level": 0,
+      "busy_level": 0
+    }
+  },
+  "event_counts": {
+    "before": {
+      "all": 8,
+      "warnings": 3,
+      "errors": 0
+    },
+    "after_active_abort": {
+      "all": 10,
+      "warnings": 4,
+      "errors": 0
+    },
+    "after_repeated_abort_and_recovery": {
+      "all": 10,
+      "warnings": 4,
+      "errors": 0
+    },
+    "expected_warning": "Trigger model path 1 has been aborted"
+  },
+  "commissioning_note": {
+    "initial_harness_result": "all state, repeated-abort, recovery, OFF, and 0 A assertions passed; the harness then rejected the expected abort warning",
+    "initial_exception_cleanup": {
+      "runtime_state": "aborted",
+      "model_state": "trigger.STATE_ABORTED",
+      "last_block": 3,
+      "output_state": "smu.OFF",
+      "source_level_a": 0.0
+    },
+    "corrected_acceptance": "record the intentional-abort warning and require no new errors"
+  },
+  "runtime_status_correction": {
+    "discovery": "the first abort trace reported busy_level 0 while RUNNING because software tracking was not refreshed for TriggerFlow digital-output blocks",
+    "change": "runtime build v2 derives tracked READY/BUSY levels from WAITING_START, RUNNING, and terminal runtime states without reading output-configured pins",
+    "replacement": "the responsive v1 volatile runtime was force-safed, deleted with its owned globals, and replaced in place without reboot",
+    "verification": "v2 reported RUNNING with BUSY 1, then ABORTED and IDLE with READY/BUSY 0; no warning 1808 or error was added"
+  },
+  "evidence_limits": {
+    "electrical_current_or_voltage_sampled_during_hold": false,
+    "abort_cutoff_measured_electrically": false,
+    "host_round_trip_is_not_electrical_abort_latency": true,
+    "external_start_tested": false,
+    "network_loss_tested": false,
+    "hardware_gate_promoted": false
+  }
+}

@@ -111,7 +111,7 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     artifact = packaged_runtime()
 
     assert artifact.abi == "oe-k2460-m4-hold-v1"
-    assert artifact.build == "m4-finite-current-hold-v1"
+    assert artifact.build == "m4-finite-current-hold-v2"
     assert artifact.sha256 == hashlib.sha256(artifact.source.encode("ascii")).hexdigest()
     assert artifact.script_name == f"oe_m4_{artifact.sha256[:24]}"
     assert len(artifact.script_name) == 30
@@ -126,6 +126,8 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     assert "math.huge" not in artifact.source
     assert "oe_m4_ready_level" in artifact.source
     assert "oe_m4_busy_level" in artifact.source
+    assert "oe_m4_track_flags(true, false)" in artifact.source
+    assert "oe_m4_track_flags(false, true)" in artifact.source
     assert "digio.line[oe_m4_ready_line].state," not in artifact.source
     assert "digio.line[oe_m4_busy_line].state," not in artifact.source
     assert not artifact.source.rstrip().endswith("oe_m4_initialize()")

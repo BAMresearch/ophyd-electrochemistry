@@ -35,6 +35,14 @@
   100 ohm resistor, including PREPARED/RUNNING/COMPLETE states, warning-free
   confirmation, and independent IDLE/OFF/0 A cleanup. No electrical samples or
   independent timing trace were collected.
+- Record a programmatic abort during a 5 s maximum +1 mA hold, including
+  RUNNING-to-ABORTED, OFF/0 A confirmation, idempotent repeated abort, recovery,
+  the expected trigger-model-aborted warning, and zero errors. The 0.196 s host
+  request-to-confirmation observation is not electrical cutoff-latency evidence.
+- Fix software-tracked READY/BUSY status for TriggerFlow state changes, identify
+  the corrected artifact as `m4-finite-current-hold-v2`, replace the responsive
+  volatile runtime without reboot, and verify RUNNING/BUSY plus abort/idle-low
+  states on the target without warning 1808.
 - Keep external ABORT disabled and G01/G02/G07 NOT RUN pending command-language
   transition, target compilation, READY-boundary traces, and failure testing.
 

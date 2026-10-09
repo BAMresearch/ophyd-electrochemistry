@@ -2,9 +2,10 @@
 
 M1 pure models/generators and bounded planning compilation, M2 independent
 simulation, M3 bounded transport, and the narrow M4 finite-hold proof are
-implemented. M4 now has target compile/load/idle and one narrow immediate-hold
-state-path proof, while electrical timing and failure-path evidence remain open. Full G05 transport
-characterization and general TSP/TriggerFlow lowering remain later work.
+implemented. M4 now has target compile/load/idle plus narrow immediate-hold and
+programmatic-abort state-path proofs, while electrical timing and failure-path
+evidence remain open. Full G05 transport characterization and general
+TSP/TriggerFlow lowering remain later work.
 It is not an operational-hardware approval or a promise that every feature is
 available on the instrument.
 
@@ -13,7 +14,7 @@ available on the instrument.
 | M1 — Pure validation/compiler | Finite SI models including first-class PRBS and arbitrary waveforms; deterministic PRBS/multisine generation; request/compiled hashes; range/resource budgets; CV and waveform timing rules | Independent PRBS vectors, coherent tone/peak tests, finite budgets, invalid requests rejected; no network code |
 | M2 — Independent simulation | Fake transport/runtime with START/ABORT, partial buffers, state races, waveform playback and failure injection | Both start modes; repeated abort; failed shutdown; buffer retention; snapshot consistency; source/measurement timing and phase mapping |
 | M3 — Transport characterization | **Implemented:** PyVISA backend, identity/firmware/language/output-state checks, read-only diagnostic, bounded framing/chunks/errors. **Open:** retrieval/abort fairness and complete target-unit G05 evidence | G05 on dummy load; no ambiguous command retries |
-| M4 — Local runtime proof | **Implemented and target-tested:** exact-artifact TSP loader, minimal finite current hold, READY/BUSY/START model, local timeout, host adapter, target compile/load/idle and immediate-hold state proof. **Open:** electrical/timing and failure evidence | G01, G02, G07; output remains off before START; external-abort capability rejected until proven |
+| M4 — Local runtime proof | **Implemented and target-tested:** exact-artifact TSP loader, minimal finite current hold, READY/BUSY/START model, local timeout, host adapter, target compile/load/idle, immediate-hold, and programmatic-abort state proofs. **Open:** electrical/timing and failure evidence | G01, G02, G07; output remains off before START; external-abort capability rejected until proven |
 | M5 — Acquisition and data | Measured/readback V/I record schema, aperture/phase mapping, timing, frozen-buffer and waveform provenance export | G03, G04, G06; known physical origin, capacity and clock uncertainty |
 | M6 — Classic ophyd Device/Flyer | Status/state monitor, config metadata, read/describe, complete/collect, stop/unstage | Real RunEngine + simulator; then all relevant bench gates |
 | M7 — Protocol expansion | Commission finite arbitrary current playback, first-class PRBS and multisine through that shared path; CV/current cutoffs, cycling, pulse and voltage waveform variants | Each protocol proves limits, timing, abort latency and storage budget; waveform fidelity/phase requires G08 |
@@ -56,7 +57,8 @@ hardware defaults. See [waveform specification](waveforms.md).
 
 Record actual unit firmware/serial, VISA backend, DUT terminals/sense wiring,
 cell-specific limits/off-mode behavior, leader logic interface, required worst-case
-abort latency, detector timing precision, and licensing. These do not block M1/M2.
+abort latency, and detector timing precision. These do not block M1/M2. Licensing
+is resolved as BSD 3-Clause.
 
 Packaged, reviewed TSP programs remain in scope for M4/M7. User-written TSP
 upload/execution is outside the current scope; the simulator has no raw-script API.

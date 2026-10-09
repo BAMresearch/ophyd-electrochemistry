@@ -39,8 +39,10 @@ SCPI mode and output state OFF over both explicit VISA resources [S11]. This doe
 not validate runtime block execution, arm ordering, interlock behavior,
 electrical OFF-mode behavior, or shutdown latency. The exact-artifact M4 runtime
 has compiled, loaded, initialized, and completed a narrow +1 mA immediate hold
-on the target. No independent electrical/timing trace, external START path,
-abort behavior, or electrical OFF property has yet been accepted.
+on the target. Its programmatic abort/repeated-abort/recovery state path has also
+completed with OFF/0 A confirmation. No independent electrical/timing trace,
+external START path, measured electrical abort latency, or electrical OFF
+property has yet been accepted.
 
 The initial local API check used Bluesky 1.14.6 and ophyd 1.11.2. The later
 [RunEngine teardown fix](development.md#runengine-abort-test-teardown-message)

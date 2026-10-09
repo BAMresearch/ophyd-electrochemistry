@@ -1,8 +1,9 @@
 # M4 finite local runtime proof
 
 M4 has an offline-reviewed implementation with successful target
-compile/load/initialize, idle-status, and narrow immediate-hold state-path
-evidence. The implementation is deliberately smaller than the eventual
+compile/load/initialize, idle-status, narrow immediate-hold, and programmatic
+abort state-path evidence. The implementation is deliberately smaller than the
+eventual
 acquisition backend: one bounded current hold, NORMAL output-off mode, immediate
 or digital START, and programmatic abort. It does not collect measurements,
 enforce measurement-derived voltage cutoffs, play arbitrary waveforms, or expose
@@ -98,9 +99,10 @@ The implementation follows the Model 2460 Reference Manual Rev. C, which applies
 to firmware 1.7.0 and later. The reviewed commands are `loadscript`/`endscript`,
 digital-line mode/state and event detection, trigger timer 1, and TriggerFlow
 digital-I/O, notify, branch, delay, source-output, and abort operations. The
-target unit runs firmware 1.7.16a. Compilation, initialization, and the
-immediate state path have run successfully; external START, abort/failure paths,
-electrical values, and independent timing remain untested.
+target unit runs firmware 1.7.16a. Compilation, initialization, the immediate
+state path, and programmatic abort/recovery have run successfully; external
+START, electrical values, failure injection, and independent timing remain
+untested.
 
 The external START construction necessarily clears the detector before
 initiating a model whose first block asserts READY. Bench traces must determine
@@ -117,6 +119,20 @@ OFF impedance, abort latency, process-kill behavior, or network-loss behavior.
 G01, G02, and G07 remain NOT RUN until the required traces and failure tests
 exist.
 
+A later 5 s maximum hold was aborted while RUNNING at delay block 3. The runtime
+reported ABORTED/output-off with READY/BUSY deasserted, and direct queries read
+`smu.OFF` and 0 A. Repeating abort was idempotent and recovery returned
+IDLE/OFF/0 A. Host request-to-confirmation took 0.196 s and the instrument added
+its expected “Trigger model path 1 has been aborted” warning with no new error.
+This proves command/state behavior, not electrical cutoff latency; the latter
+still requires an independent trace.
+
+That trace exposed a status-only defect in the first software-tracked flag
+implementation: TriggerFlow changed the physical flags but did not update the
+tracking variables. Runtime build `m4-finite-current-hold-v2` refreshes logical
+READY/BUSY from the lifecycle state without reading output pins. A repeated
+target run reported RUNNING/BUSY 1, then ABORTED and IDLE with both flags low.
+
 ## Command-language transition and live installation
 
 The instrument was changed from SCPI to TSP using the front panel and rebooted;
@@ -128,9 +144,9 @@ TSP cannot be combined. The commissioning workflow therefore never sends
 After reboot, the query-only diagnostic returned `TSP` and `smu.OFF`. The
 blank-free short-name runtime then compiled, initialized, and reported `idle`.
 After a separate physical confirmation, the guarded immediate hold completed as
-described above. `notebooks/keithley_2460_m4_runtime.ipynb` reproduces both
-boundaries with independent opt-in flags and does not clear the retained event
-log.
+described above; the later guarded abort test used the same load and limits.
+`notebooks/keithley_2460_m4_runtime.ipynb` reproduces these boundaries with
+independent opt-in flags and does not clear the retained event log.
 
 Primary source: [Tektronix Model 2460 Reference Manual Rev. C](https://download.tek.com/manual/2460-901-01C_Sept_2019_Ref.pdf),
 sections 2, 8, 13, 14, and 15.

@@ -131,6 +131,23 @@ independent session confirmed the final safe state. See
 `docs/evidence/k2460-2026-10-05-m4-immediate-hold.json`. No electrical sample or
 independent timing trace was collected, so G01/G02/G07 remain NOT RUN.
 
+On 2026-10-09, the same runtime and resistor setup exercised programmatic abort
+during a 5 s maximum +1 mA hold. The host observed RUNNING/output-on at delay
+block 3, then confirmed ABORTED/output-off, READY/BUSY deasserted, `smu.OFF`, and
+0 A. Request-to-confirmation wall time was 0.196 s. Repeated abort remained
+ABORTED without an additional warning; recovery returned IDLE/OFF/0 A. The
+active abort added the expected “Trigger model path 1 has been aborted” warning
+and no error. The retained record is
+`docs/evidence/k2460-2026-10-09-m4-programmatic-abort.json`. This is a state-path
+and command-idempotence result, not an independent electrical cutoff-latency
+measurement, so G02/G07 remain NOT RUN.
+
+The first trace revealed that software-tracked BUSY remained low while the
+TriggerFlow model was RUNNING. Build `m4-finite-current-hold-v2` refreshes
+logical READY/BUSY from runtime state without reading output-configured pins.
+After safe in-place volatile replacement, the target reported RUNNING/BUSY 1 and
+ABORTED/IDLE with both flags low, without warning 1808 or a new error.
+
 A retained SCPI query-only preflight reached serial 04686198 at
 2026-10-05T14:25:58Z and reconfirmed firmware 1.7.16a, SCPI mode, and output OFF.
 No mutating command was sent. The result is retained in
