@@ -148,6 +148,29 @@ logical READY/BUSY from runtime state without reading output-configured pins.
 After safe in-place volatile replacement, the target reported RUNNING/BUSY 1 and
 ABORTED/IDLE with both flags low, without warning 1808 or a new error.
 
+The external no-START path then exposed two pre-arm firmware differences:
+trigger-mode input state reads return `nil` and post errors, while a valid
+digital-input read returns symbolic `digio.STATE_HIGH`, not numeric 1. Both
+attempts failed before initiation and were independently left OFF/0 A. Build
+`m4-finite-current-hold-v4` samples and symbolically compares START only in
+digital-input mode, then restores trigger-input mode and reports START unknown.
+With the DB-9 connector unconnected and falling-edge START, WAITING_START showed
+READY 1/BUSY 0/output-off; 34 polls stayed off. The two-second local timeout was
+observed after 2.047 s at block 15 with flags low, no overrun, and no new warning
+or error; recovery returned IDLE/OFF/0 A. Evidence is retained in
+`docs/evidence/k2460-2026-10-09-m4-start-timeout.json`. Polling does not prove
+absence of a brief pulse or independently validate timing, so G01/G02 remain
+NOT RUN.
+
+Programmatic abort was then issued while the same unconnected-input model was
+WAITING_START at block 5, before timeout and without a START edge. READY was 1,
+BUSY/output were low, and abort confirmation after 0.199 s host wall time
+reported ABORTED, flags low, `smu.OFF`, and 0 A. Repeated abort added no warning;
+recovery returned IDLE/OFF/0 A. Only the expected active-abort warning was added
+and errors remained at six. Evidence is retained in
+`docs/evidence/k2460-2026-10-09-m4-waiting-start-abort.json`; electrical latency
+and READY/START boundary timing remain untested.
+
 A retained SCPI query-only preflight reached serial 04686198 at
 2026-10-05T14:25:58Z and reconfirmed firmware 1.7.16a, SCPI mode, and output OFF.
 No mutating command was sent. The result is retained in
@@ -159,6 +182,29 @@ The complete offline suite now has 230 passing tests on macOS/Python 3.12.13.
 Ruff lint/format, strict source/script mypy, lock consistency, strict MkDocs,
 notebook JSON/offline artifact execution, and package metadata checks are the
 required final validation set for this increment.
+
+## M5 measurement-record foundation
+
+The first M5 slice was implemented offline on 9 October 2026. The public
+`measurement-v1` models retain explicit electrical and timing origins, raw and
+actual-START-relative timestamps, aperture/availability boundaries, source
+setpoint, status bits and schedule association. Validation rejects nonfinite
+values, invalid apertures, ambiguous mapping, source-function changes, timestamp
+reference mismatches, record gaps and declared-capacity overruns.
+
+Frozen buffers bind records to acquisition, request and compiled-program IDs.
+Full-buffer and per-chunk SHA-256 values cover canonical JSON records. Chunk
+retrieval is addressed by immutable offset rather than an advancing cursor; a
+simulated lost reply can therefore be retried without skipping samples. The M2
+adapter marks both electrical values and timing as synthetic and preserves an
+empty no-START terminal outcome without inventing a START timestamp.
+
+Validated locally with Python 3.12.13: 251 tests pass, including 21 new M5 model,
+integrity, simulator-adapter and lost-reply tests. Ruff lint/format, strict mypy,
+locked dependency validation and strict MkDocs also pass. These checks do not
+exercise the 2460. Target paired acquisition, status-bit interpretation, clock
+mapping, capacity evidence, archive export and hardware gates G03/G04/G06 remain
+open.
 
 ## RunEngine failed-Status teardown fix
 

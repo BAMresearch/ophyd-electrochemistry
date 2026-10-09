@@ -1,0 +1,95 @@
+{
+  "schema": "k2460-m4-waiting-start-abort-v1",
+  "recorded_at_utc": "2026-10-09T08:09:38Z",
+  "instrument": {
+    "identity_raw": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "serial_number": "04686198",
+    "firmware_version": "1.7.16a",
+    "resource_name": "TCPIP0::169.254.113.151::5025::SOCKET",
+    "command_language": "TSP"
+  },
+  "physical_setup": {
+    "load": "user-confirmed nominal 100 ohm resistor",
+    "terminals": "front",
+    "sense": "four-wire",
+    "rear_digital_io": "user-confirmed completely unconnected"
+  },
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v4",
+    "sha256": "ce741e17ffcdd7f55d489c7b69a3e31c21d263dceea22a522844c8e0a61f0177",
+    "script_name": "oe_m4_ce741e17ffcdd7f55d489c7b"
+  },
+  "request": {
+    "current_a": 0.001,
+    "source_range_a": 0.001,
+    "voltage_limit_v": 0.2,
+    "hold_duration_s": 0.25,
+    "external_start_timeout_s": 5.0,
+    "abort_delay_host_s": 0.25,
+    "start_edge": "falling",
+    "start_applied": false
+  },
+  "state_path": {
+    "waiting_start": {
+      "runtime_state": "waiting_start",
+      "model_state": "trigger.STATE_RUNNING",
+      "last_block": 5,
+      "output_enabled": false,
+      "ready_level": 1,
+      "busy_level": 0,
+      "start_level": -1,
+      "start_overrun": false,
+      "timer_overrun": false
+    },
+    "active_abort": {
+      "runtime_state": "aborted",
+      "model_state": "trigger.STATE_ABORTED",
+      "last_block": 5,
+      "output_enabled": false,
+      "ready_level": 0,
+      "busy_level": 0,
+      "source_level_a": 0.0,
+      "host_request_to_confirmation_s": 0.19857495799078606
+    },
+    "repeated_abort": {
+      "runtime_state": "aborted",
+      "output_enabled": false,
+      "additional_warning": false
+    },
+    "recovery": {
+      "runtime_state": "idle",
+      "model_state": "trigger.STATE_ABORTED",
+      "last_block": 5,
+      "output_state": "smu.OFF",
+      "source_level_a": 0.0,
+      "ready_level": 0,
+      "busy_level": 0
+    }
+  },
+  "event_counts": {
+    "before": {
+      "all": 19,
+      "warnings": 4,
+      "errors": 6
+    },
+    "after_active_abort": {
+      "all": 22,
+      "warnings": 5,
+      "errors": 6
+    },
+    "after_repeated_abort_and_recovery": {
+      "all": 22,
+      "warnings": 5,
+      "errors": 6
+    },
+    "expected_warning": "Trigger model path 1 has been aborted"
+  },
+  "evidence_limits": {
+    "external_start_edge_applied": false,
+    "electrical_output_monitored_continuously": false,
+    "host_round_trip_is_not_electrical_abort_latency": true,
+    "ready_boundary_timing_measured": false,
+    "hardware_gate_promoted": false
+  }
+}

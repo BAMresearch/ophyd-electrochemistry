@@ -6,7 +6,7 @@
 -- disabled. The host accepts only this packaged source and verifies the ABI.
 
 oe_m4_runtime_abi = "oe-k2460-m4-hold-v1"
-oe_m4_runtime_build = "m4-finite-current-hold-v2"
+oe_m4_runtime_build = "m4-finite-current-hold-v4"
 
 oe_m4_state = "idle"
 oe_m4_mode = "none"
@@ -17,6 +17,7 @@ oe_m4_ready_asserted = 1
 oe_m4_busy_asserted = 1
 oe_m4_ready_level = -1
 oe_m4_busy_level = -1
+oe_m4_start_level = -1
 oe_m4_complete_block = 0
 oe_m4_timeout_block = 0
 
@@ -91,6 +92,7 @@ function oe_m4_initialize()
     smu.source.output = smu.OFF
     oe_m4_state = "idle"
     oe_m4_mode = "none"
+    oe_m4_start_level = -1
 end
 
 function oe_m4_prepare_current_hold(
@@ -160,6 +162,7 @@ function oe_m4_prepare_current_hold(
     oe_m4_ready_line = ready_line
     oe_m4_busy_line = busy_line
     oe_m4_start_line = start_line
+    oe_m4_start_level = -1
     oe_m4_ready_asserted = ready_asserted
     oe_m4_busy_asserted = busy_asserted
 
@@ -247,15 +250,21 @@ function oe_m4_arm()
         error("M4 proof output is not off before arm")
     end
     if oe_m4_mode == "external" then
-        local expected_inactive = 0
+        local expected_inactive = digio.STATE_LOW
         if trigger.digin[oe_m4_start_line].edge == trigger.EDGE_FALLING then
-            expected_inactive = 1
+            expected_inactive = digio.STATE_HIGH
         end
-        if digio.line[oe_m4_start_line].state ~= expected_inactive then
+        local configured_edge = trigger.digin[oe_m4_start_line].edge
+        digio.line[oe_m4_start_line].mode = digio.MODE_DIGITAL_IN
+        oe_m4_start_level = digio.line[oe_m4_start_line].state
+        if oe_m4_start_level ~= expected_inactive then
             error("START input is asserted before arm")
         end
+        digio.line[oe_m4_start_line].mode = digio.MODE_TRIGGER_IN
+        trigger.digin[oe_m4_start_line].edge = configured_edge
         trigger.digin[oe_m4_start_line].clear()
         trigger.timer[1].clear()
+        oe_m4_start_level = -1
         oe_m4_state = "waiting_start"
     else
         oe_m4_state = "running"
@@ -292,10 +301,8 @@ end
 
 function oe_m4_status()
     local model_state, model_substate, block = oe_m4_refresh_state()
-    local start_state = -1
     local start_overrun = false
     if oe_m4_mode == "external" then
-        start_state = digio.line[oe_m4_start_line].state
         start_overrun = trigger.digin[oe_m4_start_line].overrun
     end
     return oe_m4_runtime_abi,
@@ -306,7 +313,7 @@ function oe_m4_status()
         smu.source.output,
         oe_m4_ready_level,
         oe_m4_busy_level,
-        start_state,
+        oe_m4_start_level,
         start_overrun,
         trigger.timer[1].start.overrun
 end
@@ -317,6 +324,7 @@ function oe_m4_abort()
     smu.source.output = smu.OFF
     oe_m4_set_flags(false, false)
     smu.source.level = 0
+    oe_m4_start_level = -1
     oe_m4_state = "aborted"
 end
 
@@ -326,6 +334,7 @@ function oe_m4_force_safe()
     smu.source.output = smu.OFF
     oe_m4_set_flags(false, false)
     smu.source.level = 0
+    oe_m4_start_level = -1
     oe_m4_state = "aborted"
 end
 
@@ -341,5 +350,6 @@ function oe_m4_recover()
     trigger.timer[1].enable = trigger.OFF
     oe_m4_set_flags(false, false)
     smu.source.level = 0
+    oe_m4_start_level = -1
     oe_m4_state = "idle"
 end

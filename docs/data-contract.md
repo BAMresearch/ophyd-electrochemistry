@@ -8,18 +8,30 @@ starts its elapsed clock on actual execution, not preparation or external arming
 
 ## Buffered record
 
+The hardware-neutral Python representation is now fixed as
+`ophyd-electrochemistry/measurement-v1`; see the [M5 data guide](m5-data.md).
+It separates run-constant `MeasurementSchema`, per-sample `MeasurementRecord`,
+terminal `RetainedBufferMetadata`, and offset-addressed `RecordChunk`. Target
+acquisition and the M6 Bluesky projection are not yet implemented.
+
 Data keys are prefixed with the ophyd device name. The example device `ec` yields:
 
 | Key | Type/unit | Meaning |
 |---|---|---|
 | `ec_sample_index` | integer | Zero-based monotonic acquisition index |
 | `ec_time_relative` | number, s | Instrument time since actual START |
+| `ec_instrument_timestamp` | number, s | Unmodified instrument clock value |
+| `ec_aperture_start`, `ec_aperture_end` | number, s | Half-open integration window relative to actual START |
+| `ec_available` | number, s | Earliest time this complete record became available |
 | `ec_voltage` | number, V | Measured voltage or explicitly identified source readback |
 | `ec_current` | number, A | Measured current or explicitly identified source readback |
 | `ec_source_function` | string | `voltage` or `current` |
 | `ec_source_setpoint` | number, V or A | Commanded level; split descriptors if unit changes |
 | `ec_status_bits` | integer | Raw instrument flags plus documented interpretation |
 | `ec_cycle_index`, `ec_segment_index` | integer | Zero-based program position |
+| `ec_first_logical_point`, `ec_last_logical_point` | integer | Source-point aperture extent, or `-1` when mapping is unknown |
+| `ec_repeat_index`, `ec_point_index` | integer | Source repeat/point at aperture start, or `-1` when unknown |
+| `ec_mapping_quality` | string | Settled/unsettled single dwell, crossing, or unknown |
 
 Source readback and measurement may be obtained sequentially or through buffer
 options; no simultaneous dual-channel V/I guarantee is assumed. Declare each
@@ -81,7 +93,9 @@ its integration aperture lies within that dwell; the reading is still integrated
 Crossing an edge
 requires overlap information or an explicit ambiguous/invalid mapping flag;
 unknown phase must not be represented as a valid index. Fields needed to expose
-this mapping are finalized with their fixed descriptor schema at M5.
+this mapping are now fixed in the M5 Python record contract. The M6 descriptor
+will keep the same meanings and encode absent indices as `-1`; it must not
+silently treat a crossing or unknown association as a valid single point.
 
 M1 exposes planning metadata, generator provenance and scheduled sample mappings
 in `CompiledProgram`; see the [implemented schema](m1-compiler.md). Planned tick
@@ -93,7 +107,8 @@ M2 adds explicitly synthetic aperture-average records, local virtual ticks,
 source traces and a checksummed simulation diagnostic export. These are not
 observed hardware records or calibrated epoch timestamps. The [M2 guide](m2-simulator.md)
 defines their schema, fault/retention semantics and simulated field origin;
-the operational M5 schema remains pending.
+the target-backed M5 acquisition remains pending. M2 now also adapts frozen
+synthetic data into the shared M5 record schema without changing its origin.
 
 A slower measurement schedule may span multiple source points. Requested
 setpoints remain distinct from measurements and source readback; record source
@@ -117,9 +132,11 @@ as resolved individual PRBS bits without validated timing/exposure evidence.
 
 No buffer wrap/overwrite is permitted. Estimate required storage before arm;
 reject programs that exceed proven capacity. Generic advertised reading capacity
-is not a paired-record budget. Version one transfers terminal buffers in bounded
-chunks and records counts/checksums. Acquisition outcome and data export outcome
+is not a paired-record budget. Version one transfers terminal buffers in bounded,
+offset-addressed chunks and records counts/checksums. Repeating the same
+acquisition ID, offset and bound must return the same frozen records. Acquisition
+outcome and data export outcome
 are distinct. Collection is not a durable-storage acknowledgement: retain
 instrument data until explicitly archived or discarded. A document transport
-failure has no guaranteed exactly-once semantics; use sample_index/acquisition
-ID for reconciliation and diagnostic export for replay.
+failure still has no guaranteed exactly-once document semantics; use
+sample_index/acquisition ID for reconciliation and diagnostic export for replay.

@@ -207,7 +207,42 @@ from the lifecycle state without reading output-configured pins. It was replaced
 in place and the repeated bench run reported RUNNING/BUSY 1 followed by
 ABORTED/IDLE with READY/BUSY 0 and no new error.
 
+With the rear digital-I/O connector confirmed completely unconnected, the
+no-START timeout path was then exercised. Commissioning first established two
+firmware constraints without arming: trigger-mode inputs cannot be read through
+`digio.line[N].state` or `digio.readport()`, and digital-input state is returned
+as symbolic `digio.STATE_HIGH` rather than numeric 1. Those rejected attempts
+left output OFF/0 A and added six retained errors in total. Build
+`m4-finite-current-hold-v4` samples START in digital-input mode using symbolic
+comparison immediately before switching to trigger-input mode; while armed it
+reports START as unavailable rather than reading it illegally.
+
+Using falling-edge START so the floating-high unconnected input was inactive,
+the successful run reported WAITING_START with READY 1, BUSY 0, and output off.
+All 34 host polls observed output off. The local two-second timeout reached
+START_TIMEOUT at terminal block 15 after 2.047 s host-observed wall time, with
+both flags low and no detector/timer overrun. Warnings and errors were unchanged.
+The programmed 1 mA level remained configured while output was off; recovery
+explicitly restored IDLE/OFF/0 A. See
+[M4 start-timeout evidence](evidence/k2460-2026-10-09-m4-start-timeout.json).
+
+Polling does not exclude a brief electrical pulse, and host time is not an
+independent timing trace. The result proves the no-edge state path, not the
+external START boundary or G01/G02 timing.
+
+The same unconnected-input setup then exercised programmatic abort while the
+runtime was still WAITING_START at polling block 5. READY was asserted, BUSY and
+output were low, and no START was applied. Abort was confirmed after 0.199 s host
+wall time with the trigger model ABORTED, both flags low, `smu.OFF`, and 0 A.
+Repeated abort added no warning, recovery returned IDLE/OFF/0 A, and the retained
+error count stayed at six. The active abort added only the expected
+trigger-model-aborted warning. See
+[M4 START-wait abort evidence](evidence/k2460-2026-10-09-m4-waiting-start-abort.json).
+
+This establishes safe command/state behavior while waiting, not electrical
+abort latency or actual external-edge timing.
+
 External START and READY/BUSY require verified DB-9 wiring and timing capture,
 which are not available yet. External ABORT remains disabled. Process death,
-Ethernet loss, electrical abort latency, and start-timeout behavior still need
-separate evidence. G01, G02, and G07 therefore remain **NOT RUN**.
+Ethernet loss, electrical abort latency, and actual START-edge behavior still
+need separate evidence. G01, G02, and G07 therefore remain **NOT RUN**.

@@ -4,6 +4,13 @@
 
 ## Unreleased
 
+- Add the first offline M5 data layer: immutable versioned V/I records with
+  explicit electrical/timing origin, clock/aperture/source mapping, validated
+  terminal buffer metadata, canonical checksums and deterministic offset chunks.
+- Adapt frozen M2 records into that schema without weakening their synthetic
+  provenance; retrying a lost offset-chunk reply no longer advances an implicit
+  cursor. Target measurement and archive export remain open.
+
 - Implement the M3 serialized, bounded optional PyVISA transport with explicit
   backend/resource/framing, strict 2460 identity/language validation, typed
   failures, session invalidation, and no retries of ambiguous mutations.
@@ -43,6 +50,15 @@
   the corrected artifact as `m4-finite-current-hold-v2`, replace the responsive
   volatile runtime without reboot, and verify RUNNING/BUSY plus abort/idle-low
   states on the target without warning 1808.
+- Harden external START after target firmware rejected trigger-mode input reads
+  and returned symbolic digital-input levels: sample inactivity in digital mode,
+  compare enums, restore trigger mode/edge, and report armed START as unknown.
+  Runtime build v4 completed the unconnected-input two-second timeout path with
+  READY asserted, output off in all polls, terminal flags low, no overruns, no
+  new warning/error, and IDLE/OFF/0 A recovery.
+- Verify programmatic abort from WAITING_START before timeout: READY asserted,
+  BUSY/output low, ABORTED and OFF/0 A confirmation, idempotent repeated abort,
+  IDLE recovery, one expected abort warning, and unchanged retained errors.
 - Keep external ABORT disabled and G01/G02/G07 NOT RUN pending command-language
   transition, target compilation, READY-boundary traces, and failure testing.
 

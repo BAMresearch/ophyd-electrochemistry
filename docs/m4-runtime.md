@@ -1,9 +1,9 @@
 # M4 finite local runtime proof
 
 M4 has an offline-reviewed implementation with successful target
-compile/load/initialize, idle-status, narrow immediate-hold, and programmatic
-abort state-path evidence. The implementation is deliberately smaller than the
-eventual
+compile/load/initialize, idle-status, narrow immediate-hold, programmatic-abort,
+and no-START timeout state-path evidence. The implementation is deliberately
+smaller than the eventual
 acquisition backend: one bounded current hold, NORMAL output-off mode, immediate
 or digital START, and programmatic abort. It does not collect measurements,
 enforce measurement-derived voltage cutoffs, play arbitrary waveforms, or expose
@@ -133,6 +133,30 @@ tracking variables. Runtime build `m4-finite-current-hold-v2` refreshes logical
 READY/BUSY from the lifecycle state without reading output pins. A repeated
 target run reported RUNNING/BUSY 1, then ABORTED and IDLE with both flags low.
 
+External-mode commissioning found that firmware 1.7.16a returns `nil` and posts
+an error if a trigger-mode input is read using either `digio.line[N].state` or
+`digio.readport()`. The input is therefore sampled only in digital-input mode
+immediately before arm, compared against symbolic `digio.STATE_LOW/HIGH`, then
+switched to trigger-input mode with the selected edge restored and detector
+cleared. START status is unknown (`-1`) while trigger mode is active.
+
+With the DB-9 connector unconnected and falling-edge START selected, the
+floating-high input passed the inactivity check. WAITING_START reported READY 1,
+BUSY 0, and output off; 34 polls remained off. The local two-second timeout
+reached START_TIMEOUT block 15 after 2.047 s host-observed time, with flags low,
+no overrun, unchanged warning/error counts, and direct `smu.OFF` confirmation.
+Recovery changed the still-configured 1 mA level to 0 A. This proves only the
+no-edge timeout state path; it is not a continuous electrical or independent
+timing trace.
+
+The WAITING_START abort path was also exercised before timeout, with no START
+edge applied. READY was high, BUSY/output were low, and programmatic abort was
+confirmed after 0.199 s host wall time at block 5. It deasserted both flags,
+reported ABORTED, and directly confirmed `smu.OFF`/0 A. Repeated abort was
+idempotent, recovery returned IDLE, the expected abort warning was added, and
+the retained error count did not change. This remains state-path rather than
+electrical-latency evidence.
+
 ## Command-language transition and live installation
 
 The instrument was changed from SCPI to TSP using the front panel and rebooted;
@@ -144,9 +168,11 @@ TSP cannot be combined. The commissioning workflow therefore never sends
 After reboot, the query-only diagnostic returned `TSP` and `smu.OFF`. The
 blank-free short-name runtime then compiled, initialized, and reported `idle`.
 After a separate physical confirmation, the guarded immediate hold completed as
-described above; the later guarded abort test used the same load and limits.
-`notebooks/keithley_2460_m4_runtime.ipynb` reproduces these boundaries with
-independent opt-in flags and does not clear the retained event log.
+described above; the later guarded abort test used the same load and limits. The
+no-START timeout additionally requires the rear digital-I/O connector to be
+confirmed unconnected. `notebooks/keithley_2460_m4_runtime.ipynb` reproduces
+these boundaries with independent opt-in flags and does not clear the retained
+event log.
 
 Primary source: [Tektronix Model 2460 Reference Manual Rev. C](https://download.tek.com/manual/2460-901-01C_Sept_2019_Ref.pdf),
 sections 2, 8, 13, 14, and 15.

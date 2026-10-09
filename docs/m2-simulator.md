@@ -37,6 +37,8 @@ configuration and an ideal synthetic cell. Profiles must have
 | `runtime.recover()` | Explicit stopped/OFF/inactive-input check, then IDLE; never clears evidence or re-arms |
 | `runtime.latch_snapshot()` / `read_snapshot()` | Immutable coherent buffered sample, original aperture-start tick and age at latch; no extra measurement |
 | `runtime.collect_chunk(max_records=...)` | Bounded chunks from a frozen terminal buffer; only previously unemitted records |
+| `runtime.retained_buffer()` | Adapt frozen synthetic records into the shared M5 schema with explicit synthetic origin |
+| `runtime.read_record_chunk(offset=..., max_records=...)` | Deterministic retryable M5 slice; does not advance the legacy collection cursor |
 | `runtime.export_retained_data(path)` | Complete diagnostic JSON, schedule, traces, raw synthetic records, outcome and checksum; does not discard |
 | `runtime.discard_retained_data(acquisition_id=..., reason=...)` | Explicit exact-ID disposition permits next preparation; keeps evidence readable until then |
 
@@ -91,7 +93,8 @@ rules make tests reproducible; firmware must prove its own ordering.
 Simulator status bit `1` means ideal compliance was active during at least part of
 the aperture. It is **not** a raw Keithley status bit. Every record has synthetic
 origin. Tick timestamps have no epoch calibration, offset/drift uncertainty or
-detector synchronization claim; the M5 observed-record schema remains pending.
+detector synchronization claim. The M5 adapter preserves that limitation and
+does not relabel these values as observed hardware measurements.
 
 Current-source cutoffs compare synthetic voltage against the compiled lower/upper
 limits, including equality. With measurement-based monitoring, the retained

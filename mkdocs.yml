@@ -9,6 +9,7 @@ nav:
   - M2 simulator: m2-simulator.md
   - M3 transport: m3-transport.md
   - M4 local runtime: m4-runtime.md
+  - M5 data records: m5-data.md
   - Evidence: assumptions.md
   - Architecture: architecture.md
   - Triggering: triggering.md

@@ -1,4 +1,4 @@
-"""Offline M2 example: uv run --locked python -m examples.simulate_program."""
+"""Offline M2/M5 example: uv run --locked python -m examples.simulate_program."""
 
 import json
 
@@ -23,7 +23,9 @@ def main() -> None:
         max_ticks=compiled.source.duration_ticks,
         poll_ticks=137,
     )
-    records = link.collect_chunk(max_records=1000)
+    retained = link.retained_buffer()
+    chunk = link.read_record_chunk(offset=0, max_records=1000)
+    records = chunk.records
     print(
         json.dumps(
             {
@@ -32,13 +34,17 @@ def main() -> None:
                 "acquisition_id": outcome.acquisition_id,
                 "success": outcome.success,
                 "output_off_confirmed": outcome.output_off_confirmed,
+                "measurement_schema": retained.schema.schema,
+                "electrical_origin": retained.schema.voltage_origin.value,
                 "start_tick": outcome.start_tick,
                 "terminal_tick": outcome.terminal_tick,
                 "source_points_executed": outcome.source_points_executed,
                 "records": len(records),
-                "first_aperture_ticks": [
-                    records[0].aperture_start_tick,
-                    records[0].aperture_end_tick,
+                "records_sha256": retained.metadata.records_sha256,
+                "chunk_final": chunk.final,
+                "first_aperture_s": [
+                    records[0].aperture_start_relative_s,
+                    records[0].aperture_end_relative_s,
                 ],
                 "first_synthetic_current_a": records[0].current_a,
             },

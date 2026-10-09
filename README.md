@@ -1,6 +1,6 @@
 # ophyd-electrochemistry
 
-**M1–M3 implemented; narrow M4 immediate-hold and programmatic-abort state paths proven on target — no operational driver yet.**
+**M1–M3 and the first offline M5 data slice implemented; narrow M4 hold, abort, START-wait abort, and no-START timeout state paths proven on target — no operational driver yet.**
 
 A Python library for instrument-owned electrochemistry acquisition through
 classic ophyd and Bluesky. The first backend is the Keithley 2460 over Ethernet
@@ -17,6 +17,7 @@ owns the 2460 connection.
 - [M2 simulator](docs/m2-simulator.md): virtual playback, triggering, faults and retained evidence.
 - [M3 transport](docs/m3-transport.md): bounded PyVISA transactions and read-only commissioning.
 - [M4 runtime](docs/m4-runtime.md): packaged finite-hold TSP proof and live-test boundary.
+- [M5 data records](docs/m5-data.md): typed measurement origins, mapping and deterministic retained-buffer chunks.
 - [Assumptions and evidence](docs/assumptions.md): supported facts, corrections,
   and hardware acceptance gates.
 - [Architecture](docs/architecture.md): ownership and repository map.
@@ -29,7 +30,8 @@ owns the 2460 connection.
 The `src/` tree contains structurally validated immutable models, deterministic
 waveform generators, canonical serialization, a pure bounded planning compiler,
 an independent virtual-clock runtime/fake transport, a bounded PyVISA backend,
-and a narrow packaged M4 finite-hold proof runtime. It has no operational
+an immutable M5 measurement/retention schema, and a narrow packaged M4
+finite-hold proof runtime. It has no operational
 acquisition or ophyd sourcing driver. Guarded notebooks limit live commissioning
 to the documented nominal 100 ohm resistor setup. Tests cover M1, M2, mocked
 transport/runtime behavior and a separate **test-only RunEngine lifecycle
@@ -110,9 +112,10 @@ a battery or unknown DUT.
 The guarded `notebooks/keithley_2460_buffer_cleanup.ipynb` reproduces the
 completed 20-reading buffer/retrieval and ordinary host-exception cleanup test.
 Its hardware confirmation remains off by default.
-The guarded `notebooks/keithley_2460_m4_runtime.ipynb` prepares the next step and
-stops before changing the instrument from SCPI to TSP. Read the
-[M4 guide](docs/m4-runtime.md) before proceeding.
+The guarded `notebooks/keithley_2460_m4_runtime.ipynb` reproduces TSP preflight,
+volatile runtime installation, immediate hold, programmatic abort, and the
+unconnected-input no-START timeout with independent opt-in flags. Read the [M4
+guide](docs/m4-runtime.md) before proceeding.
 For a lean runtime environment, use `uv sync --locked --no-default-groups`.
 Development tools are dependency groups, not published package extras.
 

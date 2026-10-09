@@ -1,6 +1,21 @@
 """Validated models/generators and transport; no operational sourcing device yet."""
 
 from .acquisition import AcquisitionRequest, StartMode
+from .measurement import (
+    MEASUREMENT_SCHEMA,
+    ClockMapping,
+    FieldOrigin,
+    MappingQuality,
+    MeasurementRecord,
+    MeasurementSchema,
+    RecordChunk,
+    RetainedBuffer,
+    RetainedBufferMetadata,
+    TimestampReference,
+    TimingOrigin,
+    mapping_index,
+    source_setpoint_unit,
+)
 from .protocols import (
     CurrentPulseSequence,
     CyclicVoltammetry,
@@ -23,13 +38,26 @@ __all__ = [
     "CyclicVoltammetry",
     "DeviceState",
     "GalvanostaticHold",
+    "MEASUREMENT_SCHEMA",
+    "ClockMapping",
+    "FieldOrigin",
+    "MappingQuality",
+    "MeasurementRecord",
+    "MeasurementSchema",
     "MultisineSpec",
     "PRBSWaveform",
     "PotentiostaticHold",
+    "RecordChunk",
+    "RetainedBuffer",
+    "RetainedBufferMetadata",
     "StartMode",
+    "TimestampReference",
+    "TimingOrigin",
     "canonical_request_json",
     "generate_multisine",
+    "mapping_index",
     "prbs_bits",
     "request_from_json",
     "request_sha256",
+    "source_setpoint_unit",
 ]

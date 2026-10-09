@@ -23,6 +23,16 @@ from ..exceptions import (
 )
 from ..keithley.k2460 import Keithley2460Capabilities, Keithley2460Compiler, Keithley2460Config
 from ..keithley.k2460.compiler import CompiledProgram
+from ..measurement import (
+    FieldOrigin,
+    MappingQuality,
+    MeasurementRecord,
+    MeasurementSchema,
+    RecordChunk,
+    RetainedBuffer,
+    TimestampReference,
+    TimingOrigin,
+)
 from ..serialization import canonical_json, sha256_json
 from ..state import DeviceState
 from ..validation import integer, number, positive, text
@@ -381,6 +391,80 @@ class SimulatedRuntime:
             result = tuple(self._records[self._emitted : self._emitted + max_records])
             self._emitted += len(result)
             return result
+
+    def retained_buffer(self) -> RetainedBuffer:
+        """Adapt terminal synthetic data to the hardware-neutral M5 schema."""
+        with self.lock:
+            if self._outcome is None or self._program is None or self._acquisition_id is None:
+                raise RetainedDataError("Only a frozen terminal buffer can be described")
+            resolution = self._program.timer_resolution_s
+            schema = MeasurementSchema(
+                source_function=self._program.source_function,
+                voltage_origin=FieldOrigin.SYNTHETIC,
+                current_origin=FieldOrigin.SYNTHETIC,
+                timing_origin=TimingOrigin.SYNTHETIC,
+                timestamp_reference=TimestampReference.APERTURE_START,
+                instrument_timestamp_origin="simulator local virtual clock since creation",
+                instrument_timestamp_resolution_s=resolution,
+                instrument_start_timestamp_s=(
+                    None if self._start_tick is None else self._start_tick * resolution
+                ),
+                status_bits_definition=(
+                    "simulation-v1 bit 0: ideal complementary compliance active "
+                    "during at least part of the aperture"
+                ),
+                synthetic=True,
+            )
+            records = tuple(
+                self._measurement_record(record, resolution=resolution) for record in self._records
+            )
+            return RetainedBuffer(
+                schema=schema,
+                acquisition_id=self._acquisition_id,
+                request_sha256=self._program.request_sha256,
+                program_sha256=self._program.program_sha256,
+                capacity_records=self._capacity(),
+                expected_records=self._program.measurement.record_count,
+                waveform_complete=self._outcome.waveform_complete,
+                terminal_cause=self._outcome.cause,
+                records=records,
+            )
+
+    def read_record_chunk(self, *, offset: int, max_records: int) -> RecordChunk:
+        """Read a retryable offset-addressed M5 chunk from terminal data."""
+        with self.lock:
+            return self.retained_buffer().chunk(offset=offset, max_records=max_records)
+
+    def _measurement_record(
+        self, record: SimulatedRecord, *, resolution: float
+    ) -> MeasurementRecord:
+        assert self._start_tick is not None
+        if record.first_logical_point != record.last_logical_point:
+            quality = MappingQuality.CROSSES_TRANSITION
+        elif record.wholly_settled_in_one_dwell:
+            quality = MappingQuality.SETTLED_SINGLE_DWELL
+        else:
+            quality = MappingQuality.UNSETTLED_SINGLE_DWELL
+        return MeasurementRecord(
+            sample_index=record.sample_index,
+            instrument_timestamp_s=(self._start_tick + record.aperture_start_tick) * resolution,
+            time_relative_s=record.aperture_start_tick * resolution,
+            aperture_start_relative_s=record.aperture_start_tick * resolution,
+            aperture_end_relative_s=record.aperture_end_tick * resolution,
+            available_relative_s=record.available_tick * resolution,
+            voltage_v=record.voltage_v,
+            current_a=record.current_a,
+            source_function=record.source_function,
+            source_setpoint=record.source_setpoint,
+            status_bits=record.simulation_status_bits,
+            mapping_quality=quality,
+            first_logical_point=record.first_logical_point,
+            last_logical_point=record.last_logical_point,
+            repeat_index=record.repeat_index,
+            point_index=record.point_index,
+            cycle_index=record.cycle_index,
+            segment_index=record.segment_index,
+        )
 
     def export_retained_data(self, destination: str) -> str:
         """Diagnostic JSON plus checksum; export/collection do NOT authorize overwrite."""

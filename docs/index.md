@@ -8,8 +8,10 @@ M1 pure validation, waveform generation, canonical serialization and bounded
 planning compilation are implemented, together with M2's independent virtual-clock
 runtime and typed fake transport. M3 adds bounded PyVISA transactions and a
 read-only identity/language/output-state diagnostic. A narrow executable M4 TSP
-runtime has target compile/load/idle, immediate-hold, and programmatic-abort
-state-path evidence but no acquisition or operational sourcing driver.
+runtime has target compile/load/idle, immediate-hold, active-hold abort,
+START-wait abort, and no-START timeout state-path evidence but no acquisition or
+operational sourcing driver. The first M5 slice adds a shared immutable record
+schema and deterministic frozen-buffer chunks; target data acquisition is open.
 Documentation, mock tests and identity queries do not replace target-firmware
 and bench validation.
 
@@ -25,3 +27,5 @@ includes waveform intent and pure generators; the [M1 guide](m1-compiler.md)
 describes the implemented compiler. The [M2 guide](m2-simulator.md) describes
 simulated execution, faults and retained evidence. The [M3 guide](m3-transport.md)
 documents the implemented transport, safe diagnostic and incomplete G05 evidence.
+The [M5 data guide](m5-data.md) defines electrical origins, aperture mapping,
+clock metadata and retained-buffer integrity without claiming hardware data.

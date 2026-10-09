@@ -42,7 +42,8 @@ has compiled, loaded, initialized, and completed a narrow +1 mA immediate hold
 on the target. Its programmatic abort/repeated-abort/recovery state path has also
 completed with OFF/0 A confirmation. No independent electrical/timing trace,
 external START path, measured electrical abort latency, or electrical OFF
-property has yet been accepted.
+property has yet been accepted. The unconnected-input no-START timeout state path
+has completed, but no external edge or READY-boundary timing has been tested.
 
 The initial local API check used Bluesky 1.14.6 and ophyd 1.11.2. The later
 [RunEngine teardown fix](development.md#runengine-abort-test-teardown-message)
