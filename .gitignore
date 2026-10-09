@@ -60,6 +60,9 @@ output/*/index.html
 docs/_build
 docs/reference/autosummary
 
+# MkDocs
+site/
+
 .DS_Store
 *~
 .*.sw[po]
