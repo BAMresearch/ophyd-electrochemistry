@@ -15,7 +15,7 @@ class DigitalIOConfig:
     abort: int | None = 4
     ready_asserted_level: Literal[0, 1] = 1
     busy_asserted_level: Literal[0, 1] = 1
-    start_edge: Literal["rising", "falling"] = "rising"
+    start_edge: Literal["rising", "falling", "either"] = "rising"
     abort_edge: Literal["rising", "falling"] = "rising"
     external_abort_enabled: bool = False
 
@@ -30,7 +30,7 @@ class DigitalIOConfig:
         for value in (self.ready_asserted_level, self.busy_asserted_level):
             if type(value) is not int or value not in (0, 1):
                 raise ValidationError("Output assertion levels must be integer 0 or 1")
-        if self.start_edge not in ("rising", "falling") or self.abort_edge not in (
+        if self.start_edge not in ("rising", "falling", "either") or self.abort_edge not in (
             "rising",
             "falling",
         ):

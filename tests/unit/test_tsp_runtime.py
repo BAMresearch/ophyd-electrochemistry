@@ -19,6 +19,7 @@ from ophyd_electrochemistry.keithley.k2460 import (
     BufferPolicy,
     CurrentHoldAcquisitionProof,
     CurrentHoldProof,
+    DigitalIOConfig,
     Keithley2460Config,
     M4RuntimeController,
     RuntimeState,
@@ -116,7 +117,7 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     artifact = packaged_runtime()
 
     assert artifact.abi == "oe-k2460-m4-hold-v1"
-    assert artifact.build == "m4-finite-current-hold-v6"
+    assert artifact.build == "m4-finite-current-hold-v10"
     assert artifact.sha256 == hashlib.sha256(artifact.source.encode("ascii")).hexdigest()
     assert artifact.script_name == f"oe_m4_{artifact.sha256[:24]}"
     assert len(artifact.script_name) == 30
@@ -136,6 +137,10 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     assert "oe_m4_track_flags(false, true)" in artifact.source
     assert "digio.MODE_DIGITAL_IN" in artifact.source
     assert "expected_inactive = digio.STATE_HIGH" in artifact.source
+    assert "trigger.EDGE_EITHER" in artifact.source
+    assert "if configured_edge == trigger.EDGE_EITHER then" in artifact.source
+    assert "trigger.BLOCK_BRANCH_ALWAYS, 0" in artifact.source
+    assert "block >= 7 and block <= oe_m4_complete_block" in artifact.source
     assert "buffer.make(measurement_count, buffer.STYLE_STANDARD)" in artifact.source
     assert "buffer.delete(oe_m5_buffer)" in artifact.source
     assert "collectgarbage()" in artifact.source
@@ -305,6 +310,90 @@ def test_exact_known_v5_empty_buffer_can_be_replaced_without_a_reboot():
     assert 'script.delete("oe_m4_083f3d3a4749ad9b8cb7a771")' in transport.writes
 
 
+def test_exact_known_v6_empty_buffer_can_be_replaced_without_a_reboot():
+    transport = FakeRuntimeTransport(
+        status_line("idle", block=15),
+        "0",
+        "oe-k2460-m4-hold-v1",
+        "m4-finite-current-hold-v6",
+        "false",
+        "false",
+        "0\t0\t0\t17",
+        "true",
+        "true",
+        "smu.OFF",
+        "0",
+    )
+
+    artifact = M4RuntimeController(transport, runtime_config()).replace_known_runtime_and_install()
+
+    assert artifact == packaged_runtime()
+    assert 'script.delete("oe_m4_e6f0b55d4b2e240dd65e9d3f")' in transport.writes
+
+
+def test_exact_known_v7_empty_buffer_can_be_replaced_without_a_reboot():
+    transport = FakeRuntimeTransport(
+        status_line("idle", block=15),
+        "0",
+        "oe-k2460-m4-hold-v1",
+        "m4-finite-current-hold-v7",
+        "false",
+        "false",
+        "0\t0\t0\t0",
+        "true",
+        "true",
+        "smu.OFF",
+        "0",
+    )
+
+    artifact = M4RuntimeController(transport, runtime_config()).replace_known_runtime_and_install()
+
+    assert artifact == packaged_runtime()
+    assert 'script.delete("oe_m4_7aa380ecef2189eee1bf3798")' in transport.writes
+
+
+def test_exact_known_v8_empty_buffer_can_be_replaced_without_a_reboot():
+    transport = FakeRuntimeTransport(
+        status_line("idle", block=15),
+        "0",
+        "oe-k2460-m4-hold-v1",
+        "m4-finite-current-hold-v8",
+        "false",
+        "false",
+        "0\t0\t0\t0",
+        "true",
+        "true",
+        "smu.OFF",
+        "0",
+    )
+
+    artifact = M4RuntimeController(transport, runtime_config()).replace_known_runtime_and_install()
+
+    assert artifact == packaged_runtime()
+    assert 'script.delete("oe_m4_9b1f6b90992b46c362073347")' in transport.writes
+
+
+def test_exact_known_v9_empty_buffer_can_be_replaced_without_a_reboot():
+    transport = FakeRuntimeTransport(
+        status_line("idle", block=12),
+        "0",
+        "oe-k2460-m4-hold-v1",
+        "m4-finite-current-hold-v9",
+        "false",
+        "false",
+        "0\t0\t0\t0",
+        "true",
+        "true",
+        "smu.OFF",
+        "0",
+    )
+
+    artifact = M4RuntimeController(transport, runtime_config()).replace_known_runtime_and_install()
+
+    assert artifact == packaged_runtime()
+    assert 'script.delete("oe_m4_6df8a9ae8a86703bedbd0bf2")' in transport.writes
+
+
 def test_known_v5_replacement_preserves_retained_records():
     transport = FakeRuntimeTransport(
         status_line("idle"),
@@ -362,6 +451,17 @@ def test_prepare_serializes_validated_parameters_and_confirms_output_off():
         "oe_m4_prepare_current_hold(0.001,0.001,0.20000000000000001,0.25,1,2,0.01,1,1,1,2,3,1,1,1)"
     )
     assert transport.writes[1] == "print(oe_m4_status())"
+
+
+def test_prepare_serializes_native_either_edge_start_mode():
+    transport = FakeRuntimeTransport(status_line("prepared"))
+    config = runtime_config(io=DigitalIOConfig(start_edge="either"))
+
+    M4RuntimeController(transport, config).prepare_current_hold(
+        hold(start_mode=StartMode.EXTERNAL_TRIGGER)
+    )
+
+    assert transport.writes[0].endswith(",1,1,2)")
 
 
 def test_prepare_acquisition_serializes_bounded_fixed_measurement_and_empty_buffer():

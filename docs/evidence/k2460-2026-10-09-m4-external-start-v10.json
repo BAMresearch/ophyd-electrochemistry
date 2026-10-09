@@ -1,0 +1,92 @@
+{
+  "schema": "k2460-m4-external-start-proof-v1",
+  "observed_at_utc": "2026-10-09T14:33:30Z",
+  "instrument": {
+    "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+    "command_language": "TSP"
+  },
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v10",
+    "sha256": "d2255a33f73e7d593a78ee80c8da2e3697263b0622a1269819ee1a4f06e954ea",
+    "script_name": "oe_m4_d2255a33f73e7d593a78ee80"
+  },
+  "setup": {
+    "load": "nominal 100 ohm resistor",
+    "terminals": "front",
+    "sense": "four-wire",
+    "ready": "digital I/O line 1",
+    "busy": "digital I/O line 2",
+    "start": "digital I/O line 3",
+    "ground": "DB-9 pin 9",
+    "start_action": "remove held 1 kohm line-3-to-ground connection after READY",
+    "start_edge": "either"
+  },
+  "request": {
+    "current_a": 0.001,
+    "source_range_a": 0.001,
+    "voltage_limit_v": 0.2,
+    "duration_s": 0.25,
+    "external_start_timeout_s": 60.0,
+    "event_poll_s": 0.01
+  },
+  "event_counts_before": {
+    "warnings": 2,
+    "errors": 2
+  },
+  "trace": [
+    {
+      "runtime_state": "waiting_start",
+      "block": 5,
+      "output": "smu.OFF",
+      "ready": 1,
+      "busy": 0,
+      "start_overrun": false
+    },
+    {
+      "runtime_state": "running",
+      "block": 9,
+      "output": "smu.ON",
+      "ready": 0,
+      "busy": 1,
+      "start_overrun": false
+    },
+    {
+      "runtime_state": "running",
+      "block": 10,
+      "output": "smu.OFF",
+      "ready": 0,
+      "busy": 1,
+      "start_overrun": false
+    },
+    {
+      "runtime_state": "complete",
+      "block": 12,
+      "output": "smu.OFF",
+      "ready": 0,
+      "busy": 0,
+      "start_overrun": false
+    }
+  ],
+  "event_counts_after": {
+    "warnings": 2,
+    "errors": 2
+  },
+  "recovered": {
+    "runtime_state": "idle",
+    "block": 12,
+    "output": "smu.OFF",
+    "source_level_a": 0.0,
+    "ready": 0,
+    "busy": 0,
+    "start_overrun": false
+  },
+  "result": "pass within narrow external-START state-path scope",
+  "limitations": [
+    "No independent electrical timing or current/voltage trace was acquired.",
+    "The manual edge was not swept across the READY boundary.",
+    "Held, stale, repeated, coincident START/ABORT, disconnect, and process-loss cases remain untested.",
+    "This record does not promote hardware acceptance gate G01."
+  ]
+}

@@ -90,6 +90,10 @@ def test_archive_is_canonical_checksummed_and_round_trips():
 def test_archive_accepts_current_and_predecessor_runtime_builds():
     assert archive().runtime_build == "m4-finite-current-hold-v5"
     assert archive(runtime_build="m4-finite-current-hold-v6").runtime_build.endswith("v6")
+    assert archive(runtime_build="m4-finite-current-hold-v7").runtime_build.endswith("v7")
+    assert archive(runtime_build="m4-finite-current-hold-v8").runtime_build.endswith("v8")
+    assert archive(runtime_build="m4-finite-current-hold-v9").runtime_build.endswith("v9")
+    assert archive(runtime_build="m4-finite-current-hold-v10").runtime_build.endswith("v10")
 
 
 def test_archive_writer_exclusively_creates_and_never_overwrites(tmp_path):

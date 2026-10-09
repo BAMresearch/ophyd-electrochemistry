@@ -52,6 +52,13 @@ reject that configuration. Recover only after ABORT has deasserted.
 The default edge input is not a fail-safe manual emergency stop: a latched
 button, broken cable, and dropped pulse need a separate electrical design.
 
+Commissioning may explicitly select native `either`-edge START. In that mode a
+static high or low level is inert and the first subsequent transition is the
+single-shot START; later transitions cannot restart a model that has already
+left WAITING_START. Directional rising/falling modes retain their opposite-level
+pre-arm check. `either` is useful for manual jumper tests, but a production
+integration should normally choose and document one polarity.
+
 ## Modes and bounded waits
 
 `prepare()` always reaches PREPARED with output OFF. In immediate mode,

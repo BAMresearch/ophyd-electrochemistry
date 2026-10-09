@@ -298,7 +298,14 @@ trigger-model-aborted warning. See
 This establishes safe command/state behavior while waiting, not electrical
 abort latency or actual external-edge timing.
 
-External START and READY/BUSY require verified DB-9 wiring and timing capture,
-which are not available yet. External ABORT remains disabled. Process death,
-Ethernet loss, electrical abort latency, and actual START-edge behavior still
-need separate evidence. G01, G02, and G07 therefore remain **NOT RUN**.
+The DB-9 wiring was subsequently commissioned with READY on line 1, BUSY on line
+2, START on line 3, and ground on pin 9. Runtime v10 accepted one manual rising
+edge produced by removing a held 1 kohm pull-down after READY. The trace reported
+WAITING_START/OFF/READY, RUNNING/ON/BUSY, shutdown OFF, COMPLETE with both flags
+low, and recovery to IDLE/OFF/0 A. Warning/error counts were unchanged. See the
+[v10 external-START evidence](evidence/k2460-2026-10-09-m4-external-start-v10.json).
+
+This is narrow state-path evidence, not an independent electrical timing trace.
+READY-boundary races, held/stale/repeated START, coincident START/ABORT, external
+ABORT, process death, Ethernet loss, and electrical cutoff latency still need
+separate evidence. G01, G02, and G07 therefore remain **NOT RUN**.

@@ -21,7 +21,7 @@ from .config import Keithley2460Config
 from .transport import CommandLanguage, parse_source_output_enabled
 
 RUNTIME_ABI = "oe-k2460-m4-hold-v1"
-RUNTIME_BUILD = "m4-finite-current-hold-v6"
+RUNTIME_BUILD = "m4-finite-current-hold-v10"
 RUNTIME_RESOURCE = "tsp/runtime.tsp"
 K2460_BUFFER_SCHEMA = "ophyd-electrochemistry/k2460-buffer-proof-v1"
 _MAX_CURRENT_A = 0.01
@@ -77,7 +77,33 @@ _REPLACEABLE_RUNTIMES = {
         _RUNTIME_GLOBALS_V5,
         True,
     ),
+    "m4-finite-current-hold-v6": (
+        "oe_m4_e6f0b55d4b2e240dd65e9d3f",
+        _RUNTIME_GLOBALS_V5,
+        True,
+    ),
+    "m4-finite-current-hold-v7": (
+        "oe_m4_7aa380ecef2189eee1bf3798",
+        _RUNTIME_GLOBALS_V5,
+        True,
+    ),
+    "m4-finite-current-hold-v8": (
+        "oe_m4_9b1f6b90992b46c362073347",
+        _RUNTIME_GLOBALS_V5,
+        True,
+    ),
+    "m4-finite-current-hold-v9": (
+        "oe_m4_6df8a9ae8a86703bedbd0bf2",
+        _RUNTIME_GLOBALS_V5,
+        True,
+    ),
 }
+
+
+def _tsp_start_edge(edge: str) -> str:
+    """Encode the validated START edge for the narrow TSP runtime."""
+
+    return {"falling": "0", "rising": "1", "either": "2"}[edge]
 
 
 class RuntimeState(StrEnum):
@@ -529,7 +555,7 @@ class M4RuntimeController:
                     str(io.start),
                     str(io.ready_asserted_level),
                     str(io.busy_asserted_level),
-                    "1" if io.start_edge == "rising" else "0",
+                    _tsp_start_edge(io.start_edge),
                 )
             )
             + ")"
@@ -569,7 +595,7 @@ class M4RuntimeController:
                     str(io.start),
                     str(io.ready_asserted_level),
                     str(io.busy_asserted_level),
-                    "1" if io.start_edge == "rising" else "0",
+                    _tsp_start_edge(io.start_edge),
                 )
             )
             + ")"

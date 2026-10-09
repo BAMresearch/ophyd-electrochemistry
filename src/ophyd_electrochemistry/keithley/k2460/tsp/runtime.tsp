@@ -7,7 +7,7 @@
 -- The host accepts only this packaged source and verifies the ABI.
 
 oe_m4_runtime_abi = "oe-k2460-m4-hold-v1"
-oe_m4_runtime_build = "m4-finite-current-hold-v6"
+oe_m4_runtime_build = "m4-finite-current-hold-v10"
 
 oe_m4_state = "idle"
 oe_m4_mode = "none"
@@ -114,7 +114,7 @@ function oe_m5_prepare_current_hold_acquisition(
     start_line,
     ready_asserted,
     busy_asserted,
-    rising_start)
+    start_edge_mode)
 
     oe_m4_require_number(measurement_count, "measurement_count")
     if measurement_count < 1 or measurement_count > 5000000 or
@@ -140,7 +140,7 @@ function oe_m5_prepare_current_hold_acquisition(
         start_line,
         ready_asserted,
         busy_asserted,
-        rising_start)
+        start_edge_mode)
 
     if oe_m5_buffer ~= nil and oe_m5_buffer.capacity ~= measurement_count then
         buffer.delete(oe_m5_buffer)
@@ -241,7 +241,7 @@ function oe_m4_prepare_current_hold(
     start_line,
     ready_asserted,
     busy_asserted,
-    rising_start)
+    start_edge_mode)
 
     oe_m4_require_number(current_a, "current_a")
     oe_m4_require_number(source_range_a, "source_range_a")
@@ -278,6 +278,9 @@ function oe_m4_prepare_current_hold(
         (busy_asserted ~= 0 and busy_asserted ~= 1) then
         error("M4 proof flag levels must be 0 or 1")
     end
+    if start_edge_mode ~= 0 and start_edge_mode ~= 1 and start_edge_mode ~= 2 then
+        error("M4 proof START edge mode must be falling, rising, or either")
+    end
     if oe_m4_model_active() then
         error("cannot prepare while trigger model is active")
     end
@@ -303,8 +306,10 @@ function oe_m4_prepare_current_hold(
 
     if external_start == 1 then
         digio.line[start_line].mode = digio.MODE_TRIGGER_IN
-        if rising_start == 1 then
+        if start_edge_mode == 1 then
             trigger.digin[start_line].edge = trigger.EDGE_RISING
+        elseif start_edge_mode == 2 then
+            trigger.digin[start_line].edge = trigger.EDGE_EITHER
         else
             trigger.digin[start_line].edge = trigger.EDGE_FALLING
         end
@@ -342,7 +347,7 @@ function oe_m4_prepare_current_hold(
 
         trigger.model.setblock(1, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(true, false), oe_m4_mask())
         trigger.model.setblock(2, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY1)
-        trigger.model.setblock(3, trigger.BLOCK_BRANCH_ON_EVENT, trigger.EVENT_TIMER1, 13)
+        trigger.model.setblock(3, trigger.BLOCK_BRANCH_ON_EVENT, trigger.EVENT_TIMER1, 14)
         trigger.model.setblock(4, trigger.BLOCK_BRANCH_ON_EVENT, oe_m4_digio_event(start_line), 7)
         trigger.model.setblock(5, trigger.BLOCK_DELAY_CONSTANT, event_poll_s)
         trigger.model.setblock(6, trigger.BLOCK_BRANCH_ALWAYS, 3)
@@ -352,12 +357,13 @@ function oe_m4_prepare_current_hold(
         trigger.model.setblock(10, trigger.BLOCK_SOURCE_OUTPUT, smu.OFF)
         trigger.model.setblock(11, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, false), oe_m4_mask())
         trigger.model.setblock(12, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY2)
-        trigger.model.setblock(13, trigger.BLOCK_SOURCE_OUTPUT, smu.OFF)
-        trigger.model.setblock(14, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, false), oe_m4_mask())
-        trigger.model.setblock(15, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY3)
+        trigger.model.setblock(13, trigger.BLOCK_BRANCH_ALWAYS, 0)
+        trigger.model.setblock(14, trigger.BLOCK_SOURCE_OUTPUT, smu.OFF)
+        trigger.model.setblock(15, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, false), oe_m4_mask())
+        trigger.model.setblock(16, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY3)
         oe_m4_mode = "external"
         oe_m4_complete_block = 12
-        oe_m4_timeout_block = 15
+        oe_m4_timeout_block = 16
     else
         trigger.model.setblock(1, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, true), oe_m4_mask())
         trigger.model.setblock(2, trigger.BLOCK_SOURCE_OUTPUT, smu.ON)
@@ -381,18 +387,22 @@ function oe_m4_arm()
         error("M4 proof output is not off before arm")
     end
     if oe_m4_mode == "external" then
-        local expected_inactive = digio.STATE_LOW
-        if trigger.digin[oe_m4_start_line].edge == trigger.EDGE_FALLING then
-            expected_inactive = digio.STATE_HIGH
-        end
         local configured_edge = trigger.digin[oe_m4_start_line].edge
-        digio.line[oe_m4_start_line].mode = digio.MODE_DIGITAL_IN
-        oe_m4_start_level = digio.line[oe_m4_start_line].state
-        if oe_m4_start_level ~= expected_inactive then
-            error("START input is asserted before arm")
+        if configured_edge == trigger.EDGE_EITHER then
+            oe_m4_start_level = -1
+        else
+            local expected_inactive = digio.STATE_LOW
+            if configured_edge == trigger.EDGE_FALLING then
+                expected_inactive = digio.STATE_HIGH
+            end
+            digio.line[oe_m4_start_line].mode = digio.MODE_DIGITAL_IN
+            oe_m4_start_level = digio.line[oe_m4_start_line].state
+            if oe_m4_start_level ~= expected_inactive then
+                error("START input is asserted before arm")
+            end
+            digio.line[oe_m4_start_line].mode = digio.MODE_TRIGGER_IN
+            trigger.digin[oe_m4_start_line].edge = configured_edge
         end
-        digio.line[oe_m4_start_line].mode = digio.MODE_TRIGGER_IN
-        trigger.digin[oe_m4_start_line].edge = configured_edge
         trigger.digin[oe_m4_start_line].clear()
         trigger.timer[1].clear()
         oe_m4_start_level = -1
@@ -406,6 +416,10 @@ end
 function oe_m4_refresh_state()
     local model_state, model_substate, block = trigger.model.state()
     if oe_m4_state == "running" or oe_m4_state == "waiting_start" then
+        if oe_m4_state == "waiting_start" and model_state ~= trigger.STATE_IDLE and
+            block >= 7 and block <= oe_m4_complete_block then
+            oe_m4_state = "running"
+        end
         if model_state == trigger.STATE_IDLE then
             if block == oe_m4_complete_block then
                 oe_m4_state = "complete"

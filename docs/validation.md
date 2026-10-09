@@ -249,6 +249,20 @@ ceiling, sustained acquisition, or large transfers.
 Validated locally with Python 3.12.13: 274 tests pass. Ruff lint/format, strict
 source mypy, notebook JSON/code compilation, and strict MkDocs also pass.
 
+## Manual external-START runtime proof
+
+Runtime v10 adds native either-edge START, keeps that input in trigger mode while
+arming, and exits the successful TriggerFlow path explicitly through block 0.
+On the commissioned 2460, removal of a held 1 kohm line-3-to-pin-9 pull-down after
+READY produced WAITING_START/OFF, RUNNING/ON/BUSY, source OFF, and COMPLETE at
+block 12. Recovery confirmed IDLE/OFF/0 A and warning/error counts remained 2/2.
+The exact trace is retained in
+[the v10 evidence](evidence/k2460-2026-10-09-m4-external-start-v10.json).
+
+Validated locally with Python 3.12.13: 280 tests pass. Ruff lint/format and
+strict source mypy pass. The manual trace does not independently measure
+electrical timing or promote G01; race-boundary and repeated/fault cases remain.
+
 ## RunEngine failed-Status teardown fix
 
 Reproduced the user's `Future exception was never retrieved` message on local

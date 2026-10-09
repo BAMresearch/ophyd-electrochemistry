@@ -22,7 +22,14 @@ from .runtime import (
 K2460_BUFFER_ARCHIVE_SCHEMA = "ophyd-electrochemistry/k2460-buffer-archive-v1"
 K2460_BUFFER_TIMESTAMP_ORIGIN = "relative-to-first-buffer-reading"
 _MAX_ARCHIVE_BYTES = 256 * 1024 * 1024
-_SUPPORTED_RUNTIME_BUILDS = {"m4-finite-current-hold-v5", RUNTIME_BUILD}
+_SUPPORTED_RUNTIME_BUILDS = {
+    "m4-finite-current-hold-v5",
+    "m4-finite-current-hold-v6",
+    "m4-finite-current-hold-v7",
+    "m4-finite-current-hold-v8",
+    "m4-finite-current-hold-v9",
+    RUNTIME_BUILD,
+}
 _ARCHIVE_PAYLOAD_KEYS = {
     "schema",
     "acquisition_id",

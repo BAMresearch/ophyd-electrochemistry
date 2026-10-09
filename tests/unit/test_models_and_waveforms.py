@@ -335,3 +335,7 @@ def test_decoder_rejects_unknown_schema_duplicate_keys_and_arbitrary_types(encod
 def test_io_rejects_conflicting_lines_or_invalid_levels(changes):
     with pytest.raises(ValidationError):
         DigitalIOConfig(**changes)
+
+
+def test_io_accepts_native_either_edge_start_trigger():
+    assert DigitalIOConfig(start_edge="either").start_edge == "either"

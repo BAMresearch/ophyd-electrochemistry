@@ -2,7 +2,7 @@
 
 M4 has an offline-reviewed implementation with successful target
 compile/load/initialize, idle-status, narrow immediate-hold, programmatic-abort,
-and no-START timeout state-path evidence. The implementation is deliberately
+no-START timeout, and manual external-START state-path evidence. The implementation is deliberately
 smaller than the eventual
 acquisition backend: one bounded current hold, NORMAL output-off mode, immediate
 or digital START, and programmatic abort. It does not collect measurements,
@@ -39,10 +39,11 @@ runtime globals established by an earlier diagnostic script. A first install
 therefore requires both the digest-named script and its globals to be absent. An
 already-installed matching script is verified and initialized without rerunning
 its top level. Conflicting globals are never overwritten automatically. A stuck
-script requires a reboot. The host now exposes one allow-listed no-reboot
-migration from the exact v4 digest/build: it requires IDLE, OFF, 0 A and the
-expected digest-named script before deletion, clears only the known v4 globals,
-verifies absence plus OFF/0 A, and then invokes the normal exact-artifact loader.
+script requires a reboot. The host now exposes allow-listed no-reboot migrations
+from exact predecessor digests/builds through v9: each requires IDLE, OFF, 0 A
+and the expected digest-named script before deletion, preserves retained
+measurements, clears only known owned globals, verifies absence plus OFF/0 A,
+and then invokes the normal exact-artifact loader.
 
 Firmware 1.7.16a also remained running when the 70-character name containing a
 full SHA-256 was invoked, despite the documented 256-character limit. The same
@@ -81,7 +82,9 @@ host or Ethernet connection.
 
 External mode locally asserts READY and starts trigger timer 1. It checks timeout
 before START on each bounded polling loop. START deasserts READY, asserts BUSY,
-and enters the same finite hold. Timeout reaches an explicit source-OFF block and
+and enters the same finite hold. The successful path explicitly branches to
+TriggerFlow block 0 after its completion notification, so it cannot fall through
+the later timeout cleanup. Timeout reaches an explicit source-OFF block and
 deasserts both flags without sourcing. A programmatic abort separately aborts
 the trigger model, disables the timer, sets output OFF, deasserts flags, and
 programs 0 A.
@@ -99,17 +102,17 @@ The implementation follows the Model 2460 Reference Manual Rev. C, which applies
 to firmware 1.7.0 and later. The reviewed commands are `loadscript`/`endscript`,
 digital-line mode/state and event detection, trigger timer 1, and TriggerFlow
 digital-I/O, notify, branch, delay, source-output, and abort operations. The
-target unit runs firmware 1.7.16a. Compilation, initialization, the immediate
-state path, and programmatic abort/recovery have run successfully; external
-START, electrical values, failure injection, and independent timing remain
-untested.
+target unit runs firmware 1.7.16a. Compilation, initialization, immediate and
+manual external-START state paths, programmatic abort/recovery, and the no-START
+timeout have run successfully. Electrical values, failure injection,
+independent timing, and READY-boundary race sweeps remain untested.
 
-The external START construction necessarily clears the detector before
-initiating a model whose first block asserts READY. Bench traces must determine
-whether a pre-READY edge can survive that boundary or a just-post-READY edge can
-be lost. Until repeated boundary tests prove the required ordering, external
-START is an experiment and G01 remains NOT RUN. External ABORT is absent rather
-than inferred from a sequential event branch.
+The external START construction clears the detector before initiating a model
+whose first block asserts READY. Bench traces must still determine whether a
+pre-READY edge can survive that boundary or a just-post-READY edge can be lost.
+The one successful manual edge below does not establish that ordering, so G01
+remains NOT RUN. External ABORT is absent rather than inferred from a sequential
+event branch.
 
 The immediate local path reached PREPARED/output-off, RUNNING/BUSY/output-on,
 COMPLETE/output-off, and recovery to IDLE/output-off/0 A on the nominal 100 ohm
@@ -135,10 +138,13 @@ target run reported RUNNING/BUSY 1, then ABORTED and IDLE with both flags low.
 
 External-mode commissioning found that firmware 1.7.16a returns `nil` and posts
 an error if a trigger-mode input is read using either `digio.line[N].state` or
-`digio.readport()`. The input is therefore sampled only in digital-input mode
-immediately before arm, compared against symbolic `digio.STATE_LOW/HIGH`, then
-switched to trigger-input mode with the selected edge restored and detector
-cleared. START status is unknown (`-1`) while trigger mode is active.
+`digio.readport()`. Directional rising/falling modes therefore sample the input
+in digital-input mode immediately before arm, compare against symbolic
+`digio.STATE_LOW/HIGH`, then restore trigger-input mode and the configured edge.
+Native `trigger.EDGE_EITHER` needs no asserted-level test and remains in trigger
+mode throughout arm, avoiding the warning emitted when trigger mode is changed
+to ordinary digital input. START status is unknown (`-1`) while trigger mode is
+active.
 
 With the DB-9 connector unconnected and falling-edge START selected, the
 floating-high input passed the inactivity check. WAITING_START reported READY 1,
@@ -156,6 +162,19 @@ reported ABORTED, and directly confirmed `smu.OFF`/0 A. Repeated abort was
 idempotent, recovery returned IDLE, the expected abort warning was added, and
 the retained error count did not change. This remains state-path rather than
 electrical-latency evidence.
+
+Runtime build v10 then exercised native either-edge START using DB-9 line 3 and
+a manually removed 1 kohm pull-down to pin 9 after READY asserted. On the same
+nominal 100 ohm front-terminal four-wire load, a +1 mA, 0.2 V-limit, 250 ms hold
+reported WAITING_START/OFF/READY at block 5, RUNNING/ON/BUSY at block 9,
+RUNNING/OFF/BUSY at block 10, and COMPLETE/OFF with both flags low at block 12.
+Warning/error counts remained 2/2. Recovery confirmed IDLE/OFF/0 A. See the
+[v10 external-START evidence](evidence/k2460-2026-10-09-m4-external-start-v10.json).
+
+This proves one manually applied external-edge state path and the single-shot
+successful-path exit. It does not measure electrical current, voltage, duration,
+or edge latency; sweep the READY boundary; or exercise stale, held, repeated,
+coincident, disconnect, or process-loss cases. G01 therefore remains NOT RUN.
 
 Runtime build v5 adds a separate immediate-only measurement proof without
 expanding the hold envelope. It uses a 16-record standard fill-once buffer,
