@@ -9,7 +9,7 @@
   terminal buffer metadata, canonical checksums and deterministic offset chunks.
 - Adapt frozen M2 records into that schema without weakening their synthetic
   provenance; retrying a lost offset-chunk reply no longer advances an implicit
-  cursor. Target measurement and archive export remain open.
+  cursor. Target START/aperture mapping and shared-record projection remain open.
 - Add a narrow M5 target adapter and TSP buffer proof: at most eight immediate
   1 NPLC readings in a 16-record fill-once buffer, raw paired source-readback/V
   fields plus statuses, deterministic offset retrieval, and explicit discard.
@@ -21,6 +21,13 @@
 - Allow-list replacement of only the exact idle/output-off/0 A v4 volatile
   runtime, avoiding a reboot while retaining the loader's refusal to overwrite
   unknown scripts or globals.
+- Add a versioned raw-K2460 archive with contiguous-chunk assembly, inner record
+  and whole-payload checksums, allowlisted parsing, UTC/timestamp-origin metadata,
+  and exclusive-create output that refuses to overwrite an existing archive.
+- Exercise the runtime maximum of eight readings as deterministic 3+3+2 chunks.
+  The checked archive reloaded exactly, the middle chunk retried identically,
+  warning/error counts were unchanged, and independent retention/discard checks
+  ended IDLE/OFF/0 A with an empty buffer.
 
 - Implement the M3 serialized, bounded optional PyVISA transport with explicit
   backend/resource/framing, strict 2460 identity/language validation, typed

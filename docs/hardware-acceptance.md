@@ -167,6 +167,18 @@ not an observed actual START. Capacity/no-wrap limits, calibrated accuracy,
 clock mapping, interruption behavior and larger transfers remain untested. This
 is useful partial G03/G04 evidence; neither gate is promoted.
 
+The follow-up maximum-count proof acquired eight records and retrieved them as
+3+3+2 contiguous offset chunks. A retry of the middle chunk was identical. The
+new raw-target archive verified both its record checksum and whole-payload
+checksum after reload, and exclusive-create output prevents silent replacement
+of an earlier archive. Mean V/I was 102.5092 ohm; warning/error counts did not
+change. An independent session confirmed all eight records retained with
+IDLE/OFF/0 A before reason-bearing discard emptied the buffer. The
+[run evidence](evidence/k2460-2026-10-09-m5-max8-evidence.json) links the
+[verifiable archive](evidence/k2460-2026-10-09-m5-max8-archive.json). This reaches
+the deliberately configured eight-reading runtime limit, not the 16-record
+buffer capacity, and does not test wrap behavior.
+
 ## M4 runtime installation, immediate hold, and programmatic abort — PASS within narrow scope
 
 The exact-artifact loader, packaged finite-current-hold TSP runtime, typed host

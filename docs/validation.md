@@ -212,11 +212,20 @@ confirmed IDLE/OFF/0 A while the records remained retained; after archiving,
 explicit discard left the buffer empty and the source safe. The exact record is
 [retained](evidence/k2460-2026-10-09-m5-buffer-proof.json).
 
-Validated locally with Python 3.12.13: 266 tests pass. Ruff lint/format, strict
+Validated locally with Python 3.12.13: 270 tests pass. Ruff lint/format, strict
 mypy, notebook JSON/code compilation, and strict MkDocs also pass. The target
 proof does not map first-reading-relative timestamps to actual START, establish
 capacity/no-wrap behavior, calibrate the resistor, export the shared archive, or
 complete hardware gates G03/G04/G06.
+
+The follow-up raw-archive slice validates contiguous chunk assembly, versioned
+plain-data encoding, independent record and payload checksums, allowlisted
+round-trip parsing, UTC/timestamp-origin metadata, tamper rejection and
+exclusive-create/no-overwrite output. On target, the maximum eight-reading proof
+was retrieved as 3+3+2 chunks and reloaded from the checked archive before an
+independent retention audit and explicit discard. The instrument ended
+IDLE/OFF/0 A with an empty buffer. This still does not exercise the full
+16-record capacity or wrap behavior.
 
 ## RunEngine failed-Status teardown fix
 

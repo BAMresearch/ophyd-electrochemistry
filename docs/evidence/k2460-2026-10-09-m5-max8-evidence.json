@@ -1,0 +1,82 @@
+{
+  "schema": "k2460-m5-max8-evidence-v1",
+  "recorded_at_utc": "2026-10-09T09:34:21.685688Z",
+  "instrument": {
+    "identity_raw": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "resource_name": "TCPIP0::169.254.113.151::5025::SOCKET",
+    "command_language": "TSP"
+  },
+  "physical_setup": {
+    "load": "user-confirmed nominal 100 ohm resistor; not a calibrated standard",
+    "terminals": "front",
+    "sense": "four-wire"
+  },
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v5",
+    "sha256": "083f3d3a4749ad9b8cb7a771dff2dd9cf12f2dd7da229d4a779d9f1539306b47",
+    "script_name": "oe_m4_083f3d3a4749ad9b8cb7a771"
+  },
+  "request": {
+    "current_a": 0.001,
+    "source_range_a": 0.001,
+    "voltage_limit_v": 0.2,
+    "measurement_count": 8,
+    "measurement_nplc": 1,
+    "start_mode": "immediate"
+  },
+  "result": {
+    "runtime_state": "complete",
+    "last_block": 7,
+    "output_enabled_at_terminal": false,
+    "buffer_capacity_records": 16,
+    "buffer_record_count": 8,
+    "buffer_start_index": 1,
+    "buffer_end_index": 8,
+    "chunk_sizes": [3, 3, 2],
+    "middle_chunk_retry_equal": true,
+    "chunk_sha256": [
+      "cff4fc0fddc7087dbf157912b33eb4fc9a8b6004840446038f6f5aa912000244",
+      "1e8ce21e1aeb96c842f35c5adfbe103fd21c417edcf78906bd524c7792f7b2e4",
+      "06c959340d1cb0afde243ca881f3a5fc085d5fb40755e08bc129a4cbab267ac3"
+    ],
+    "records_sha256": "35f94bae9780e212e4a3cc177a2aeb76520a1285b57b8f91485d3cfa86b105e9",
+    "archive_sha256": "0e6d134e8bdca3c64463f0b935f2424ffd7807c172997c621f528b6694cdf841",
+    "mean_resistance_ohm": 102.50917186583641,
+    "resistance_population_standard_deviation_ohm": 0.00038815202110696606,
+    "all_source_statuses": 200,
+    "first_measurement_status": 264,
+    "remaining_measurement_statuses": 8,
+    "questionable_measurement_bit_present": false
+  },
+  "event_counts": {
+    "before": {"warnings": 5, "errors": 6},
+    "after": {"warnings": 5, "errors": 6},
+    "event_log_not_cleared": true
+  },
+  "archive": {
+    "path": "docs/evidence/k2460-2026-10-09-m5-max8-archive.json",
+    "exclusive_create_used": true,
+    "reloaded_equal_to_in_memory_archive": true,
+    "whole_payload_checksum_verified": true,
+    "records_checksum_verified": true,
+    "timestamp_origin": "relative-to-first-buffer-reading"
+  },
+  "independent_session_and_discard": {
+    "retained_count_before_discard": 8,
+    "runtime_state_before_discard": "idle",
+    "output_state_before_discard": "smu.OFF",
+    "source_level_before_discard_a": 0.0,
+    "record_count_after_discard": 0,
+    "runtime_state_after_discard": "idle",
+    "output_state_after_discard": "smu.OFF",
+    "source_level_after_discard_a": 0.0
+  },
+  "evidence_limits": {
+    "resistor_calibrated": false,
+    "buffer_timestamps_are_relative_to_first_reading_not_actual_start": true,
+    "full_16_record_capacity_tested": false,
+    "buffer_wrap_tested": false,
+    "hardware_gate_promoted": false
+  }
+}

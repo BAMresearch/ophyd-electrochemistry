@@ -96,6 +96,15 @@ the requested number of measurements, then turns output off locally. Retrieval
 requires a terminal state and confirmed output off. A retained buffer blocks the
 next prepare until an explicit reason-bearing discard.
 
+`RuntimeBufferArchive` assembles a complete sequence of independently validated
+chunks without hiding gaps or overlaps. Its versioned plain-data payload fixes
+the runtime identity, request, instrument identity, capacity, timestamp origin
+and raw records. The record array retains its own SHA-256, while the enclosing
+JSON adds a checksum over the complete canonical payload. The allowlisted parser
+checks both. `write_runtime_buffer_archive()` uses exclusive creation and refuses
+to overwrite an existing path; successful export does not itself authorize
+instrument-buffer discard.
+
 On 9 October 2026, the target 2460 acquired three records at +1 mA with a 0.2 V
 limit from the front-terminal four-wire nominal 100 ohm resistor. Buffer extent
 was 1–3 of capacity 16. All source statuses were 200, carrying the source
@@ -115,11 +124,23 @@ first-reading-in-group bit; subsequent records report only the front-terminal
 bit. No record has the questionable-measurement bit. These observations are not
 generalized beyond this evidence.
 
+A follow-up exercised the proof runtime's maximum eight readings. Retrieval in
+3+3+2-record chunks covered offsets 0–7; retrying the middle chunk returned the
+same content and digest. The complete archive reloaded equal to its in-memory
+form with payload SHA-256
+`0e6d134e8bdca3c64463f0b935f2424ffd7807c172997c621f528b6694cdf841`.
+Mean V/I was 102.5092 ohm, warning/error counts were unchanged, and a new session
+verified all eight records retained at IDLE/OFF/0 A before explicit discard left
+the buffer empty. See the
+[run evidence](evidence/k2460-2026-10-09-m5-max8-evidence.json) and
+[machine-verifiable raw archive](evidence/k2460-2026-10-09-m5-max8-archive.json).
+
 The following remain open before M5 is complete:
 
 - map target timestamps/apertures to actual START without inventing precision;
 - prove buffer capacity, fill-once/no-wrap behavior and larger bounded transfers;
-- generalize bounded target retrieval and implement full archive export;
+- map this raw archive into the shared `MeasurementRecord` archive only after
+  the START/aperture relationship is established;
 - calibrate or explicitly decline instrument-clock-to-epoch mapping;
 - complete G03, G04 and G06 hardware evidence.
 

@@ -1,5 +1,14 @@
-"""2460 planning compiler and bounded read-only commissioning transport."""
+"""2460 planning compiler and bounded commissioning transport/runtime."""
 
+from .archive import (
+    K2460_BUFFER_ARCHIVE_SCHEMA,
+    K2460_BUFFER_TIMESTAMP_ORIGIN,
+    RuntimeBufferArchive,
+    assemble_runtime_buffer_archive,
+    runtime_buffer_archive_from_json,
+    runtime_buffer_archive_json,
+    write_runtime_buffer_archive,
+)
 from .capabilities import Keithley2460Capabilities, SourceCapabilities
 from .compiler import CompiledProgram, Keithley2460Compiler
 from .config import DigitalIOConfig, Keithley2460Config, SafetyConfig, TimingPolicy
@@ -41,9 +50,12 @@ __all__ = [
     "CurrentHoldAcquisitionProof",
     "BufferedReading",
     "K2460_BUFFER_SCHEMA",
+    "K2460_BUFFER_ARCHIVE_SCHEMA",
+    "K2460_BUFFER_TIMESTAMP_ORIGIN",
     "M4RuntimeController",
     "RuntimeArtifact",
     "RuntimeBufferInfo",
+    "RuntimeBufferArchive",
     "RuntimeRecordChunk",
     "RuntimeState",
     "RuntimeStatus",
@@ -51,6 +63,10 @@ __all__ = [
     "parse_buffered_readings",
     "parse_runtime_buffer_info",
     "parse_runtime_status",
+    "assemble_runtime_buffer_archive",
+    "runtime_buffer_archive_from_json",
+    "runtime_buffer_archive_json",
+    "write_runtime_buffer_archive",
     "InstrumentIdentity",
     "PyVisaKeithley2460Transport",
     "VisaTransportConfig",

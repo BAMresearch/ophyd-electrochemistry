@@ -30,8 +30,9 @@ owns the 2460 connection.
 The `src/` tree contains structurally validated immutable models, deterministic
 waveform generators, canonical serialization, a pure bounded planning compiler,
 an independent virtual-clock runtime/fake transport, a bounded PyVISA backend,
-an immutable M5 measurement/retention schema, and a narrow packaged M4/M5
-finite-hold and target-buffer proof runtime. It has no operational
+an immutable M5 measurement/retention schema, a checksummed raw-target archive,
+and a narrow packaged M4/M5 finite-hold and target-buffer proof runtime. It has
+no operational
 acquisition or ophyd sourcing driver. Guarded notebooks limit live commissioning
 to the documented nominal 100 ohm resistor setup. Tests cover M1, M2, mocked
 transport/runtime behavior and a separate **test-only RunEngine lifecycle
@@ -117,8 +118,9 @@ volatile runtime installation, immediate hold, programmatic abort, and the
 unconnected-input no-START timeout with independent opt-in flags. Read the [M4
 guide](docs/m4-runtime.md) before proceeding.
 The guarded `notebooks/keithley_2460_m5_buffer.ipynb` reproduces the bounded
-three-reading +1 mA target-buffer proof and keeps acquisition, audit, and
-destructive discard behind separate opt-in flags. It is only for the confirmed
+three-to-eight-reading +1 mA target-buffer proof and checksummed archive, and
+keeps acquisition, audit, and destructive discard behind separate opt-in flags.
+It is only for the confirmed
 front-terminal four-wire nominal 100 ohm resistor setup.
 For a lean runtime environment, use `uv sync --locked --no-default-groups`.
 Development tools are dependency groups, not published package extras.
