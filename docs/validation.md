@@ -7,15 +7,15 @@ simulator-backed M6 Flyer; not operational hardware sourcing or acquisition.
 ## First M6 classic-Ophyd Flyer slice
 
 `Keithley2460Device` now implements the finite Flyer lifecycle over a typed
-backend returning the fixed M5 `RetainedBuffer`. It uses real Ophyd Status
+backend returning the fixed M5 schema, metadata and record chunks. It uses real Ophyd Status
 objects, background completion monitoring, explicit external-START armed
 semantics, distinct abort/acquisition outcomes, bounded stop, recovery,
 terminal offset-chunk collection, snapshot readback, configuration metadata and
-explicit retained-data disposition. The initial allowlist accepts only
-`GalvanostaticHold`.
+explicit retained-data disposition. The allowlist accepts `GalvanostaticHold`
+and `CurrentPulseSequence`.
 
-Five new contract cases run the device through a real Bluesky RunEngine for both
-start modes and validate Event Model documents plus all 18 fixed data fields.
+Contract cases run holds and two-pulse trains through a real Bluesky RunEngine
+for both start modes and validate Event Model documents plus all 18 fixed data fields.
 They also cover partial records after abort, failed completion with successful
 shutdown, terminal snapshot readback, no-START timeout with an empty collectable
 buffer, recovery, and rejection of unsupported CV before output. The complete
@@ -23,6 +23,10 @@ local suite has 291 passing tests; Ruff, strict source mypy and strict MkDocs pa
 The RunEngine cases use two-record chunks for a four-record acquisition and
 verify the exact `(0, 2)` then `(2, 2)` retrieval sequence. Chunk size is the
 only allowlisted runtime configuration field and is bounded to 4,096 records.
+The pulse cases prove that one external START releases the complete locally timed
+train. A separate case proves two trigger-per-pulse `count=1` acquisitions with
+distinct acquisition IDs, explicit retained-data disposition, START deassertion
+and re-arming. Multi-edge operation within one arm is not implemented or claimed.
 
 This slice uses only the independent simulator backend. No adapter from the raw
 2460 buffer is provided because its first-reading-relative timestamp does not

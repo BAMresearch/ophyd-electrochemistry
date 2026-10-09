@@ -14,9 +14,26 @@ device = Keithley2460Device(simulator_transport, name="ec")
 ```
 
 The constructor does not connect or mutate a backend. `stage()` connects,
-reconciles state and requires confirmed output OFF. The initial capability
-allowlist accepts only `GalvanostaticHold`; other public protocol models fail
-with `UnsupportedCapabilityError` before the backend is prepared.
+reconciles state and requires confirmed output OFF. The current capability
+allowlist accepts `GalvanostaticHold` and `CurrentPulseSequence`; other public
+protocol models fail with `UnsupportedCapabilityError` before the backend is
+prepared.
+
+## Pulse start semantics
+
+`CurrentPulseSequence(count=N)` is one finite acquisition. With external start,
+one START edge releases the complete instrument-timed sequence of N alternating
+pulse and baseline dwells. Host or detector timing is not used between pulses.
+
+Shot-by-shot external synchronization uses N separate acquisitions with
+`count=1`: prepare and arm, accept one START edge, complete and collect, then
+archive or explicitly discard the retained acquisition, deassert START and
+re-arm for the next edge. This keeps the one-START/one-acquisition lifecycle and
+gives every shot a distinct acquisition ID. Its cadence includes host disposition
+and re-arm latency, so it is not a substitute for a high-rate hardware-triggered
+sequence. A single arm that consumes N external edges is not implemented; it
+would require a separate request mode, runtime behavior and repeated-input
+hardware evidence.
 
 ## Implemented lifecycle
 
@@ -68,7 +85,7 @@ metadata and retryable `RecordChunk` transactions.
 
 ## Validation scope
 
-Contract tests run the operational device through Bluesky for immediate and
+Contract tests run holds and two-pulse trains through Bluesky for immediate and
 external starts, validate Event Model documents, verify the complete 18-field
 stream, preserve partial records after abort, exercise no-START timeout and
 recovery, and reject unsupported CV before output. These are software lifecycle

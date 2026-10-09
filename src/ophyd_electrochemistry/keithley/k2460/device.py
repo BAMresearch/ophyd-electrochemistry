@@ -37,7 +37,7 @@ from ...measurement import (
     mapping_index,
     source_setpoint_unit,
 )
-from ...protocols import GalvanostaticHold
+from ...protocols import CurrentPulseSequence, GalvanostaticHold
 from ...state import DeviceState
 from ...validation import integer, positive, text
 
@@ -98,10 +98,11 @@ def _failed_status(owner: object, exc: Exception) -> Status:
 class Keithley2460Device(Device):
     """Finite Flyer lifecycle over a typed acquisition backend.
 
-    This initial M6 slice supports :class:`GalvanostaticHold` by default. It is
-    operational with the independent simulator backend, but is intentionally not
-    wired to ``M4RuntimeController`` while the target timestamp/aperture mapping
-    remains unresolved.
+    This initial M6 slice supports :class:`GalvanostaticHold` and
+    :class:`CurrentPulseSequence` by default. It is operational with the
+    independent simulator backend, but is intentionally not wired to
+    ``M4RuntimeController`` while the target timestamp/aperture mapping remains
+    unresolved.
     """
 
     _stream_name = "electrochemistry"
@@ -116,7 +117,10 @@ class Keithley2460Device(Device):
         shutdown_timeout_s: float = 5.0,
         collection_chunk_records: int = 128,
         acquisition_id_factory: Callable[[], str] | None = None,
-        supported_program_types: tuple[type[Any], ...] = (GalvanostaticHold,),
+        supported_program_types: tuple[type[Any], ...] = (
+            GalvanostaticHold,
+            CurrentPulseSequence,
+        ),
         parent: Device | None = None,
     ) -> None:
         super().__init__("", name=name, parent=parent)

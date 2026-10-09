@@ -13,6 +13,7 @@ from examples.compile_program import capabilities as example_capabilities
 from examples.compile_program import config as example_config
 from ophyd_electrochemistry import (
     AcquisitionRequest,
+    CurrentPulseSequence,
     CyclicVoltammetry,
     DeviceState,
     GalvanostaticHold,
@@ -35,6 +36,22 @@ def request(mode: StartMode = StartMode.IMMEDIATE) -> AcquisitionRequest:
             current_a=0.01,
             duration_s=0.04,
             sample_period_s=0.01,
+            voltage_limit_v=5,
+        ),
+    )
+
+
+def pulse_request(mode: StartMode = StartMode.IMMEDIATE, *, count: int = 2) -> AcquisitionRequest:
+    return AcquisitionRequest(
+        experiment_id="m6-pulse-contract",
+        start_mode=mode,
+        program=CurrentPulseSequence(
+            baseline_current_a=0,
+            pulse_current_a=0.01,
+            pulse_width_s=0.01,
+            period_s=0.03,
+            count=count,
+            sample_period_s=0.006,
             voltage_limit_v=5,
         ),
     )
@@ -182,6 +199,90 @@ def test_abort_fails_completion_preserves_partial_data_and_recovers():
 
     device.recover().wait(timeout=1)
     assert device.state == DeviceState.IDLE and device.output_enabled is False
+    device.unstage()
+
+
+@pytest.mark.parametrize("mode", list(StartMode))
+def test_one_start_runs_the_complete_instrument_timed_pulse_train(mode):
+    device, runtime, _ = device_stack()
+    documents = []
+    run_engine = RunEngine({})
+    run_engine.subscribe(lambda name, doc: documents.append((name, doc)))
+    worker_errors = []
+
+    def finish_pulse_train():
+        try:
+            expected = (
+                DeviceState.WAITING_START
+                if mode == StartMode.EXTERNAL_TRIGGER
+                else DeviceState.RUNNING
+            )
+            wait_for_state(device, expected)
+            if mode == StartMode.EXTERNAL_TRIGGER:
+                runtime.set_inputs(start=True, abort=False)
+            runtime.advance_ticks(60)
+        except BaseException as exc:
+            worker_errors.append(exc)
+
+    worker = threading.Thread(target=finish_pulse_train, daemon=True)
+    worker.start()
+
+    def plan():
+        yield from bps.open_run(md={"experiment_id": "m6-pulse-contract"})
+        yield from bps.stage(device)
+        yield from bps.prepare(device, pulse_request(mode), wait=True)
+        yield from bps.kickoff(device, wait=True)
+        yield from bps.complete(device, wait=True)
+        yield from bps.collect(device, return_payload=False)
+        yield from bps.unstage(device)
+        yield from bps.close_run()
+
+    try:
+        run_engine(plan())
+    finally:
+        worker.join(timeout=2)
+
+    assert not worker.is_alive() and not worker_errors
+    assert [(step.relative_tick, step.level) for step in runtime.source_trace] == [
+        (0, 0.01),
+        (10, 0),
+        (30, 0.01),
+        (40, 0),
+    ]
+    event_page = next(document for name, document in documents if name == "event_page")
+    assert len(event_page["data"]["ec_sample_index"]) == 10
+    assert device.state == DeviceState.COMPLETE and device.output_enabled is False
+
+
+def test_trigger_per_pulse_uses_distinct_rearmed_acquisitions():
+    device, runtime, _ = device_stack()
+    acquisition_ids = []
+    device.stage()
+
+    for shot in range(2):
+        device.prepare(pulse_request(StartMode.EXTERNAL_TRIGGER, count=1)).wait(timeout=1)
+        acquisition_id = device.acquisition_id
+        assert acquisition_id is not None
+        acquisition_ids.append(acquisition_id)
+        device.kickoff().wait(timeout=1)
+        assert device.state == DeviceState.WAITING_START
+        assert runtime.output is False and runtime.source_trace == ()
+
+        runtime.set_inputs(start=True, abort=False)
+        runtime.advance_ticks(30)
+        device.complete().wait(timeout=1)
+        assert [(step.relative_tick, step.level) for step in runtime.source_trace] == [
+            (0, 0.01),
+            (10, 0),
+        ]
+        assert len(list(device.collect())) == 5
+
+        device.discard_retained_data(
+            acquisition_id=acquisition_id, reason=f"contract-shot-{shot}-collected"
+        )
+        runtime.set_inputs(start=False, abort=False)
+
+    assert acquisition_ids == ["m6-acquisition-1", "m6-acquisition-2"]
     device.unstage()
 
 

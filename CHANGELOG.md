@@ -15,6 +15,9 @@
   recovery and rejection of unsupported CV before output. The independent
   simulator is the only backend; raw 2460 adaptation remains blocked on the
   unresolved START/aperture timestamp mapping.
+- Enable finite `CurrentPulseSequence` acquisitions in the Flyer. One START runs
+  a complete locally timed pulse train; trigger-per-pulse operation is expressed
+  as separately armed `count=1` acquisitions, not an unproven multi-edge mode.
 - Add the first offline M5 data layer: immutable versioned V/I records with
   explicit electrical/timing origin, clock/aperture/source mapping, validated
   terminal buffer metadata, canonical checksums and deterministic offset chunks.
