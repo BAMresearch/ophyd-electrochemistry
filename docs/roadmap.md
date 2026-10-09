@@ -27,10 +27,11 @@ timing, canonical hashes, scheduled aperture mapping and explicit capability bud
 Planning, [M2 simulated execution](m2-simulator.md), [M3 bounded
 communication](m3-transport.md), and the [M4 finite-hold proof](m4-runtime.md)
 are implemented. The [M5 data layer](m5-data.md) is implemented offline and has
-an explicitly synthetic simulator adapter. Live instrument execution so far comprises guarded resistor
-sourcing, bipolar, and buffer tests in SCPI mode plus volatile TSP runtime
-installation plus a +1 mA, 250 ms immediate-hold state-path proof. There is no
-TSP acquisition, independent timing trace, or ophyd device yet.
+an explicitly synthetic simulator adapter. Live instrument execution so far
+comprises guarded resistor sourcing, bipolar and buffer tests in SCPI mode plus
+volatile TSP runtime installation, finite-hold state paths, and a 17-record
+exact-sized TSP acquisition. There is no independent timing trace or ophyd
+device yet.
 Charge/discharge cycling and voltage-pulse models remain extension work.
 Chronoamperometry/chronopotentiometry can be
 aliases/compositions of validated step/hold protocols rather than redundant APIs.

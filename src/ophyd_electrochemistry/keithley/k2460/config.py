@@ -100,6 +100,24 @@ class TimingPolicy:
 
 
 @dataclass(frozen=True, kw_only=True)
+class BufferPolicy:
+    """Host-side allocation and transfer ceilings below runtime hard backstops."""
+
+    capacity_ceiling_records: int = 250_000
+    transfer_chunk_records: int = 128
+
+    def __post_init__(self) -> None:
+        integer(self.capacity_ceiling_records, "capacity_ceiling_records")
+        integer(self.transfer_chunk_records, "transfer_chunk_records")
+        if self.capacity_ceiling_records > 5_000_000:
+            raise ValidationError("capacity_ceiling_records must not exceed 5,000,000")
+        if self.transfer_chunk_records > 4_096:
+            raise ValidationError("transfer_chunk_records must not exceed 4,096")
+        if self.transfer_chunk_records > self.capacity_ceiling_records:
+            raise ValidationError("transfer chunk cannot exceed the buffer capacity ceiling")
+
+
+@dataclass(frozen=True, kw_only=True)
 class Keithley2460Config:
     visa_resource: str
     safety: SafetyConfig
@@ -107,6 +125,7 @@ class Keithley2460Config:
     source_terminal: Literal["front", "rear"]
     sense: Literal["local", "remote"]
     io: DigitalIOConfig = field(default_factory=DigitalIOConfig)
+    buffer: BufferPolicy = field(default_factory=BufferPolicy)
 
     def __post_init__(self) -> None:
         text(self.visa_resource, "visa_resource")
@@ -114,5 +133,7 @@ class Keithley2460Config:
             raise ValidationError("safety/timing require validated configuration objects")
         if not isinstance(self.io, DigitalIOConfig):
             raise ValidationError("io requires DigitalIOConfig")
+        if not isinstance(self.buffer, BufferPolicy):
+            raise ValidationError("buffer requires BufferPolicy")
         if self.source_terminal not in ("front", "rear") or self.sense not in ("local", "remote"):
             raise ValidationError("Unsupported terminals or sense mode")

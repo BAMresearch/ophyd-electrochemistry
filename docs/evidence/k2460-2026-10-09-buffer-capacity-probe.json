@@ -1,0 +1,64 @@
+{
+  "schema": "k2460-buffer-capacity-probe-v1",
+  "recorded_at_utc": "2026-10-09T09:49:55Z",
+  "instrument": {
+    "identity_raw": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "resource_name": "TCPIP0::169.254.113.151::5025::SOCKET",
+    "command_language": "TSP"
+  },
+  "preconditions": {
+    "runtime_state": "idle",
+    "source_output": "smu.OFF",
+    "source_level_a": 0.0,
+    "runtime_buffer_capacity_records": 16,
+    "runtime_buffer_record_count": 0,
+    "defbuffer1_capacity_records": 100000,
+    "defbuffer1_record_count": 1760,
+    "defbuffer2_capacity_records": 100000,
+    "defbuffer2_record_count": 0,
+    "event_warning_count": 5,
+    "event_error_count": 6
+  },
+  "procedure": {
+    "allocation": "oe_capacity_probe2 = buffer.make(0, buffer.STYLE_STANDARD)",
+    "capacity_query": "oe_capacity_probe2.capacity",
+    "deletion": "buffer.delete(oe_capacity_probe2)",
+    "global_release": "oe_capacity_probe2 = nil",
+    "memory_reclamation": "collectgarbage()",
+    "source_output_enabled": false
+  },
+  "result": {
+    "maximum_available_standard_buffer_capacity_records": 5110784,
+    "temporary_buffer_record_count": 0,
+    "temporary_buffer_start_index": 0,
+    "temporary_buffer_end_index": 0
+  },
+  "postconditions": {
+    "temporary_buffer_absent": true,
+    "runtime_state": "idle",
+    "source_output": "smu.OFF",
+    "source_level_a": 0.0,
+    "runtime_buffer_capacity_records": 16,
+    "runtime_buffer_record_count": 0,
+    "defbuffer1_record_count": 1760,
+    "defbuffer2_record_count": 0,
+    "event_warning_count": 5,
+    "event_error_count": 6
+  },
+  "commissioning_note": {
+    "first_probe_cleanup_confirmed": true,
+    "first_harness_failure": "postcondition incorrectly required both default buffers to contain zero readings",
+    "correction": "default-buffer contents were recorded as observed state rather than treated as an allocation failure",
+    "user_defined_buffers_cleared_by_power_cycle": true,
+    "default_buffer_capacity_remains_allocated_after_clear": true
+  },
+  "evidence_limits": {
+    "allocation_only_no_readings_stored": true,
+    "full_capacity_fill_tested": false,
+    "no_wrap_tested": false,
+    "large_transfer_tested": false,
+    "sustained_acquisition_tested": false,
+    "capacity_is_configuration_and_firmware_specific": true,
+    "hardware_gate_promoted": false
+  }
+}

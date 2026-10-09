@@ -21,7 +21,8 @@ from .runtime import (
 
 K2460_BUFFER_ARCHIVE_SCHEMA = "ophyd-electrochemistry/k2460-buffer-archive-v1"
 K2460_BUFFER_TIMESTAMP_ORIGIN = "relative-to-first-buffer-reading"
-_MAX_ARCHIVE_BYTES = 1024 * 1024
+_MAX_ARCHIVE_BYTES = 256 * 1024 * 1024
+_SUPPORTED_RUNTIME_BUILDS = {"m4-finite-current-hold-v5", RUNTIME_BUILD}
 _ARCHIVE_PAYLOAD_KEYS = {
     "schema",
     "acquisition_id",
@@ -90,7 +91,7 @@ class RuntimeBufferArchive:
             raise ValidationError("Unsupported K2460 buffer archive schema")
         if self.runtime_abi != RUNTIME_ABI:
             raise ValidationError("K2460 buffer archive runtime ABI is incompatible")
-        if self.runtime_build != RUNTIME_BUILD:
+        if self.runtime_build not in _SUPPORTED_RUNTIME_BUILDS:
             raise ValidationError("K2460 buffer archive runtime build is incompatible")
         if self.buffer_timestamp_origin != K2460_BUFFER_TIMESTAMP_ORIGIN:
             raise ValidationError("Unsupported K2460 buffer timestamp origin")
@@ -223,7 +224,7 @@ def runtime_buffer_archive_from_json(encoded: str) -> RuntimeBufferArchive:
     """Verify and decode an allowlisted raw K2460 archive envelope."""
 
     if not isinstance(encoded, str) or len(encoded.encode("utf-8")) > _MAX_ARCHIVE_BYTES:
-        raise ValidationError("K2460 archive JSON must be a string <=1 MiB")
+        raise ValidationError("K2460 archive JSON must be a string <=256 MiB")
     try:
         envelope = json.loads(encoded, object_pairs_hook=_unique_object)
         if not isinstance(envelope, dict) or set(envelope) != {"sha256", "payload"}:

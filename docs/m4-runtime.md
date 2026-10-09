@@ -169,6 +169,15 @@ The [M5 guide](m5-data.md) and
 [evidence](evidence/k2460-2026-10-09-m5-buffer-proof.json) record the exact
 boundary.
 
+Runtime build v6 removes only v5's artificial eight-reading and 16-record
+limits. It allocates a standard fill-once buffer at the exact requested count,
+with a configurable host ceiling, a 5,000,000-record runtime backstop, and
+independently bounded chunk retrieval. The exact empty v5 artifact can be
+replaced in place; retained records make replacement fail before deletion. The
+target v6 proof used 17 records and a 10-record transfer, then independently
+confirmed retention and IDLE/OFF/0 A before archive-authorized discard. See the
+[M5 guide](m5-data.md) for the evidence and remaining limits.
+
 ## Command-language transition and live installation
 
 The instrument was changed from SCPI to TSP using the front panel and rebooted;

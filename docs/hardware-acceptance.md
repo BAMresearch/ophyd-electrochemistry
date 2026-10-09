@@ -179,6 +179,28 @@ IDLE/OFF/0 A before reason-bearing discard emptied the buffer. The
 the deliberately configured eight-reading runtime limit, not the 16-record
 buffer capacity, and does not test wrap behavior.
 
+An output-off capacity probe subsequently requested the largest currently
+available standard-style user buffer. Firmware 1.7.16a allocated 5,110,784
+records while the two 100,000-record default buffers and 16-record proof buffer
+remained allocated. The empty temporary buffer was immediately deleted and
+garbage-collected; warning/error counts and all pre-existing buffers were
+unchanged, and the source remained IDLE/OFF/0 A. The
+[capacity record](evidence/k2460-2026-10-09-buffer-capacity-probe.json) proves
+allocation under this configuration, not filling, no-wrap behavior, sustained
+acquisition, or multi-megabyte transfer.
+
+Runtime build v6 subsequently allocated an exact 17-record standard fill-once
+buffer and acquired extent 1–17. Retrieval used 10+7-record chunks, crossing the
+former eight-record transfer limit, and the first 10-record chunk retried with
+identical content and checksum. The canonical archive reloaded successfully;
+an independent session then confirmed all records retained at IDLE/OFF/0 A
+before explicit discard left an empty 17-record buffer. Mean V/I was 102.5087
+ohm and warning/error counts stayed at 5/6. See the
+[v6 evidence](evidence/k2460-2026-10-09-m5-v6-exact-buffer-evidence.json) and
+[verifiable archive](evidence/k2460-2026-10-09-m5-v6-exact-buffer-archive.json).
+This adds exact-allocation, small fill-once and bounded-transfer evidence; it
+does not promote G03/G04 or validate the configured 250,000-record host ceiling.
+
 ## M4 runtime installation, immediate hold, and programmatic abort — PASS within narrow scope
 
 The exact-artifact loader, packaged finite-current-hold TSP runtime, typed host

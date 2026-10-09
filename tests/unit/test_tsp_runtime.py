@@ -16,6 +16,7 @@ from ophyd_electrochemistry.exceptions import (
 )
 from ophyd_electrochemistry.keithley.k2460 import (
     K2460_BUFFER_SCHEMA,
+    BufferPolicy,
     CurrentHoldAcquisitionProof,
     CurrentHoldProof,
     Keithley2460Config,
@@ -115,7 +116,7 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     artifact = packaged_runtime()
 
     assert artifact.abi == "oe-k2460-m4-hold-v1"
-    assert artifact.build == "m4-finite-current-hold-v5"
+    assert artifact.build == "m4-finite-current-hold-v6"
     assert artifact.sha256 == hashlib.sha256(artifact.source.encode("ascii")).hexdigest()
     assert artifact.script_name == f"oe_m4_{artifact.sha256[:24]}"
     assert len(artifact.script_name) == 30
@@ -135,7 +136,12 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     assert "oe_m4_track_flags(false, true)" in artifact.source
     assert "digio.MODE_DIGITAL_IN" in artifact.source
     assert "expected_inactive = digio.STATE_HIGH" in artifact.source
-    assert "buffer.make(oe_m5_buffer_capacity, buffer.STYLE_STANDARD)" in artifact.source
+    assert "buffer.make(measurement_count, buffer.STYLE_STANDARD)" in artifact.source
+    assert "buffer.delete(oe_m5_buffer)" in artifact.source
+    assert "collectgarbage()" in artifact.source
+    assert "oe_m5_buffer.fillmode = buffer.FILL_ONCE" in artifact.source
+    assert "measurement_count > 5000000" in artifact.source
+    assert "last_index - first_index + 1 > 4096" in artifact.source
     assert "trigger.BLOCK_BUFFER_CLEAR, oe_m5_buffer" in artifact.source
     assert "trigger.BLOCK_MEASURE_DIGITIZE, oe_m5_buffer, measurement_count" in artifact.source
     assert "oe_m5_buffer.sourcevalues" in artifact.source
@@ -176,7 +182,7 @@ def test_current_hold_proof_rejects_values_outside_hard_runtime_envelope(changes
         {"voltage_limit_v": 0.009},
         {"voltage_limit_v": 2.01},
         {"measurement_count": 0},
-        {"measurement_count": 9},
+        {"measurement_count": 5_000_001},
         {"measurement_count": True},
     ],
 )
@@ -220,6 +226,7 @@ def test_runtime_buffer_parsers_are_strict_and_keep_raw_timestamp_meaning():
     info = parse_runtime_buffer_info("3\t1\t3\t16")
     assert info.record_count == 3 and info.start_index == 1 and info.end_index == 3
     assert parse_runtime_buffer_info("0\t0\t0\t16").start_index is None
+    assert parse_runtime_buffer_info("0\t0\t0\t0").capacity_records == 0
     records = parse_buffered_readings(
         "0.000999998,0.10249,0,136,8, 0.000999997,0.10248,0.0825,136,8",
         offset=2,
@@ -273,6 +280,49 @@ def test_exact_known_v4_can_be_replaced_without_a_reboot():
     assert "oe_m4_initialize = nil" in transport.writes
 
 
+def test_exact_known_v5_empty_buffer_can_be_replaced_without_a_reboot():
+    transport = FakeRuntimeTransport(
+        status_line("idle"),
+        "0",
+        "oe-k2460-m4-hold-v1",
+        "m4-finite-current-hold-v5",
+        "false",
+        "false",
+        "0\t0\t0\t16",
+        "true",
+        "true",
+        "smu.OFF",
+        "0",
+    )
+    controller = M4RuntimeController(transport, runtime_config())
+
+    artifact = controller.replace_known_runtime_and_install()
+
+    assert artifact == packaged_runtime()
+    assert "buffer.delete(oe_m5_buffer)" in transport.writes
+    assert "oe_m5_buffer = nil" in transport.writes
+    assert "collectgarbage()" in transport.writes
+    assert 'script.delete("oe_m4_083f3d3a4749ad9b8cb7a771")' in transport.writes
+
+
+def test_known_v5_replacement_preserves_retained_records():
+    transport = FakeRuntimeTransport(
+        status_line("idle"),
+        "0",
+        "oe-k2460-m4-hold-v1",
+        "m4-finite-current-hold-v5",
+        "false",
+        "false",
+        "3\t1\t3\t16",
+    )
+
+    with pytest.raises(IncompatibleInstrumentError, match="retained records"):
+        M4RuntimeController(transport, runtime_config()).replace_known_runtime_and_install()
+
+    assert "buffer.delete(oe_m5_buffer)" not in transport.writes
+    assert not any(command.startswith("script.delete") for command in transport.writes)
+
+
 @pytest.mark.parametrize(
     ("replies", "match"),
     [
@@ -280,7 +330,7 @@ def test_exact_known_v4_can_be_replaced_without_a_reboot():
         ((status_line("idle"), "0.001"), "zero programmed"),
         (
             (status_line("idle"), "0", "oe-k2460-m4-hold-v1", "unexpected-build"),
-            "exact replaceable",
+            "exact allowlisted",
         ),
         (
             (
@@ -315,7 +365,7 @@ def test_prepare_serializes_validated_parameters_and_confirms_output_off():
 
 
 def test_prepare_acquisition_serializes_bounded_fixed_measurement_and_empty_buffer():
-    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t16")
+    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t3")
     controller = M4RuntimeController(transport, runtime_config())
     acquisition = CurrentHoldAcquisitionProof(
         current_a=0.001,
@@ -334,17 +384,45 @@ def test_prepare_acquisition_serializes_bounded_fixed_measurement_and_empty_buff
     ]
 
 
+def test_buffer_policy_and_controller_apply_separate_allocation_and_transfer_ceilings():
+    assert BufferPolicy().capacity_ceiling_records == 250_000
+    with pytest.raises(ValidationError):
+        BufferPolicy(capacity_ceiling_records=5_000_001)
+    with pytest.raises(ValidationError):
+        BufferPolicy(transfer_chunk_records=4_097)
+    with pytest.raises(ValidationError):
+        BufferPolicy(capacity_ceiling_records=3, transfer_chunk_records=4)
+
+    config = runtime_config(
+        buffer=BufferPolicy(capacity_ceiling_records=17, transfer_chunk_records=7)
+    )
+    acquisition = CurrentHoldAcquisitionProof(
+        current_a=0.001,
+        source_range_a=0.001,
+        voltage_limit_v=0.2,
+        measurement_count=18,
+    )
+    transport = FakeRuntimeTransport()
+    with pytest.raises(ValidationError, match="capacity ceiling"):
+        M4RuntimeController(transport, config).prepare_current_hold_acquisition(acquisition)
+    assert transport.writes == []
+
+    with pytest.raises(ValidationError, match="transfer chunk ceiling"):
+        M4RuntimeController(transport, config).read_buffer_chunk(offset=0, max_records=8)
+    assert transport.writes == []
+
+
 def test_offset_buffer_chunks_are_retryable_and_discard_is_explicit():
     data = "0.001,0.1025,0,136,8,0.001,0.1026,0.0825,136,8"
     transport = FakeRuntimeTransport(
         status_line("complete", block=7),
-        "3\t1\t3\t16",
+        "3\t1\t3\t3",
         data,
         status_line("complete", block=7),
-        "3\t1\t3\t16",
+        "3\t1\t3\t3",
         data,
         status_line("complete", block=7),
-        "0\t0\t0\t16",
+        "0\t0\t0\t3",
     )
     controller = M4RuntimeController(transport, runtime_config())
 

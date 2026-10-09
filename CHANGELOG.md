@@ -28,6 +28,19 @@
   The checked archive reloaded exactly, the middle chunk retried identically,
   warning/error counts were unchanged, and independent retention/discard checks
   ended IDLE/OFF/0 A with an empty buffer.
+- Clarify that eight readings is only the proof-runtime cap. An output-off
+  `buffer.make(0, buffer.STYLE_STANDARD)` probe on firmware 1.7.16a allocated
+  5,110,784 currently available records, then deletion plus garbage collection
+  restored the prior buffer state without new warnings or errors.
+- Replace the artificial eight-reading/16-record limits with runtime build v6:
+  exact-sized fill-once allocation, a configurable 250,000-record host ceiling,
+  a 5,000,000-record instrument-side backstop, and independently bounded
+  4,096-record maximum transfers. Historical v5 archives remain readable.
+- Allow-list safe in-place replacement of the exact v5 runtime only when its
+  buffer is empty. On target, v6 allocated exactly 17 records, filled all 17,
+  retrieved them as 10+7 chunks with deterministic retry, and preserved them
+  through an independent IDLE/OFF/0 A audit before verified archival and
+  explicit discard. Warning/error counts remained unchanged.
 
 - Implement the M3 serialized, bounded optional PyVISA transport with explicit
   backend/resource/framing, strict 2460 identity/language validation, typed

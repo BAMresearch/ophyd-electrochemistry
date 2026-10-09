@@ -87,6 +87,11 @@ def test_archive_is_canonical_checksummed_and_round_trips():
     assert runtime_buffer_archive_json(runtime_buffer_archive_from_json(encoded)) == encoded
 
 
+def test_archive_accepts_current_and_predecessor_runtime_builds():
+    assert archive().runtime_build == "m4-finite-current-hold-v5"
+    assert archive(runtime_build="m4-finite-current-hold-v6").runtime_build.endswith("v6")
+
+
 def test_archive_writer_exclusively_creates_and_never_overwrites(tmp_path):
     value = archive()
     destination = tmp_path / "proof.json"

@@ -11,7 +11,7 @@ from .archive import (
 )
 from .capabilities import Keithley2460Capabilities, SourceCapabilities
 from .compiler import CompiledProgram, Keithley2460Compiler
-from .config import DigitalIOConfig, Keithley2460Config, SafetyConfig, TimingPolicy
+from .config import BufferPolicy, DigitalIOConfig, Keithley2460Config, SafetyConfig, TimingPolicy
 from .runtime import (
     K2460_BUFFER_SCHEMA,
     BufferedReading,
@@ -39,6 +39,7 @@ from .transport import (
 
 __all__ = [
     "CompiledProgram",
+    "BufferPolicy",
     "DigitalIOConfig",
     "Keithley2460Capabilities",
     "Keithley2460Compiler",

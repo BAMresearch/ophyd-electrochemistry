@@ -1,10 +1,11 @@
 # M5 measurement records and retained buffers
 
 M5 has a hardware-neutral record contract plus a deliberately narrow target
-proof. The packaged Keithley runtime can acquire at most eight immediate 1 NPLC
-readings into a 16-record fill-once buffer and return raw source readback,
-measured voltage, buffer-relative timestamp, source status and measurement
-status. This is commissioning code, not the operational acquisition backend.
+proof. The packaged Keithley runtime allocates an exact-sized fill-once buffer
+for an explicitly bounded number of immediate 1 NPLC readings and returns raw
+source readback, measured voltage, buffer-relative timestamp, source status and
+measurement status. This is commissioning code, not the operational acquisition
+backend.
 
 ## Public model
 
@@ -87,14 +88,17 @@ not exactly-once.
 
 ## Narrow target proof
 
-Runtime build `m4-finite-current-hold-v5` adds
+Runtime build `m4-finite-current-hold-v6` provides
 `CurrentHoldAcquisitionProof`, `RuntimeBufferInfo`, `BufferedReading`, and
 `RuntimeRecordChunk`. Hard limits remain ±10 mA and 2 V, while configuration
-limits may be lower. The acquisition path is immediate-only, configures voltage
-measurement at 1 NPLC, clears the bounded buffer before output on, makes exactly
+limits may be lower. The acquisition count has an explicit host ceiling
+(250,000 records by default) and a 5,000,000-record TSP backstop. The runtime
+allocates exactly the requested capacity, selects fill-once mode, configures
+voltage measurement at 1 NPLC, clears the buffer before output on, makes exactly
 the requested number of measurements, then turns output off locally. Retrieval
-requires a terminal state and confirmed output off. A retained buffer blocks the
-next prepare until an explicit reason-bearing discard.
+requires a terminal state and confirmed output off, and is separately bounded
+to at most 4,096 records per transfer (128 by default). A retained buffer blocks
+the next prepare until an explicit reason-bearing discard.
 
 `RuntimeBufferArchive` assembles a complete sequence of independently validated
 chunks without hiding gaps or overlaps. Its versioned plain-data payload fixes
@@ -124,7 +128,8 @@ first-reading-in-group bit; subsequent records report only the front-terminal
 bit. No record has the questionable-measurement bit. These observations are not
 generalized beyond this evidence.
 
-A follow-up exercised the proof runtime's maximum eight readings. Retrieval in
+A follow-up exercised the proof runtime's deliberately imposed maximum of eight
+readings. Retrieval in
 3+3+2-record chunks covered offsets 0–7; retrying the middle chunk returned the
 same content and digest. The complete archive reloaded equal to its in-memory
 form with payload SHA-256
@@ -135,10 +140,34 @@ the buffer empty. See the
 [run evidence](evidence/k2460-2026-10-09-m5-max8-evidence.json) and
 [machine-verifiable raw archive](evidence/k2460-2026-10-09-m5-max8-archive.json).
 
+Eight is not a 2460 capacity limit. With output off and all existing buffers left
+intact, a temporary standard-style `buffer.make(0, ...)` allocation reported
+5,110,784 currently available records on this firmware/configuration. The two
+default buffers retained capacities of 100,000 each, the 16-record proof buffer
+was unchanged, and the temporary buffer was deleted and garbage-collected. The
+warning/error counts did not change and the source remained IDLE/OFF/0 A. This
+is allocation evidence only: the buffer was not filled and no large transfer or
+wrap behavior was tested. See the
+[capacity-probe evidence](evidence/k2460-2026-10-09-buffer-capacity-probe.json).
+
+Runtime build v6 then removed the artificial v5 limits. Safe replacement first
+verified that the v5 buffer was empty and the source was IDLE/OFF/0 A. A 17-count
+request allocated exactly 17 standard fill-once records, filled extent 1–17 and
+was retrieved as 10+7 records; retrying the first 10-record transfer returned the
+same digest. The checked archive reloaded exactly with payload SHA-256
+`4368f2779dee394e4cf6097ac2fea9659c616046ab52b24809e5e6431bee8f77`.
+Mean V/I was 102.5087 ohm. Warning/error counts remained 5/6, and an independent
+session confirmed all 17 records retained at IDLE/OFF/0 A before explicit discard
+left the exact-sized buffer empty. See the
+[run evidence](evidence/k2460-2026-10-09-m5-v6-exact-buffer-evidence.json) and
+[raw archive](evidence/k2460-2026-10-09-m5-v6-exact-buffer-archive.json). This
+validates a small exact-size allocation and a transfer larger than the old
+eight-record ceiling, not a 250,000-record acquisition or multi-megabyte reply.
+
 The following remain open before M5 is complete:
 
 - map target timestamps/apertures to actual START without inventing precision;
-- prove buffer capacity, fill-once/no-wrap behavior and larger bounded transfers;
+- extend fill-once/no-wrap and transfer evidence well beyond the 17-record proof;
 - map this raw archive into the shared `MeasurementRecord` archive only after
   the START/aperture relationship is established;
 - calibrate or explicitly decline instrument-clock-to-epoch mapping;

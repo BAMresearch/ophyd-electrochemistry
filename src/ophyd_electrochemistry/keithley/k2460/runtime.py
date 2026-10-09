@@ -2,7 +2,7 @@
 
 This module does not provide an operational acquisition runtime or an ophyd
 device. It accepts only the packaged, reviewed TSP resource and keeps live work
-limited to finite current holds and at most eight readings on a resistive load.
+limited to finite current holds and explicitly bounded readings on a resistive load.
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ from .config import Keithley2460Config
 from .transport import CommandLanguage, parse_source_output_enabled
 
 RUNTIME_ABI = "oe-k2460-m4-hold-v1"
-RUNTIME_BUILD = "m4-finite-current-hold-v5"
+RUNTIME_BUILD = "m4-finite-current-hold-v6"
 RUNTIME_RESOURCE = "tsp/runtime.tsp"
 K2460_BUFFER_SCHEMA = "ophyd-electrochemistry/k2460-buffer-proof-v1"
 _MAX_CURRENT_A = 0.01
@@ -31,10 +31,9 @@ _MIN_DURATION_S = 0.001
 _MIN_EVENT_POLL_S = 0.001
 _MAX_EVENT_POLL_S = 0.1
 _SCRIPT_DIGEST_PREFIX_LENGTH = 24
-_MAX_MEASUREMENT_COUNT = 8
-_REPLACEABLE_RUNTIME_BUILD = "m4-finite-current-hold-v4"
-_REPLACEABLE_RUNTIME_SCRIPT = "oe_m4_ce741e17ffcdd7f55d489c7b"
-_REPLACEABLE_RUNTIME_GLOBALS = (
+_MAX_MEASUREMENT_COUNT = 5_000_000
+_MAX_TRANSFER_CHUNK_RECORDS = 4_096
+_RUNTIME_GLOBALS_V4 = (
     "oe_m4_runtime_abi",
     "oe_m4_runtime_build",
     "oe_m4_state",
@@ -58,6 +57,27 @@ _REPLACEABLE_RUNTIME_GLOBALS = (
     "oe_m4_force_safe",
     "oe_m4_recover",
 )
+_RUNTIME_GLOBALS_V5 = _RUNTIME_GLOBALS_V4 + (
+    "oe_m5_buffer",
+    "oe_m5_buffer_capacity",
+    "oe_m5_measurement_count",
+    "oe_m5_prepare_current_hold_acquisition",
+    "oe_m5_buffer_status",
+    "oe_m5_print_buffer",
+    "oe_m5_discard_buffer",
+)
+_REPLACEABLE_RUNTIMES = {
+    "m4-finite-current-hold-v4": (
+        "oe_m4_ce741e17ffcdd7f55d489c7b",
+        _RUNTIME_GLOBALS_V4,
+        False,
+    ),
+    "m4-finite-current-hold-v5": (
+        "oe_m4_083f3d3a4749ad9b8cb7a771",
+        _RUNTIME_GLOBALS_V5,
+        True,
+    ),
+}
 
 
 class RuntimeState(StrEnum):
@@ -126,7 +146,7 @@ class CurrentHoldAcquisitionProof:
         integer(self.measurement_count, "measurement_count")
         if self.measurement_count > _MAX_MEASUREMENT_COUNT:
             raise ValidationError(
-                f"M5 proof measurement_count must not exceed {_MAX_MEASUREMENT_COUNT}"
+                f"M5 measurement_count must not exceed {_MAX_MEASUREMENT_COUNT:,}"
             )
 
 
@@ -161,7 +181,7 @@ class RuntimeBufferInfo:
 
     def __post_init__(self) -> None:
         integer(self.record_count, "record_count", minimum=0)
-        integer(self.capacity_records, "capacity_records")
+        integer(self.capacity_records, "capacity_records", minimum=0)
         if self.record_count == 0:
             if self.start_index is not None or self.end_index is not None:
                 raise ValidationError("Empty runtime buffer cannot have an index extent")
@@ -408,7 +428,21 @@ class M4RuntimeController:
         return artifact
 
     def replace_known_v4_and_install(self) -> RuntimeArtifact:
-        """Replace only the exact commissioned v4 artifact while safely idle.
+        """Compatibility entry point restricted to the exact commissioned v4 artifact."""
+
+        return self._replace_known_runtime_and_install(
+            {"m4-finite-current-hold-v4": _REPLACEABLE_RUNTIMES["m4-finite-current-hold-v4"]}
+        )
+
+    def replace_known_runtime_and_install(self) -> RuntimeArtifact:
+        """Replace one exact allowlisted prior artifact while safely idle."""
+
+        return self._replace_known_runtime_and_install(_REPLACEABLE_RUNTIMES)
+
+    def _replace_known_runtime_and_install(
+        self, allowed: dict[str, tuple[str, tuple[str, ...], bool]]
+    ) -> RuntimeArtifact:
+        """Delete only a recognized digest/build and its known owned globals.
 
         This is deliberately not a general script-deletion API. If any identity,
         state, output, level, or script-name check differs, no deletion occurs.
@@ -419,39 +453,56 @@ class M4RuntimeController:
         status = self.status()
         if status.state != RuntimeState.IDLE or status.output_enabled:
             raise IncompatibleInstrumentError(
-                "Known v4 replacement requires output-OFF IDLE runtime state"
+                "Known runtime replacement requires output-OFF IDLE runtime state"
             )
         source_level = self._query_source_level()
         if source_level != 0:
             raise IncompatibleInstrumentError(
-                "Known v4 replacement requires a zero programmed source level"
+                "Known runtime replacement requires a zero programmed source level"
             )
         loaded_abi = self.transport.query("print(oe_m4_runtime_abi)")
         loaded_build = self.transport.query("print(oe_m4_runtime_build)")
-        if (loaded_abi, loaded_build) != (RUNTIME_ABI, _REPLACEABLE_RUNTIME_BUILD):
+        if loaded_abi != RUNTIME_ABI or loaded_build not in allowed:
             raise IncompatibleInstrumentError(
-                "Loaded runtime is not the exact replaceable v4 ABI/build"
+                "Loaded runtime is not an exact allowlisted ABI/build"
             )
-        script_absent = self.transport.query(f"print({_REPLACEABLE_RUNTIME_SCRIPT} == nil)")
+        script_name, owned_globals, has_m5_buffer = allowed[loaded_build]
+        script_absent = self.transport.query(f"print({script_name} == nil)")
         if script_absent != "false":
             raise IncompatibleInstrumentError(
-                "Exact replaceable v4 digest-named script is not present"
+                "Exact allowlisted digest-named script is not present"
             )
 
-        self.transport.write(f'script.delete("{_REPLACEABLE_RUNTIME_SCRIPT}")')
-        if self.transport.query(f"print({_REPLACEABLE_RUNTIME_SCRIPT} == nil)") != "true":
-            raise IncompatibleInstrumentError("Known v4 script deletion was not confirmed")
-        for name in _REPLACEABLE_RUNTIME_GLOBALS:
+        if has_m5_buffer:
+            buffer_absent = self.transport.query("print(oe_m5_buffer == nil)")
+            if buffer_absent not in ("true", "false"):
+                raise TransportProtocolError("Could not determine prior runtime buffer presence")
+            if buffer_absent == "false":
+                info = self.buffer_info()
+                if info.record_count != 0:
+                    raise IncompatibleInstrumentError(
+                        "Prior runtime buffer contains retained records; archive/discard first"
+                    )
+                self.transport.write("buffer.delete(oe_m5_buffer)")
+                self.transport.write("oe_m5_buffer = nil")
+                self.transport.write("collectgarbage()")
+
+        self.transport.write(f'script.delete("{script_name}")')
+        if self.transport.query(f"print({script_name} == nil)") != "true":
+            raise IncompatibleInstrumentError("Known runtime script deletion was not confirmed")
+        for name in owned_globals:
             self.transport.write(f"{name} = nil")
         globals_absent = self.transport.query(
             "print(oe_m4_runtime_abi == nil and oe_m4_initialize == nil)"
         )
         if globals_absent != "true":
-            raise IncompatibleInstrumentError("Known v4 runtime globals were not cleared")
+            raise IncompatibleInstrumentError("Known runtime globals were not cleared")
         if parse_source_output_enabled(self.transport.query("print(smu.source.output)")):
-            raise IncompatibleInstrumentError("Output changed during known v4 replacement")
+            raise IncompatibleInstrumentError("Output changed during known runtime replacement")
         if self._query_source_level() != 0:
-            raise IncompatibleInstrumentError("Source level changed during known v4 replacement")
+            raise IncompatibleInstrumentError(
+                "Source level changed during known runtime replacement"
+            )
         return self.install()
 
     def prepare_current_hold(self, hold: CurrentHoldProof) -> RuntimeStatus:
@@ -496,6 +547,10 @@ class M4RuntimeController:
             raise ValidationError("acquisition must be CurrentHoldAcquisitionProof")
         self._validate_against_config(acquisition)
         self._validate_runtime_config()
+        if acquisition.measurement_count > self.config.buffer.capacity_ceiling_records:
+            raise ValidationError(
+                "Measurement count exceeds the configured buffer capacity ceiling"
+            )
         io = self.config.io
         command = (
             "oe_m5_prepare_current_hold_acquisition("
@@ -524,8 +579,8 @@ class M4RuntimeController:
         if status.state != RuntimeState.PREPARED or status.output_enabled:
             raise TransportProtocolError("M5 runtime did not reach output-OFF PREPARED")
         info = self.buffer_info()
-        if info.record_count != 0 or info.capacity_records < acquisition.measurement_count:
-            raise TransportProtocolError("M5 runtime buffer is not empty or adequately bounded")
+        if info.record_count != 0 or info.capacity_records != acquisition.measurement_count:
+            raise TransportProtocolError("M5 runtime buffer is not empty or exactly sized")
         return status
 
     def arm(self) -> RuntimeStatus:
@@ -549,8 +604,10 @@ class M4RuntimeController:
     def read_buffer_chunk(self, *, offset: int, max_records: int) -> RuntimeRecordChunk:
         integer(offset, "offset", minimum=0)
         integer(max_records, "max_records")
-        if max_records > _MAX_MEASUREMENT_COUNT:
-            raise ValidationError(f"M5 proof max_records must not exceed {_MAX_MEASUREMENT_COUNT}")
+        if max_records > self.config.buffer.transfer_chunk_records:
+            raise ValidationError("max_records exceeds the configured transfer chunk ceiling")
+        if max_records > _MAX_TRANSFER_CHUNK_RECORDS:
+            raise ValidationError(f"M5 max_records must not exceed {_MAX_TRANSFER_CHUNK_RECORDS:,}")
         status = self.status()
         if status.state not in (RuntimeState.COMPLETE, RuntimeState.ABORTED, RuntimeState.ERROR):
             raise TransportProtocolError("M5 buffer retrieval requires a terminal runtime state")

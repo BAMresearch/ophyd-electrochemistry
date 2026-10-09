@@ -1,13 +1,13 @@
 -- ophyd-electrochemistry M4 finite-hold proof plus narrow M5 buffer proof.
 --
 -- This is intentionally not the operational acquisition runtime. It supports
--- only a bounded current hold and an immediate-only, at-most-eight-reading
+-- only a bounded current hold and an immediate-only, explicitly bounded
 -- buffer proof on an explicitly configured resistive commissioning load.
 -- External ABORT, measurement cutoffs, and arbitrary waveforms remain disabled.
 -- The host accepts only this packaged source and verifies the ABI.
 
 oe_m4_runtime_abi = "oe-k2460-m4-hold-v1"
-oe_m4_runtime_build = "m4-finite-current-hold-v5"
+oe_m4_runtime_build = "m4-finite-current-hold-v6"
 
 oe_m4_state = "idle"
 oe_m4_mode = "none"
@@ -22,7 +22,7 @@ oe_m4_start_level = -1
 oe_m4_complete_block = 0
 oe_m4_timeout_block = 0
 oe_m5_buffer = nil
-oe_m5_buffer_capacity = 16
+oe_m5_buffer_capacity = 0
 oe_m5_measurement_count = 0
 
 local function oe_m4_require_number(value, name)
@@ -117,9 +117,9 @@ function oe_m5_prepare_current_hold_acquisition(
     rising_start)
 
     oe_m4_require_number(measurement_count, "measurement_count")
-    if measurement_count < 1 or measurement_count > 8 or
+    if measurement_count < 1 or measurement_count > 5000000 or
         measurement_count ~= math.floor(measurement_count) then
-        error("M5 proof measurement count must be an integer in 1..8")
+        error("M5 proof measurement count must be an integer in 1..5000000")
     end
     if oe_m5_buffer ~= nil and oe_m5_buffer.n > 0 then
         error("retained M5 proof data must be explicitly discarded before prepare")
@@ -142,9 +142,20 @@ function oe_m5_prepare_current_hold_acquisition(
         busy_asserted,
         rising_start)
 
-    if oe_m5_buffer == nil then
-        oe_m5_buffer = buffer.make(oe_m5_buffer_capacity, buffer.STYLE_STANDARD)
+    if oe_m5_buffer ~= nil and oe_m5_buffer.capacity ~= measurement_count then
+        buffer.delete(oe_m5_buffer)
+        oe_m5_buffer = nil
+        oe_m5_buffer_capacity = 0
+        collectgarbage()
     end
+    if oe_m5_buffer == nil then
+        oe_m5_buffer = buffer.make(measurement_count, buffer.STYLE_STANDARD)
+    end
+    oe_m5_buffer_capacity = oe_m5_buffer.capacity
+    if oe_m5_buffer_capacity ~= measurement_count then
+        error("M5 proof buffer capacity does not match the requested count")
+    end
+    oe_m5_buffer.fillmode = buffer.FILL_ONCE
     smu.measure.func = smu.FUNC_DC_VOLTAGE
     smu.measure.autorange = smu.OFF
     smu.measure.range = voltage_limit_v
@@ -192,8 +203,8 @@ function oe_m5_print_buffer(first_index, last_index)
         last_index > oe_m5_buffer.endindex or first_index > last_index then
         error("M5 proof buffer retrieval indices are out of range")
     end
-    if last_index - first_index + 1 > 8 then
-        error("M5 proof buffer retrieval is limited to eight records")
+    if last_index - first_index + 1 > 4096 then
+        error("M5 proof buffer retrieval is limited to 4096 records per transfer")
     end
     printbuffer(
         first_index,

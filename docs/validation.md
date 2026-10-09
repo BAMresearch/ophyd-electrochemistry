@@ -227,6 +227,28 @@ independent retention audit and explicit discard. The instrument ended
 IDLE/OFF/0 A with an empty buffer. This still does not exercise the full
 16-record capacity or wrap behavior.
 
+The separate output-off capacity probe allocated an empty 5,110,784-record
+standard buffer with `buffer.make(0, ...)`, then deleted it and reclaimed its
+memory. Existing buffer capacities/content, warning/error counts, runtime state,
+output and source level were unchanged. This demonstrates available allocation
+on the commissioned firmware/configuration; it does not demonstrate filling,
+wrap prevention, sustained acquisition or large-data transfer.
+
+Runtime build v6 replaces the earlier fixed limits with exact-sized fill-once
+allocation, separate configured host allocation/transfer ceilings, and hard TSP
+backstops of 5,000,000 records per acquisition and 4,096 records per transfer.
+The exact v5 artifact was replaced only after proving its buffer empty and the
+source IDLE/OFF/0 A. The target then filled an exact 17-record buffer, returned
+10+7-record chunks, and reproduced the first 10-record chunk on retry. The raw
+archive passed both checksums and round-trip decoding. A new session confirmed
+all 17 records retained at IDLE/OFF/0 A before explicit discard left the source
+OFF/0 A and the 17-record buffer empty. Warning/error counts stayed at 5/6.
+This validates the old-boundary crossing, not the configured 250,000-record
+ceiling, sustained acquisition, or large transfers.
+
+Validated locally with Python 3.12.13: 274 tests pass. Ruff lint/format, strict
+source mypy, notebook JSON/code compilation, and strict MkDocs also pass.
+
 ## RunEngine failed-Status teardown fix
 
 Reproduced the user's `Future exception was never retrieved` message on local
