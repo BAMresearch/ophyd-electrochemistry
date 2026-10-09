@@ -18,8 +18,8 @@ Contract cases run holds and two-pulse trains through a real Bluesky RunEngine
 for both start modes and validate Event Model documents plus all 18 fixed data fields.
 They also cover partial records after abort, failed completion with successful
 shutdown, terminal snapshot readback, no-START timeout with an empty collectable
-buffer, recovery, and rejection of unsupported CV before output. The complete
-local suite has 291 passing tests; Ruff, strict source mypy and strict MkDocs pass.
+buffer, recovery, and rejection of unsupported CV before output. Ruff, strict
+source mypy and strict MkDocs pass.
 The RunEngine cases use two-record chunks for a four-record acquisition and
 verify the exact `(0, 2)` then `(2, 2)` retrieval sequence. Chunk size is the
 only allowlisted runtime configuration field and is bounded to 4,096 records.
@@ -27,6 +27,14 @@ The pulse cases prove that one external START releases the complete locally time
 train. A separate case proves two trigger-per-pulse `count=1` acquisitions with
 distinct acquisition IDs, explicit retained-data disposition, START deassertion
 and re-arming. Multi-edge operation within one arm is not implemented or claimed.
+
+The independent simulator now interprets START as a physical HIGH/LOW level and
+applies the configured `rising`, `falling` or `either` edge. Contract cases cover
+both either-edge directions, directional inactive-level enforcement before arm,
+an inert static level, ignored return transitions after leaving WAITING_START,
+and immediate-mode recovery independent of the unused START level. The selected
+backend edge is published as read-only Ophyd Device configuration. These are
+software semantics, not new digital-I/O hardware evidence.
 
 This slice uses only the independent simulator backend. No adapter from the raw
 2460 buffer is provided because its first-reading-relative timestamp does not

@@ -65,6 +65,13 @@ class FakeTransport:
             self._reply()
             return self.observed_state, self.observed_output
 
+    def start_edge(self) -> str:
+        with self.runtime.lock:
+            self._check()
+            result = self.runtime.config.io.start_edge
+            self._reply()
+            return result
+
     def prepare(self, request: AcquisitionRequest, *, acquisition_id: str) -> CompiledProgram:
         with self.runtime.lock:
             self._check()

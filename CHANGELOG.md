@@ -18,6 +18,10 @@
 - Enable finite `CurrentPulseSequence` acquisitions in the Flyer. One START runs
   a complete locally timed pulse train; trigger-per-pulse operation is expressed
   as separately armed `count=1` acquisitions, not an unproven multi-edge mode.
+- Make the independent simulator honor configured rising, falling and either-edge
+  START detection, including directional pre-arm level checks and ignored return
+  transitions after the one-shot wait. Report the backend edge selection as
+  read-only Ophyd Device configuration.
 - Add the first offline M5 data layer: immutable versioned V/I records with
   explicit electrical/timing origin, clock/aperture/source mapping, validated
   terminal buffer metadata, canonical checksums and deterministic offset chunks.

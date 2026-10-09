@@ -174,6 +174,7 @@ def test_real_runengine_operates_device_and_emits_fixed_m5_schema(mode):
     assert event_page["data"]["ec_source_function"] == ["current"] * 4
     assert event_page["data"]["ec_current"] == pytest.approx([0.01] * 4)
     assert chunk_requests == [(0, 2), (2, 2)]
+    assert device.read_configuration()["ec_start_edge"]["value"] == "rising"
 
 
 def test_abort_fails_completion_preserves_partial_data_and_recovers():

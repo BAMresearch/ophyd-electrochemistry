@@ -61,6 +61,9 @@ operations. Collection does not imply durable archival or authorize discard.
 It defaults to 128 and is bounded to 1–4,096 records. Configuration changes are
 rejected while an acquisition is active. Physical limits, terminals and timing
 remain constructor/backend configuration rather than mutable Ophyd settings.
+The backend-selected `start_edge` (`rising`, `falling` or `either`) is reported
+as read-only Device configuration after staging. It belongs to the commissioned
+I/O profile and cannot be changed through `configure()` while running a plan.
 
 When a `ClockMapping` exists, event-envelope time is mapped from the instrument
 timestamp. Otherwise the required Bluesky event envelope uses host emission

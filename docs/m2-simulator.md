@@ -32,7 +32,7 @@ configuration and an ideal synthetic cell. Profiles must have
 |---|---|
 | `runtime.prepare(request, acquisition_id=...)` | Pure M1 compilation before mutation; output OFF, flags down, PREPARED; unique session acquisition ID |
 | `runtime.kickoff()` | Immediate execution or installed external wait with READY; asserted inputs reject arming |
-| `runtime.set_inputs(start=..., abort=...)` | Logical asserted inputs; ignores stale/out-of-wait START; enabled asserted ABORT wins in a coincident batch |
+| `runtime.set_inputs(start=..., abort=...)` | Physical START HIGH/LOW level plus logical ABORT assertion; applies configured rising/falling/either START detection, ignores stale/out-of-wait edges, and gives enabled asserted ABORT precedence in a coincident batch |
 | `runtime.advance_ticks(n)` | Advances independent integer clock and executes all due local events, without sleeps or host polling |
 | `runtime.completion()` | Nonblocking: pending `None`, successful `TerminalOutcome`, or failure exception |
 | `runtime.abort(reason=...)` | Confirmed OFF and unsuccessful acquisition; repeated abort preserves outcome; lost acknowledgement raises `ShutdownUnconfirmed` |

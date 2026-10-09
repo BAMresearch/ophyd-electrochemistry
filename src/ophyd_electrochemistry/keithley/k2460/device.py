@@ -51,6 +51,8 @@ class AcquisitionBackend(Protocol):
 
     def inspect(self) -> tuple[DeviceState, bool | None]: ...
 
+    def start_edge(self) -> str: ...
+
     def prepare(self, request: AcquisitionRequest, *, acquisition_id: str) -> object: ...
 
     def kickoff(self) -> None: ...
@@ -143,6 +145,7 @@ class Keithley2460Device(Device):
         self._operation_lock = threading.Lock()
         self._state = DeviceState.IDLE
         self._output: bool | None = None
+        self._start_edge = "unknown"
         self._is_staged = False
         self._request: AcquisitionRequest | None = None
         self._acquisition_id: str | None = None
@@ -215,6 +218,9 @@ class Keithley2460Device(Device):
                 if self._is_staged:
                     return [self]
             self._backend.connect()
+            start_edge = self._backend.start_edge()
+            if start_edge not in ("rising", "falling", "either"):
+                raise ValidationError("Backend returned an invalid START edge")
             state, output = self._inspect()
             if output is not False:
                 raise ShutdownUnconfirmed("Stage requires confirmed output OFF")
@@ -222,6 +228,7 @@ class Keithley2460Device(Device):
                 raise ElectrochemistryError(f"Cannot stage an active backend in {state.value}")
             with self._lock:
                 self._is_staged = True
+                self._start_edge = start_edge
         return [self]
 
     def unstage(self) -> list[object]:
@@ -576,6 +583,7 @@ class Keithley2460Device(Device):
         with self._lock:
             start_mode = "unprepared" if self._request is None else self._request.start_mode.value
             acquisition_id = self._acquisition_id or "none"
+            start_edge = self._start_edge
         backend = type(self._backend)
         return {
             self._field_name("backend"): f"{backend.__module__}.{backend.__qualname__}",
@@ -583,6 +591,7 @@ class Keithley2460Device(Device):
             self._field_name("completion_timeout"): self._completion_timeout_s,
             self._field_name("collection_chunk_records"): self._collection_chunk_records,
             self._field_name("start_mode"): start_mode,
+            self._field_name("start_edge"): start_edge,
             self._field_name("acquisition_id"): acquisition_id,
         }
 

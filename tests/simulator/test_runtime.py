@@ -336,6 +336,71 @@ def test_stale_start_not_queued_and_ready_race_no_event_clearing(runtime):
     assert len(runtime.source_trace) == 1
 
 
+@pytest.mark.parametrize(
+    "edge,idle_level,trigger_level",
+    [
+        ("rising", False, True),
+        ("falling", True, False),
+        ("either", False, True),
+        ("either", True, False),
+    ],
+)
+def test_configured_start_edge_and_return_transition_are_one_shot(
+    capabilities, config, runtime, edge, idle_level, trigger_level
+):
+    edge_runtime = SimulatedRuntime(
+        capabilities=capabilities,
+        config=replace(config, io=replace(config.io, start_edge=edge)),
+        cell=runtime.cell,
+    )
+    edge_runtime.set_inputs(start=idle_level, abort=False)
+    edge_runtime.prepare(request(StartMode.EXTERNAL_TRIGGER), acquisition_id="edge-acq")
+    edge_runtime.kickoff()
+    assert edge_runtime.state == DeviceState.WAITING_START
+
+    edge_runtime.set_inputs(start=idle_level, abort=False)
+    assert edge_runtime.state == DeviceState.WAITING_START
+    edge_runtime.set_inputs(start=trigger_level, abort=False)
+    assert edge_runtime.state == DeviceState.RUNNING
+    assert len(edge_runtime.source_trace) == 1
+
+    edge_runtime.set_inputs(start=idle_level, abort=False)
+    assert edge_runtime.state == DeviceState.RUNNING
+    assert len(edge_runtime.source_trace) == 1
+
+
+@pytest.mark.parametrize("edge,active_level", [("rising", True), ("falling", False)])
+def test_directional_start_edge_rejects_active_level_before_arm(
+    capabilities, config, runtime, edge, active_level
+):
+    edge_runtime = SimulatedRuntime(
+        capabilities=capabilities,
+        config=replace(config, io=replace(config.io, start_edge=edge)),
+        cell=runtime.cell,
+    )
+    edge_runtime.set_inputs(start=active_level, abort=False)
+    edge_runtime.prepare(request(StartMode.EXTERNAL_TRIGGER), acquisition_id="edge-acq")
+    with pytest.raises(ElectrochemistryError, match="Cannot arm"):
+        edge_runtime.kickoff()
+    assert edge_runtime.state == DeviceState.PREPARED
+    assert edge_runtime.output is False and not edge_runtime.ready
+
+
+def test_falling_start_idle_level_is_irrelevant_to_immediate_mode_recovery(
+    capabilities, config, runtime
+):
+    edge_runtime = SimulatedRuntime(
+        capabilities=capabilities,
+        config=replace(config, io=replace(config.io, start_edge="falling")),
+        cell=runtime.cell,
+    )
+    edge_runtime.prepare(request(StartMode.IMMEDIATE), acquisition_id="edge-acq")
+    edge_runtime.kickoff()
+    edge_runtime.abort(reason="immediate-mode-test")
+    edge_runtime.recover()
+    assert edge_runtime.state == DeviceState.IDLE and edge_runtime.output is False
+
+
 def test_coincident_abort_wins_before_first_source(runtime):
     runtime.prepare(request(StartMode.EXTERNAL_TRIGGER), acquisition_id="acq-1")
     runtime.kickoff()

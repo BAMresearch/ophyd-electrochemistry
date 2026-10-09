@@ -185,7 +185,7 @@ class SimulatedRuntime:
         self.state = DeviceState.IDLE
         self.output: bool | None = False
         self.ready = self.busy = False
-        self.start_asserted = self.abort_asserted = False
+        self.start_level_high = self.abort_asserted = False
         self._program: CompiledProgram | None = None
         self._request: AcquisitionRequest | None = None
         self._acquisition_id: str | None = None
@@ -264,13 +264,14 @@ class SimulatedRuntime:
         with self.lock:
             if self.state != DeviceState.PREPARED:
                 raise ElectrochemistryError("Kickoff requires PREPARED")
-            if self.start_asserted or (
+            assert self._request is not None
+            external_start = self._request.start_mode == StartMode.EXTERNAL_TRIGGER
+            if (external_start and not self._start_level_is_idle()) or (
                 self.config.io.external_abort_enabled and self.abort_asserted
             ):
                 raise ElectrochemistryError("Cannot arm with asserted START/ABORT")
-            assert self._request is not None
             self.state = DeviceState.ARMING
-            if self._request.start_mode == StartMode.EXTERNAL_TRIGGER:
+            if external_start:
                 timeout = self._ceil_ticks(self.config.timing.external_start_timeout_s)
                 self._schedule(self.tick + timeout, 0, "start_timeout")
                 self.state = DeviceState.WAITING_START
@@ -281,16 +282,16 @@ class SimulatedRuntime:
                 self._start()
 
     def set_inputs(self, *, start: bool, abort: bool) -> None:
-        """Logical asserted inputs; caller converts physical polarity/edge if needed.
+        """Set physical START level and logical ABORT assertion atomically.
 
         One atomic simulation batch gives ABORT precedence over coincident START.
         Separate calls preserve their explicit order, not a hardware simultaneity claim.
         """
         if type(start) is not bool or type(abort) is not bool:
-            raise ValidationError("Logical inputs must be booleans")
+            raise ValidationError("Input values must be booleans")
         with self.lock:
-            rising_start = start and not self.start_asserted
-            self.start_asserted, self.abort_asserted = start, abort
+            start_event = self._is_configured_start_edge(self.start_level_high, start)
+            self.start_level_high, self.abort_asserted = start, abort
             if (
                 self.config.io.external_abort_enabled
                 and abort
@@ -298,8 +299,20 @@ class SimulatedRuntime:
                 in (DeviceState.PREPARED, DeviceState.WAITING_START, DeviceState.RUNNING)
             ):
                 self._terminate("external_abort", success=False)
-            elif rising_start and self.state == DeviceState.WAITING_START:
+            elif start_event and self.state == DeviceState.WAITING_START:
                 self._start()
+
+    def _start_level_is_idle(self) -> bool:
+        edge = self.config.io.start_edge
+        return edge == "either" or self.start_level_high == (edge == "falling")
+
+    def _is_configured_start_edge(self, previous: bool, current: bool) -> bool:
+        edge = self.config.io.start_edge
+        if edge == "rising":
+            return not previous and current
+        if edge == "falling":
+            return previous and not current
+        return previous != current
 
     def advance_ticks(self, ticks: int) -> None:
         integer(ticks, "ticks", minimum=0)
@@ -344,7 +357,10 @@ class SimulatedRuntime:
                 return
             if self.state not in (DeviceState.ABORTED, DeviceState.ERROR):
                 raise ElectrochemistryError("Recovery requires ABORTED or ERROR")
-            if self.start_asserted or self.abort_asserted:
+            external_start = (
+                self._request is not None and self._request.start_mode == StartMode.EXTERNAL_TRIGGER
+            )
+            if (external_start and not self._start_level_is_idle()) or self.abort_asserted:
                 raise ElectrochemistryError("Recovery requires inactive inputs")
             if self.faults.shutdown_confirmation_lost:
                 raise ShutdownUnconfirmed("Simulated output cannot be verified")
