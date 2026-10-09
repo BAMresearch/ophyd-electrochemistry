@@ -3,7 +3,12 @@
 from ..acquisition import AcquisitionRequest
 from ..exceptions import ElectrochemistryError, ShutdownUnconfirmed
 from ..keithley.k2460.compiler import CompiledProgram
-from ..measurement import RecordChunk, RetainedBuffer
+from ..measurement import (
+    MeasurementSchema,
+    RecordChunk,
+    RetainedBuffer,
+    RetainedBufferMetadata,
+)
 from ..state import DeviceState
 from ..validation import integer
 from .runtime import SimulatedRecord, SimulatedRuntime, Snapshot, TerminalOutcome
@@ -127,6 +132,20 @@ class FakeTransport:
         with self.runtime.lock:
             self._check()
             result = self.runtime.retained_buffer()
+            self._reply()
+            return result
+
+    def retained_schema(self) -> MeasurementSchema:
+        with self.runtime.lock:
+            self._check()
+            result = self.runtime.retained_buffer().schema
+            self._reply()
+            return result
+
+    def retained_metadata(self) -> RetainedBufferMetadata:
+        with self.runtime.lock:
+            self._check()
+            result = self.runtime.retained_buffer().metadata
             self._reply()
             return result
 

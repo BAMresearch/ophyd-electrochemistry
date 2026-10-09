@@ -10,7 +10,7 @@ simulator-backed M6 Flyer; not operational hardware sourcing or acquisition.
 backend returning the fixed M5 `RetainedBuffer`. It uses real Ophyd Status
 objects, background completion monitoring, explicit external-START armed
 semantics, distinct abort/acquisition outcomes, bounded stop, recovery,
-terminal incremental collection, snapshot readback, configuration metadata and
+terminal offset-chunk collection, snapshot readback, configuration metadata and
 explicit retained-data disposition. The initial allowlist accepts only
 `GalvanostaticHold`.
 
@@ -20,6 +20,9 @@ They also cover partial records after abort, failed completion with successful
 shutdown, terminal snapshot readback, no-START timeout with an empty collectable
 buffer, recovery, and rejection of unsupported CV before output. The complete
 local suite has 291 passing tests; Ruff, strict source mypy and strict MkDocs pass.
+The RunEngine cases use two-record chunks for a four-record acquisition and
+verify the exact `(0, 2)` then `(2, 2)` retrieval sequence. Chunk size is the
+only allowlisted runtime configuration field and is bounded to 4,096 records.
 
 This slice uses only the independent simulator backend. No adapter from the raw
 2460 buffer is provided because its first-reading-relative timestamp does not

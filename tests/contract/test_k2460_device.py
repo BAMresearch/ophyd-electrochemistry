@@ -20,6 +20,7 @@ from ophyd_electrochemistry import (
 )
 from ophyd_electrochemistry.exceptions import (
     AcquisitionAborted,
+    RetainedDataError,
     UnsupportedCapabilityError,
 )
 from ophyd_electrochemistry.keithley.k2460 import Keithley2460Device
@@ -39,7 +40,7 @@ def request(mode: StartMode = StartMode.IMMEDIATE) -> AcquisitionRequest:
     )
 
 
-def device_stack() -> tuple[Keithley2460Device, SimulatedRuntime]:
+def device_stack() -> tuple[Keithley2460Device, SimulatedRuntime, FakeTransport]:
     config = replace(
         example_config,
         timing=replace(
@@ -61,9 +62,10 @@ def device_stack() -> tuple[Keithley2460Device, SimulatedRuntime]:
         poll_period_s=0.001,
         completion_timeout_s=1,
         shutdown_timeout_s=1,
+        collection_chunk_records=2,
         acquisition_id_factory=lambda: next(ids),
     )
-    return device, runtime
+    return device, runtime, backend
 
 
 def wait_for_state(device: Keithley2460Device, state: DeviceState) -> None:
@@ -75,7 +77,15 @@ def wait_for_state(device: Keithley2460Device, state: DeviceState) -> None:
 
 @pytest.mark.parametrize("mode", list(StartMode))
 def test_real_runengine_operates_device_and_emits_fixed_m5_schema(mode):
-    device, runtime = device_stack()
+    device, runtime, backend = device_stack()
+    chunk_requests = []
+    read_record_chunk = backend.read_record_chunk
+
+    def tracked_chunk(*, offset, max_records):
+        chunk_requests.append((offset, max_records))
+        return read_record_chunk(offset=offset, max_records=max_records)
+
+    backend.read_record_chunk = tracked_chunk
     documents = []
     run_engine = RunEngine({})
     run_engine.subscribe(lambda name, doc: documents.append((name, doc)))
@@ -146,10 +156,11 @@ def test_real_runengine_operates_device_and_emits_fixed_m5_schema(mode):
     assert event_page["data"]["ec_sample_index"] == [0, 1, 2, 3]
     assert event_page["data"]["ec_source_function"] == ["current"] * 4
     assert event_page["data"]["ec_current"] == pytest.approx([0.01] * 4)
+    assert chunk_requests == [(0, 2), (2, 2)]
 
 
 def test_abort_fails_completion_preserves_partial_data_and_recovers():
-    device, runtime = device_stack()
+    device, runtime, _ = device_stack()
     device.stage()
     device.prepare(request()).wait(timeout=1)
     device.kickoff().wait(timeout=1)
@@ -175,7 +186,7 @@ def test_abort_fails_completion_preserves_partial_data_and_recovers():
 
 
 def test_no_start_timeout_fails_completion_with_empty_collectable_buffer():
-    device, runtime = device_stack()
+    device, runtime, _ = device_stack()
     device.stage()
     device.prepare(request(StartMode.EXTERNAL_TRIGGER)).wait(timeout=1)
     device.kickoff().wait(timeout=1)
@@ -192,7 +203,7 @@ def test_no_start_timeout_fails_completion_with_empty_collectable_buffer():
 
 
 def test_narrow_slice_rejects_unimplemented_program_before_output():
-    device, runtime = device_stack()
+    device, runtime, _ = device_stack()
     device.stage()
     unsupported = AcquisitionRequest(
         experiment_id="unsupported-cv",
@@ -209,6 +220,29 @@ def test_narrow_slice_rejects_unimplemented_program_before_output():
     with pytest.raises(UnsupportedCapabilityError, match="GalvanostaticHold"):
         device.prepare(unsupported).wait(timeout=1)
     assert runtime.state == DeviceState.IDLE and runtime.output is False
-    with pytest.raises(UnsupportedCapabilityError, match="no runtime-configurable"):
+    before, after = device.configure({"collection_chunk_records": 1})
+    assert before["ec_collection_chunk_records"]["value"] == 2
+    assert after["ec_collection_chunk_records"]["value"] == 1
+    with pytest.raises(UnsupportedCapabilityError, match="Only collection_chunk_records"):
         device.configure({"source_terminal": "front"})
+    device.unstage()
+
+
+def test_collect_rejects_a_backend_chunk_larger_than_requested():
+    device, runtime, backend = device_stack()
+    device.stage()
+    device.prepare(request()).wait(timeout=1)
+    device.kickoff().wait(timeout=1)
+    runtime.advance_ticks(40)
+    device.complete().wait(timeout=1)
+
+    read_record_chunk = backend.read_record_chunk
+
+    def oversized_chunk(*, offset, max_records):
+        return read_record_chunk(offset=offset, max_records=max_records + 1)
+
+    backend.read_record_chunk = oversized_chunk
+    with pytest.raises(RetainedDataError, match="requested record limit"):
+        list(device.collect())
+    assert runtime.output is False
     device.unstage()

@@ -1,7 +1,7 @@
 """Classic-ophyd Flyer for a finite, backend-owned electrochemistry acquisition.
 
-The first operational slice deliberately consumes the hardware-neutral M5
-``RetainedBuffer`` contract. The independent simulator satisfies this backend
+The first operational slice consumes the hardware-neutral M5 schema, metadata
+and offset-chunk contracts. The independent simulator satisfies this backend
 today. A target adapter must not be added until the 2460 buffer timestamp can be
 mapped to actual START and measurement apertures without inventing precision.
 """
@@ -29,10 +29,17 @@ from ...exceptions import (
     UnsupportedCapabilityError,
     ValidationError,
 )
-from ...measurement import MeasurementRecord, RetainedBuffer, mapping_index, source_setpoint_unit
+from ...measurement import (
+    MeasurementRecord,
+    MeasurementSchema,
+    RecordChunk,
+    RetainedBufferMetadata,
+    mapping_index,
+    source_setpoint_unit,
+)
 from ...protocols import GalvanostaticHold
 from ...state import DeviceState
-from ...validation import positive, text
+from ...validation import integer, positive, text
 
 
 class AcquisitionBackend(Protocol):
@@ -54,7 +61,11 @@ class AcquisitionBackend(Protocol):
 
     def recover(self) -> None: ...
 
-    def retained_buffer(self) -> RetainedBuffer: ...
+    def retained_schema(self) -> MeasurementSchema: ...
+
+    def retained_metadata(self) -> RetainedBufferMetadata: ...
+
+    def read_record_chunk(self, *, offset: int, max_records: int) -> RecordChunk: ...
 
     def export_retained_data(self, destination: str) -> str: ...
 
@@ -103,6 +114,7 @@ class Keithley2460Device(Device):
         poll_period_s: float = 0.01,
         completion_timeout_s: float = 120.0,
         shutdown_timeout_s: float = 5.0,
+        collection_chunk_records: int = 128,
         acquisition_id_factory: Callable[[], str] | None = None,
         supported_program_types: tuple[type[Any], ...] = (GalvanostaticHold,),
         parent: Device | None = None,
@@ -116,6 +128,11 @@ class Keithley2460Device(Device):
         self._poll_period_s = positive(poll_period_s, "poll_period_s")
         self._completion_timeout_s = positive(completion_timeout_s, "completion_timeout_s")
         self._shutdown_timeout_s = positive(shutdown_timeout_s, "shutdown_timeout_s")
+        self._collection_chunk_records = integer(
+            collection_chunk_records, "collection_chunk_records"
+        )
+        if self._collection_chunk_records > 4_096:
+            raise ValidationError("collection_chunk_records must not exceed 4,096")
         self._acquisition_id_factory = acquisition_id_factory or (lambda: str(uuid.uuid4()))
         self._supported_program_types = supported_program_types
         self._lock = threading.RLock()
@@ -127,7 +144,8 @@ class Keithley2460Device(Device):
         self._acquisition_id: str | None = None
         self._completion_status: Status | None = None
         self._completion_monitor_started = False
-        self._retained: RetainedBuffer | None = None
+        self._retained_schema: MeasurementSchema | None = None
+        self._retained_metadata: RetainedBufferMetadata | None = None
         self._emitted = 0
         self._snapshot: MeasurementRecord | None = None
         self._snapshot_timestamp: float | None = None
@@ -241,7 +259,8 @@ class Keithley2460Device(Device):
             self._acquisition_id = acquisition_id
             self._completion_status = Status(obj=self)
             self._completion_monitor_started = False
-            self._retained = None
+            self._retained_schema = None
+            self._retained_metadata = None
             self._emitted = 0
             self._snapshot = None
             self._snapshot_timestamp = None
@@ -390,27 +409,48 @@ class Keithley2460Device(Device):
             "Interrupted acquisitions are not replayed; prepare a new request"
         )
 
-    def _ensure_retained(self) -> RetainedBuffer:
+    def _ensure_retained_header(self) -> tuple[MeasurementSchema, RetainedBufferMetadata]:
         with self._lock:
-            if self._retained is not None:
-                return self._retained
+            if self._retained_schema is not None and self._retained_metadata is not None:
+                return self._retained_schema, self._retained_metadata
             if self._state not in _TERMINAL_STATES:
                 raise RetainedDataError("Collection requires a terminal acquisition")
-        retained = self._backend.retained_buffer()
+        schema = self._backend.retained_schema()
+        metadata = self._backend.retained_metadata()
         with self._lock:
-            if retained.acquisition_id != self._acquisition_id:
+            if metadata.acquisition_id != self._acquisition_id:
                 raise RetainedDataError("Backend returned the wrong retained acquisition")
-            self._retained = retained
-            return retained
+            self._retained_schema = schema
+            self._retained_metadata = metadata
+            return schema, metadata
+
+    def _read_chunk(self, *, offset: int, max_records: int) -> RecordChunk:
+        _, metadata = self._ensure_retained_header()
+        chunk = self._backend.read_record_chunk(offset=offset, max_records=max_records)
+        if chunk.acquisition_id != metadata.acquisition_id:
+            raise RetainedDataError("Backend chunk belongs to the wrong acquisition")
+        if chunk.offset != offset:
+            raise RetainedDataError("Backend chunk does not begin at the requested offset")
+        if len(chunk.records) > max_records:
+            raise RetainedDataError("Backend chunk exceeds the requested record limit")
+        if chunk.total_records != metadata.retained_records:
+            raise RetainedDataError("Backend chunk extent differs from retained metadata")
+        if offset < metadata.retained_records and not chunk.records:
+            raise RetainedDataError("Backend returned an empty chunk before the retained end")
+        return chunk
 
     def trigger(self) -> Status:
         try:
-            retained = self._ensure_retained()
-            if not retained.records:
+            schema, metadata = self._ensure_retained_header()
+            if metadata.retained_records == 0:
                 raise RetainedDataError("No complete buffered sample exists")
+            chunk = self._read_chunk(offset=metadata.retained_records - 1, max_records=1)
+            if len(chunk.records) != 1:
+                raise RetainedDataError("Backend did not return the latest complete record")
+            record = chunk.records[0]
             with self._lock:
-                self._snapshot = retained.records[-1]
-                self._snapshot_timestamp = self._event_time(retained, self._snapshot)
+                self._snapshot = record
+                self._snapshot_timestamp = self._event_time(schema, record)
             return _finished_status(self)
         except Exception as exc:
             return _failed_status(self, exc)
@@ -422,8 +462,8 @@ class Keithley2460Device(Device):
         backend = type(self._backend)
         return f"ophyd-electrochemistry://{backend.__module__}.{backend.__qualname__}/{suffix}"
 
-    def _descriptor(self, retained: RetainedBuffer) -> dict[str, DataKey]:
-        unit = source_setpoint_unit(retained.schema.source_function)
+    def _descriptor(self, schema: MeasurementSchema) -> dict[str, DataKey]:
+        unit = source_setpoint_unit(schema.source_function)
         fields: tuple[tuple[str, str, str | None], ...] = (
             ("sample_index", "integer", None),
             ("time_relative", "number", "s"),
@@ -479,8 +519,8 @@ class Keithley2460Device(Device):
         }
 
     @staticmethod
-    def _event_time(retained: RetainedBuffer, record: MeasurementRecord) -> float:
-        mapping = retained.schema.clock_mapping
+    def _event_time(schema: MeasurementSchema, record: MeasurementRecord) -> float:
+        mapping = schema.clock_mapping
         if mapping is not None:
             return mapping.to_epoch(record.instrument_timestamp_s)
         # Physical time remains in explicit data fields. Host emission time is
@@ -488,27 +528,34 @@ class Keithley2460Device(Device):
         return time.time()
 
     def describe_collect(self) -> dict[str, dict[str, DataKey]]:
-        retained = self._ensure_retained()
-        return {self._stream_name: self._descriptor(retained)}
+        schema, _ = self._ensure_retained_header()
+        return {self._stream_name: self._descriptor(schema)}
 
     def collect(self) -> Iterator[PartialEvent]:
-        retained = self._ensure_retained()
+        schema, metadata = self._ensure_retained_header()
         while True:
             with self._lock:
-                if self._emitted >= len(retained.records):
+                offset = self._emitted
+                max_records = self._collection_chunk_records
+                if offset >= metadata.retained_records:
                     return
-                record = retained.records[self._emitted]
-                self._emitted += 1
-            timestamp = self._event_time(retained, record)
-            data = self._record_data(record)
-            yield {
-                "time": timestamp,
-                "data": data,
-                "timestamps": dict.fromkeys(data, timestamp),
-            }
+            chunk = self._read_chunk(offset=offset, max_records=max_records)
+            for record in chunk.records:
+                with self._lock:
+                    if record.sample_index != self._emitted:
+                        raise RetainedDataError("Backend chunk is not contiguous with collection")
+                    self._emitted += 1
+                timestamp = self._event_time(schema, record)
+                data = self._record_data(record)
+                yield {
+                    "time": timestamp,
+                    "data": data,
+                    "timestamps": dict.fromkeys(data, timestamp),
+                }
 
     def describe(self) -> dict[str, DataKey]:
-        return self._descriptor(self._ensure_retained())
+        schema, _ = self._ensure_retained_header()
+        return self._descriptor(schema)
 
     def read(self) -> dict[str, dict[str, int | float | str]]:
         with self._lock:
@@ -530,6 +577,7 @@ class Keithley2460Device(Device):
             self._field_name("backend"): f"{backend.__module__}.{backend.__qualname__}",
             self._field_name("poll_period"): self._poll_period_s,
             self._field_name("completion_timeout"): self._completion_timeout_s,
+            self._field_name("collection_chunk_records"): self._collection_chunk_records,
             self._field_name("start_mode"): start_mode,
             self._field_name("acquisition_id"): acquisition_id,
         }
@@ -564,12 +612,22 @@ class Keithley2460Device(Device):
     def configure(
         self, values: Mapping[str, Any]
     ) -> tuple[dict[str, dict[str, int | float | str]], dict[str, dict[str, int | float | str]]]:
-        if values:
+        if set(values) - {"collection_chunk_records"}:
             raise UnsupportedCapabilityError(
-                "This M6 slice has no runtime-configurable fields; use constructor configuration"
+                "Only collection_chunk_records is runtime-configurable in this M6 slice"
             )
-        current = self.read_configuration()
-        return current, current
+        before = self.read_configuration()
+        if "collection_chunk_records" in values:
+            with self._lock:
+                if self._state in _ACTIVE_STATES:
+                    raise ElectrochemistryError("Cannot configure while an acquisition is active")
+                chunk_records = integer(
+                    values["collection_chunk_records"], "collection_chunk_records"
+                )
+                if chunk_records > 4_096:
+                    raise ValidationError("collection_chunk_records must not exceed 4,096")
+                self._collection_chunk_records = chunk_records
+        return before, self.read_configuration()
 
     def export_retained_data(self, destination: str) -> None:
         text(destination, "destination")
@@ -585,7 +643,8 @@ class Keithley2460Device(Device):
                 raise RetainedDataError("Discard requires a terminal acquisition")
         self._backend.discard_retained_data(acquisition_id=acquisition_id, reason=reason)
         with self._lock:
-            self._retained = None
+            self._retained_schema = None
+            self._retained_metadata = None
             self._emitted = 0
             self._snapshot = None
             self._snapshot_timestamp = None

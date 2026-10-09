@@ -33,11 +33,17 @@ with `UnsupportedCapabilityError` before the backend is prepared.
 - `stop()` is bounded and synchronous for Bluesky cleanup. `unstage()` confirms
   output OFF before closing the backend. Pause aborts; resume is rejected.
 - `describe_collect()` and `collect()` emit the fixed M5 electrochemistry stream.
-  Collection is terminal-only, incremental, and does not discard retained data.
+  Collection is terminal-only and requests retryable offset-addressed chunks;
+  it neither materializes the full buffer in the Device nor discards retained data.
 - Terminal `trigger()` latches the most recent retained record for `read()`.
   A live running snapshot remains open work.
 - Diagnostic export and reason-bearing exact-acquisition discard remain explicit
-  operations. Collection does not imply durable archival or authorize discard.
+operations. Collection does not imply durable archival or authorize discard.
+
+`collection_chunk_records` is the only runtime-configurable field in this slice.
+It defaults to 128 and is bounded to 1–4,096 records. Configuration changes are
+rejected while an acquisition is active. Physical limits, terminals and timing
+remain constructor/backend configuration rather than mutable Ophyd settings.
 
 When a `ClockMapping` exists, event-envelope time is mapped from the instrument
 timestamp. Otherwise the required Bluesky event envelope uses host emission
@@ -50,13 +56,15 @@ The packaged 2460 runtime returns current readback, measured voltage, status bit
 and a `relativetimestamps` value whose first record is zero. That establishes a
 first-reading-relative buffer clock, not actual START or the integration aperture.
 The public M5 schema requires actual-START-relative aperture meaning. Therefore
-the M6 backend protocol consumes an already validated `RetainedBuffer`, and no
-adapter from `M4RuntimeController` is supplied yet.
+the M6 backend protocol consumes validated schema and retained metadata plus
+bounded, offset-addressed `RecordChunk` values, and no adapter from
+`M4RuntimeController` is supplied yet.
 
 This boundary prevents a convenient but false timestamp projection. Hardware
 connection requires either additional runtime fields or validated timing evidence
-that supplies the missing START/aperture relationship. It also requires bounded
-target chunk projection rather than materializing an unproven large buffer.
+that supplies the missing START/aperture relationship. The Device-side bounded
+chunk projection is ready; a target adapter must supply matching schema,
+metadata and retryable `RecordChunk` transactions.
 
 ## Validation scope
 
