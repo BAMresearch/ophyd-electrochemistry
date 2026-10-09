@@ -194,10 +194,26 @@ and [checked raw archive](evidence/k2460-2026-10-09-m5-external-start-v12-archiv
 This proves the narrow state/data path, not edge-to-aperture latency or electrical
 timing.
 
+A follow-up requested and filled an exact 256-record buffer under the same
+external-start conditions. Retrieval as 128+128 records was contiguous, the
+second chunk retried identically, all sample indices covered 0–255, and buffer
+timestamps increased strictly across a 10.4123 s span. Mean interval was
+40.8326 ms and mean V/I was 102.5069 ohm. The checked v2 archive round-tripped;
+recovery and an independent session retained all records at IDLE/OFF/0 A before
+explicit discard. Warning/error counts remained unchanged.
+
+This run also reported `start_overrun=true` beginning at the digitize block.
+Exactly one acquisition completed with exactly 256 records, but one or more
+additional input edges were detected after the accepted edge. Manual-contact
+bounce is plausible and was not independently measured, so the run is useful
+scale/no-wrap evidence but not clean single-edge or repeated-input acceptance.
+See the [scale-run evidence](evidence/k2460-2026-10-09-m5-external-start-256-v12-evidence.json)
+and [raw archive](evidence/k2460-2026-10-09-m5-external-start-256-v12-archive.json).
+
 The following remain open before M5 is complete:
 
 - map target timestamps/apertures to actual START without inventing precision;
-- extend fill-once/no-wrap and transfer evidence well beyond the 17-record proof;
+- extend fill-once/no-wrap and transfer evidence well beyond the 256-record proof;
 - map this raw archive into the shared `MeasurementRecord` archive only after
   the START/aperture relationship is established;
 - calibrate or explicitly decline instrument-clock-to-epoch mapping;

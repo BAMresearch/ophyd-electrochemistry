@@ -1,0 +1,209 @@
+{
+  "schema": "k2460-m5-external-start-scale-proof-v1",
+  "recorded_at_utc": "2026-10-09T15:00:25.632244Z",
+  "repository_commit": "f74c2b1",
+  "instrument": {
+    "identity_raw": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "serial_number": "04686198",
+    "firmware_version": "1.7.16a",
+    "resource_name": "TCPIP0::169.254.113.151::5025::SOCKET",
+    "command_language": "TSP"
+  },
+  "physical_setup": {
+    "load": "user-confirmed nominal 100 ohm resistor; not a calibrated standard",
+    "terminals": "front",
+    "sense": "four-wire",
+    "start_action": "user removed a held 1 kohm resistor from START line 3 to GND pin 9 after READY asserted",
+    "ready_line": 1,
+    "busy_line": 2,
+    "start_line": 3,
+    "start_edge": "either",
+    "physical_output_indicator_confirmed_off_before_session": true
+  },
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v12",
+    "sha256": "e77fb18fa6ca9f2849ef910a96ff42e4327fa4552f477fb44fc57f5849076666",
+    "script_name": "oe_m4_e77fb18fa6ca9f2849ef910a"
+  },
+  "request": {
+    "current_a": 0.001,
+    "source_range_a": 0.001,
+    "voltage_limit_v": 0.2,
+    "measurement_count": 256,
+    "measurement_nplc": 1,
+    "measure_autorange": false,
+    "measure_filter": false,
+    "measure_relative": false,
+    "measure_autozero": "once before arm, then disabled",
+    "start_mode": "external_trigger",
+    "external_start_timeout_s": 60,
+    "off_mode": "normal"
+  },
+  "state_path": {
+    "preflight": {
+      "runtime_state": "idle",
+      "model_state": "trigger.STATE_IDLE",
+      "last_block": 13,
+      "output_enabled": false,
+      "source_level_a": 0.0,
+      "buffer_record_count": 0,
+      "buffer_capacity_records": 16
+    },
+    "prepared": {
+      "runtime_state": "prepared",
+      "model_state": "trigger.STATE_BUILDING",
+      "last_block": 13,
+      "output_enabled": false,
+      "ready_level": 0,
+      "busy_level": 0
+    },
+    "armed": {
+      "runtime_state": "waiting_start",
+      "model_state": "trigger.STATE_RUNNING",
+      "last_block": 5,
+      "output_enabled": false,
+      "ready_level": 1,
+      "busy_level": 0,
+      "start_overrun": false
+    },
+    "running": {
+      "runtime_state": "running",
+      "model_state": "trigger.STATE_RUNNING",
+      "last_block": 10,
+      "output_enabled": true,
+      "ready_level": 0,
+      "busy_level": 1,
+      "start_overrun": true
+    },
+    "terminal": {
+      "runtime_state": "complete",
+      "model_state": "trigger.STATE_IDLE",
+      "last_block": 13,
+      "output_enabled": false,
+      "ready_level": 0,
+      "busy_level": 0,
+      "start_overrun": true,
+      "timer_overrun": false
+    },
+    "recovery": {
+      "runtime_state": "idle",
+      "model_state": "trigger.STATE_IDLE",
+      "last_block": 13,
+      "output_state": "smu.OFF",
+      "source_level_a": 0.0,
+      "start_overrun": true
+    }
+  },
+  "buffer": {
+    "style": "standard fill-once",
+    "requested_records": 256,
+    "capacity_records": 256,
+    "record_count": 256,
+    "start_index": 1,
+    "end_index": 256,
+    "no_wrap_observed": true,
+    "sample_indices_contiguous_zero_through_255": true,
+    "buffer_timestamps_strictly_increasing": true,
+    "records_sha256": "244366de380e58960be613ab8e8eed3b7ed69d5027493c72998af0d3c1ffcbbf",
+    "chunks": [
+      {
+        "offset": 0,
+        "record_count": 128,
+        "records_sha256": "aceb1ab83ebbf658ebcb64d27490a7580ea3ec940a94726c391b866dd546493c"
+      },
+      {
+        "offset": 128,
+        "record_count": 128,
+        "records_sha256": "615b530438d17d4393dff859507a3c38eba0c50a897af396083fb0f94f02d842",
+        "retry_equal": true
+      }
+    ],
+    "retained_through_recovery": true,
+    "archive_schema": "ophyd-electrochemistry/k2460-buffer-archive-v2",
+    "archive_payload_sha256": "30bfb5824415f3a2e4b7463bc1146080f69863249d9c48c8b90feff2bb9d99ca",
+    "archive_file": "k2460-2026-10-09-m5-external-start-256-v12-archive.json",
+    "archive_round_trip_verified": true
+  },
+  "derived_observations": {
+    "mean_source_current_a": 0.0010000117563296875,
+    "mean_measured_voltage_v": 0.10250814072757812,
+    "mean_resistance_ohm": 102.5069356221177,
+    "minimum_resistance_ohm": 102.5054513154141,
+    "maximum_resistance_ohm": 102.51101816081635,
+    "population_standard_deviation_ohm": 0.0008003999558420084,
+    "buffer_relative_span_s": 10.41232032,
+    "mean_interval_s": 0.04083262870588235,
+    "minimum_interval_s": 0.04081212000000001,
+    "maximum_interval_s": 0.04083986000000017,
+    "population_standard_deviation_interval_s": 0.0000060324207325152225,
+    "source_status_counts": {
+      "200": 256
+    },
+    "measurement_status_counts": {
+      "264": 1,
+      "8": 255
+    },
+    "questionable_measurement_bit_present": false
+  },
+  "start_overrun_observation": {
+    "value": true,
+    "first_seen": "running at digitize block 10",
+    "effect_on_state_path": "none observed; the single acquisition completed once with exactly 256 records",
+    "interpretation": "one or more additional START edges were detected after the accepted edge; manual-contact bounce is plausible but not independently measured",
+    "acceptance_consequence": "do not treat this run as clean single-edge or repeated-input acceptance evidence"
+  },
+  "event_counts": {
+    "before_arm": {
+      "warnings": 2,
+      "errors": 4
+    },
+    "after_completion": {
+      "warnings": 2,
+      "errors": 4
+    },
+    "after_discard": {
+      "warnings": 2,
+      "errors": 4
+    },
+    "new_warnings": 0,
+    "new_errors": 0,
+    "event_log_not_cleared": true
+  },
+  "independent_new_session_audit": {
+    "runtime_state": "idle",
+    "model_state": "trigger.STATE_IDLE",
+    "last_block": 13,
+    "output_state": "smu.OFF",
+    "source_level_a": 0.0,
+    "buffer_record_count": 256,
+    "buffer_start_index": 1,
+    "buffer_end_index": 256,
+    "buffer_capacity_records": 256,
+    "start_overrun": true,
+    "event_warnings": 2,
+    "event_errors": 4
+  },
+  "explicit_post_archive_discard": {
+    "before_record_count": 256,
+    "after_record_count": 0,
+    "capacity_records": 256,
+    "runtime_state": "idle",
+    "model_state": "trigger.STATE_IDLE",
+    "last_block": 13,
+    "output_state": "smu.OFF",
+    "source_level_a": 0.0
+  },
+  "evidence_limits": {
+    "resistor_calibrated": false,
+    "buffer_timestamps_are_relative_to_first_reading_not_actual_start": true,
+    "instrument_clock_to_epoch_mapped": false,
+    "start_edge_to_first_aperture_latency_measured": false,
+    "full_configured_250000_record_capacity_tested": false,
+    "buffer_wrap_beyond_capacity_tested": false,
+    "single_edge_integrity_proven": false,
+    "electrical_output_trace_captured": false,
+    "failure_injection_tested": false,
+    "hardware_gate_promoted": false
+  }
+}

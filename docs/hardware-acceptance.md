@@ -220,6 +220,22 @@ and [raw archive](evidence/k2460-2026-10-09-m5-external-start-v12-archive.json).
 No independent edge-to-aperture or electrical timing trace was captured, so
 G01/G03/G04/G06 remain **NOT RUN**.
 
+The next external-start scale run allocated and filled exactly 256 records.
+Two 128-record transfers covered sample indices 0–255 without gaps or wrap;
+retrying the second chunk returned identical content. Timestamps increased
+strictly across 10.4123 s with a 40.8326 ms mean interval. Recovery and a fresh
+session retained the complete buffer at IDLE/OFF/0 A, and verified archival was
+followed by explicit discard. No warning or error was added. See the
+[scale evidence](evidence/k2460-2026-10-09-m5-external-start-256-v12-evidence.json)
+and [archive](evidence/k2460-2026-10-09-m5-external-start-256-v12-archive.json).
+
+The runtime reported START overrun during digitization. This did not start a
+second acquisition or change the exact 256-record result, but it means one or
+more additional edges were detected after the accepted edge. Because manual
+contact bounce is only a hypothesis, this run does not satisfy G01's stale or
+repeated-START requirement. It adds bounded G03/G04 evidence without promoting
+either gate.
+
 ## M4 runtime installation, immediate hold, and programmatic abort — PASS within narrow scope
 
 The exact-artifact loader, packaged finite-current-hold TSP runtime, typed host

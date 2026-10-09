@@ -295,6 +295,22 @@ Validated locally with Python 3.12.13: 286 tests pass. Ruff lint/format, strict
 source mypy, notebook JSON/code compilation, archive round-trip parsing, and
 strict MkDocs all pass.
 
+The follow-up external-start scale run filled an exact 256-record buffer and
+retrieved it in two contiguous 128-record chunks. The second chunk retried
+identically. Sample indices were 0–255, timestamps increased strictly across
+10.4123 s, mean interval was 40.8326 ms, and mean V/I was 102.5069 ohm. The
+v2 archive passed record and payload checksum round-trip. Recovery and a fresh
+session confirmed all 256 records retained at IDLE/OFF/0 A before explicit
+post-archive discard; warning/error counts remained 2/4.
+
+`start_overrun` became true during digitization. The model still completed once
+with exactly 256 records, but the flag shows at least one additional detected
+edge after the accepted START. Manual-contact bounce is plausible but unproven;
+the result therefore does not count as clean single-edge or repeated-input
+acceptance. Evidence is retained in
+[the scale-run record](evidence/k2460-2026-10-09-m5-external-start-256-v12-evidence.json)
+and [raw archive](evidence/k2460-2026-10-09-m5-external-start-256-v12-archive.json).
+
 ## RunEngine failed-Status teardown fix
 
 Reproduced the user's `Future exception was never retrieved` message on local
