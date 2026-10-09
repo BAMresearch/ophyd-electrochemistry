@@ -230,5 +230,7 @@ The following remain open before M5 is complete:
 - calibrate or explicitly decline instrument-clock-to-epoch mapping;
 - complete G03, G04 and G06 hardware evidence.
 
-The operational ophyd `describe_collect()`/`collect()` projection remains M6 and
-will consume this fixed record meaning rather than inventing a second schema.
+The first M6 `describe_collect()`/`collect()` projection now consumes this fixed
+record meaning through the simulator-backed typed backend. It is deliberately
+not connected to the raw target buffer: that adapter remains blocked until the
+START/aperture relationship can be represented without inventing precision.

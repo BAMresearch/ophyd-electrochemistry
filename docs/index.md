@@ -10,9 +10,11 @@ runtime and typed fake transport. M3 adds bounded PyVISA transactions and a
 read-only identity/language/output-state diagnostic. A narrow executable M4 TSP
 runtime has target compile/load/idle, immediate-hold, active-hold abort,
 START-wait abort, and no-START timeout state-path evidence but no acquisition or
-operational sourcing driver. M5 adds a shared immutable record schema and a
+operational hardware sourcing driver. M5 adds a shared immutable record schema and a
 narrow bounded target-buffer proof with deterministic chunk retry;
-operational target acquisition remains open.
+operational target acquisition remains open. A first M6 classic-Ophyd Flyer now
+operates against the typed simulator backend and emits the fixed M5 schema through
+a real RunEngine; the real-2460 adapter remains intentionally absent.
 Documentation, mock tests and identity queries do not replace target-firmware
 and bench validation.
 
@@ -30,3 +32,5 @@ simulated execution, faults and retained evidence. The [M3 guide](m3-transport.m
 documents the implemented transport, safe diagnostic and incomplete G05 evidence.
 The [M5 data guide](m5-data.md) defines electrical origins, aperture mapping,
 clock metadata and retained-buffer integrity without claiming hardware data.
+The [M6 device guide](m6-device.md) documents the operational simulator slice
+and the remaining target boundary.

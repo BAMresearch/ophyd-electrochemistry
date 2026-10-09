@@ -1,4 +1,4 @@
-"""Validated models/generators and transport; no operational sourcing device yet."""
+"""Validated models, transport, simulation, and a simulator-backed Ophyd Flyer."""
 
 from .acquisition import AcquisitionRequest, StartMode
 from .measurement import (

@@ -10,6 +10,7 @@ nav:
   - M3 transport: m3-transport.md
   - M4 local runtime: m4-runtime.md
   - M5 data records: m5-data.md
+  - M6 Ophyd device: m6-device.md
   - Evidence: assumptions.md
   - Architecture: architecture.md
   - Triggering: triggering.md

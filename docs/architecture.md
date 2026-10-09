@@ -23,10 +23,11 @@
 | `.../capabilities.py`, `.../compiler.py` | Explicit capability profiles and concrete pure planning compiler |
 | `.../transport.py` | Implemented serialized, bounded optional PyVISA transport |
 | `.../commissioning.py` | Implemented read-only identity/language/output-state diagnostic and JSON report |
-| `.../device.py`, `.../io.py` | Explicit placeholders; no operational code |
+| `.../device.py` | First operational classic-Ophyd Flyer over a typed retained-buffer backend; simulator-backed only until target timestamp mapping is resolved |
+| `.../io.py` | Placeholder for the still-uncommissioned external-abort path |
 | `.../runtime.py`, `.../tsp/runtime.tsp` | Offline-reviewed M4 finite-current-hold proof; exact packaged artifact only, not an acquisition backend |
 | `src/ophyd_electrochemistry/simulation/` | Implemented independent virtual-clock runtime and typed fake transport |
-| `tests/contract/` | Real RunEngine operating a test-only lifecycle witness |
+| `tests/contract/` | Real RunEngine operating both the original minimal witness and the simulator-backed M6 Flyer |
 | `tests/unit/` | M1 models, waveform properties/independent vectors, budgets, timing and serialization |
 | `tests/simulator/` | Independent reference traces, aperture integrals, state races, faults and retention |
 | `tests/hardware/` | Future explicitly enabled bench tests |

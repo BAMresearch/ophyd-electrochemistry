@@ -4,6 +4,15 @@
 
 ## Unreleased
 
+- Add the first operational M6 classic-Ophyd Flyer over a typed acquisition
+  backend. It provides real asynchronous Status objects, immediate/external
+  kickoff semantics, background completion monitoring, confirmed abort/recovery,
+  retained-data collection, snapshots and configuration metadata.
+- Exercise that Flyer through a real Bluesky RunEngine for both start modes,
+  full fixed-schema event emission, partial data after abort, no-START timeout,
+  recovery and rejection of unsupported CV before output. The independent
+  simulator is the only backend; raw 2460 adaptation remains blocked on the
+  unresolved START/aperture timestamp mapping.
 - Add the first offline M5 data layer: immutable versioned V/I records with
   explicit electrical/timing origin, clock/aperture/source mapping, validated
   terminal buffer metadata, canonical checksums and deterministic offset chunks.

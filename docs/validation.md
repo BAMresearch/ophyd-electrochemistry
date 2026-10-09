@@ -1,8 +1,29 @@
 # Template validation record
 
 Updated: 2026-10-09. Scope: contracts, transport/runtime commissioning, bounded
-nominal-100-ohm tests, and a narrow target-buffer proof; not operational
-sourcing or acquisition.
+nominal-100-ohm tests, a narrow target-buffer proof, and the first operational
+simulator-backed M6 Flyer; not operational hardware sourcing or acquisition.
+
+## First M6 classic-Ophyd Flyer slice
+
+`Keithley2460Device` now implements the finite Flyer lifecycle over a typed
+backend returning the fixed M5 `RetainedBuffer`. It uses real Ophyd Status
+objects, background completion monitoring, explicit external-START armed
+semantics, distinct abort/acquisition outcomes, bounded stop, recovery,
+terminal incremental collection, snapshot readback, configuration metadata and
+explicit retained-data disposition. The initial allowlist accepts only
+`GalvanostaticHold`.
+
+Five new contract cases run the device through a real Bluesky RunEngine for both
+start modes and validate Event Model documents plus all 18 fixed data fields.
+They also cover partial records after abort, failed completion with successful
+shutdown, terminal snapshot readback, no-START timeout with an empty collectable
+buffer, recovery, and rejection of unsupported CV before output. The complete
+local suite has 291 passing tests; Ruff, strict source mypy and strict MkDocs pass.
+
+This slice uses only the independent simulator backend. No adapter from the raw
+2460 buffer is provided because its first-reading-relative timestamp does not
+yet establish actual START or aperture timing. No hardware gate is promoted.
 
 ## M3 bounded transport and initial read-only commissioning
 

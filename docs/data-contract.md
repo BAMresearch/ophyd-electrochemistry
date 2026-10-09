@@ -11,8 +11,9 @@ starts its elapsed clock on actual execution, not preparation or external arming
 The hardware-neutral Python representation is now fixed as
 `ophyd-electrochemistry/measurement-v1`; see the [M5 data guide](m5-data.md).
 It separates run-constant `MeasurementSchema`, per-sample `MeasurementRecord`,
-terminal `RetainedBufferMetadata`, and offset-addressed `RecordChunk`. Target
-acquisition and the M6 Bluesky projection are not yet implemented.
+terminal `RetainedBufferMetadata`, and offset-addressed `RecordChunk`. The first
+M6 Bluesky projection is implemented for a terminal validated `RetainedBuffer`;
+target acquisition and raw-2460-to-shared-record projection remain open.
 
 Data keys are prefixed with the ophyd device name. The example device `ec` yields:
 

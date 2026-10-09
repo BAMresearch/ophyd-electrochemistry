@@ -12,6 +12,7 @@ from .archive import (
 from .capabilities import Keithley2460Capabilities, SourceCapabilities
 from .compiler import CompiledProgram, Keithley2460Compiler
 from .config import BufferPolicy, DigitalIOConfig, Keithley2460Config, SafetyConfig, TimingPolicy
+from .device import AcquisitionBackend, Keithley2460Device
 from .runtime import (
     K2460_BUFFER_SCHEMA,
     BufferedReading,
@@ -38,12 +39,14 @@ from .transport import (
 )
 
 __all__ = [
+    "AcquisitionBackend",
     "CompiledProgram",
     "BufferPolicy",
     "DigitalIOConfig",
     "Keithley2460Capabilities",
     "Keithley2460Compiler",
     "Keithley2460Config",
+    "Keithley2460Device",
     "SafetyConfig",
     "SourceCapabilities",
     "TimingPolicy",

@@ -3,7 +3,9 @@
 M2 implements a deterministic fake runtime and typed fake host transport over
 M1's finite planning IR. It never opens VISA, interprets TSP, uploads a script or
 energizes hardware. Use it to test lifecycle, schedules and retained evidence;
-all hardware gates remain **NOT RUN**. The operational ophyd Device is still M6.
+all hardware gates remain **NOT RUN**. The first M6 device slice now wraps this
+typed backend and exercises it through a real RunEngine; that does not make
+simulated electrical behavior hardware evidence.
 
 ## QuickStart
 

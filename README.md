@@ -1,6 +1,6 @@
 # ophyd-electrochemistry
 
-**M1–M3 and the first M5 data slice implemented; narrow M4 state paths and a three-record M5 target-buffer proof completed — no operational driver yet.**
+**M1–M5 foundations plus a first simulator-backed M6 Ophyd Flyer slice are implemented; the operational 2460 adapter and pulse runtime remain open.**
 
 A Python library for instrument-owned electrochemistry acquisition through
 classic ophyd and Bluesky. The first backend is the Keithley 2460 over Ethernet
@@ -18,6 +18,7 @@ owns the 2460 connection.
 - [M3 transport](docs/m3-transport.md): bounded PyVISA transactions and read-only commissioning.
 - [M4 runtime](docs/m4-runtime.md): packaged finite-hold TSP proof and live-test boundary.
 - [M5 data records](docs/m5-data.md): typed measurement origins, mapping and deterministic retained-buffer chunks.
+- [M6 Ophyd device](docs/m6-device.md): operational simulator-backed Flyer lifecycle and target-adapter boundary.
 - [Assumptions and evidence](docs/assumptions.md): supported facts, corrections,
   and hardware acceptance gates.
 - [Architecture](docs/architecture.md): ownership and repository map.
@@ -31,12 +32,14 @@ The `src/` tree contains structurally validated immutable models, deterministic
 waveform generators, canonical serialization, a pure bounded planning compiler,
 an independent virtual-clock runtime/fake transport, a bounded PyVISA backend,
 an immutable M5 measurement/retention schema, a checksummed raw-target archive,
-and a narrow packaged M4/M5 finite-hold and target-buffer proof runtime. It has
-no operational
-acquisition or ophyd sourcing driver. Guarded notebooks limit live commissioning
+a narrow packaged M4/M5 finite-hold and target-buffer proof runtime, and a first
+classic-Ophyd Flyer that operates against the typed simulator backend. The Flyer
+is not yet connected to the real 2460 runtime because the target START/aperture
+timestamp mapping remains unresolved. Guarded notebooks limit live commissioning
 to the documented nominal 100 ohm resistor setup. Tests cover M1, M2, mocked
-transport/runtime behavior and a separate **test-only RunEngine lifecycle
-witness**; they do not establish general physical behavior.
+transport/runtime behavior, the original lifecycle witness, and the operational
+simulator-backed Flyer through a real RunEngine; they do not establish general
+physical behavior.
 
 Contract revision **0.2** includes first-class PRBS intent and a shared finite
 arbitrary-waveform mechanism. Multisine is generated into that same representation
