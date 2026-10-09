@@ -1,0 +1,156 @@
+{
+  "schema": "k2460-m5-rising-square-clean-proof-v1",
+  "recorded_at_utc": "2026-10-09T15:59:28.192998Z",
+  "instrument": {
+    "identity_raw": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "resource_name": "TCPIP0::169.254.113.151::5025::SOCKET",
+    "command_language": "TSP"
+  },
+  "generator": {
+    "model": "Agilent 33120A",
+    "waveform": "square",
+    "frequency_hz": 0.1,
+    "load_display_setting": "50 ohm",
+    "displayed_amplitude_vpp": 2.295,
+    "displayed_offset_v": 1.1525,
+    "scope_verified_low_v_approx": 0.01,
+    "scope_verified_high_v_approx": 4.6,
+    "scope_verified_at_free_end_of_1_kohm_path": true,
+    "user_verified_no_excursion_outside_v": [-0.25, 5.25]
+  },
+  "wiring": {
+    "signal": "33120A OUTPUT center conductor through 1 kohm series resistor to Keithley DB-9 pin 3 / START",
+    "ground": "33120A OUTPUT shield to Keithley DB-9 pin 9 / ground",
+    "load": "nominal 100 ohm resistor on front source and remote-sense terminals"
+  },
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v12",
+    "sha256": "e77fb18fa6ca9f2849ef910a96ff42e4327fa4552f477fb44fc57f5849076666",
+    "script_name": "oe_m4_e77fb18fa6ca9f2849ef910a"
+  },
+  "request": {
+    "current_a": 0.001,
+    "source_range_a": 0.001,
+    "voltage_limit_v": 0.2,
+    "measurement_count": 5,
+    "measurement_nplc": 1,
+    "start_mode": "external_trigger",
+    "start_edge": "rising",
+    "external_start_timeout_s": 30
+  },
+  "digital_input_functional_retest": {
+    "disconnected_state": "digio.STATE_HIGH",
+    "source_output_during_monitor": "smu.OFF",
+    "transition_sequence": [
+      {"elapsed_s": 24.420704584015766, "state": "digio.STATE_LOW"},
+      {"elapsed_s": 29.40962658400531, "state": "digio.STATE_HIGH"},
+      {"elapsed_s": 34.4233477920061, "state": "digio.STATE_LOW"}
+    ],
+    "recognized_low": true,
+    "recognized_high": true,
+    "arm_action": "after the observed HIGH-to-LOW transition, leaving approximately five seconds before the next rising edge"
+  },
+  "state_path": {
+    "prepared_output_enabled": false,
+    "armed": {
+      "runtime_state": "waiting_start",
+      "model_state": "trigger.STATE_RUNNING",
+      "last_block": 5,
+      "output_enabled": false,
+      "ready_level": 1,
+      "busy_level": 0,
+      "start_overrun": false
+    },
+    "running": {
+      "runtime_state": "running",
+      "last_block": 10,
+      "output_enabled": true,
+      "ready_level": 0,
+      "busy_level": 1,
+      "start_overrun": false
+    },
+    "terminal": {
+      "runtime_state": "complete",
+      "model_state": "trigger.STATE_IDLE",
+      "last_block": 13,
+      "output_enabled": false,
+      "ready_level": 0,
+      "busy_level": 0,
+      "start_overrun": false,
+      "timer_overrun": false
+    },
+    "recovered": {
+      "runtime_state": "idle",
+      "output_state": "smu.OFF",
+      "source_level_a": 0.0,
+      "start_overrun": false
+    }
+  },
+  "buffer": {
+    "capacity_records": 16,
+    "record_count": 5,
+    "start_index": 1,
+    "end_index": 5,
+    "records_sha256": "b0f9bbbf11b1ece6e2cab34f20416a0a2f9e17dd1be914dd35a77fb399f7c000",
+    "retry_equal": true,
+    "independent_post_disconnect_transfer_equal": true,
+    "archive_schema": "ophyd-electrochemistry/k2460-buffer-archive-v2",
+    "archive_payload_sha256": "2aeeea494ccd1f3ce5dd4ac5f2c6b10f8a84b168bcc5186dfeb899b7c3175035",
+    "archive_file": "k2460-2026-10-09-m5-rising-square-clean-v12-archive.json",
+    "archive_round_trip_verified": true
+  },
+  "derived_observations": {
+    "mean_resistance_ohm": 102.50249481762711,
+    "buffer_relative_span_s": 0.1633278,
+    "mean_interval_s": 0.04083195
+  },
+  "event_counts": {
+    "before_digital_monitor": {"warnings": 4, "errors": 4},
+    "after_run": {"warnings": 6, "errors": 4},
+    "new_warnings": 2,
+    "new_errors": 0,
+    "warning_text_normalized": "Setting digio line 3 to digital has reset a trigger setting for digio line",
+    "interpretation": "expected when the guarded procedure temporarily changes line 3 between trigger and ordinary digital-input modes"
+  },
+  "independent_post_disconnect_audit": {
+    "runtime_state": "idle",
+    "model_state": "trigger.STATE_IDLE",
+    "last_block": 13,
+    "output_state": "smu.OFF",
+    "source_level_a": 0.0,
+    "buffer_record_count": 5,
+    "line_3_mode": "digio.MODE_TRIGGER_IN",
+    "start_edge": "trigger.EDGE_RISING",
+    "start_overrun": true,
+    "start_overrun_interpretation": "became true only after the clean terminal and recovery snapshots when the disconnected input floated from driven LOW to HIGH; it did not occur during the acquisition"
+  },
+  "explicit_post_archive_discard": {
+    "before_record_count": 5,
+    "after_record_count": 0,
+    "capacity_records": 16,
+    "runtime_state": "idle",
+    "model_state": "trigger.STATE_IDLE",
+    "output_state": "smu.OFF",
+    "source_level_a": 0.0,
+    "event_warning_count": 6,
+    "event_error_count": 4
+  },
+  "result": {
+    "post_overvoltage_low_high_recognition_passed": true,
+    "pre_arm_low_validation_passed": true,
+    "rising_start_accepted": true,
+    "acquisition_completed_once": true,
+    "clean_terminal_single_edge_observed": true,
+    "exact_five_record_buffer_passed": true,
+    "source_safe_after_run": true,
+    "g01_promoted": false
+  },
+  "evidence_limits": {
+    "functional_retest_does_not_exclude_latent_input_damage_or_prove_full_electrical_specification": true,
+    "start_edge_to_first_aperture_latency_measured": false,
+    "ready_race_boundary_tested": false,
+    "held_stale_and_repeated_start_cases_completed": false,
+    "independent_electrical_timing_trace_retained": false
+  }
+}

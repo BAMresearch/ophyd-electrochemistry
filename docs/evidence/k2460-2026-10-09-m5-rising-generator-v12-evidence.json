@@ -1,0 +1,176 @@
+{
+  "schema": "k2460-m5-rising-generator-proof-v1",
+  "recorded_at_utc": "2026-10-09T15:46:32.764328Z",
+  "instrument": {
+    "identity_raw": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "resource_name": "TCPIP0::169.254.113.151::5025::SOCKET",
+    "command_language": "TSP"
+  },
+  "generator": {
+    "model": "Agilent 33120A",
+    "load_display_setting": "50 ohm",
+    "pre_arm_pin_level_v": "approximately 0.01 based on the preceding scope-verified setup and Keithley LOW recognition",
+    "initial_start_display_level_v": 4.5,
+    "nominal_unloaded_voltage_implied_by_initial_display_v": 9.0,
+    "subsequent_action": "approximately 5 seconds later, user noticed the level was too high and halved the displayed setting",
+    "intended_pin_high_level_v": 4.6,
+    "actual_pin_voltage_during_transition": "unknown; not captured at the Keithley pin",
+    "start_action": "user changed the front-panel DC level after READY asserted"
+  },
+  "wiring": {
+    "signal": "33120A OUTPUT center conductor through 1 kohm series resistor to Keithley DB-9 pin 3 / START",
+    "ground": "33120A OUTPUT shield to Keithley DB-9 pin 9 / ground"
+  },
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v12",
+    "sha256": "e77fb18fa6ca9f2849ef910a96ff42e4327fa4552f477fb44fc57f5849076666",
+    "script_name": "oe_m4_e77fb18fa6ca9f2849ef910a"
+  },
+  "request": {
+    "current_a": 0.001,
+    "source_range_a": 0.001,
+    "voltage_limit_v": 0.2,
+    "measurement_count": 5,
+    "measurement_nplc": 1,
+    "start_mode": "external_trigger",
+    "start_edge": "rising",
+    "external_start_timeout_s": 60
+  },
+  "state_path": {
+    "input_before_prepare": "digio.STATE_LOW",
+    "prepared": {
+      "runtime_state": "prepared",
+      "model_state": "trigger.STATE_BUILDING",
+      "output_enabled": false,
+      "start_overrun": false
+    },
+    "armed": {
+      "runtime_state": "waiting_start",
+      "model_state": "trigger.STATE_RUNNING",
+      "last_block": 5,
+      "output_enabled": false,
+      "ready_level": 1,
+      "busy_level": 0,
+      "start_overrun": false
+    },
+    "running": {
+      "runtime_state": "running",
+      "last_block": 10,
+      "output_enabled": true,
+      "ready_level": 0,
+      "busy_level": 1,
+      "start_overrun": true
+    },
+    "terminal": {
+      "runtime_state": "complete",
+      "model_state": "trigger.STATE_IDLE",
+      "last_block": 13,
+      "output_enabled": false,
+      "ready_level": 0,
+      "busy_level": 0,
+      "start_overrun": true,
+      "timer_overrun": false
+    },
+    "recovery": {
+      "runtime_state": "idle",
+      "output_state": "smu.OFF",
+      "source_level_a": 0.0
+    }
+  },
+  "buffer": {
+    "capacity_records": 16,
+    "record_count": 5,
+    "start_index": 1,
+    "end_index": 5,
+    "records_sha256": "a93e549c15269611ceb84abfe6f017f0c7c93b980970515a68a5a42e530254d6",
+    "offset_retry_equal": true,
+    "retained_through_recovery": true,
+    "archive_schema": "ophyd-electrochemistry/k2460-buffer-archive-v2",
+    "archive_payload_sha256": "5c1a3cc19b99759ae07020e9a7628f2efcfc01d50c7bf2f7d66657204b21ad2d",
+    "archive_file": "k2460-2026-10-09-m5-rising-generator-v12-archive.json",
+    "archive_round_trip_verified": true
+  },
+  "derived_observations": {
+    "mean_source_current_a": 0.00100001615938,
+    "mean_measured_voltage_v": 0.10250825881600001,
+    "mean_resistance_ohm": 102.50660237269577,
+    "buffer_relative_span_s": 0.16333398
+  },
+  "start_overrun_observation": {
+    "value": true,
+    "first_seen": "running at digitize block 10",
+    "effect_on_state_path": "none observed; one acquisition completed with exactly five records",
+    "interpretation": "the front-panel DC-level change generated or coincided with more than one detected rising event; the waveform at the Keithley pin during this transition was not independently captured",
+    "acceptance_consequence": "this run is invalid as trigger-acceptance evidence because the transition was not clean and the input may have been driven beyond its absolute permitted range"
+  },
+  "possible_overvoltage_incident": {
+    "keithley_documented_input_range_v": [-0.25, 5.25],
+    "cause": "the 33120A remained in 50 ohm display mode; a 4.5 V displayed DC level nominally corresponds to about 9 V into a high-impedance load",
+    "duration_before_display_setting_was_halved_s": "approximately 5, user reported",
+    "series_resistor_ohm": 1000,
+    "actual_voltage_at_line_3": "unknown because the waveform was not captured at the Keithley pin and input protection may have clamped it",
+    "consequence": "possible absolute-maximum violation; absence of a new instrument error does not prove that line 3 was undamaged",
+    "immediate_response": "33120A OUTPUT BNC physically disconnected; event log preserved"
+  },
+  "event_counts": {
+    "before_prepare": {
+      "warnings": 3,
+      "errors": 4
+    },
+    "after_completion_and_discard": {
+      "warnings": 4,
+      "errors": 4
+    },
+    "new_warnings": 1,
+    "new_errors": 0,
+    "new_warning_text": "not captured remotely; user front-panel report requested"
+  },
+  "independent_new_session_audit": {
+    "runtime_state": "idle",
+    "model_state": "trigger.STATE_IDLE",
+    "last_block": 13,
+    "output_state": "smu.OFF",
+    "source_level_a": 0.0,
+    "buffer_record_count": 5,
+    "buffer_start_index": 1,
+    "buffer_end_index": 5,
+    "start_overrun": true
+  },
+  "explicit_post_archive_discard": {
+    "before_record_count": 5,
+    "after_record_count": 0,
+    "capacity_records": 16,
+    "runtime_state": "idle",
+    "output_state": "smu.OFF",
+    "source_level_a": 0.0
+  },
+  "result": {
+    "pre_arm_low_validation_passed": true,
+    "rising_start_accepted": true,
+    "acquisition_completed_once": true,
+    "clean_single_edge_proven": false,
+    "usable_as_trigger_acceptance_evidence": false,
+    "line_3_function_after_possible_overvoltage_proven": false
+  },
+  "evidence_limits": {
+    "transition_waveform_captured_at_keithley_pin": false,
+    "start_edge_to_first_aperture_latency_measured": false,
+    "single_edge_integrity_proven": false,
+    "hardware_gate_promoted": false,
+    "post_incident_read_only_audit": {
+      "runtime_state": "idle",
+      "model_state": "trigger.STATE_IDLE",
+      "last_block": 13,
+      "source_output": "smu.OFF",
+      "source_level_a": 0.0,
+      "buffer_record_count": 0,
+      "line_3_mode": "digio.MODE_TRIGGER_IN",
+      "start_edge": "trigger.EDGE_RISING",
+      "start_overrun": true,
+      "event_warning_count": 4,
+      "event_error_count": 4,
+      "new_error_after_user_report": false
+    }
+  }
+}

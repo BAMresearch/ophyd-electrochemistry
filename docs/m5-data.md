@@ -210,6 +210,17 @@ scale/no-wrap evidence but not clean single-edge or repeated-input acceptance.
 See the [scale-run evidence](evidence/k2460-2026-10-09-m5-external-start-256-v12-evidence.json)
 and [raw archive](evidence/k2460-2026-10-09-m5-external-start-256-v12-archive.json).
 
+A later controlled rising-edge check used a scope-verified 0.10 Hz square wave.
+The runtime armed during a known LOW interval and completed one five-record run
+on the next rising edge without START overrun through completion and recovery.
+The records retried identically, independent post-disconnect transfer matched,
+and mean V/I was 102.5025 ohm. Physical disconnect then produced a separate
+floating-HIGH transition and set the historical overrun flag after the terminal
+snapshot. This narrows the earlier manual-contact ambiguity but does not establish
+START-to-aperture timing or the full G01 input cases. See the
+[clean-run evidence](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-evidence.json)
+and [archive](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-archive.json).
+
 The following remain open before M5 is complete:
 
 - map target timestamps/apertures to actual START without inventing precision;

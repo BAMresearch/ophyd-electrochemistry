@@ -236,6 +236,51 @@ contact bounce is only a hypothesis, this run does not satisfy G01's stale or
 repeated-START requirement. It adds bounded G03/G04 evidence without promoting
 either gate.
 
+An Agilent 33120A was then checked as a controlled START source before using
+trigger mode. The user verified a 1 Hz, 0.01–4.56 V square wave at the cable end;
+the generator drove line 3 through 1 kohm with its shield on pin 9. The unit was
+actually in 50 ohm display mode, so the scope measurement, rather than its
+displayed amplitude, establishes the electrical levels. With line 3
+configured as an ordinary digital input and the SMU IDLE/OFF/0 A, the Keithley
+recognized 16 alternating transitions over eight seconds. HIGH and LOW sample
+counts were 159 and 157, and the mean host-observed half-period was 0.49994 s.
+The steady-state monitor added no warning or error. See the
+[generator-input evidence](evidence/k2460-2026-10-09-generator-digital-input.json).
+This qualifies logic-level recognition only; trigger capture, edge integrity,
+and timing remain open under G01.
+
+The generator was then held LOW and the runtime configured for rising-only
+START. Pre-arm LOW validation passed and WAITING_START asserted READY with output
+off. Raising the 33120A front-panel DC level started and completed one five-record
+acquisition, but START overrun became true during digitization and one warning
+was added. The checked archive and independent retention/discard lifecycle
+completed at IDLE/OFF/0 A. It was then discovered that the generator remained in
+50 ohm display mode and had displayed 4.5 V for approximately five seconds before
+the setting was halved. Into a high-impedance input, this implies a nominal
+unloaded target near 9 V, above the Keithley line's +5.25 V permitted input. The
+actual pin voltage is unknown because it was not captured; the 1 kohm series
+resistor limited current but does not establish compliance with the voltage
+limit. The generator was physically disconnected. This run is invalid as
+trigger-acceptance evidence, line 3 required a conservative functional retest,
+and G01 remains **NOT RUN**. See the
+[rising-edge evidence](evidence/k2460-2026-10-09-m5-rising-generator-v12-evidence.json)
+and [archive](evidence/k2460-2026-10-09-m5-rising-generator-v12-archive.json).
+
+The functional retest used a scope-verified 0.10 Hz square wave of approximately
+0.01–4.60 V through the 1 kohm path. Line 3 recognized successive LOW, HIGH and
+LOW states while the source remained off. The runtime armed during LOW; the next
+rising edge produced one five-record acquisition with no START or timer overrun
+through COMPLETE and recovery. Mean V/I was 102.5025 ohm, retry and independent
+post-disconnect transfer matched, and the final source state was IDLE/OFF/0 A.
+The two new warnings were the expected trigger-setting reset on line-mode
+changes; no error was added. The overrun flag set only afterward when physical
+disconnect let the input float HIGH. This establishes present basic line
+function and one clean rising-start path, but cannot exclude latent damage or
+cover G01's READY-race, held/stale/repeated START and independent timing-trace
+requirements. G01 therefore remains **NOT RUN**. See the
+[clean-run evidence](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-evidence.json)
+and [checked archive](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-archive.json).
+
 ## M4 runtime installation, immediate hold, and programmatic abort — PASS within narrow scope
 
 The exact-artifact loader, packaged finite-current-hold TSP runtime, typed host

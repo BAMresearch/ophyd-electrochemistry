@@ -1,0 +1,107 @@
+{
+  "schema": "k2460-generator-digital-input-proof-v1",
+  "recorded_at_utc": "2026-10-09",
+  "instrument": {
+    "identity_raw": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "resource_name": "TCPIP0::169.254.113.151::5025::SOCKET",
+    "command_language": "TSP"
+  },
+  "generator": {
+    "model": "Agilent 33120A",
+    "waveform": "square",
+    "frequency_hz": 1.0,
+    "measured_low_v": 0.01,
+    "measured_high_v": 4.56,
+    "load_display_setting": "50 ohm",
+    "front_panel_amplitude_settings": "not retained; displayed values differ from unloaded output by approximately a factor of two in 50 ohm display mode",
+    "levels_and_overshoot_verified_by_user_at_cable_end_with_high_impedance_oscilloscope": true,
+    "main_output_behavior": "always active; the OUTPUT BNC was connected only after the Keithley input monitor was ready"
+  },
+  "wiring": {
+    "signal": "33120A OUTPUT center conductor through 1 kohm series resistor to Keithley DB-9 pin 3 / digital I/O line 3",
+    "ground": "33120A OUTPUT shield to Keithley DB-9 pin 9 / ground",
+    "start_to_ground_pull_down_present": false
+  },
+  "preconditions": {
+    "runtime_state": "idle",
+    "model_state": "trigger.STATE_IDLE",
+    "source_output": "smu.OFF",
+    "source_level_a": 0.0,
+    "runtime_buffer_record_count": 0,
+    "event_warning_count": 2,
+    "event_error_count": 4
+  },
+  "configuration": {
+    "line": 3,
+    "mode": "digio.MODE_DIGITAL_IN",
+    "source_output_enabled": false,
+    "initial_disconnected_state": "digio.STATE_HIGH"
+  },
+  "connection_monitor": {
+    "observed_transitions": 3,
+    "transition_times_s": [
+      28.635975,
+      29.130099,
+      29.648398
+    ],
+    "purpose": "confirm recognition immediately after the OUTPUT BNC was connected"
+  },
+  "steady_state_monitor": {
+    "duration_s": 8.0,
+    "host_samples": 316,
+    "high_samples": 159,
+    "low_samples": 157,
+    "observed_transitions": 16,
+    "transition_times_s": [
+      0.231033,
+      0.725699,
+      1.238364,
+      1.746477,
+      2.225371,
+      2.72513,
+      3.236719,
+      3.740089,
+      4.234989,
+      4.723409,
+      5.224945,
+      5.728219,
+      6.241232,
+      6.739366,
+      7.240647,
+      7.730189
+    ],
+    "mean_host_observed_half_period_s": 0.49994370833349727,
+    "minimum_host_observed_half_period_s": 0.47889391699573025,
+    "maximum_host_observed_half_period_s": 0.5130136250227224,
+    "recognized_states": [
+      "digio.STATE_LOW",
+      "digio.STATE_HIGH"
+    ]
+  },
+  "postconditions": {
+    "source_output": "smu.OFF",
+    "source_level_a": 0.0,
+    "event_warning_count": 3,
+    "event_error_count": 4,
+    "new_warning_during_mode_change": 1,
+    "new_warnings_during_steady_state_monitor": 0,
+    "new_errors": 0,
+    "mode_change_warning_interpretation": "consistent with the previously observed warning that changing line 3 from trigger mode to digital mode resets its trigger setting"
+  },
+  "result": {
+    "valid_low_recognized": true,
+    "valid_high_recognized": true,
+    "repeated_alternation_recognized": true,
+    "generator_suitable_for_next_trigger_input_test_at_time_of_test": true,
+    "current_line_3_health_after_later_possible_overvoltage_requires_retest": true
+  },
+  "evidence_limits": {
+    "host_polling_is_not_an_independent_timing_measurement": true,
+    "voltage_was_not_measured_by_the_keithley_digital_port": true,
+    "trigger_mode_not_tested": true,
+    "single_edge_integrity_not_tested": true,
+    "start_overrun_not_retested": true,
+    "hardware_gate_promoted": false,
+    "scope_verified_levels_are_the_electrical_evidence; the_33120a_display_setting_alone_is_not": true
+  }
+}

@@ -81,3 +81,40 @@ logic polarity, isolation, and timing source requirements need verification.
 These values do not establish direct compatibility with a 24 V or LVDS system.
 Source: [Tektronix 2460 datasheet](https://www.tek.com/en/datasheet/2460-source-measure-unit),
 Digital I/O Interface.
+
+On 9 October 2026, an Agilent 33120A produced a user-verified 0.01–4.56 V,
+1 Hz square wave at the cable end and drove START line 3 through a 1 kohm series
+resistor, with its shield connected to pin 9. The 33120A was actually in its
+50 ohm display mode, so the oscilloscope readings—not its displayed amplitude—
+establish these levels. In ordinary digital-input mode, the 2460 recognized
+16 alternating HIGH/LOW transitions over eight seconds with nearly equal state
+counts. The mean host-observed half-period was 0.49994 s, output remained OFF/0 A,
+and the steady-state monitor added no warning or error. Changing line 3 from
+trigger mode to digital mode added the expected trigger-setting-reset warning.
+This qualifies the generator's logical levels, not trigger capture or electrical
+timing. See the [generator-input evidence](evidence/k2460-2026-10-09-generator-digital-input.json).
+
+A subsequent rising-only trigger test held the same generator LOW before arm,
+then raised its front-panel DC setting after READY. The edge started and
+completed one five-record acquisition, but `start_overrun` became true and one
+warning was added. It was discovered afterward that the 33120A was still in
+50 ohm display mode: it displayed 4.5 V for approximately five seconds before
+the setting was halved, implying a nominal unloaded target near 9 V. The actual
+line-3 voltage is unknown, but the possible exposure exceeds the Keithley's
++5.25 V input limit despite the 1 kohm series resistor. The generator was
+physically disconnected. The run is invalid as trigger-acceptance evidence and
+line 3 required a conservative functional retest before further triggering. See the
+[rising-edge evidence](evidence/k2460-2026-10-09-m5-rising-generator-v12-evidence.json).
+
+The follow-up used a scope-verified 0.10 Hz square wave of approximately
+0.01–4.60 V through the same 1 kohm path. With the SMU output off, line 3
+recognized LOW, HIGH and LOW over successive half-cycles. The runtime armed
+during the latter LOW interval and the next rising edge completed exactly one
+five-record acquisition. `start_overrun` remained false through RUNNING,
+COMPLETE and recovery; output returned to OFF/0 A. Disconnecting the generator
+afterward let the input float HIGH and set the otherwise historical overrun flag,
+but this occurred after the clean terminal snapshot. This is a functional
+post-incident check and a clean single-run observation, not proof against latent
+damage, READY-boundary races, stale/repeated START, or electrical timing. See the
+[clean rising-edge evidence](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-evidence.json)
+and [archive](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-archive.json).

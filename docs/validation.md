@@ -311,6 +311,44 @@ acceptance. Evidence is retained in
 [the scale-run record](evidence/k2460-2026-10-09-m5-external-start-256-v12-evidence.json)
 and [raw archive](evidence/k2460-2026-10-09-m5-external-start-256-v12-archive.json).
 
+The proposed controlled source, an Agilent 33120A, was next checked in plain
+digital-input mode without arming or sourcing. Its user-verified 1 Hz,
+0.01–4.56 V square wave drove line 3 through 1 kohm. The 33120A was actually in
+50 ohm display mode, so the scope measurement, not its displayed amplitude,
+establishes those levels. The Keithley recognized 16
+alternating HIGH/LOW transitions over eight seconds, with a 0.49994 s mean
+host-observed half-period and no steady-state warning or error. The SMU remained
+IDLE/OFF/0 A. The retained
+[generator-input evidence](evidence/k2460-2026-10-09-generator-digital-input.json)
+does not yet establish trigger-mode capture or edge timing.
+
+With the generator held LOW, rising-only pre-arm validation passed and the
+runtime reached WAITING_START/OFF/READY. A front-panel DC increase started and
+completed one five-record acquisition, but `start_overrun` became true during
+digitization and one warning was added. Data retry, checked archive, recovery,
+independent retention audit and explicit discard all completed at IDLE/OFF/0 A.
+It was later reported that the generator was in 50 ohm display mode and displayed
+4.5 V for approximately five seconds before the setting was halved. This implies
+a nominal unloaded target near 9 V; the actual line-3 voltage was not captured
+and may have exceeded the Keithley's +5.25 V permitted input. The generator was
+physically disconnected. This run is invalid as trigger-acceptance evidence and
+line 3 required a functional retest before further trigger work. See the
+[run record](evidence/k2460-2026-10-09-m5-rising-generator-v12-evidence.json)
+and [archive](evidence/k2460-2026-10-09-m5-rising-generator-v12-archive.json).
+
+The follow-up functional retest used a scope-verified 0.10 Hz, approximately
+0.01–4.60 V square wave through 1 kohm. With source output off, line 3 recognized
+LOW, HIGH and LOW; the runtime armed during the latter LOW interval. The next
+rising edge completed exactly one five-record run with no START overrun through
+COMPLETE and recovery. Mean V/I was 102.5025 ohm, repeated and independent
+buffer transfers matched SHA-256, no error was added, and the source finished
+IDLE/OFF/0 A. A later physical disconnect produced a post-run floating-HIGH edge
+and set the historical overrun flag, distinguishable from the captured clean
+terminal result. This is narrow functional and single-run evidence, not a full
+G01 result. See the
+[clean-run record](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-evidence.json)
+and [archive](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-archive.json).
+
 ## RunEngine failed-Status teardown fix
 
 Reproduced the user's `Future exception was never retrieved` message on local
