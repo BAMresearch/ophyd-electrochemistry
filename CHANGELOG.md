@@ -22,6 +22,9 @@
   START detection, including directional pre-arm level checks and ignored return
   transitions after the one-shot wait. Report the backend edge selection as
   read-only Ophyd Device configuration.
+- Add follower plan templates for one locally timed pulse train and separately
+  armed external `count=1` shots. Repeated shots require unique raw destinations,
+  export before exact-ID discard, and stop with retained data on failure.
 - Add the first offline M5 data layer: immutable versioned V/I records with
   explicit electrical/timing origin, clock/aperture/source mapping, validated
   terminal buffer metadata, canonical checksums and deterministic offset chunks.

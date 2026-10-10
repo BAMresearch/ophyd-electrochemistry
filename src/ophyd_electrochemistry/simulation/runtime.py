@@ -507,10 +507,13 @@ class SimulatedRuntime:
                 }
             )
             digest = sha256_json(payload)
-            Path(destination).write_text(
-                canonical_json({"sha256": digest, "payload": json.loads(payload)}) + "\n",
-                encoding="utf-8",
-            )
+            try:
+                with Path(destination).open("x", encoding="utf-8") as stream:
+                    stream.write(
+                        canonical_json({"sha256": digest, "payload": json.loads(payload)}) + "\n"
+                    )
+            except FileExistsError as exc:
+                raise RetainedDataError("Export destination already exists") from exc
             return digest
 
     def discard_retained_data(self, *, acquisition_id: str, reason: str) -> None:

@@ -1,5 +1,6 @@
 """RunEngine coverage for the first operational M6 Flyer slice."""
 
+import json
 import threading
 import time
 from dataclasses import replace
@@ -11,6 +12,7 @@ from bluesky import plan_stubs as bps
 
 from examples.compile_program import capabilities as example_capabilities
 from examples.compile_program import config as example_config
+from examples.follower import repeated_single_pulse_acquisitions
 from ophyd_electrochemistry import (
     AcquisitionRequest,
     CurrentPulseSequence,
@@ -285,6 +287,84 @@ def test_trigger_per_pulse_uses_distinct_rearmed_acquisitions():
 
     assert acquisition_ids == ["m6-acquisition-1", "m6-acquisition-2"]
     device.unstage()
+
+
+def test_repeated_pulse_plan_archives_before_discard_and_rearm(tmp_path):
+    device, runtime, _ = device_stack()
+    destinations = [tmp_path / "shot-0.json", tmp_path / "shot-1.json"]
+    documents = []
+    worker_errors = []
+    run_engine = RunEngine({})
+    run_engine.subscribe(lambda name, doc: documents.append((name, doc)))
+
+    def trigger_each_armed_shot():
+        try:
+            for _ in destinations:
+                wait_for_state(device, DeviceState.WAITING_START)
+                runtime.set_inputs(start=True, abort=False)
+                runtime.advance_ticks(30)
+                runtime.set_inputs(start=False, abort=False)
+                wait_for_state(device, DeviceState.COMPLETE)
+        except BaseException as exc:
+            worker_errors.append(exc)
+
+    worker = threading.Thread(target=trigger_each_armed_shot, daemon=True)
+    worker.start()
+    try:
+        run_engine(
+            repeated_single_pulse_acquisitions(
+                device,
+                pulse_request(StartMode.EXTERNAL_TRIGGER, count=1),
+                destinations,
+            )
+        )
+    finally:
+        worker.join(timeout=2)
+
+    assert not worker.is_alive() and not worker_errors
+    assert [document["shot_index"] for name, document in documents if name == "start"] == [0, 1]
+    assert [name for name, _ in documents].count("stop") == 2
+    assert runtime.dispositions == [
+        ("m6-acquisition-1", "shot 0 raw archive exported"),
+        ("m6-acquisition-2", "shot 1 raw archive exported"),
+    ]
+    archived_ids = [
+        json.loads(path.read_text())["payload"]["acquisition_id"] for path in destinations
+    ]
+    assert archived_ids == ["m6-acquisition-1", "m6-acquisition-2"]
+
+
+def test_repeated_pulse_plan_preserves_data_when_archive_exists(tmp_path):
+    device, runtime, _ = device_stack()
+    destination = tmp_path / "occupied.json"
+    destination.write_text("operator-owned\n")
+    run_engine = RunEngine({})
+
+    def trigger_armed_shot():
+        wait_for_state(device, DeviceState.WAITING_START)
+        runtime.set_inputs(start=True, abort=False)
+        runtime.advance_ticks(30)
+        runtime.set_inputs(start=False, abort=False)
+
+    worker = threading.Thread(target=trigger_armed_shot, daemon=True)
+    worker.start()
+    try:
+        with pytest.raises(RetainedDataError, match="already exists"):
+            run_engine(
+                repeated_single_pulse_acquisitions(
+                    device,
+                    pulse_request(StartMode.EXTERNAL_TRIGGER, count=1),
+                    [destination],
+                )
+            )
+    finally:
+        worker.join(timeout=2)
+
+    assert not worker.is_alive()
+    assert destination.read_text() == "operator-owned\n"
+    assert runtime.dispositions == []
+    assert len(runtime.records) == 5
+    assert runtime.state == DeviceState.COMPLETE and runtime.output is False
 
 
 def test_no_start_timeout_fails_completion_with_empty_collectable_buffer():

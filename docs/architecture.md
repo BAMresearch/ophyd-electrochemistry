@@ -31,6 +31,7 @@
 | `tests/unit/` | M1 models, waveform properties/independent vectors, budgets, timing and serialization |
 | `tests/simulator/` | Independent reference traces, aperture integrals, state races, faults and retention |
 | `tests/hardware/` | Future explicitly enabled bench tests |
+| `examples/follower.py` | Single-acquisition, pulse-train and archive-before-rearm repeated-shot plans |
 | `docs/` | Contract, evidence, commissioning record, roadmap, ADRs |
 | `.github/workflows/ci.yml` | Lint/typing/tests/docs/package checks |
 

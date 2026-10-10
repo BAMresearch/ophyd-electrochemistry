@@ -35,6 +35,13 @@ sequence. A single arm that consumes N external edges is not implemented; it
 would require a separate request mode, runtime behavior and repeated-input
 hardware evidence.
 
+The plan templates in `examples/follower.py` make both lifecycles executable.
+`pulse_train_acquisition()` runs one pulse-sequence acquisition.
+`repeated_single_pulse_acquisitions()` opens a separate follower run for every
+externally triggered `count=1` shot and requires a unique raw-archive destination
+for each. A shot is discarded only after its raw export succeeds. Execution or
+export failure stops the sequence and leaves that acquisition retained.
+
 ## Implemented lifecycle
 
 - `prepare()` creates a unique acquisition ID, delegates bounded backend

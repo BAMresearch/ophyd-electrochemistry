@@ -612,6 +612,9 @@ def test_frozen_chunks_disposition_export_digest_and_recovery(runtime, tmp_path)
     assert len(saved["payload"]["records"]) == 2
     assert saved["payload"]["program"]["terminal_action"] == "output_off"
     assert saved["payload"]["outcome"]["fields"]["cause"] == "beamline-stop"
+    with pytest.raises(RetainedDataError, match="already exists"):
+        runtime.export_retained_data(str(destination))
+    assert len(runtime.records) == 2
     runtime.recover()
     with pytest.raises(RetainedDataError):
         runtime.prepare(request(), acquisition_id="acq-2")
