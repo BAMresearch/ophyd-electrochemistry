@@ -41,12 +41,12 @@ config = Keithley2460Config(
         source_off_mode="normal",
     ),
     timing=TimingPolicy(
-        command_timeout_s=10,
-        external_start_timeout_s=60,
-        shutdown_timeout_s=2,
-        poll_period_s=0.01,
-        required_abort_latency_s=1,
-        required_cutoff_latency_s=1,
+        command_timeout_s=10,  # One host/backend transaction, not the run.
+        external_start_timeout_s=60,  # Local wait for a physical START edge.
+        shutdown_timeout_s=2,  # Bound for confirmed abort and output OFF.
+        poll_period_s=0.01,  # Instrument-local START/timeout event polling.
+        required_abort_latency_s=1,  # Commissioning acceptance requirement.
+        required_cutoff_latency_s=1,  # Local protection requirement.
     ),
 )
 ```
@@ -68,13 +68,13 @@ request = AcquisitionRequest(
     experiment_id="coin-cell-pulse-0042",
     start_mode=StartMode.EXTERNAL_TRIGGER,
     program=CurrentPulseSequence(
-        baseline_current_a=0.0,
-        pulse_current_a=0.001,
-        pulse_width_s=0.100,
-        period_s=1.000,
-        count=20,
-        sample_period_s=0.020,
-        voltage_limit_v=0.2,
+        baseline_current_a=0.0,  # Current between pulses.
+        pulse_current_a=0.001,  # Current during each pulse.
+        pulse_width_s=0.100,  # ON portion of one period.
+        period_s=1.000,  # Pulse-to-pulse interval.
+        count=20,  # Total duration is period × count = 20 s.
+        sample_period_s=0.020,  # Independent V/I sample cadence.
+        voltage_limit_v=0.2,  # Compliance, not a voltage setpoint.
     ),
 )
 ```
@@ -119,6 +119,34 @@ measurement settings.
 There is intentionally no raw SCPI/TSP escape hatch and no sequence such as
 `current.put()`, `range.put()`, `output.put()`. The backend receives one
 validated finite request.
+
+### Program-dependent timing and resource bounds
+
+Changing pulse width, period, count or sampling period changes the compiled
+duration, measurement count and buffer requirement. It must not require the
+user to increase unrelated communication or shutdown timeouts. The compiler
+already derives the source schedule, achieved duration, measurement schedule
+and finite resource budget from the request.
+
+The offline quickstart additionally derives its simulator tick budget and host
+completion watchdog from the compiled result. Its host watchdog covers:
+
+1. the instrument-local external-START timeout, only for externally started
+   requests;
+2. the compiled acquisition duration; and
+3. a bounded host-communication margin.
+
+`command_timeout_s` remains the bound for one host/backend transaction;
+`shutdown_timeout_s` remains the bound for confirming abort and output OFF;
+neither is the acquisition duration. Safety limits, START-wait policy,
+measurement profile and accuracy/noise trade-offs also remain explicit
+commissioning or user choices rather than values inferred from pulse duration.
+
+The simulator-backed quickstart constructs one device for one request and can
+therefore pass the derived watchdog directly to the device constructor. Before
+the target backend supports arbitrary successive requests on one staged device,
+its prepare result should expose a reviewed worst-case completion bound so the
+Flyer can update the watchdog for every acquisition without user calculation.
 
 ## Run lifecycle
 
@@ -196,11 +224,12 @@ simulator meanings are not Keithley bit definitions.
 
 ## Preliminary visualization
 
-The quickstart plots both measured voltage and current against
-`ec_time_relative`, shades pulse dwells from the commanded schedule and prints a
-compact record table. The plot is a first-look diagnostic, not an acceptance
-test: it does not establish calibration, timing accuracy, settling, compliance
-behavior or hardware synchronization.
+The quickstart uses Plotly to show measured voltage, measured current and
+commanded current against `ec_time_relative`. It provides linked time axes,
+hover readouts, shades pulse dwells from the commanded schedule and prints a
+compact record table. The interactive plot is a first-look diagnostic, not an
+acceptance test: it does not establish calibration, timing accuracy, settling,
+compliance behavior or hardware synchronization.
 
 When an instrument-to-epoch `ClockMapping` is available, Bluesky event-envelope
 time uses it. Otherwise the event envelope uses host emission time solely to

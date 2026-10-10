@@ -6,7 +6,9 @@
 
 - Add a living user guide and simulator-backed quickstart notebook covering the
   three-layer configuration model, safe Ophyd lifecycle, paired I/V data,
-  retained-data behavior and preliminary post-run visualization.
+  retained-data behavior and interactive Plotly post-run visualization. Derive
+  the simulator run budget and host completion watchdog from the compiled
+  request so longer pulse programs do not require manual timeout coordination.
 - Revise the shared measurement schema to v2: replace the ambiguous combined
   status word and definition with independent source and measurement status
   values and definitions throughout typed records, simulator projection and the

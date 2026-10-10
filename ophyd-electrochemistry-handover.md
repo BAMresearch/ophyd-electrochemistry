@@ -1,10 +1,17 @@
-# ophyd-electrochemistry — Codex handover
+# ophyd-electrochemistry — archived Codex handover
 
 Prepared 5 October 2026 for continued development in VS Code.
 
 Repository: <https://github.com/BAMresearch/ophyd-electrochemistry>
 
-## Start here
+> **Archive status:** This document preserves the 5 October 2026 transition
+> snapshot and subsequent historical notes. Its embedded prompts, worktree
+> descriptions, milestone status, IP addresses, and “next” steps are not active
+> instructions. Read [`AGENTS.md`](AGENTS.md) for durable repository rules and
+> [`docs/current-state.md`](docs/current-state.md) for the current resumption
+> checkpoint. The checkout, contracts, tests, and evidence take precedence.
+
+## Archived starting point
 
 **M1 (models and compiler) and M2 (independent simulation) are implemented. M3 (real transport characterization) is next. There is no operational 2460 driver yet, and every hardware acceptance gate remains NOT RUN.**
 
@@ -12,7 +19,10 @@ This document transfers decisions and validation from the preceding chat. Inspec
 
 The user’s macOS checkout was `/Users/bpauw/Code/ophyd-electrochemistry`. VS Code is already open on the repository. Work directly in that checkout, preserve unrelated changes, and leave commits, pushes and publishing to the user unless subsequently instructed otherwise.
 
-### Starter prompt to paste into Codex
+### Archived starter prompt
+
+The following prompt is retained only to document the original transition. Do
+not use it to resume the present checkout.
 
 ```text
 Continue development of BAMresearch/ophyd-electrochemistry using

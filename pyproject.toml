@@ -26,9 +26,16 @@ ophyd-electrochemistry-k2460-diagnose = "ophyd_electrochemistry.keithley.k2460.c
 test = ["pytest>=8,<10"]
 lint = ["ruff>=0.11,<1", "mypy>=1.15,<3"]
 docs = ["mkdocs>=1.6,<2"]
+notebook = ["ipykernel>=6,<8", "nbformat>=5.10,<6", "plotly>=6,<7"]
 build = ["twine>=6,<7"]
 release = ["python-semantic-release==10.7.0"]
-dev = [{include-group = "test"}, {include-group = "lint"}, {include-group = "docs"}, {include-group = "build"}]
+dev = [
+    {include-group = "test"},
+    {include-group = "lint"},
+    {include-group = "docs"},
+    {include-group = "notebook"},
+    {include-group = "build"},
+]
 
 [tool.uv]
 required-version = ">=0.12.19"

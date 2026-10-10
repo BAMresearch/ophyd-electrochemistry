@@ -26,7 +26,8 @@ per-run intent, planned measurement profiles, Ophyd Flyer lifecycle, paired I/V
 records and retained-data behavior. The companion simulator-only notebook
 `notebooks/ophyd_electrochemistry_quickstart.ipynb` executes the pulse plan
 through a real RunEngine, produces 20 paired records, finishes COMPLETE with
-output false and creates a dependency-free inline SVG of voltage and current.
+output false and creates an interactive two-panel Plotly figure of voltage,
+measured current and commanded current.
 
 A contract test executes every code cell and checks the terminal safe state,
 paired electrical fields, separate source/measurement status words and

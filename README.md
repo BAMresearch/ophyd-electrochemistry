@@ -11,6 +11,9 @@ owns the 2460 connection.
 
 ## Start here
 
+- [Current project state](docs/current-state.md): concise implementation,
+  hardware-evidence, validation, and next-work checkpoint for resuming
+  development.
 - [User guide and quickstart](docs/user-guide.md): configure finite requests,
   run the Ophyd lifecycle, understand paired I/V records and reproduce the
   offline visualization notebook.
@@ -131,7 +134,8 @@ It is only for the confirmed
 front-terminal four-wire nominal 100 ohm resistor setup.
 The offline `notebooks/ophyd_electrochemistry_quickstart.ipynb` runs the intended
 Ophyd/Bluesky pulse workflow entirely against the simulator, tabulates paired
-I/V events and produces a preliminary visualization without opening VISA.
+I/V events and produces an interactive Plotly visualization without opening
+VISA. The default development environment includes its notebook dependencies.
 For a lean runtime environment, use `uv sync --locked --no-default-groups`.
 Development tools are dependency groups, not published package extras.
 
