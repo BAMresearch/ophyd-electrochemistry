@@ -88,7 +88,7 @@ not exactly-once.
 
 ## Narrow target proof
 
-Runtime build `m4-finite-current-hold-v12` provides
+Runtime build `m4-finite-current-hold-v13` provides
 `CurrentHoldAcquisitionProof`, `RuntimeBufferInfo`, `BufferedReading`, and
 `RuntimeRecordChunk`. Hard limits remain ±10 mA and 2 V, while configuration
 limits may be lower. The acquisition count has an explicit host ceiling
@@ -229,6 +229,34 @@ The following remain open before M5 is complete:
   the START/aperture relationship is established;
 - calibrate or explicitly decline instrument-clock-to-epoch mapping;
 - complete G03, G04 and G06 hardware evidence.
+
+## Hardware timestamp proof prepared
+
+Runtime v13 adds a dedicated one-reading external-START proof without changing
+the v12 acquisition record format. Four uniquely run-tagged TriggerFlow
+information events bracket BUSY assertion and the digitize block. After the
+model is terminal and output is confirmed off, the host can retrieve the first
+reading's absolute `seconds` and `fractionalseconds`, its relative timestamp,
+the configured NPLC and the detected line frequency. Event retrieval is
+explicit because `eventlog.next()` consumes the remotely unread entry; the
+guarded notebook archives every consumed information event.
+
+The instrument-clock portion is combined with a scope measurement of physical
+rising START to rising BUSY. The pre/post-BUSY event timestamps bound the
+instrument time of that physical edge, including a user-supplied scope
+uncertainty. The pre/post-measure events then locate the reading timestamp and
+the configured integration aperture on the same instrument clock. This can
+establish an evidence-backed START-to-reading interval and help determine the
+timestamp reference without using host command timing.
+
+The procedure is in
+`notebooks/keithley_2460_timestamp_proof.ipynb`. It defaults every mutating,
+event-consuming and destructive switch to false, uses rising-edge START so the
+return edge is inert, requires the resistor/output/scope/generator confirmations,
+and will not overwrite an evidence file. No hardware result or gate is claimed
+until that notebook has run and its trace and JSON have been reviewed. The
+field and event semantics follow the
+[Keithley 2460 Reference Manual, revision C](https://download.tek.com/manual/2460-901-01C_Sept_2019_Ref.pdf).
 
 The first M6 `describe_collect()`/`collect()` projection now consumes this fixed
 record meaning through the simulator-backed typed backend. It is deliberately

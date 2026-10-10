@@ -16,7 +16,7 @@ available on the instrument.
 | M2 — Independent simulation | Fake transport/runtime with START/ABORT, partial buffers, state races, waveform playback and failure injection | Both start modes; repeated abort; failed shutdown; buffer retention; snapshot consistency; source/measurement timing and phase mapping |
 | M3 — Transport characterization | **Implemented:** PyVISA backend, identity/firmware/language/output-state checks, read-only diagnostic, bounded framing/chunks/errors. **Open:** retrieval/abort fairness and complete target-unit G05 evidence | G05 on dummy load; no ambiguous command retries |
 | M4 — Local runtime proof | **Implemented and target-tested:** exact-artifact TSP loader, minimal finite current hold, READY/BUSY/START model, local timeout, host adapter, target compile/load/idle, immediate and manual external-start holds, active-hold abort, START-wait abort, and no-START timeout state proofs. **Open:** electrical/timing, READY-boundary race, repeated-input and failure evidence | G01, G02, G07; output remains off before START; external-abort capability rejected until proven |
-| M5 — Acquisition and data | **In progress:** shared typed V/I schema, immediate and external-start target acquisitions through 256 records, deterministic chunks and checksummed raw archive implemented. **Open:** START/aperture mapping, larger capacity/clock proof, repeated-input behavior and shared-record projection | G03, G04, G06; known physical origin, capacity and clock uncertainty |
+| M5 — Acquisition and data | **In progress:** shared typed V/I schema, immediate and external-start target acquisitions through 256 records, deterministic chunks and checksummed raw archive implemented; a guarded v13 instrument-clock/scope timestamp proof is ready to run. **Open:** execute and review START/aperture mapping, larger capacity/clock proof, repeated-input behavior and shared-record projection | G03, G04, G06; known physical origin, capacity and clock uncertainty |
 | M6 — Classic ophyd Device/Flyer | **In progress:** operational `Keithley2460Device` for holds and current-pulse trains, with real Status objects, background completion, configuration metadata, bounded offset-chunk collection, terminal read/describe, stop/recover/unstage and explicit retained-data disposition over a typed backend. **Open:** target adapter, live running snapshot and hardware lifecycle validation | Simulator-backed Real RunEngine slice passes; target adapter depends on M5 START/aperture mapping |
 | M7 — Protocol expansion | Commission finite arbitrary current playback, first-class PRBS and multisine through that shared path; CV/current cutoffs, cycling, pulse and voltage waveform variants | Each protocol proves limits, timing, abort latency and storage budget; waveform fidelity/phase requires G08 |
 | M8 — Two-QueueServer integration | Separate startup environments, leader/follower plans, experiment linking, failure propagation | Timeouts, manual abort, missing START, leader/follower restarts, catalog correlation |
@@ -33,7 +33,9 @@ projects those retained records through a real RunEngine without claiming target
 support. Live instrument execution so far
 comprises guarded resistor sourcing, bipolar and buffer tests in SCPI mode plus
 volatile TSP runtime installation, finite-hold state paths, and a 17-record
-exact-sized TSP acquisition. There is no independent timing trace or operational
+exact-sized TSP acquisition. Runtime v13 and its guarded scope-correlated
+timestamp notebook are prepared offline, but have not yet produced a target
+trace. There is no independent timing trace or operational
 hardware-backed Ophyd device yet.
 Charge/discharge cycling and voltage-pulse models remain extension work.
 Chronoamperometry/chronopotentiometry can be

@@ -7,7 +7,7 @@
 -- The host accepts only this packaged source and verifies the ABI.
 
 oe_m4_runtime_abi = "oe-k2460-m4-hold-v1"
-oe_m4_runtime_build = "m4-finite-current-hold-v12"
+oe_m4_runtime_build = "m4-finite-current-hold-v13"
 
 oe_m4_state = "idle"
 oe_m4_mode = "none"
@@ -206,6 +206,89 @@ function oe_m5_prepare_current_hold_acquisition(
     end
     oe_m5_measurement_count = measurement_count
     oe_m4_state = "prepared"
+end
+
+function oe_m5_prepare_timestamp_proof(
+    proof_run_id,
+    current_a,
+    source_range_a,
+    voltage_limit_v,
+    start_timeout_s,
+    event_poll_s,
+    front_terminals,
+    remote_sense,
+    ready_line,
+    busy_line,
+    start_line,
+    ready_asserted,
+    busy_asserted,
+    start_edge_mode)
+
+    oe_m4_require_number(proof_run_id, "proof_run_id")
+    if proof_run_id < 1 or proof_run_id ~= math.floor(proof_run_id) then
+        error("M5 timestamp proof run ID must be a positive integer")
+    end
+    local proof_suffix = ":" .. tostring(proof_run_id)
+
+    oe_m5_prepare_current_hold_acquisition(
+        current_a,
+        source_range_a,
+        voltage_limit_v,
+        1,
+        1,
+        start_timeout_s,
+        event_poll_s,
+        front_terminals,
+        remote_sense,
+        ready_line,
+        busy_line,
+        start_line,
+        ready_asserted,
+        busy_asserted,
+        start_edge_mode)
+
+    trigger.model.load("Empty")
+    trigger.model.setblock(1, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(true, false), oe_m4_mask())
+    trigger.model.setblock(2, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY1)
+    trigger.model.setblock(3, trigger.BLOCK_BRANCH_ON_EVENT, trigger.EVENT_TIMER1, 19)
+    trigger.model.setblock(4, trigger.BLOCK_BRANCH_ON_EVENT, oe_m4_digio_event(start_line), 7)
+    trigger.model.setblock(5, trigger.BLOCK_DELAY_CONSTANT, event_poll_s)
+    trigger.model.setblock(6, trigger.BLOCK_BRANCH_ALWAYS, 3)
+    trigger.model.setblock(7, trigger.BLOCK_LOG_EVENT, trigger.LOG_INFO1, "OE_TS_PRE_BUSY" .. proof_suffix)
+    trigger.model.setblock(8, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, true), oe_m4_mask())
+    trigger.model.setblock(9, trigger.BLOCK_LOG_EVENT, trigger.LOG_INFO2, "OE_TS_POST_BUSY" .. proof_suffix)
+    trigger.model.setblock(10, trigger.BLOCK_BUFFER_CLEAR, oe_m5_buffer)
+    trigger.model.setblock(11, trigger.BLOCK_SOURCE_OUTPUT, smu.ON)
+    trigger.model.setblock(12, trigger.BLOCK_LOG_EVENT, trigger.LOG_INFO3, "OE_TS_PRE_MEASURE" .. proof_suffix)
+    trigger.model.setblock(13, trigger.BLOCK_MEASURE_DIGITIZE, oe_m5_buffer, 1)
+    trigger.model.setblock(14, trigger.BLOCK_LOG_EVENT, trigger.LOG_INFO4, "OE_TS_POST_MEASURE" .. proof_suffix)
+    trigger.model.setblock(15, trigger.BLOCK_SOURCE_OUTPUT, smu.OFF)
+    trigger.model.setblock(16, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, false), oe_m4_mask())
+    trigger.model.setblock(17, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY2)
+    trigger.model.setblock(18, trigger.BLOCK_BRANCH_ALWAYS, 0)
+    trigger.model.setblock(19, trigger.BLOCK_SOURCE_OUTPUT, smu.OFF)
+    trigger.model.setblock(20, trigger.BLOCK_DIGITAL_IO, oe_m4_pattern(false, false), oe_m4_mask())
+    trigger.model.setblock(21, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY3)
+    oe_m4_mode = "external"
+    oe_m4_complete_block = 17
+    oe_m4_timeout_block = 21
+    oe_m5_measurement_count = 1
+    oe_m4_state = "prepared"
+end
+
+function oe_m5_timestamp_proof_reading()
+    if oe_m4_model_active() or smu.source.output ~= smu.OFF then
+        error("M5 timestamp proof retrieval requires an inactive model and output off")
+    end
+    if oe_m5_buffer == nil or oe_m5_buffer.n ~= 1 then
+        error("M5 timestamp proof requires exactly one retained reading")
+    end
+    local index = oe_m5_buffer.startindex
+    return oe_m5_buffer.seconds[index],
+        oe_m5_buffer.fractionalseconds[index],
+        oe_m5_buffer.relativetimestamps[index],
+        smu.measure.nplc,
+        localnode.linefreq
 end
 
 function oe_m5_buffer_status()

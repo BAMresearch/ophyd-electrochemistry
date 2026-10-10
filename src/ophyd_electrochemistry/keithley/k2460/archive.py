@@ -32,6 +32,7 @@ _SUPPORTED_RUNTIME_BUILDS = {
     "m4-finite-current-hold-v9",
     "m4-finite-current-hold-v10",
     "m4-finite-current-hold-v11",
+    "m4-finite-current-hold-v12",
     RUNTIME_BUILD,
 }
 _ARCHIVE_PAYLOAD_KEYS = {

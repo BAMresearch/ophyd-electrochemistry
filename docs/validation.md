@@ -1,8 +1,23 @@
 # Template validation record
 
-Updated: 2026-10-09. Scope: contracts, transport/runtime commissioning, bounded
+Updated: 2026-10-10. Scope: contracts, transport/runtime commissioning, bounded
 nominal-100-ohm tests, a narrow target-buffer proof, and the first operational
 simulator-backed M6 Flyer; not operational hardware sourcing or acquisition.
+
+## Timestamp-proof fixture prepared offline
+
+Runtime v13 and `notebooks/keithley_2460_timestamp_proof.ipynb` add a guarded
+one-reading proof that brackets BUSY assertion and digitization with uniquely
+tagged instrument event-log timestamps. It retrieves the buffered absolute
+timestamp, NPLC and detected line frequency only after a terminal/output-off
+check, and combines them with a user-entered scope measurement from physical
+START to BUSY. Informational-event retrieval is a separately enabled consuming
+step and all retrieved entries are included in an exclusive-create JSON record.
+
+Focused unit tests cover command serialization, parsing, run-ID selection,
+clock arithmetic and bounded START-time intervals. This is offline fixture
+validation only. It does not establish the target timestamp convention,
+START-to-aperture latency or G03/G06 until actual trace/evidence review.
 
 ## First M6 classic-Ophyd Flyer slice
 

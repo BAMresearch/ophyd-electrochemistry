@@ -21,7 +21,7 @@ from .config import Keithley2460Config
 from .transport import CommandLanguage, parse_source_output_enabled
 
 RUNTIME_ABI = "oe-k2460-m4-hold-v1"
-RUNTIME_BUILD = "m4-finite-current-hold-v12"
+RUNTIME_BUILD = "m4-finite-current-hold-v13"
 RUNTIME_RESOURCE = "tsp/runtime.tsp"
 K2460_BUFFER_SCHEMA = "ophyd-electrochemistry/k2460-buffer-proof-v1"
 _MAX_CURRENT_A = 0.01
@@ -66,6 +66,10 @@ _RUNTIME_GLOBALS_V5 = _RUNTIME_GLOBALS_V4 + (
     "oe_m5_print_buffer",
     "oe_m5_discard_buffer",
 )
+_RUNTIME_GLOBALS_V13 = _RUNTIME_GLOBALS_V5 + (
+    "oe_m5_prepare_timestamp_proof",
+    "oe_m5_timestamp_proof_reading",
+)
 _REPLACEABLE_RUNTIMES = {
     "m4-finite-current-hold-v4": (
         "oe_m4_ce741e17ffcdd7f55d489c7b",
@@ -107,7 +111,19 @@ _REPLACEABLE_RUNTIMES = {
         _RUNTIME_GLOBALS_V5,
         True,
     ),
+    "m4-finite-current-hold-v12": (
+        "oe_m4_e77fb18fa6ca9f2849ef910a",
+        _RUNTIME_GLOBALS_V5,
+        True,
+    ),
 }
+
+TIMESTAMP_PROOF_MARKERS = (
+    "OE_TS_PRE_BUSY",
+    "OE_TS_POST_BUSY",
+    "OE_TS_PRE_MEASURE",
+    "OE_TS_POST_MEASURE",
+)
 
 
 def _tsp_start_edge(edge: str) -> str:
@@ -267,6 +283,78 @@ class RuntimeRecordChunk:
     @property
     def final(self) -> bool:
         return self.next_offset == self.total_records
+
+
+@dataclass(frozen=True, kw_only=True)
+class TimestampProofReading:
+    """Absolute first-reading time and aperture configuration from the 2460."""
+
+    utc_seconds: int
+    fractional_seconds: float
+    relative_timestamp_s: float
+    nplc: float
+    line_frequency_hz: int
+
+    def __post_init__(self) -> None:
+        integer(self.utc_seconds, "UTC seconds", minimum=0)
+        for name in ("fractional_seconds", "relative_timestamp_s"):
+            value = number(getattr(self, name), name)
+            if value < 0 or (name == "fractional_seconds" and value >= 1):
+                raise ValidationError(f"{name} is out of range")
+            object.__setattr__(self, name, value)
+        object.__setattr__(self, "nplc", positive(self.nplc, "NPLC"))
+        integer(self.line_frequency_hz, "line frequency")
+        if self.line_frequency_hz not in (50, 60):
+            raise ValidationError("line frequency must be 50 or 60 Hz")
+
+    @property
+    def utc_nanoseconds(self) -> int:
+        return self.utc_seconds * 1_000_000_000 + round(self.fractional_seconds * 1e9)
+
+    @property
+    def aperture_duration_s(self) -> float:
+        return self.nplc / self.line_frequency_hz
+
+
+@dataclass(frozen=True, kw_only=True)
+class RuntimeEvent:
+    """One remotely consumed TSP event-log entry with its instrument timestamp."""
+
+    event_number: int
+    message: str
+    severity: int
+    node_id: int
+    utc_seconds: int
+    utc_nanoseconds_part: int
+
+    def __post_init__(self) -> None:
+        integer(self.event_number, "event number", minimum=-1_000_000)
+        text(self.message, "event message")
+        integer(self.severity, "event severity")
+        if self.severity not in (1, 2, 4):
+            raise ValidationError("event severity must be error, warning or information")
+        integer(self.node_id, "event node ID", minimum=0)
+        integer(self.utc_seconds, "event UTC seconds", minimum=0)
+        integer(self.utc_nanoseconds_part, "event nanoseconds", minimum=0)
+        if self.utc_nanoseconds_part >= 1_000_000_000:
+            raise ValidationError("event nanoseconds must be below one second")
+
+    @property
+    def utc_nanoseconds(self) -> int:
+        return self.utc_seconds * 1_000_000_000 + self.utc_nanoseconds_part
+
+
+@dataclass(frozen=True, kw_only=True)
+class TimestampProofAnalysis:
+    """Instrument-clock intervals; optional START bounds include scope uncertainty."""
+
+    busy_marker_span_s: float
+    pre_measure_to_reading_s: float
+    reading_to_post_measure_s: float
+    measurement_block_span_s: float
+    configured_aperture_s: float
+    reading_after_start_min_s: float | None
+    reading_after_start_max_s: float | None
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -440,6 +528,97 @@ def parse_buffered_readings(
     except (TypeError, ValueError, ValidationError) as exc:
         raise TransportProtocolError("M5 buffer reply contains invalid record fields") from exc
     return tuple(result)
+
+
+def parse_timestamp_proof_reading(response: str) -> TimestampProofReading:
+    fields = response.split("\t")
+    if len(fields) != 5:
+        raise TransportProtocolError(
+            f"M5 timestamp proof must contain 5 tab-separated fields, received {len(fields)}"
+        )
+    try:
+        seconds = _parse_nonnegative_integer(fields[0], "timestamp UTC seconds")
+        line_frequency = _parse_nonnegative_integer(fields[4], "line frequency")
+        return TimestampProofReading(
+            utc_seconds=seconds,
+            fractional_seconds=number(float(fields[1]), "timestamp fractional seconds"),
+            relative_timestamp_s=number(float(fields[2]), "relative timestamp"),
+            nplc=number(float(fields[3]), "NPLC"),
+            line_frequency_hz=line_frequency,
+        )
+    except (TypeError, ValueError, ValidationError) as exc:
+        raise TransportProtocolError("M5 timestamp proof contains invalid fields") from exc
+
+
+def parse_runtime_event(response: str) -> RuntimeEvent:
+    fields = response.split("\t")
+    if len(fields) != 6:
+        raise TransportProtocolError(
+            f"Runtime event must contain 6 tab-separated fields, received {len(fields)}"
+        )
+    try:
+        return RuntimeEvent(
+            event_number=int(fields[0]),
+            message=fields[1],
+            severity=int(fields[2]),
+            node_id=int(fields[3]),
+            utc_seconds=int(fields[4]),
+            utc_nanoseconds_part=int(fields[5]),
+        )
+    except (TypeError, ValueError, ValidationError) as exc:
+        raise TransportProtocolError("Runtime event contains invalid fields") from exc
+
+
+def analyze_timestamp_proof(
+    reading: TimestampProofReading,
+    events: tuple[RuntimeEvent, ...],
+    *,
+    proof_run_id: int,
+    start_to_busy_s: float | None = None,
+    scope_uncertainty_s: float = 0,
+) -> TimestampProofAnalysis:
+    """Reduce raw proof markers without guessing the reading timestamp reference."""
+
+    if not isinstance(reading, TimestampProofReading):
+        raise ValidationError("reading must be TimestampProofReading")
+    if not isinstance(events, tuple) or not all(
+        isinstance(event, RuntimeEvent) for event in events
+    ):
+        raise ValidationError("events must be a tuple of RuntimeEvent values")
+    integer(proof_run_id, "proof_run_id")
+    markers: dict[str, RuntimeEvent] = {}
+    for marker in TIMESTAMP_PROOF_MARKERS:
+        token = f"{marker}:{proof_run_id}"
+        matches = [event for event in events if token in event.message and event.severity == 4]
+        if len(matches) != 1:
+            raise ValidationError(f"Timestamp proof requires exactly one {token} information event")
+        markers[marker] = matches[0]
+    times = [markers[marker].utc_nanoseconds for marker in TIMESTAMP_PROOF_MARKERS]
+    if times != sorted(times):
+        raise ValidationError("Timestamp proof markers are not monotonic")
+
+    reading_ns = reading.utc_nanoseconds
+    pre_busy_ns, post_busy_ns, pre_measure_ns, post_measure_ns = times
+    start_min = start_max = None
+    if start_to_busy_s is not None:
+        delay = positive(start_to_busy_s, "START-to-BUSY delay", zero=True)
+        uncertainty = positive(scope_uncertainty_s, "scope uncertainty", zero=True)
+        delay_ns = round(delay * 1e9)
+        uncertainty_ns = round(uncertainty * 1e9)
+        actual_start_earliest = pre_busy_ns - delay_ns - uncertainty_ns
+        actual_start_latest = post_busy_ns - delay_ns + uncertainty_ns
+        start_min = (reading_ns - actual_start_latest) / 1e9
+        start_max = (reading_ns - actual_start_earliest) / 1e9
+
+    return TimestampProofAnalysis(
+        busy_marker_span_s=(post_busy_ns - pre_busy_ns) / 1e9,
+        pre_measure_to_reading_s=(reading_ns - pre_measure_ns) / 1e9,
+        reading_to_post_measure_s=(post_measure_ns - reading_ns) / 1e9,
+        measurement_block_span_s=(post_measure_ns - pre_measure_ns) / 1e9,
+        configured_aperture_s=reading.aperture_duration_s,
+        reading_after_start_min_s=start_min,
+        reading_after_start_max_s=start_max,
+    )
 
 
 def _buffered_records_sha256(records: tuple[BufferedReading, ...]) -> str:
@@ -625,6 +804,52 @@ class M4RuntimeController:
             )
         return status
 
+    def prepare_timestamp_proof(
+        self, acquisition: CurrentHoldAcquisitionProof, *, proof_run_id: int
+    ) -> RuntimeStatus:
+        """Prepare the dedicated one-reading, externally triggered timestamp proof."""
+
+        if not isinstance(acquisition, CurrentHoldAcquisitionProof):
+            raise ValidationError("acquisition must be CurrentHoldAcquisitionProof")
+        integer(proof_run_id, "proof_run_id")
+        if acquisition.measurement_count != 1:
+            raise ValidationError("Timestamp proof requires exactly one measurement")
+        if acquisition.start_mode != StartMode.EXTERNAL_TRIGGER:
+            raise ValidationError("Timestamp proof requires external start")
+        self._validate_against_config(acquisition)
+        self._validate_runtime_config()
+        io = self.config.io
+        command = (
+            "oe_m5_prepare_timestamp_proof("
+            + ",".join(
+                (
+                    str(proof_run_id),
+                    _tsp_number(acquisition.current_a),
+                    _tsp_number(acquisition.source_range_a),
+                    _tsp_number(acquisition.voltage_limit_v),
+                    _tsp_number(self.config.timing.external_start_timeout_s),
+                    _tsp_number(self.config.timing.poll_period_s),
+                    "1" if self.config.source_terminal == "front" else "0",
+                    "1" if self.config.sense == "remote" else "0",
+                    str(io.ready),
+                    str(io.busy),
+                    str(io.start),
+                    str(io.ready_asserted_level),
+                    str(io.busy_asserted_level),
+                    _tsp_start_edge(io.start_edge),
+                )
+            )
+            + ")"
+        )
+        self.transport.write(command)
+        status = self.status()
+        if status.state != RuntimeState.PREPARED or status.output_enabled:
+            raise TransportProtocolError("M5 timestamp proof did not reach output-OFF PREPARED")
+        info = self.buffer_info()
+        if info.record_count != 0 or info.capacity_records < 1:
+            raise TransportProtocolError("M5 timestamp proof buffer is not empty or unavailable")
+        return status
+
     def arm(self) -> RuntimeStatus:
         self.transport.write("oe_m4_arm()")
         status = self.status()
@@ -642,6 +867,39 @@ class M4RuntimeController:
 
     def buffer_info(self) -> RuntimeBufferInfo:
         return parse_runtime_buffer_info(self.transport.query("print(oe_m5_buffer_status())"))
+
+    def timestamp_proof_reading(self) -> TimestampProofReading:
+        status = self.status()
+        if status.state not in (RuntimeState.COMPLETE, RuntimeState.ABORTED, RuntimeState.ERROR):
+            raise TransportProtocolError(
+                "M5 timestamp proof retrieval requires a terminal runtime state"
+            )
+        if status.output_enabled:
+            raise TransportProtocolError("M5 timestamp proof retrieval requires output OFF")
+        info = self.buffer_info()
+        if info.record_count != 1:
+            raise TransportProtocolError(
+                "M5 timestamp proof retrieval requires exactly one retained reading"
+            )
+        return parse_timestamp_proof_reading(
+            self.transport.query("print(oe_m5_timestamp_proof_reading())")
+        )
+
+    def information_event_count(self) -> int:
+        return _parse_nonnegative_integer(
+            self.transport.query("print(eventlog.getcount(eventlog.SEV_INFO))"),
+            "information event count",
+        )
+
+    def next_information_event(self) -> RuntimeEvent:
+        """Consume and return the next remotely unread information event."""
+
+        return parse_runtime_event(self.transport.query("print(eventlog.next(eventlog.SEV_INFO))"))
+
+    def showevents_mask(self) -> int:
+        return _parse_nonnegative_integer(
+            self.transport.query("print(localnode.showevents)"), "show-events mask"
+        )
 
     def read_buffer_chunk(self, *, offset: int, max_records: int) -> RuntimeRecordChunk:
         integer(offset, "offset", minimum=0)

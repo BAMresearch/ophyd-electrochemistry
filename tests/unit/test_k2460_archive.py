@@ -122,6 +122,7 @@ def test_archive_accepts_current_and_predecessor_runtime_builds():
     assert archive(runtime_build="m4-finite-current-hold-v10").runtime_build.endswith("v10")
     assert archive(runtime_build="m4-finite-current-hold-v11").runtime_build.endswith("v11")
     assert archive(runtime_build="m4-finite-current-hold-v12").runtime_build.endswith("v12")
+    assert archive(runtime_build="m4-finite-current-hold-v13").runtime_build.endswith("v13")
 
 
 def test_archive_writer_exclusively_creates_and_never_overwrites(tmp_path):

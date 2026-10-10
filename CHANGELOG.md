@@ -4,6 +4,13 @@
 
 ## Unreleased
 
+- Prepare runtime v13 and a guarded target timestamp proof. A uniquely tagged
+  set of instrument-clock event markers brackets BUSY assertion and one
+  digitize block; terminal retrieval exposes the absolute reading timestamp,
+  NPLC and line frequency. The notebook combines these with a physical
+  START-to-BUSY scope delay, archives every remotely consumed information event,
+  and makes no timestamp-reference or hardware-gate claim before review.
+
 - Add the first operational M6 classic-Ophyd Flyer over a typed acquisition
   backend. It provides real asynchronous Status objects, immediate/external
   kickoff semantics, background completion monitoring, confirmed abort/recovery,

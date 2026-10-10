@@ -22,13 +22,18 @@ from ophyd_electrochemistry.keithley.k2460 import (
     DigitalIOConfig,
     Keithley2460Config,
     M4RuntimeController,
+    RuntimeEvent,
     RuntimeState,
     SafetyConfig,
+    TimestampProofReading,
     TimingPolicy,
+    analyze_timestamp_proof,
     packaged_runtime,
     parse_buffered_readings,
     parse_runtime_buffer_info,
+    parse_runtime_event,
     parse_runtime_status,
+    parse_timestamp_proof_reading,
 )
 
 
@@ -117,7 +122,7 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     artifact = packaged_runtime()
 
     assert artifact.abi == "oe-k2460-m4-hold-v1"
-    assert artifact.build == "m4-finite-current-hold-v12"
+    assert artifact.build == "m4-finite-current-hold-v13"
     assert artifact.sha256 == hashlib.sha256(artifact.source.encode("ascii")).hexdigest()
     assert artifact.script_name == f"oe_m4_{artifact.sha256[:24]}"
     assert len(artifact.script_name) == 30
@@ -157,6 +162,13 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     assert "oe_m5_buffer.sourcestatuses" in artifact.source
     assert "oe_m5_buffer.statuses" in artifact.source
     assert "retained M5 proof data must be explicitly discarded" in artifact.source
+    assert "function oe_m5_prepare_timestamp_proof(" in artifact.source
+    assert "trigger.BLOCK_LOG_EVENT" in artifact.source
+    assert '"OE_TS_PRE_BUSY" .. proof_suffix' in artifact.source
+    assert '"OE_TS_POST_MEASURE" .. proof_suffix' in artifact.source
+    assert "oe_m5_buffer.seconds[index]" in artifact.source
+    assert "oe_m5_buffer.fractionalseconds[index]" in artifact.source
+    assert "localnode.linefreq" in artifact.source
     assert "oe_m4_start_level = digio.line[oe_m4_start_line].state" in artifact.source
     assert "start_state = digio.line[oe_m4_start_line].state" not in artifact.source
     assert "digio.line[oe_m4_ready_line].state," not in artifact.source
@@ -439,6 +451,27 @@ def test_exact_known_v11_empty_buffer_can_be_replaced_without_a_reboot():
     assert 'script.delete("oe_m4_f85daa49ffefcd782bb1f89b")' in transport.writes
 
 
+def test_exact_known_v12_empty_buffer_can_be_replaced_without_a_reboot():
+    transport = FakeRuntimeTransport(
+        status_line("idle", block=13),
+        "0",
+        "oe-k2460-m4-hold-v1",
+        "m4-finite-current-hold-v12",
+        "false",
+        "false",
+        "0\t0\t0\t16",
+        "true",
+        "true",
+        "smu.OFF",
+        "0",
+    )
+
+    artifact = M4RuntimeController(transport, runtime_config()).replace_known_runtime_and_install()
+
+    assert artifact == packaged_runtime()
+    assert 'script.delete("oe_m4_e77fb18fa6ca9f2849ef910a")' in transport.writes
+
+
 def test_known_v5_replacement_preserves_retained_records():
     transport = FakeRuntimeTransport(
         status_line("idle"),
@@ -547,6 +580,118 @@ def test_prepare_acquisition_serializes_external_start_and_either_edge():
         "oe_m5_prepare_current_hold_acquisition("
         "0.001,0.001,0.20000000000000001,3,1,2,0.01,1,1,1,2,3,1,1,2)"
     )
+
+
+def test_prepare_timestamp_proof_requires_one_external_reading_and_serializes_run_id():
+    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t16")
+    config = runtime_config(io=DigitalIOConfig(start_edge="rising"))
+    acquisition = CurrentHoldAcquisitionProof(
+        current_a=0.001,
+        source_range_a=0.001,
+        voltage_limit_v=0.2,
+        measurement_count=1,
+        start_mode=StartMode.EXTERNAL_TRIGGER,
+    )
+
+    status = M4RuntimeController(transport, config).prepare_timestamp_proof(
+        acquisition, proof_run_id=42
+    )
+
+    assert status.state == RuntimeState.PREPARED
+    assert transport.writes == [
+        "oe_m5_prepare_timestamp_proof(42,0.001,0.001,0.20000000000000001,2,0.01,1,1,1,2,3,1,1,1)",
+        "print(oe_m4_status())",
+        "print(oe_m5_buffer_status())",
+    ]
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"measurement_count": 2},
+        {"start_mode": StartMode.IMMEDIATE},
+    ],
+)
+def test_prepare_timestamp_proof_rejects_wrong_acquisition_shape(changes):
+    acquisition = CurrentHoldAcquisitionProof(
+        current_a=0.001,
+        source_range_a=0.001,
+        voltage_limit_v=0.2,
+        measurement_count=1,
+        start_mode=StartMode.EXTERNAL_TRIGGER,
+    )
+    acquisition = replace(acquisition, **changes)
+    transport = FakeRuntimeTransport()
+
+    with pytest.raises(ValidationError):
+        M4RuntimeController(transport, runtime_config()).prepare_timestamp_proof(
+            acquisition, proof_run_id=42
+        )
+    assert transport.writes == []
+
+
+def test_timestamp_reading_events_and_analysis_use_instrument_clock_and_run_id():
+    reading = parse_timestamp_proof_reading("100\t0.130000000\t0\t1\t50")
+    events = tuple(
+        parse_runtime_event(value)
+        for value in (
+            "1001\tOE_TS_PRE_BUSY:42\t4\t0\t100\t100000000",
+            "1002\tOE_TS_POST_BUSY:42\t4\t0\t100\t102000000",
+            "1003\tOE_TS_PRE_MEASURE:42\t4\t0\t100\t110000000",
+            "1004\tOE_TS_POST_MEASURE:42\t4\t0\t100\t135000000",
+        )
+    )
+
+    analysis = analyze_timestamp_proof(
+        reading,
+        events,
+        proof_run_id=42,
+        start_to_busy_s=0.005,
+        scope_uncertainty_s=0.001,
+    )
+
+    assert reading.utc_nanoseconds == 100_130_000_000
+    assert reading.aperture_duration_s == pytest.approx(0.02)
+    assert analysis.busy_marker_span_s == pytest.approx(0.002)
+    assert analysis.pre_measure_to_reading_s == pytest.approx(0.020)
+    assert analysis.reading_to_post_measure_s == pytest.approx(0.005)
+    assert analysis.reading_after_start_min_s == pytest.approx(0.032)
+    assert analysis.reading_after_start_max_s == pytest.approx(0.036)
+
+
+def test_timestamp_proof_controller_retrieval_and_event_log_access_are_explicit():
+    transport = FakeRuntimeTransport(
+        status_line("complete", block=17),
+        "1\t1\t1\t16",
+        "100\t0.13\t0\t1\t50",
+        "4",
+        "1001\tOE_TS_PRE_BUSY:42\t4\t0\t100\t100000000",
+        "3",
+    )
+    controller = M4RuntimeController(transport, runtime_config())
+
+    assert controller.timestamp_proof_reading() == TimestampProofReading(
+        utc_seconds=100,
+        fractional_seconds=0.13,
+        relative_timestamp_s=0,
+        nplc=1,
+        line_frequency_hz=50,
+    )
+    assert controller.information_event_count() == 4
+    assert controller.next_information_event() == RuntimeEvent(
+        event_number=1001,
+        message="OE_TS_PRE_BUSY:42",
+        severity=4,
+        node_id=0,
+        utc_seconds=100,
+        utc_nanoseconds_part=100_000_000,
+    )
+    assert controller.showevents_mask() == 3
+    assert transport.writes[-3:] == [
+        "print(eventlog.getcount(eventlog.SEV_INFO))",
+        "print(eventlog.next(eventlog.SEV_INFO))",
+        "print(localnode.showevents)",
+    ]
 
 
 def test_prepare_acquisition_rejects_an_undersized_runtime_buffer():
