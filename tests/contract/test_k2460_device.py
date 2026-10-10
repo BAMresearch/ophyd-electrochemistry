@@ -20,6 +20,7 @@ from ophyd_electrochemistry import (
     DeviceState,
     GalvanostaticHold,
     StartMode,
+    VoltagePulseSequence,
 )
 from ophyd_electrochemistry.exceptions import (
     AcquisitionAborted,
@@ -408,6 +409,20 @@ def test_narrow_slice_rejects_unimplemented_program_before_output():
     )
     with pytest.raises(UnsupportedCapabilityError, match="GalvanostaticHold"):
         device.prepare(unsupported).wait(timeout=1)
+    unsupported_voltage_pulses = AcquisitionRequest(
+        experiment_id="unsupported-voltage-pulses",
+        program=VoltagePulseSequence(
+            baseline_voltage_v=0,
+            pulse_voltage_v=0.1,
+            pulse_width_s=0.01,
+            period_s=0.03,
+            count=2,
+            sample_period_s=0.006,
+            current_limit_a=0.1,
+        ),
+    )
+    with pytest.raises(UnsupportedCapabilityError, match="GalvanostaticHold"):
+        device.prepare(unsupported_voltage_pulses).wait(timeout=1)
     assert runtime.state == DeviceState.IDLE and runtime.output is False
     before, after = device.configure({"collection_chunk_records": 1})
     assert before["ec_collection_chunk_records"]["value"] == 2

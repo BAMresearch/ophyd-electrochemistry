@@ -30,6 +30,7 @@ class AcquisitionRequest:
             CyclicVoltammetry,
             GalvanostaticHold,
             PotentiostaticHold,
+            VoltagePulseSequence,
         )
         from .waveforms import ArbitraryWaveform, PRBSWaveform
 
@@ -40,6 +41,7 @@ class AcquisitionRequest:
                 GalvanostaticHold,
                 CyclicVoltammetry,
                 CurrentPulseSequence,
+                VoltagePulseSequence,
                 ArbitraryWaveform,
                 PRBSWaveform,
             ),

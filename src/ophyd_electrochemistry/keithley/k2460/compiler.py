@@ -13,6 +13,7 @@ from ...protocols import (
     CyclicVoltammetry,
     GalvanostaticHold,
     PotentiostaticHold,
+    VoltagePulseSequence,
 )
 from ...serialization import canonical_json, canonical_request_json, sha256_json
 from ...validation import integer, number
@@ -185,7 +186,7 @@ class Keithley2460Compiler:
         caps, p = self.capabilities, request.program
         self._validate_config(request, config)
         function: SourceFunction
-        if isinstance(p, (PotentiostaticHold, CyclicVoltammetry)):
+        if isinstance(p, (PotentiostaticHold, CyclicVoltammetry, VoltagePulseSequence)):
             function, compliance = "voltage", p.current_limit_a
         elif isinstance(p, (GalvanostaticHold, CurrentPulseSequence)):
             function, compliance = "current", p.voltage_limit_v
@@ -437,7 +438,7 @@ class Keithley2460Compiler:
             level = p.voltage if isinstance(p, PotentiostaticHold) else p.current_a
             steps = (SourceStep(level=level, dwell_ticks=ticks),)
             requested = p.duration_s
-        elif isinstance(p, CurrentPulseSequence):
+        elif isinstance(p, (CurrentPulseSequence, VoltagePulseSequence)):
             period = self._ticks(p.period_s, policy.source_period_tolerance_s, "pulse period")
             width = self._ticks(p.pulse_width_s, policy.source_period_tolerance_s, "pulse width")
             rest = period - width
@@ -446,9 +447,13 @@ class Keithley2460Compiler:
                 - (_decimal(p.period_s) - _decimal(p.pulse_width_s))
             ) > _decimal(policy.source_period_tolerance_s):
                 raise ValidationError("Pulse baseline dwell cannot meet timing tolerance")
+            if isinstance(p, CurrentPulseSequence):
+                pulse_level, baseline_level = p.pulse_current_a, p.baseline_current_a
+            else:
+                pulse_level, baseline_level = p.pulse_voltage_v, p.baseline_voltage_v
             steps = (
-                SourceStep(level=p.pulse_current_a, dwell_ticks=width),
-                SourceStep(level=p.baseline_current_a, dwell_ticks=rest, segment_index=1),
+                SourceStep(level=pulse_level, dwell_ticks=width),
+                SourceStep(level=baseline_level, dwell_ticks=rest, segment_index=1),
             )
             repeats = p.count
             requested = number(float(_decimal(p.period_s) * repeats), "pulse duration")

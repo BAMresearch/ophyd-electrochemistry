@@ -62,6 +62,39 @@ def test_offline_quickstart_executes_and_ends_safe(
         "Measured current",
         "Commanded current",
     ]
+    assert set(namespace["program_examples"]) == {
+        "current_pulse",
+        "voltage_pulse",
+        "alternating_current",
+    }
+
+
+@pytest.mark.parametrize(
+    ("selected_program", "source_function", "command_trace"),
+    [
+        ("voltage_pulse", "voltage", "Commanded voltage"),
+        ("alternating_current", "current", "Commanded current"),
+    ],
+)
+def test_quickstart_alternative_pulse_programs_execute(
+    monkeypatch: pytest.MonkeyPatch,
+    selected_program: str,
+    source_function: str,
+    command_trace: str,
+) -> None:
+    _, _, namespace = _execute_quickstart(
+        monkeypatch,
+        replacements={
+            'selected_program = "current_pulse"': f'selected_program = "{selected_program}"'
+        },
+    )
+
+    assert namespace["compiled"].source_function == source_function
+    assert namespace["ec"].state.value == "complete"
+    assert namespace["ec"].output_enabled is False
+    assert namespace["figure"].data[2].name == command_trace
+    if selected_program == "alternating_current":
+        assert namespace["compiled"].commanded_charge_c == pytest.approx(0)
 
 
 def test_quickstart_derives_runtime_bounds_for_longer_program(

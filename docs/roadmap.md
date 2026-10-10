@@ -21,8 +21,10 @@ available on the instrument.
 | M7 — Protocol expansion | Commission finite arbitrary current playback, first-class PRBS and multisine through that shared path; CV/current cutoffs, cycling, pulse and voltage waveform variants | Each protocol proves limits, timing, abort latency and storage budget; waveform fidelity/phase requires G08 |
 | M8 — Two-QueueServer integration | Separate startup environments, leader/follower plans, experiment linking, failure propagation | Timeouts, manual abort, missing START, leader/follower restarts, catalog correlation |
 
-Current structurally validated models cover CV, voltage/current holds, current
-pulses, `PRBSWaveform` and `ArbitraryWaveform`. A pure multisine generator retains
+Current structurally validated models cover CV, voltage/current holds,
+current/voltage pulses, `PRBSWaveform` and `ArbitraryWaveform`. Voltage pulses
+have pure planning and simulator coverage but are not enabled by the default M6
+device allowlist or commissioned target runtime. A pure multisine generator retains
 `MultisineSpec`. M1 expands the compiler result for independent source/measurement
 timing, canonical hashes, scheduled aperture mapping and explicit capability budgets.
 Planning, [M2 simulated execution](m2-simulator.md), [M3 bounded
@@ -37,7 +39,7 @@ exact-sized TSP acquisition. Runtime v13 and its guarded scope-correlated
 timestamp notebook are prepared offline, but have not yet produced a target
 trace. There is no independent timing trace or operational
 hardware-backed Ophyd device yet.
-Charge/discharge cycling and voltage-pulse models remain extension work.
+Charge/discharge cycling and hardware voltage-pulse execution remain extension work.
 Chronoamperometry/chronopotentiometry can be
 aliases/compositions of validated step/hold protocols rather than redundant APIs.
 

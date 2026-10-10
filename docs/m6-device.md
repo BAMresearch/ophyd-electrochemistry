@@ -14,10 +14,16 @@ device = Keithley2460Device(simulator_transport, name="ec")
 ```
 
 The constructor does not connect or mutate a backend. `stage()` connects,
-reconciles state and requires confirmed output OFF. The current capability
+reconciles state and requires confirmed output OFF. The default capability
 allowlist accepts `GalvanostaticHold` and `CurrentPulseSequence`; other public
 protocol models fail with `UnsupportedCapabilityError` before the backend is
 prepared.
+
+`VoltagePulseSequence` is available to pure planning and simulation. A caller
+may explicitly opt a simulator-backed device into it through
+`supported_program_types`, as the offline quickstart does. Do not apply that
+override to a target backend without the separate voltage-source runtime and
+hardware evidence.
 
 ## Pulse start semantics
 

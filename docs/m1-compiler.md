@@ -25,7 +25,8 @@ These numbers are planning arithmetic, not a 2460 speed specification. The
 module does not open its `SIM::NO_CONNECTION` resource.
 
 The public intent classes are `PotentiostaticHold`, `GalvanostaticHold`,
-`CyclicVoltammetry`, `CurrentPulseSequence`, `ArbitraryWaveform` and `PRBSWaveform`.
+`CyclicVoltammetry`, `CurrentPulseSequence`, `VoltagePulseSequence`,
+`ArbitraryWaveform` and `PRBSWaveform`.
 `generate_multisine(MultisineSpec(...))` returns `ArbitraryWaveform` retaining its
 specification. Constructors reject nonfinite/wrongly typed SI values, booleans
 used as counts, inconsistent cutoffs and malformed waveform intent. Physical
@@ -105,6 +106,10 @@ it exceeds one sample period.
 
 Current pulses begin with the pulse level, followed by baseline for
 `period - width`, repeated `count` times. Zero baseline remains sourced, not OFF.
+Voltage pulses use the same two-dwell schedule with voltage setpoints and current
+compliance. A current pulse and an opposite-sign baseline can form a bipolar
+sequence; equal dwell durations and magnitudes give zero net commanded charge.
+Neither pulse model inserts an implicit zero-level rest.
 Arbitrary/PRBS points each receive a full dwell, including the final point;
 repeats add no endpoint or gap. Equal PRBS bits retain individual logical indices.
 

@@ -21,6 +21,7 @@ from .protocols import (
     CyclicVoltammetry,
     GalvanostaticHold,
     PotentiostaticHold,
+    VoltagePulseSequence,
 )
 from .serialization import canonical_request_json, request_from_json, request_sha256
 from .state import DeviceState
@@ -53,6 +54,7 @@ __all__ = [
     "StartMode",
     "TimestampReference",
     "TimingOrigin",
+    "VoltagePulseSequence",
     "canonical_request_json",
     "generate_multisine",
     "mapping_index",

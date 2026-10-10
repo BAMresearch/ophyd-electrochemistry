@@ -24,14 +24,17 @@ START-to-aperture latency or G03/G06 until actual trace/evidence review.
 `docs/user-guide.md` documents the commissioned configuration, immutable
 per-run intent, planned measurement profiles, Ophyd Flyer lifecycle, paired I/V
 records and retained-data behavior. The companion simulator-only notebook
-`notebooks/ophyd_electrochemistry_quickstart.ipynb` executes the pulse plan
-through a real RunEngine, produces 20 paired records, finishes COMPLETE with
-output false and creates an interactive two-panel Plotly figure of voltage,
-measured current and commanded current.
+`notebooks/ophyd_electrochemistry_quickstart.ipynb` provides selectable
+unipolar-current, voltage-pulse, and charge-balanced alternating-current
+programs. Each executes through a real RunEngine, produces 20 paired records,
+finishes COMPLETE with output false and creates an interactive two-panel Plotly
+figure with the command trace on the matching source axis.
 
-A contract test executes every code cell and checks the terminal safe state,
-paired electrical fields, separate source/measurement status words and
-visualization output.
+Contract tests execute every code cell with all three selections and check the
+terminal safe state, paired electrical fields, separate source/measurement
+status words, zero commanded charge for the balanced program, and visualization
+output. Voltage-pulse support here is planning/simulation evidence only; the M6
+default allowlist and target runtime remain unchanged.
 
 ## First M6 classic-Ophyd Flyer slice
 

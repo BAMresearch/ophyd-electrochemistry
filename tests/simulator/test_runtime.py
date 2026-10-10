@@ -17,6 +17,7 @@ from ophyd_electrochemistry import (
     PotentiostaticHold,
     PRBSWaveform,
     StartMode,
+    VoltagePulseSequence,
     generate_multisine,
 )
 from ophyd_electrochemistry.exceptions import (
@@ -228,6 +229,28 @@ def test_pulses_baseline_and_full_last_dwell(runtime):
         (40, 0),
     ]
     runtime.advance_ticks(1)
+    assert runtime.completion().terminal_tick == 60
+
+
+def test_voltage_pulses_use_the_same_finite_two_dwell_schedule(runtime):
+    p = VoltagePulseSequence(
+        baseline_voltage_v=0.1,
+        pulse_voltage_v=0.2,
+        pulse_width_s=0.01,
+        period_s=0.03,
+        count=2,
+        sample_period_s=0.006,
+        current_limit_a=0.1,
+    )
+    start(runtime, request(program=p))
+    runtime.advance_ticks(60)
+    assert [(step.relative_tick, step.level) for step in runtime.source_trace] == [
+        (0, 0.2),
+        (10, 0.1),
+        (30, 0.2),
+        (40, 0.1),
+    ]
+    assert runtime.records[0].source_function == "voltage"
     assert runtime.completion().terminal_tick == 60
 
 

@@ -92,11 +92,34 @@ class CurrentPulseSequence:
         cutoffs(self)
 
 
+@dataclass(frozen=True, kw_only=True)
+class VoltagePulseSequence:
+    baseline_voltage_v: float
+    pulse_voltage_v: float
+    pulse_width_s: float
+    period_s: float
+    count: int
+    sample_period_s: float
+    current_limit_a: float
+
+    def __post_init__(self) -> None:
+        numeric_fields(self, ("baseline_voltage_v", "pulse_voltage_v"))
+        numeric_fields(
+            self,
+            ("pulse_width_s", "period_s", "sample_period_s", "current_limit_a"),
+            positive_only=True,
+        )
+        integer(self.count, "count")
+        if self.pulse_width_s >= self.period_s:
+            raise ValidationError("pulse_width_s must be below period_s")
+
+
 ElectrochemicalProgram: TypeAlias = (
     PotentiostaticHold
     | GalvanostaticHold
     | CyclicVoltammetry
     | CurrentPulseSequence
+    | VoltagePulseSequence
     | ArbitraryWaveform
     | PRBSWaveform
 )

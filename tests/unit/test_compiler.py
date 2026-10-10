@@ -14,6 +14,7 @@ from ophyd_electrochemistry import (
     PotentiostaticHold,
     PRBSWaveform,
     StartMode,
+    VoltagePulseSequence,
     generate_multisine,
 )
 from ophyd_electrochemistry.exceptions import UnsupportedCapabilityError, ValidationError
@@ -185,6 +186,48 @@ def test_pulse_starts_at_pulse_then_baseline_with_weighted_charge(capabilities, 
     assert result.achieved_duration_s == 0.12
     assert result.mean_level == pytest.approx(0.005)
     assert result.commanded_charge_c == pytest.approx(0.0006)
+
+
+def test_bipolar_current_pulse_has_zero_net_commanded_charge(capabilities, config):
+    p = CurrentPulseSequence(
+        baseline_current_a=-0.01,
+        pulse_current_a=0.01,
+        pulse_width_s=0.02,
+        period_s=0.04,
+        count=4,
+        sample_period_s=0.005,
+        voltage_limit_v=5,
+    )
+    result = compile_program(p, capabilities, config)
+    assert result.source_function == "current"
+    assert tuple(step.level for step in result.source.steps) == (0.01, -0.01)
+    assert result.source.boundaries_ticks == (0, 20, 40)
+    assert result.achieved_duration_s == 0.16
+    assert result.mean_level == pytest.approx(0)
+    assert result.commanded_charge_c == pytest.approx(0)
+
+
+def test_voltage_pulse_uses_current_compliance_and_full_baseline_dwell(capabilities, config):
+    p = VoltagePulseSequence(
+        baseline_voltage_v=0.1,
+        pulse_voltage_v=0.2,
+        pulse_width_s=0.01,
+        period_s=0.04,
+        count=3,
+        sample_period_s=0.005,
+        current_limit_a=0.1,
+    )
+    result = compile_program(p, capabilities, config)
+    assert result.source_function == "voltage"
+    assert tuple(step.level for step in result.source.steps) == (0.2, 0.1)
+    assert result.source.boundaries_ticks == (0, 10, 40)
+    assert result.achieved_duration_s == 0.12
+    assert result.mean_level == pytest.approx(0.125)
+    assert result.commanded_charge_c is None
+    assert result.effective_voltage_cutoffs_v is None
+    current_only = replace(capabilities, sources=(capabilities.sources[0],))
+    with pytest.raises(UnsupportedCapabilityError, match="voltage sourcing"):
+        compile_program(p, current_only, config)
 
 
 def test_holds_use_complete_apertures_and_safe_cutoff_envelope(capabilities, config):

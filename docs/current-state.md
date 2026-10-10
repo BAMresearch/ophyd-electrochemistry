@@ -23,6 +23,9 @@ contracts, tests, and evidence remain authoritative.
 - Measurement schema v2 exposes separate untouched `ec_source_status` and
   `ec_measurement_status` values with independent definitions. The obsolete
   combined status field is rejected.
+- `VoltagePulseSequence` is available for immutable intent, canonical request
+  encoding, pure compilation, and simulated execution. It remains outside the
+  hardware-facing M6 default allowlist and has no commissioned target runtime.
 - The project uses the BSD 3-Clause License.
 
 ## Hardware and evidence snapshot
@@ -52,11 +55,13 @@ and pulse-edge mapping.
 - `docs/user-guide.md` describes immutable per-run configuration, the Flyer
   lifecycle, paired I/V records, retained-data behavior, and preliminary result
   inspection.
-- `notebooks/ophyd_electrochemistry_quickstart.ipynb` runs without importing the
-  `examples` package or requiring an editable install. It locates the checkout,
-  exposes `src/`, and defines its synthetic configuration and plan locally.
+- `notebooks/ophyd_electrochemistry_quickstart.ipynb` provides selectable
+  unipolar-current, voltage-pulse, and charge-balanced alternating-current
+  examples. It runs without importing the `examples` package or requiring an
+  editable install. It locates the checkout, exposes `src/`, and defines its
+  synthetic configuration and plan locally.
 - The notebook uses Plotly for linked voltage/current plots, hover inspection,
-  commanded-current display, and shaded pulse dwells.
+  source-command display on the matching axis, and shaded pulse dwells.
 - Configuration cells contain short field comments. `command_timeout_s` bounds
   one backend transaction, `external_start_timeout_s` bounds the local START
   wait, and `shutdown_timeout_s` bounds confirmation of abort/output OFF. None
@@ -84,18 +89,18 @@ adds `AGENTS.md` and this file, changes the archival handover header, and links
 this page from the documentation navigation and README. Always use current
 `git status` rather than this list to decide what must be preserved.
 
-The latest full validation before this context split reported:
+The latest full validation after adding the voltage and bipolar pulse examples
+reported:
 
-- 315 tests passed;
+- 321 tests passed;
 - Ruff lint and formatting passed;
 - strict mypy passed;
 - strict MkDocs passed;
 - `git diff --check` passed; and
 - the lockfile was resolved and checked after adding notebook dependencies.
 
-After this context split, strict MkDocs and `git diff --check` were rerun and
-passed. The full test suite was not rerun because the split changes only
-documentation and agent guidance.
+Strict MkDocs, Ruff lint/format, strict mypy, and `git diff --check` were rerun
+for the pulse-example update and passed.
 
 ## Next work
 

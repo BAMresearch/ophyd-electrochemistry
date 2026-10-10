@@ -14,7 +14,7 @@
 
 | Path | Purpose/status |
 |---|---|
-| `src/ophyd_electrochemistry/protocols.py` | Immutable structurally validated CV/hold/pulse models and program union |
+| `src/ophyd_electrochemistry/protocols.py` | Immutable structurally validated CV, hold, current/voltage pulse models and program union |
 | `src/ophyd_electrochemistry/waveforms.py` | PRBS/arbitrary/multisine intent and deterministic pure generators |
 | `src/ophyd_electrochemistry/serialization.py` | Canonical request JSON/hash and validating allowlisted decoder |
 | `src/ophyd_electrochemistry/acquisition.py` | Start mode and request independent of protocol |

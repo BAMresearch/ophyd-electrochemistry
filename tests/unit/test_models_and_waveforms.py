@@ -15,6 +15,7 @@ from ophyd_electrochemistry import (
     PotentiostaticHold,
     PRBSWaveform,
     StartMode,
+    VoltagePulseSequence,
     canonical_request_json,
     generate_multisine,
     prbs_bits,
@@ -85,6 +86,16 @@ def test_structural_validation_is_not_physical_approval():
             count=True,
             sample_period_s=0.1,
             voltage_limit_v=5,
+        )
+    with pytest.raises(ValidationError):
+        VoltagePulseSequence(
+            baseline_voltage_v=0,
+            pulse_voltage_v=0.1,
+            pulse_width_s=1,
+            period_s=1,
+            count=1,
+            sample_period_s=0.1,
+            current_limit_a=0.1,
         )
     with pytest.raises(ValidationError):
         CyclicVoltammetry(
@@ -255,6 +266,15 @@ def test_generator_budget_prevents_expansion():
             count=3,
             sample_period_s=0.01,
             voltage_limit_v=5,
+        ),
+        VoltagePulseSequence(
+            baseline_voltage_v=0,
+            pulse_voltage_v=0.1,
+            pulse_width_s=0.1,
+            period_s=0.2,
+            count=3,
+            sample_period_s=0.01,
+            current_limit_a=0.1,
         ),
         CyclicVoltammetry(
             start_voltage_v=0,

@@ -14,6 +14,7 @@ from .protocols import (
     CyclicVoltammetry,
     GalvanostaticHold,
     PotentiostaticHold,
+    VoltagePulseSequence,
 )
 from .waveforms import ArbitraryWaveform, MultisineSpec, PRBSWaveform
 
@@ -26,6 +27,7 @@ _MODELS = {
         GalvanostaticHold,
         CyclicVoltammetry,
         CurrentPulseSequence,
+        VoltagePulseSequence,
         ArbitraryWaveform,
         PRBSWaveform,
         MultisineSpec,

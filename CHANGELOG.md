@@ -4,6 +4,11 @@
 
 ## Unreleased
 
+- Add immutable `VoltagePulseSequence` intent with canonical serialization,
+  pure planning, simulator execution, and a selectable quickstart example while
+  leaving the hardware-facing M6 default allowlist unchanged. Add a second
+  `CurrentPulseSequence` example whose equal positive/negative half-periods have
+  zero net commanded charge.
 - Add a living user guide and simulator-backed quickstart notebook covering the
   three-layer configuration model, safe Ophyd lifecycle, paired I/V data,
   retained-data behavior and interactive Plotly post-run visualization. Derive

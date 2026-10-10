@@ -6,9 +6,9 @@ The operational device currently runs against the independent simulator. The
 real 2460 adapter remains blocked on the target START/aperture timestamp proof.
 
 The companion `notebooks/ophyd_electrochemistry_quickstart.ipynb` is an offline
-executable example. It creates a simulated current-pulse experiment, runs it
-through a real Bluesky RunEngine, tabulates the emitted records and draws a
-preliminary I/V time-series plot. It never opens a VISA connection.
+executable example. It provides three selectable simulated pulse programs, runs
+the selected one through a real Bluesky RunEngine, tabulates the emitted records
+and draws a preliminary I/V time-series plot. It never opens a VISA connection.
 
 ## Configuration model
 
@@ -60,8 +60,13 @@ wiring setup.
 
 ### Per-run scientific intent
 
-The user creates one immutable `AcquisitionRequest`. A pulse train is expressed
-in SI units:
+The user creates one immutable `AcquisitionRequest`. The three pulse examples
+below are also available through the `selected_program` mapping in the offline
+quickstart notebook.
+
+### Current pulses
+
+A unipolar current-pulse train is expressed in SI units:
 
 ```python
 request = AcquisitionRequest(
@@ -84,6 +89,63 @@ optional cutoffs and start mode. It is compiled and validated as a whole before
 arming. Requests that exceed the commissioned electrical envelope, cannot fit
 the measurement aperture, exceed finite memory, miss a timing tolerance or use
 an uncommissioned feature fail before output is enabled.
+
+### Voltage pulses
+
+`VoltagePulseSequence` has the same two-dwell timing model, with voltage
+setpoints and current compliance:
+
+```python
+request = AcquisitionRequest(
+    experiment_id="voltage-pulse-simulation-0043",
+    start_mode=StartMode.IMMEDIATE,
+    program=VoltagePulseSequence(
+        baseline_voltage_v=0.10,  # Voltage during the remainder of each period.
+        pulse_voltage_v=0.20,  # Voltage during the first dwell.
+        pulse_width_s=0.020,
+        period_s=0.050,
+        count=4,
+        sample_period_s=0.010,
+        current_limit_a=0.05,  # Compliance, not a current setpoint.
+    ),
+)
+```
+
+The model, canonical request encoding, compiler, and simulator support this
+program. The current M6 device does not enable it by default, and the target
+runtime has not been commissioned for voltage pulses. The quickstart opts in
+only on its explicitly synthetic backend; this example is not hardware approval
+or a battery-safe default.
+
+### Alternating positive and negative current
+
+`CurrentPulseSequence` always emits the pulse dwell first and the baseline dwell
+second. Giving those dwells opposite signs produces an alternating bipolar
+sequence:
+
+```python
+request = AcquisitionRequest(
+    experiment_id="balanced-bipolar-simulation-0044",
+    start_mode=StartMode.IMMEDIATE,
+    program=CurrentPulseSequence(
+        pulse_current_a=0.01,  # Positive charge dwell.
+        baseline_current_a=-0.01,  # Negative discharge dwell.
+        pulse_width_s=0.025,
+        period_s=0.050,  # The negative dwell also lasts 25 ms.
+        count=4,
+        sample_period_s=0.010,
+        voltage_limit_v=5.0,
+    ),
+)
+```
+
+Equal magnitudes and equal half-periods give zero net commanded charge per
+period. For unequal dwell durations, charge balance requires
+`baseline_current_a = -pulse_current_a * pulse_width_s /
+(period_s - pulse_width_s)`. This model alternates two continuously sourced
+levels; it does not include a zero-current rest between positive and negative
+pulses. Use a finite `ArbitraryWaveform` when a `+pulse, 0, -pulse, 0` structure
+is required.
 
 ### Measurement profiles
 
