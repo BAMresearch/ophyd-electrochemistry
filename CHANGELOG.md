@@ -4,6 +4,10 @@
 
 ## Unreleased
 
+- Document the available excitation-sequence library, including current
+  representations, uniform-grid limitations, hardware-support boundaries, and
+  phased plans for examples, finite segment composition, waveform generators,
+  and operational commissioning.
 - Add immutable `VoltagePulseSequence` intent with canonical serialization,
   pure planning, simulator execution, and a selectable quickstart example while
   leaving the hardware-facing M6 default allowlist unchanged. Add a second

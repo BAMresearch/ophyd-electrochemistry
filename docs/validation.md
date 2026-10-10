@@ -4,6 +4,19 @@ Updated: 2026-10-10. Scope: contracts, transport/runtime commissioning, bounded
 nominal-100-ohm tests, a narrow target-buffer proof, and the first operational
 simulator-backed M6 Flyer; not operational hardware sourcing or acquisition.
 
+## Available-sequence assessment
+
+`docs/available-sequences.md` maps twelve proposed excitation sequences plus
+PITT-style voltage steps onto the current intent, compiler, simulator, default
+Flyer, and target-hardware boundaries. It identifies direct examples, bounded
+uniform-grid prototypes, missing generator provenance, and the cases that would
+benefit from finite nonuniform segment composition. It also records phased
+plans for a separate example gallery and later operational commissioning.
+
+This is documentation and implementation planning only. No program model,
+runtime, target adapter, hardware capability, or acceptance gate changed.
+Strict MkDocs and `git diff --check` passed after adding the page and navigation.
+
 ## Timestamp-proof fixture prepared offline
 
 Runtime v13 and `notebooks/keithley_2460_timestamp_proof.ipynb` add a guarded

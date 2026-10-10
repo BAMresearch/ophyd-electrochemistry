@@ -17,6 +17,9 @@ owns the 2460 connection.
 - [User guide and quickstart](docs/user-guide.md): configure finite requests,
   run the Ophyd lifecycle, understand paired I/V records and reproduce the
   offline visualization notebook.
+- [Available excitation sequences](docs/available-sequences.md): current
+  planning/simulation coverage, representation limits, and phased plans for
+  additional sequence examples and target commissioning.
 - [Implementation contract](docs/implementation-contract.md): normative behavior.
 - [Waveform contract](docs/waveforms.md): first-class PRBS, arbitrary-waveform intent and multisine generation.
 - [M1 compiler](docs/m1-compiler.md): implemented API, offline example, timing rules and planning limits.

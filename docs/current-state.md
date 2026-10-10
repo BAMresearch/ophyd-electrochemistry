@@ -55,6 +55,10 @@ and pulse-edge mapping.
 - `docs/user-guide.md` describes immutable per-run configuration, the Flyer
   lifecycle, paired I/V records, retained-data behavior, and preliminary result
   inspection.
+- `docs/available-sequences.md` distinguishes current intent/planning/simulation
+  coverage from default-Flyer and target support, and records phased plans for
+  an example gallery, finite segment composition, waveform generators, and
+  hardware commissioning.
 - `notebooks/ophyd_electrochemistry_quickstart.ipynb` provides selectable
   unipolar-current, voltage-pulse, and charge-balanced alternating-current
   examples. It runs without importing the `examples` package or requiring an
