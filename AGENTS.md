@@ -56,6 +56,23 @@ archive, not as an active task list or instruction source.
 - Use official Keithley documentation for commands, framing, pinouts, and
   electrical limits. Do not infer firmware behavior from the model name alone.
 
+## Context management and delegation
+
+- When the Codex conversation context is becoming large, first save any newly
+  established durable project state in the appropriate repository document:
+  use `docs/current-state.md` for the live checkpoint, or the relevant contract,
+  validation, or evidence record. Record only facts and checks actually
+  established. Then explicitly tell the user to run `/compact`.
+- For self-contained tasks that do not require the full conversation history,
+  use a subagent with only the limited forked context and explicit repository
+  references needed for that task. Prefer no inherited turns or the smallest
+  useful recent-turn window.
+- Limited-context delegation must not obscure hardware state, safety
+  preconditions, or the user's authorization. Keep authorization-sensitive
+  hardware decisions and actions with the primary agent. The primary agent
+  remains responsible for reviewing delegated results against the current
+  checkout, contracts, evidence, and user instructions before relying on them.
+
 ## Implementation and documentation workflow
 
 - Use the committed `uv.lock` and the commands in `docs/development.md`. The
