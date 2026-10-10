@@ -162,7 +162,8 @@ def test_real_runengine_operates_device_and_emits_fixed_m5_schema(mode):
         "ec_current",
         "ec_source_function",
         "ec_source_setpoint",
-        "ec_status_bits",
+        "ec_source_status",
+        "ec_measurement_status",
         "ec_mapping_quality",
         "ec_first_logical_point",
         "ec_last_logical_point",
@@ -175,6 +176,12 @@ def test_real_runengine_operates_device_and_emits_fixed_m5_schema(mode):
     assert event_page["data"]["ec_sample_index"] == [0, 1, 2, 3]
     assert event_page["data"]["ec_source_function"] == ["current"] * 4
     assert event_page["data"]["ec_current"] == pytest.approx([0.01] * 4)
+    assert event_page["data"]["ec_source_status"] == [0] * 4
+    assert event_page["data"]["ec_measurement_status"] == [0] * 4
+    configuration = descriptor["configuration"]["ec"]["data"]
+    assert configuration["ec_measurement_schema"] == "ophyd-electrochemistry/measurement-v2"
+    assert "compliance" in configuration["ec_source_status_definition"]
+    assert "no measurement-status bits" in configuration["ec_measurement_status_definition"]
     assert chunk_requests == [(0, 2), (2, 2)]
     assert device.read_configuration()["ec_start_edge"]["value"] == "rising"
 

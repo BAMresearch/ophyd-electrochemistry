@@ -9,7 +9,7 @@ from .serialization import canonical_json, sha256_json
 from .validation import integer, number, positive, text
 from .waveforms import SourceFunction
 
-MEASUREMENT_SCHEMA = "ophyd-electrochemistry/measurement-v1"
+MEASUREMENT_SCHEMA = "ophyd-electrochemistry/measurement-v2"
 _SHA256_LENGTH = 64
 
 
@@ -90,7 +90,8 @@ class MeasurementSchema:
     instrument_timestamp_origin: str
     instrument_timestamp_resolution_s: float
     instrument_start_timestamp_s: float | None
-    status_bits_definition: str
+    source_status_definition: str
+    measurement_status_definition: str
     synthetic: bool
     clock_mapping: ClockMapping | None = None
     schema: str = MEASUREMENT_SCHEMA
@@ -129,7 +130,8 @@ class MeasurementSchema:
                 "instrument_start_timestamp_s",
                 number(self.instrument_start_timestamp_s, "instrument start timestamp"),
             )
-        text(self.status_bits_definition, "status_bits_definition")
+        text(self.source_status_definition, "source_status_definition")
+        text(self.measurement_status_definition, "measurement_status_definition")
         if self.clock_mapping is not None and not isinstance(self.clock_mapping, ClockMapping):
             raise ValidationError("clock_mapping must be ClockMapping or None")
 
@@ -148,7 +150,8 @@ class MeasurementRecord:
     current_a: float
     source_function: SourceFunction
     source_setpoint: float
-    status_bits: int
+    source_status: int
+    measurement_status: int
     mapping_quality: MappingQuality
     first_logical_point: int | None
     last_logical_point: int | None
@@ -175,7 +178,8 @@ class MeasurementRecord:
             object.__setattr__(self, name, value)
         if self.source_function not in ("current", "voltage"):
             raise ValidationError("source_function must be current or voltage")
-        integer(self.status_bits, "status_bits", minimum=0)
+        integer(self.source_status, "source_status", minimum=0)
+        integer(self.measurement_status, "measurement_status", minimum=0)
         if not isinstance(self.mapping_quality, MappingQuality):
             raise ValidationError("mapping_quality must be MappingQuality")
         if not (

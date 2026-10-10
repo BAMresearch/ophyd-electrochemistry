@@ -30,6 +30,7 @@ from ...exceptions import (
     ValidationError,
 )
 from ...measurement import (
+    MEASUREMENT_SCHEMA,
     MeasurementRecord,
     MeasurementSchema,
     RecordChunk,
@@ -486,7 +487,8 @@ class Keithley2460Device(Device):
             ("current", "number", "A"),
             ("source_function", "string", None),
             ("source_setpoint", "number", unit),
-            ("status_bits", "integer", None),
+            ("source_status", "integer", None),
+            ("measurement_status", "integer", None),
             ("mapping_quality", "string", None),
             ("first_logical_point", "integer", None),
             ("last_logical_point", "integer", None),
@@ -519,7 +521,8 @@ class Keithley2460Device(Device):
             self._field_name("current"): record.current_a,
             self._field_name("source_function"): record.source_function,
             self._field_name("source_setpoint"): record.source_setpoint,
-            self._field_name("status_bits"): record.status_bits,
+            self._field_name("source_status"): record.source_status,
+            self._field_name("measurement_status"): record.measurement_status,
             self._field_name("mapping_quality"): record.mapping_quality.value,
             self._field_name("first_logical_point"): mapping_index(record.first_logical_point),
             self._field_name("last_logical_point"): mapping_index(record.last_logical_point),
@@ -584,6 +587,7 @@ class Keithley2460Device(Device):
             start_mode = "unprepared" if self._request is None else self._request.start_mode.value
             acquisition_id = self._acquisition_id or "none"
             start_edge = self._start_edge
+            retained_schema = self._retained_schema
         backend = type(self._backend)
         return {
             self._field_name("backend"): f"{backend.__module__}.{backend.__qualname__}",
@@ -593,6 +597,17 @@ class Keithley2460Device(Device):
             self._field_name("start_mode"): start_mode,
             self._field_name("start_edge"): start_edge,
             self._field_name("acquisition_id"): acquisition_id,
+            self._field_name("measurement_schema"): MEASUREMENT_SCHEMA,
+            self._field_name("source_status_definition"): (
+                "unavailable before retained schema"
+                if retained_schema is None
+                else retained_schema.source_status_definition
+            ),
+            self._field_name("measurement_status_definition"): (
+                "unavailable before retained schema"
+                if retained_schema is None
+                else retained_schema.measurement_status_definition
+            ),
         }
 
     def read_configuration(self) -> dict[str, dict[str, int | float | str]]:

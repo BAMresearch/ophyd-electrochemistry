@@ -30,7 +30,8 @@ def schema(**changes):
         instrument_timestamp_origin="test virtual clock",
         instrument_timestamp_resolution_s=0.001,
         instrument_start_timestamp_s=10.0,
-        status_bits_definition="test bit 0: synthetic compliance",
+        source_status_definition="test source bit 0: synthetic compliance",
+        measurement_status_definition="test measurement bits: none",
         synthetic=True,
     )
     return MeasurementSchema(**(values | changes))
@@ -49,7 +50,8 @@ def record(index=0, **changes):
         current_a=0.01,
         source_function="current",
         source_setpoint=0.01,
-        status_bits=0,
+        source_status=0,
+        measurement_status=0,
         mapping_quality=MappingQuality.SETTLED_SINGLE_DWELL,
         first_logical_point=index,
         last_logical_point=index,
@@ -86,7 +88,7 @@ def test_schema_keeps_origin_clock_and_source_units_explicit():
         method="bracketed host round trip",
     )
     value = schema(clock_mapping=mapping)
-    assert value.schema == MEASUREMENT_SCHEMA
+    assert value.schema == MEASUREMENT_SCHEMA == "ophyd-electrochemistry/measurement-v2"
     assert value.voltage_origin == value.current_origin == FieldOrigin.SYNTHETIC
     assert mapping.to_epoch(14.0) == pytest.approx(1_800_000_002.000002)
     assert source_setpoint_unit("current") == "A"
@@ -110,6 +112,11 @@ def test_schema_keeps_origin_clock_and_source_units_explicit():
 def test_schema_rejects_ambiguous_or_invalid_meaning(changes):
     with pytest.raises(ValidationError):
         schema(**changes)
+
+
+def test_measurement_v1_is_not_silently_accepted_as_v2():
+    with pytest.raises(ValidationError, match="Unsupported measurement schema"):
+        schema(schema="ophyd-electrochemistry/measurement-v1")
 
 
 def test_mapping_quality_requires_consistent_indices():
@@ -141,7 +148,8 @@ def test_mapping_quality_requires_consistent_indices():
     [
         {"sample_index": -1},
         {"voltage_v": float("inf")},
-        {"status_bits": -1},
+        {"source_status": -1},
+        {"measurement_status": -1},
         {"aperture_end_relative_s": 0.002},
         {"available_relative_s": 0.003},
         {"first_logical_point": 2, "last_logical_point": 1},

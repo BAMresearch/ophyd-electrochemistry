@@ -13,18 +13,22 @@ Import the immutable models from `ophyd_electrochemistry`:
 
 - `MeasurementSchema` holds run-constant source function, voltage/current field
   origins, timing origin, timestamp reference and resolution, actual-START clock
-  anchor, status-bit definition, optional clock-to-epoch mapping, and the explicit
+  anchor, separate source/measurement status definitions, optional clock-to-epoch
+  mapping, and the explicit
   synthetic flag.
 - `MeasurementRecord` holds one complete paired V/I record, raw instrument and
   actual-START-relative timestamps, aperture start/end/availability, source
-  setpoint, status bits and source-schedule association.
+  setpoint, separate source/measurement status words and source-schedule association.
 - `RetainedBuffer` binds records to acquisition/request/program identities and
   finite capacity/expected-count/outcome metadata.
 - `RetainedBufferMetadata` reports the retained extent and a checksum over all
   records. `RecordChunk` reports one bounded offset-addressed slice and its own
   checksum.
 
-The schema identifier is `ophyd-electrochemistry/measurement-v1`. All electrical
+The schema identifier is `ophyd-electrochemistry/measurement-v2`. Version 2
+replaces the ambiguous single status word with independent, nonnegative
+`source_status` and `measurement_status` values and independent definitions.
+All electrical
 and time values use SI units. Nonfinite values, invalid apertures, inconsistent
 mapping indices, record gaps, capacity overruns, source-function changes and
 timestamp-reference mismatches are rejected.

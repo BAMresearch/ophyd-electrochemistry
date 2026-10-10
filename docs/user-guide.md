@@ -110,7 +110,9 @@ before, after = ec.configure({"collection_chunk_records": 512})
 It is limited to 1–4096 records and cannot be changed during an active
 acquisition. `read_configuration()` currently reports the backend, host polling
 and completion timeouts, chunk size, start mode, commissioned START edge and
-acquisition ID. The target backend should additionally report model, serial,
+acquisition ID. The run descriptor also records the measurement-schema ID and,
+once retained data are available, the definitions of both status words. The
+target backend should additionally report model, serial,
 firmware, terminals, sense, off mode, safety/capability profile and complete
 measurement settings.
 
@@ -178,19 +180,19 @@ per pulse. Mapping metadata distinguishes a settled aperture inside one dwell,
 an unsettled aperture, an aperture crossing a transition, and an unknown
 association.
 
-## Status-field revision
+## Source and measurement status
 
-The hardware-near archive already preserves separate `source_status` and
-`measurement_status` words. The current shared measurement schema and simulator
-projection still expose the provisional combined `ec_status_bits` field. The
-agreed next schema revision will replace that ambiguity with:
+The hardware-near archive and shared measurement schema preserve separate
+status words:
 
 - `ec_source_status` — untouched source status word;
 - `ec_measurement_status` — untouched measurement status word.
 
-Decoded convenience flags may be added, but the raw words remain authoritative.
-Until that revision lands, the quickstart labels `ec_status_bits` as provisional
-and does not imply that it is the target 2460 status representation.
+The run-constant schema carries an independent definition for each word.
+Decoded convenience flags may be added later, but these raw values remain
+authoritative. Simulator source-status bit 0 denotes synthetic compliance during
+at least part of the aperture; its measurement status is currently zero. Those
+simulator meanings are not Keithley bit definitions.
 
 ## Preliminary visualization
 

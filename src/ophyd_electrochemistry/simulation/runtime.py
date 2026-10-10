@@ -124,7 +124,8 @@ class SimulatedRecord:
     cycle_index: int
     segment_index: int
     wholly_settled_in_one_dwell: bool
-    simulation_status_bits: int
+    source_status: int
+    measurement_status: int
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -425,9 +426,12 @@ class SimulatedRuntime:
                 instrument_start_timestamp_s=(
                     None if self._start_tick is None else self._start_tick * resolution
                 ),
-                status_bits_definition=(
-                    "simulation-v1 bit 0: ideal complementary compliance active "
+                source_status_definition=(
+                    "simulation-v2 source bit 0: ideal complementary compliance active "
                     "during at least part of the aperture"
+                ),
+                measurement_status_definition=(
+                    "simulation-v2: no measurement-status bits are currently defined"
                 ),
                 synthetic=True,
             )
@@ -472,7 +476,8 @@ class SimulatedRuntime:
             current_a=record.current_a,
             source_function=record.source_function,
             source_setpoint=record.source_setpoint,
-            status_bits=record.simulation_status_bits,
+            source_status=record.source_status,
+            measurement_status=record.measurement_status,
             mapping_quality=quality,
             first_logical_point=record.first_logical_point,
             last_logical_point=record.last_logical_point,
@@ -640,7 +645,8 @@ class SimulatedRuntime:
                 segment_index=first.segment_index,
                 wholly_settled_in_one_dwell=first.logical_point == self._window_last_point
                 and start - first.relative_tick >= program.settling_ticks,
-                simulation_status_bits=self._window_bits,
+                source_status=self._window_bits,
+                measurement_status=0,
             )
             self._window = None
             self._schedule(self.tick + program.measurement.overhead_ticks, 20, "publish", index)

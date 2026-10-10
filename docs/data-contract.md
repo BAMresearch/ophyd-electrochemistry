@@ -9,7 +9,7 @@ starts its elapsed clock on actual execution, not preparation or external arming
 ## Buffered record
 
 The hardware-neutral Python representation is now fixed as
-`ophyd-electrochemistry/measurement-v1`; see the [M5 data guide](m5-data.md).
+`ophyd-electrochemistry/measurement-v2`; see the [M5 data guide](m5-data.md).
 It separates run-constant `MeasurementSchema`, per-sample `MeasurementRecord`,
 terminal `RetainedBufferMetadata`, and offset-addressed `RecordChunk`. The first
 M6 Bluesky projection is implemented for a terminal validated `RetainedBuffer`;
@@ -28,7 +28,8 @@ Data keys are prefixed with the ophyd device name. The example device `ec` yield
 | `ec_current` | number, A | Measured current or explicitly identified source readback |
 | `ec_source_function` | string | `voltage` or `current` |
 | `ec_source_setpoint` | number, V or A | Commanded level; split descriptors if unit changes |
-| `ec_status_bits` | integer | Raw instrument flags plus documented interpretation |
+| `ec_source_status` | integer | Untouched source-status word with a schema-level definition |
+| `ec_measurement_status` | integer | Untouched measurement-status word with a schema-level definition |
 | `ec_cycle_index`, `ec_segment_index` | integer | Zero-based program position |
 | `ec_first_logical_point`, `ec_last_logical_point` | integer | Source-point aperture extent, or `-1` when mapping is unknown |
 | `ec_repeat_index`, `ec_point_index` | integer | Source repeat/point at aperture start, or `-1` when unknown |
@@ -37,6 +38,9 @@ Data keys are prefixed with the ophyd device name. The example device `ec` yield
 Source readback and measurement may be obtained sequentially or through buffer
 options; no simultaneous dual-channel V/I guarantee is assumed. Declare each
 field's origin, integration aperture, and any timestamp offset in metadata.
+The run configuration records the measurement-schema ID plus independent source
+and measurement status-word definitions so the raw integer columns remain
+interpretable without backend-private knowledge.
 If usable paired V/I is unsupported, reject that acquisition schema rather than
 inventing a second measurement. Limits/compliance flags must be retained.
 

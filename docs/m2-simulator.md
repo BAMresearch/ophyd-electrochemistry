@@ -92,8 +92,10 @@ apertures open last. A separate input batch executes at the current tick in call
 order. ABORT within one coincident input batch wins over START. These explicit
 rules make tests reproducible; firmware must prove its own ordering.
 
-Simulator status bit `1` means ideal compliance was active during at least part of
-the aperture. It is **not** a raw Keithley status bit. Every record has synthetic
+Simulator source-status bit `1` means ideal compliance was active during at least
+part of the aperture. Simulator measurement status is currently zero because no
+measurement-condition bits are defined. These are **not** raw Keithley status
+bits. Every record has synthetic
 origin. Tick timestamps have no epoch calibration, offset/drift uncertainty or
 detector synchronization claim. The M5 adapter preserves that limitation and
 does not relabel these values as observed hardware measurements.

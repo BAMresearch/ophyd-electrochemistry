@@ -29,9 +29,8 @@ through a real RunEngine, produces 20 paired records, finishes COMPLETE with
 output false and creates a dependency-free inline SVG of voltage and current.
 
 A contract test executes every code cell and checks the terminal safe state,
-paired electrical fields and visualization output. A second assertion keeps the
-agreed `ec_source_status`/`ec_measurement_status` revision visible while the
-implemented stream still carries provisional `ec_status_bits`.
+paired electrical fields, separate source/measurement status words and
+visualization output.
 
 ## First M6 classic-Ophyd Flyer slice
 
@@ -252,9 +251,10 @@ required final validation set for this increment.
 ## M5 measurement-record foundation
 
 The first M5 slice was implemented offline on 9 October 2026. The public
-`measurement-v1` models retain explicit electrical and timing origins, raw and
+`measurement-v2` models retain explicit electrical and timing origins, raw and
 actual-START-relative timestamps, aperture/availability boundaries, source
-setpoint, status bits and schedule association. Validation rejects nonfinite
+setpoint, separate source/measurement status words and schedule association.
+Version 2 removes the ambiguous combined status word. Validation rejects nonfinite
 values, invalid apertures, ambiguous mapping, source-function changes, timestamp
 reference mismatches, record gaps and declared-capacity overruns.
 

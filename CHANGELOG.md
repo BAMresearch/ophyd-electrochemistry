@@ -6,9 +6,11 @@
 
 - Add a living user guide and simulator-backed quickstart notebook covering the
   three-layer configuration model, safe Ophyd lifecycle, paired I/V data,
-  retained-data behavior and preliminary post-run visualization. Record the
-  agreed next-schema split into source and measurement status fields without
-  presenting it as already implemented.
+  retained-data behavior and preliminary post-run visualization.
+- Revise the shared measurement schema to v2: replace the ambiguous combined
+  status word and definition with independent source and measurement status
+  values and definitions throughout typed records, simulator projection and the
+  19-field Bluesky stream.
 - Prepare runtime v13 and a guarded target timestamp proof. A uniquely tagged
   set of instrument-clock event markers brackets BUSY assertion and one
   digitize block; terminal retrieval exposes the absolute reading timestamp,

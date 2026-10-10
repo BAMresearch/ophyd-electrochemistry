@@ -79,7 +79,8 @@ data fields. Such events must not be treated as epoch-correlated measurements.
 
 ## Deliberate target boundary
 
-The packaged 2460 runtime returns current readback, measured voltage, status bits
+The packaged 2460 runtime returns current readback, measured voltage, separate
+source and measurement status words
 and a `relativetimestamps` value whose first record is zero. That establishes a
 first-reading-relative buffer clock, not actual START or the integration aperture.
 The public M5 schema requires actual-START-relative aperture meaning. Therefore
@@ -96,7 +97,7 @@ metadata and retryable `RecordChunk` transactions.
 ## Validation scope
 
 Contract tests run holds and two-pulse trains through Bluesky for immediate and
-external starts, validate Event Model documents, verify the complete 18-field
+external starts, validate Event Model documents, verify the complete 19-field
 stream, preserve partial records after abort, exercise no-START timeout and
 recovery, and reject unsupported CV before output. These are software lifecycle
 results over synthetic data; no hardware gate is promoted.

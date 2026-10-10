@@ -546,14 +546,16 @@ def test_compliance_flag_and_value_origin(runtime, capabilities, config):
     start(sim, request(program=p))
     sim.advance_ticks(40)
     assert sim.records[0].current_a == pytest.approx(0.0009)
-    assert sim.records[0].simulation_status_bits == 0
+    assert sim.records[0].source_status == 0
+    assert sim.records[0].measurement_status == 0
     # Low resistance hits synthetic current compliance, differing from commanded V.
     other = SimulatedRuntime(capabilities=capabilities, config=config, cell=runtime.cell)
     start(other, request(program=p))
     other.advance_ticks(40)
     r = other.records[0]
     assert r.source_setpoint == 1 and r.voltage_v == pytest.approx(0.11)
-    assert r.current_a == pytest.approx(0.001) and r.simulation_status_bits == 1
+    assert r.current_a == pytest.approx(0.001) and r.source_status == 1
+    assert r.measurement_status == 0
 
 
 def test_snapshot_coherence_no_fresh_timestamp_or_competing_measurement(runtime):
