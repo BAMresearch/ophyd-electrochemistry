@@ -36,6 +36,12 @@ tests must verify safety, timing, and data behavior rather than just repeat
 the implementation. Hardware tests are excluded by default and cannot pass by
 being skipped. No real DUT is used for initial commissioning.
 
+Review `docs/user-guide.md` and
+`notebooks/ophyd_electrochemistry_quickstart.ipynb` whenever a public request,
+measurement/status schema, device lifecycle, backend configuration, retained
+data rule or commissioned capability changes. The quickstart is executed by a
+contract test; update its explanation and visualization as well as its code.
+
 ## Transport and TSP changes
 
 Keep TSP in package resources. Review the generated TriggerFlow model and its

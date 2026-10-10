@@ -19,6 +19,20 @@ clock arithmetic and bounded START-time intervals. This is offline fixture
 validation only. It does not establish the target timestamp convention,
 START-to-aperture latency or G03/G06 until actual trace/evidence review.
 
+## Living user quickstart
+
+`docs/user-guide.md` documents the commissioned configuration, immutable
+per-run intent, planned measurement profiles, Ophyd Flyer lifecycle, paired I/V
+records and retained-data behavior. The companion simulator-only notebook
+`notebooks/ophyd_electrochemistry_quickstart.ipynb` executes the pulse plan
+through a real RunEngine, produces 20 paired records, finishes COMPLETE with
+output false and creates a dependency-free inline SVG of voltage and current.
+
+A contract test executes every code cell and checks the terminal safe state,
+paired electrical fields and visualization output. A second assertion keeps the
+agreed `ec_source_status`/`ec_measurement_status` revision visible while the
+implemented stream still carries provisional `ec_status_bits`.
+
 ## First M6 classic-Ophyd Flyer slice
 
 `Keithley2460Device` now implements the finite Flyer lifecycle over a typed

@@ -11,6 +11,9 @@ owns the 2460 connection.
 
 ## Start here
 
+- [User guide and quickstart](docs/user-guide.md): configure finite requests,
+  run the Ophyd lifecycle, understand paired I/V records and reproduce the
+  offline visualization notebook.
 - [Implementation contract](docs/implementation-contract.md): normative behavior.
 - [Waveform contract](docs/waveforms.md): first-class PRBS, arbitrary-waveform intent and multisine generation.
 - [M1 compiler](docs/m1-compiler.md): implemented API, offline example, timing rules and planning limits.
@@ -126,6 +129,9 @@ acquisition, audit, and destructive discard behind separate opt-in flags. Its
 host buffer and transfer ceilings are explicit and independent.
 It is only for the confirmed
 front-terminal four-wire nominal 100 ohm resistor setup.
+The offline `notebooks/ophyd_electrochemistry_quickstart.ipynb` runs the intended
+Ophyd/Bluesky pulse workflow entirely against the simulator, tabulates paired
+I/V events and produces a preliminary visualization without opening VISA.
 For a lean runtime environment, use `uv sync --locked --no-default-groups`.
 Development tools are dependency groups, not published package extras.
 

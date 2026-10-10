@@ -4,6 +4,11 @@
 
 ## Unreleased
 
+- Add a living user guide and simulator-backed quickstart notebook covering the
+  three-layer configuration model, safe Ophyd lifecycle, paired I/V data,
+  retained-data behavior and preliminary post-run visualization. Record the
+  agreed next-schema split into source and measurement status fields without
+  presenting it as already implemented.
 - Prepare runtime v13 and a guarded target timestamp proof. A uniquely tagged
   set of instrument-clock event markers brackets BUSY assertion and one
   digitize block; terminal retrieval exposes the absolute reading timestamp,

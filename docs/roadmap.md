@@ -73,4 +73,7 @@ upload/execution is outside the current scope; the simulator has no raw-script A
 ## Completion rule
 
 Every milestone updates contract coverage, tests, changelog, and bench evidence.
+It also reviews the user guide and offline quickstart notebook for schema,
+configuration, lifecycle, visualization and capability-status changes, even when
+that review concludes that no edit is required.
 Do not promote an Open assumption to Supported from a successful simulated test.

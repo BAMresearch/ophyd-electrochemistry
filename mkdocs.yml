@@ -2,6 +2,7 @@ site_name: ophyd-electrochemistry contract
 theme: readthedocs
 nav:
   - Overview: index.md
+  - User guide and quickstart: user-guide.md
   - Development and releases: development.md
   - Contract: implementation-contract.md
   - Waveforms: waveforms.md
