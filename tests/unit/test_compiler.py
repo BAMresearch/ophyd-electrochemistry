@@ -63,6 +63,32 @@ def test_compiler_has_no_network_side_effects_and_retains_full_final_dwell(
     assert '"terminal_action":"output_off"' in result.canonical_program_json
 
 
+def test_compiler_exposes_reviewed_completion_and_communication_bounds(capabilities, config):
+    immediate = compile_program(arbitrary(), capabilities, config)
+    external = compile_program(arbitrary(), capabilities, config, StartMode.EXTERNAL_TRIGGER)
+
+    assert immediate.completion_bound_s == immediate.achieved_duration_s
+    assert external.completion_bound_s == pytest.approx(
+        external.achieved_duration_s + config.timing.external_start_timeout_s
+    )
+    assert immediate.communication_margin_s == config.timing.command_timeout_s
+    assert immediate.expected_records == immediate.measurement.record_count
+    assert immediate.capacity_records == capabilities.max_buffer_records
+
+
+def test_configured_buffer_ceiling_is_an_operational_prepare_bound(capabilities, config):
+    constrained = replace(
+        config,
+        buffer=replace(
+            config.buffer,
+            capacity_ceiling_records=11,
+            transfer_chunk_records=11,
+        ),
+    )
+    with pytest.raises(ValidationError, match="buffer budget"):
+        compile_program(arbitrary(), capabilities, constrained)
+
+
 def test_independent_measurement_aperture_mapping_and_half_open_boundaries(capabilities, config):
     profile = replace(capabilities, measurement_aperture_s=0.003, measurement_overhead_s=0)
     result = compile_program(arbitrary(sample_period_s=0.007), profile, config)

@@ -13,6 +13,11 @@ from .capabilities import Keithley2460Capabilities, SourceCapabilities
 from .compiler import CompiledProgram, Keithley2460Compiler
 from .config import BufferPolicy, DigitalIOConfig, Keithley2460Config, SafetyConfig, TimingPolicy
 from .device import AcquisitionBackend, Keithley2460Device
+from .measurement_profiles import (
+    K2460MeasurementProfile,
+    K2460MeasurementSettings,
+    resolve_measurement_profile,
+)
 from .runtime import (
     K2460_BUFFER_SCHEMA,
     TIMESTAMP_PROOF_MARKERS,
@@ -54,6 +59,8 @@ __all__ = [
     "Keithley2460Compiler",
     "Keithley2460Config",
     "Keithley2460Device",
+    "K2460MeasurementProfile",
+    "K2460MeasurementSettings",
     "SafetyConfig",
     "SourceCapabilities",
     "TimingPolicy",
@@ -91,4 +98,5 @@ __all__ = [
     "parse_command_language",
     "parse_identity",
     "parse_source_output_enabled",
+    "resolve_measurement_profile",
 ]

@@ -2,7 +2,7 @@
 
 M5 has a hardware-neutral record contract plus a deliberately narrow target
 proof. The packaged Keithley runtime allocates a bounded fill-once buffer
-for an explicitly bounded number of immediate or externally started 1 NPLC readings and returns raw
+for an explicitly bounded number of immediate or externally started profiled readings and returns raw
 source readback, measured voltage, buffer-relative timestamp, source status and
 measurement status. This is commissioning code, not the operational acquisition
 backend.
@@ -92,31 +92,40 @@ not exactly-once.
 
 ## Narrow target proof
 
-Runtime build `m4-finite-current-hold-v13` provides
+Runtime build `m4-finite-current-hold-v14` provides
 `CurrentHoldAcquisitionProof`, `RuntimeBufferInfo`, `BufferedReading`, and
-`RuntimeRecordChunk`. Hard limits remain ±10 mA and 2 V, while configuration
-limits may be lower. The acquisition count has an explicit host ceiling
+`RuntimeRecordChunk`. The source proof retains its ±10 mA/2 V hard envelope;
+profiled buffered acquisition is deliberately narrower at ±10 mA and a fixed
+0.2 V measurement range, while configuration limits may be lower. The
+acquisition count has an explicit host ceiling
 (250,000 records by default) and a 5,000,000-record TSP backstop. The runtime
 allocates the requested capacity (or the instrument's 16-record minimum), selects
-fill-once mode, configures
-voltage measurement at 1 NPLC, and records immediate versus external start mode
-in the request. External mode keeps output OFF while READY is asserted; a START
+fill-once mode, resolves one of three allowlisted 1, 0.1 or 0.01 NPLC profiles,
+and records immediate versus external start mode plus profile identity in the
+request. Every profile fixes the voltage range at 0.2 V, disables autorange,
+filtering and relative measurement, and performs one output-off autozero before
+leaving autozero off. The host queries all applied settings before accepting
+PREPARED. External mode keeps output OFF while READY is asserted; a START
 edge locally asserts BUSY, clears the buffer, turns output on, makes exactly the
 requested number of measurements, turns output off, and exits the successful
 path without entering timeout cleanup. An unanswered wait takes a separate local
 source-OFF timeout path and leaves the buffer empty. Immediate mode retains its
-existing behavior. Retrieval
-requires a terminal state and confirmed output off, and is separately bounded
-to at most 4,096 records per transfer (128 by default). A retained buffer blocks
-the next prepare until an explicit reason-bearing discard.
+existing behavior. Retrieval requires either a terminal outcome state or a
+successfully recovered IDLE state, plus confirmed output off, and is separately
+bounded to at most 4,096 records per transfer (128 by default). This permits a
+fresh session to retrieve frozen records after recovery without changing the
+original outcome. PREPARED, WAITING_START, RUNNING and output-on states remain
+rejected. A retained buffer blocks the next prepare until an explicit
+reason-bearing discard.
 
-`RuntimeBufferArchive` v2 assembles a complete sequence of independently validated
+`RuntimeBufferArchive` v3 assembles a complete sequence of independently validated
 chunks without hiding gaps or overlaps. Its versioned plain-data payload fixes
 the runtime identity, request, instrument identity, capacity, timestamp origin
 and raw records. The record array retains its own SHA-256, while the enclosing
-JSON adds a checksum over the complete canonical payload. Version 2 records the
-request start mode; the allowlisted parser still reads existing v1 immediate-mode
-archives without changing their schema. It checks both checksums.
+JSON adds a checksum over the complete canonical payload. Version 3 adds the
+versioned measurement-profile identity. The allowlisted parser still reads v2
+archives with their start mode and v1 immediate-mode archives, treating both as
+the original 1 NPLC settings without changing their schema. It checks both checksums.
 `write_runtime_buffer_archive()` uses exclusive creation and refuses
 to overwrite an existing path; successful export does not itself authorize
 instrument-buffer discard.
@@ -214,6 +223,20 @@ scale/no-wrap evidence but not clean single-edge or repeated-input acceptance.
 See the [scale-run evidence](evidence/k2460-2026-10-09-m5-external-start-256-v12-evidence.json)
 and [raw archive](evidence/k2460-2026-10-09-m5-external-start-256-v12-archive.json).
 
+Runtime v14 later completed an immediate 10,000-reading acquisition at +1 mA
+and 0.01 NPLC. An exact 10,000-record standard fill-once buffer retained extent
+1–10,000 with contiguous indices and strictly increasing timestamps across
+12.17023136 s. Retrieval used 4096+4096+1808-record chunks; retry, v3 archive
+decode and a complete fresh-session reread all matched. Warning/error counts
+remained zero. Recovery preserved the records at IDLE/OFF/0 A until explicit
+post-archive discard, after which another fresh session confirmed the buffer
+empty and the source safe. See the
+[archive](evidence/k2460-2026-10-12-capacity-10000-archive.json),
+[summary](evidence/k2460-2026-10-12-capacity-10000-evidence.json), and
+[discard record](evidence/k2460-2026-10-12-capacity-10000-discard.json).
+This establishes bounded no-wrap and multi-chunk behavior at 10,000 records,
+not the configured 250,000-record ceiling or START/aperture timing.
+
 A later controlled rising-edge check used a scope-verified 0.10 Hz square wave.
 The runtime armed during a known LOW interval and completed one five-record run
 on the next rising edge without START overrun through completion and recovery.
@@ -228,7 +251,8 @@ and [archive](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-archive.json)
 The following remain open before M5 is complete:
 
 - map target timestamps/apertures to actual START without inventing precision;
-- extend fill-once/no-wrap and transfer evidence well beyond the 256-record proof;
+- extend the 10,000-record fill-once/no-wrap proof to the selected operational
+  ceiling and characterize interrupted transfer;
 - map this raw archive into the shared `MeasurementRecord` archive only after
   the START/aperture relationship is established;
 - calibrate or explicitly decline instrument-clock-to-epoch mapping;

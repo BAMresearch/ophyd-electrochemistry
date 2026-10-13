@@ -14,6 +14,7 @@ from ophyd_electrochemistry import (
     MultisineSpec,
     PotentiostaticHold,
     PRBSWaveform,
+    PreparedAcquisition,
     StartMode,
     VoltagePulseSequence,
     canonical_request_json,
@@ -324,6 +325,45 @@ def test_canonical_units_negative_zero_and_semantic_hash():
         AcquisitionRequest(program=hold(), experiment_id="e", start_mode="immediate")
     with pytest.raises(ValidationError):
         AcquisitionRequest(program=hold(), experiment_id=" ")
+
+
+@pytest.mark.parametrize("field", ["completion_bound_s", "communication_margin_s"])
+@pytest.mark.parametrize("value", [0, -1, float("nan"), float("inf")])
+def test_prepared_acquisition_requires_positive_finite_timing_bounds(field, value):
+    values = {
+        "request_sha256": "1" * 64,
+        "program_sha256": "2" * 64,
+        "expected_records": 1,
+        "capacity_records": 1,
+        "completion_bound_s": 1.0,
+        "communication_margin_s": 0.1,
+    }
+    values[field] = value
+    with pytest.raises(ValidationError, match=field):
+        PreparedAcquisition(**values)
+
+
+@pytest.mark.parametrize(
+    ("changes", "message"),
+    [
+        ({"request_sha256": "not-a-digest"}, "request_sha256"),
+        ({"program_sha256": "A" * 64}, "program_sha256"),
+        ({"expected_records": 0}, "expected_records"),
+        ({"capacity_records": 0}, "capacity_records"),
+        ({"expected_records": 2}, "must not exceed"),
+    ],
+)
+def test_prepared_acquisition_validates_identity_and_record_bounds(changes, message):
+    values = {
+        "request_sha256": "1" * 64,
+        "program_sha256": "2" * 64,
+        "expected_records": 1,
+        "capacity_records": 1,
+        "completion_bound_s": 1.0,
+        "communication_margin_s": 0.1,
+    }
+    with pytest.raises(ValidationError, match=message):
+        PreparedAcquisition(**(values | changes))
 
 
 @pytest.mark.parametrize(

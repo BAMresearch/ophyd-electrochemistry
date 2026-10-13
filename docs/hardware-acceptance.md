@@ -236,6 +236,25 @@ contact bounce is only a hypothesis, this run does not satisfy G01's stale or
 repeated-START requirement. It adds bounded G03/G04 evidence without promoting
 either gate.
 
+On 12 October, runtime v14 then exercised a much larger immediate acquisition
+without using START. At +1 mA and 0.01 NPLC, the front-terminal four-wire
+nominal 100 ohm resistor produced exactly 10,000 records in an exact-size
+standard fill-once buffer. Extent 1–10,000, contiguous sample indices and
+strictly increasing timestamps showed no wrap. The 12.17023136 s buffer span
+corresponded to 821.595 paired I/V records/s. Bounded 4096+4096+1808 transfers,
+first-chunk retry, archive decode and a fresh-session full reread all matched.
+
+Warning/error counts stayed zero. Recovery retained all records at IDLE/OFF/0 A;
+after checked archival and explicit authorization, discard emptied the buffer.
+A final fresh session confirmed v14 IDLE, trigger model idle, output OFF,
+programmed level 0 A and an empty 10,000-record-capacity buffer. See the
+[archive](evidence/k2460-2026-10-12-capacity-10000-archive.json),
+[summary](evidence/k2460-2026-10-12-capacity-10000-evidence.json), and
+[discard record](evidence/k2460-2026-10-12-capacity-10000-discard.json).
+This adds substantial partial G03/G04/G05 evidence but does not establish the
+250,000-record host ceiling, calibrated accuracy, interrupted-transfer behavior,
+or external-START/aperture/clock timing. No complete gate is promoted.
+
 An Agilent 33120A was then checked as a controlled START source before using
 trigger mode. The user verified a 1 Hz, 0.01–4.56 V square wave at the cable end;
 the generator drove line 3 through 1 kohm with its shield on pin 9. The unit was

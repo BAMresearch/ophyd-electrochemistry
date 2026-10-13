@@ -11,6 +11,7 @@ from ...acquisition import StartMode
 from ...exceptions import RetainedDataError, ValidationError
 from ...serialization import canonical_json, sha256_json
 from ...validation import integer, text
+from .measurement_profiles import K2460MeasurementProfile
 from .runtime import (
     K2460_BUFFER_SCHEMA,
     RUNTIME_ABI,
@@ -20,8 +21,11 @@ from .runtime import (
     RuntimeRecordChunk,
 )
 
-K2460_BUFFER_ARCHIVE_SCHEMA = "ophyd-electrochemistry/k2460-buffer-archive-v2"
-_LEGACY_K2460_BUFFER_ARCHIVE_SCHEMA = "ophyd-electrochemistry/k2460-buffer-archive-v1"
+K2460_BUFFER_ARCHIVE_SCHEMA = "ophyd-electrochemistry/k2460-buffer-archive-v3"
+_LEGACY_K2460_BUFFER_ARCHIVE_SCHEMAS = {
+    "ophyd-electrochemistry/k2460-buffer-archive-v1",
+    "ophyd-electrochemistry/k2460-buffer-archive-v2",
+}
 K2460_BUFFER_TIMESTAMP_ORIGIN = "relative-to-first-buffer-reading"
 _MAX_ARCHIVE_BYTES = 256 * 1024 * 1024
 _SUPPORTED_RUNTIME_BUILDS = {
@@ -33,6 +37,7 @@ _SUPPORTED_RUNTIME_BUILDS = {
     "m4-finite-current-hold-v10",
     "m4-finite-current-hold-v11",
     "m4-finite-current-hold-v12",
+    "m4-finite-current-hold-v13",
     RUNTIME_BUILD,
 }
 _ARCHIVE_PAYLOAD_KEYS = {
@@ -99,10 +104,7 @@ class RuntimeBufferArchive:
     schema: str = K2460_BUFFER_ARCHIVE_SCHEMA
 
     def __post_init__(self) -> None:
-        if self.schema not in (
-            _LEGACY_K2460_BUFFER_ARCHIVE_SCHEMA,
-            K2460_BUFFER_ARCHIVE_SCHEMA,
-        ):
+        if self.schema not in _LEGACY_K2460_BUFFER_ARCHIVE_SCHEMAS | {K2460_BUFFER_ARCHIVE_SCHEMA}:
             raise ValidationError("Unsupported K2460 buffer archive schema")
         if self.runtime_abi != RUNTIME_ABI:
             raise ValidationError("K2460 buffer archive runtime ABI is incompatible")
@@ -199,8 +201,10 @@ def _archive_payload(archive: RuntimeBufferArchive) -> dict[str, object]:
         "voltage_limit_v": archive.request.voltage_limit_v,
         "measurement_count": archive.request.measurement_count,
     }
-    if archive.schema == K2460_BUFFER_ARCHIVE_SCHEMA:
+    if archive.schema != "ophyd-electrochemistry/k2460-buffer-archive-v1":
         request["start_mode"] = archive.request.start_mode.value
+    if archive.schema == K2460_BUFFER_ARCHIVE_SCHEMA:
+        request["measurement_profile"] = archive.request.measurement_profile.value
     return {
         "schema": archive.schema,
         "acquisition_id": archive.acquisition_id,
@@ -260,15 +264,21 @@ def runtime_buffer_archive_from_json(encoded: str) -> RuntimeBufferArchive:
             "voltage_limit_v",
             "measurement_count",
         }
-        if payload["schema"] == K2460_BUFFER_ARCHIVE_SCHEMA:
+        if payload["schema"] != "ophyd-electrochemistry/k2460-buffer-archive-v1":
             request_keys.add("start_mode")
-        elif payload["schema"] != _LEGACY_K2460_BUFFER_ARCHIVE_SCHEMA:
+        if payload["schema"] == K2460_BUFFER_ARCHIVE_SCHEMA:
+            request_keys.add("measurement_profile")
+        elif payload["schema"] not in _LEGACY_K2460_BUFFER_ARCHIVE_SCHEMAS:
             raise ValidationError("Unsupported K2460 buffer archive schema")
         if not isinstance(request, dict) or set(request) != request_keys:
             raise ValidationError("Invalid K2460 archive request")
         decoded_request = dict(request)
-        if payload["schema"] == K2460_BUFFER_ARCHIVE_SCHEMA:
+        if payload["schema"] != "ophyd-electrochemistry/k2460-buffer-archive-v1":
             decoded_request["start_mode"] = StartMode(decoded_request["start_mode"])
+        if payload["schema"] == K2460_BUFFER_ARCHIVE_SCHEMA:
+            decoded_request["measurement_profile"] = K2460MeasurementProfile(
+                decoded_request["measurement_profile"]
+            )
         if not isinstance(records, list):
             raise ValidationError("Invalid K2460 archive records")
         decoded_record_list: list[BufferedReading] = []

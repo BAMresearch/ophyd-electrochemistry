@@ -149,16 +149,54 @@ is required.
 
 ### Measurement profiles
 
-The commissioning runtime currently fixes 1 NPLC, filter off, relative
-measurement off, one explicit autozero followed by autozero off, and fixed
-ranges. The operational backend should replace those hidden constants with an
-immutable `MeasurementSettings` model or reviewed named profiles such as
-`pulse_fast`, `hold_precision` and `cv_standard`.
+The narrow Keithley commissioning runtime exposes three immutable, versioned
+`K2460MeasurementProfile` selectors. They do not permit arbitrary NPLC, range,
+filter or autozero overrides:
+
+| Selector | NPLC | Voltage range | Common policy | Observed paired rate |
+|---|---:|---:|---|---|
+| `NPLC_1` | 1 | 0.2 V | autorange/filter/relative off; autozero once during output-off preparation, then off | 24.497 Hz |
+| `NPLC_0_1` | 0.1 | 0.2 V | same | 207.034 Hz |
+| `NPLC_0_01` | 0.01 | 0.2 V | same | 821.183 Hz |
+
+Select one on the backend-specific finite commissioning request:
+
+```python
+from ophyd_electrochemistry.keithley.k2460 import (
+    CurrentHoldAcquisitionProof,
+    K2460MeasurementProfile,
+)
+
+proof = CurrentHoldAcquisitionProof(
+    current_a=0.001,
+    source_range_a=0.001,
+    voltage_limit_v=0.2,
+    measurement_count=256,
+    measurement_profile=K2460MeasurementProfile.NPLC_0_1,
+)
+```
+
+The host sends only an allowlisted profile code. Runtime v14 resolves the full
+settings locally while output is off, then the host queries back the applied
+profile, NPLC, range, autorange, filter, relative and autozero states before
+accepting `PREPARED`. The checked raw archive v3 retains the profile identity;
+legacy v1/v2 archives decode as the original 1 NPLC behavior.
+
+The rates above are observed 256-record paired source-readback/voltage cadence
+on the commissioned 2460 firmware and nominal 100 ohm resistor, not guaranteed
+maxima. The corresponding voltage population standard deviations were 0.982,
+275.822 and 302.250 µV. Faster profiles materially increase time resolution at
+the cost of noise in this setup; select the slowest profile that still resolves
+the pulse behavior of interest. These buffer-relative measurements do not
+establish external-trigger or aperture timing.
 
 Timing-sensitive pulse profiles should normally use fixed source and
 measurement ranges because autoranging can introduce variable latency. The
 chosen NPLC, autozero/filter/range policy and profile identity must be emitted
-as configuration metadata. This model is planned, not yet a public API.
+as configuration metadata. These selectors currently belong to the narrow raw
+target proof, not the hardware-neutral `AcquisitionRequest` or the operational
+Ophyd `configure()` surface. Promoting them to that surface requires the real
+target adapter and reviewed per-run configuration metadata.
 
 ### Ophyd runtime configuration
 
@@ -170,9 +208,10 @@ before, after = ec.configure({"collection_chunk_records": 512})
 ```
 
 It is limited to 1–4096 records and cannot be changed during an active
-acquisition. `read_configuration()` currently reports the backend, host polling
-and completion timeouts, chunk size, start mode, commissioned START edge and
-acquisition ID. The run descriptor also records the measurement-schema ID and,
+acquisition. `read_configuration()` currently reports the backend, host polling,
+configured minimum and prepared/effective completion timing, chunk size, start
+mode, commissioned START edge and acquisition ID. The run descriptor also
+records the measurement-schema ID and,
 once retained data are available, the definitions of both status words. The
 target backend should additionally report model, serial,
 firmware, terminals, sense, off mode, safety/capability profile and complete
@@ -204,11 +243,39 @@ neither is the acquisition duration. Safety limits, START-wait policy,
 measurement profile and accuracy/noise trade-offs also remain explicit
 commissioning or user choices rather than values inferred from pulse duration.
 
-The simulator-backed quickstart constructs one device for one request and can
-therefore pass the derived watchdog directly to the device constructor. Before
-the target backend supports arbitrary successive requests on one staged device,
-its prepare result should expose a reviewed worst-case completion bound so the
-Flyer can update the watchdog for every acquisition without user calculation.
+The backend's successful `prepare()` result now exposes a reviewed local
+completion bound and communication margin, together with the request/program
+digests and expected/capacity record bounds. The Flyer verifies the submitted
+request digest, then recalculates its effective watchdog for every request as
+the larger of the constructor minimum and the prepared bound plus at least one
+communication/polling margin. External-start bounds include the full local
+START timeout followed by the full achieved run. The quickstart therefore
+passes only a small backwards-compatible minimum; it does not manually
+coordinate pulse duration with a host timeout.
+
+`read_configuration()` distinguishes the values in seconds:
+
+- `ec_completion_timeout`: constructor minimum/fallback;
+- `ec_prepared_completion_bound`: backend-reviewed local wait/run bound;
+- `ec_prepared_communication_margin`: backend-reviewed observation bound; and
+- `ec_completion_timeout_effective`: watchdog used by `complete()`.
+
+The same configuration record exposes `ec_prepared_request_sha256`,
+`ec_prepared_program_sha256`, `ec_prepared_expected_records`, and
+`ec_prepared_capacity_records` for provenance and retained-buffer checks.
+
+The prepared/effective values are zero before the first successful preparation
+and after explicit disposition. A failed prepare in that state leaves them zero;
+a later successful request replaces them rather than retaining the largest
+historical value. Target use still requires a target backend to derive these
+values from its commissioned runtime rather than from synthetic planning
+assumptions.
+
+If an earlier acquisition is still retained, a rejected attempt to prepare a
+new request preserves the earlier acquisition ID, bounds and collection path.
+Collection also cross-checks retained acquisition ID, request/program digests,
+expected records and capacity against that successful prepare. Any mismatch is
+reported as `RetainedDataError`; it does not authorize discard.
 
 ## Run lifecycle
 
@@ -233,6 +300,12 @@ yield from bps.unstage(ec)
 - `collect()` retrieves retained records through retryable bounded chunks; it
   neither erases the instrument buffer nor implies durable archival.
 - `unstage()` confirms output OFF before closing the backend.
+
+Recovery returns a stopped, output-off device to IDLE but deliberately retains
+its frozen records. Those records remain readable from the recovered device or
+a fresh session; IDLE does not turn an aborted/faulted acquisition into success
+and does not mean the records were archived. Discard remains a separate,
+explicit operation after durable export and review.
 
 Normal users should call a plan wrapper such as `follower_acquisition()` or
 `pulse_train_acquisition()` from `examples/follower.py`. A single external

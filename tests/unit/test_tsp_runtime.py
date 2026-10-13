@@ -20,6 +20,7 @@ from ophyd_electrochemistry.keithley.k2460 import (
     CurrentHoldAcquisitionProof,
     CurrentHoldProof,
     DigitalIOConfig,
+    K2460MeasurementProfile,
     Keithley2460Config,
     M4RuntimeController,
     RuntimeEvent,
@@ -34,7 +35,10 @@ from ophyd_electrochemistry.keithley.k2460 import (
     parse_runtime_event,
     parse_runtime_status,
     parse_timestamp_proof_reading,
+    resolve_measurement_profile,
 )
+
+PROFILE_1_STATUS = "1\t1\t0.2\t0\t0\t0\t0"
 
 
 def status_line(
@@ -122,7 +126,7 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     artifact = packaged_runtime()
 
     assert artifact.abi == "oe-k2460-m4-hold-v1"
-    assert artifact.build == "m4-finite-current-hold-v13"
+    assert artifact.build == "m4-finite-current-hold-v14"
     assert artifact.sha256 == hashlib.sha256(artifact.source.encode("ascii")).hexdigest()
     assert artifact.script_name == f"oe_m4_{artifact.sha256[:24]}"
     assert len(artifact.script_name) == 30
@@ -163,6 +167,11 @@ def test_packaged_runtime_has_stable_identity_and_only_local_triggerflow_timing(
     assert "oe_m5_buffer.statuses" in artifact.source
     assert "retained M5 proof data must be explicitly discarded" in artifact.source
     assert "function oe_m5_prepare_timestamp_proof(" in artifact.source
+    assert "function oe_m5_prepare_profiled_current_hold_acquisition(" in artifact.source
+    assert "function oe_m5_measurement_profile_status()" in artifact.source
+    assert 'error("M5 measurement profile code is not allowlisted")' in artifact.source
+    assert "smu.measure.range = 0.2" in artifact.source
+    assert "if profile_code == 3 then return 0.01 end" in artifact.source
     assert "trigger.BLOCK_LOG_EVENT" in artifact.source
     assert '"OE_TS_PRE_BUSY" .. proof_suffix' in artifact.source
     assert '"OE_TS_POST_MEASURE" .. proof_suffix' in artifact.source
@@ -205,6 +214,8 @@ def test_current_hold_proof_rejects_values_outside_hard_runtime_envelope(changes
         {"measurement_count": 5_000_001},
         {"measurement_count": True},
         {"start_mode": "immediate"},
+        {"measurement_profile": "k2460_0p2v_1nplc_v1"},
+        {"voltage_limit_v": 0.21},
     ],
 )
 def test_current_hold_acquisition_rejects_values_outside_proof_envelope(changes):
@@ -216,6 +227,28 @@ def test_current_hold_acquisition_rejects_values_outside_proof_envelope(changes)
     }
     with pytest.raises(ValidationError):
         CurrentHoldAcquisitionProof(**(values | changes))  # type: ignore[arg-type]
+
+
+def test_measurement_profiles_are_exact_immutable_allowlisted_settings():
+    expected = {
+        K2460MeasurementProfile.NPLC_1: (1, 1.0),
+        K2460MeasurementProfile.NPLC_0_1: (2, 0.1),
+        K2460MeasurementProfile.NPLC_0_01: (3, 0.01),
+    }
+    assert set(K2460MeasurementProfile) == set(expected)
+    for profile, (code, nplc) in expected.items():
+        settings = resolve_measurement_profile(profile)
+        assert (settings.instrument_code, settings.nplc, settings.voltage_range_v) == (
+            code,
+            nplc,
+            0.2,
+        )
+        assert not settings.autorange_enabled
+        assert not settings.filter_enabled
+        assert not settings.relative_enabled
+        assert settings.autozero == "once_then_off"
+    with pytest.raises(ValidationError):
+        resolve_measurement_profile("k2460_0p2v_1nplc_v1")  # type: ignore[arg-type]
 
 
 def test_runtime_status_parser_is_strict_and_typed():
@@ -472,6 +505,27 @@ def test_exact_known_v12_empty_buffer_can_be_replaced_without_a_reboot():
     assert 'script.delete("oe_m4_e77fb18fa6ca9f2849ef910a")' in transport.writes
 
 
+def test_exact_known_v13_empty_buffer_can_be_replaced_without_a_reboot():
+    transport = FakeRuntimeTransport(
+        status_line("idle", block=17),
+        "0",
+        "oe-k2460-m4-hold-v1",
+        "m4-finite-current-hold-v13",
+        "false",
+        "false",
+        "0\t0\t0\t16",
+        "true",
+        "true",
+        "smu.OFF",
+        "0",
+    )
+
+    artifact = M4RuntimeController(transport, runtime_config()).replace_known_runtime_and_install()
+
+    assert artifact == packaged_runtime()
+    assert 'script.delete("oe_m4_5f667d74698798e6eef9ec9b")' in transport.writes
+
+
 def test_known_v5_replacement_preserves_retained_records():
     transport = FakeRuntimeTransport(
         status_line("idle"),
@@ -543,7 +597,7 @@ def test_prepare_serializes_native_either_edge_start_mode():
 
 
 def test_prepare_acquisition_serializes_bounded_fixed_measurement_and_empty_buffer():
-    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t16")
+    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t16", PROFILE_1_STATUS)
     controller = M4RuntimeController(transport, runtime_config())
     acquisition = CurrentHoldAcquisitionProof(
         current_a=0.001,
@@ -556,14 +610,15 @@ def test_prepare_acquisition_serializes_bounded_fixed_measurement_and_empty_buff
 
     assert status.state == RuntimeState.PREPARED
     assert transport.writes == [
-        "oe_m5_prepare_current_hold_acquisition(0.001,0.001,0.20000000000000001,3,0,2,0.01,1,1,1,2,3,1,1,1)",
+        "oe_m5_prepare_profiled_current_hold_acquisition(0.001,0.001,0.20000000000000001,3,0,2,0.01,1,1,1,2,3,1,1,1,1)",
         "print(oe_m4_status())",
         "print(oe_m5_buffer_status())",
+        "print(oe_m5_measurement_profile_status())",
     ]
 
 
 def test_prepare_acquisition_serializes_external_start_and_either_edge():
-    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t16")
+    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t16", PROFILE_1_STATUS)
     config = runtime_config(io=DigitalIOConfig(start_edge="either"))
     controller = M4RuntimeController(transport, config)
     acquisition = CurrentHoldAcquisitionProof(
@@ -577,13 +632,54 @@ def test_prepare_acquisition_serializes_external_start_and_either_edge():
     controller.prepare_current_hold_acquisition(acquisition)
 
     assert transport.writes[0] == (
-        "oe_m5_prepare_current_hold_acquisition("
-        "0.001,0.001,0.20000000000000001,3,1,2,0.01,1,1,1,2,3,1,1,2)"
+        "oe_m5_prepare_profiled_current_hold_acquisition("
+        "0.001,0.001,0.20000000000000001,3,1,2,0.01,1,1,1,2,3,1,1,2,1)"
     )
 
 
+@pytest.mark.parametrize(
+    ("profile", "profile_code", "profile_status"),
+    [
+        (K2460MeasurementProfile.NPLC_0_1, 2, "2\t0.1\t0.2\t0\t0\t0\t0"),
+        (K2460MeasurementProfile.NPLC_0_01, 3, "3\t0.01\t0.2\t0\t0\t0\t0"),
+    ],
+)
+def test_prepare_acquisition_serializes_and_confirms_fast_profiles(
+    profile, profile_code, profile_status
+):
+    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t16", profile_status)
+    acquisition = CurrentHoldAcquisitionProof(
+        current_a=0.001,
+        source_range_a=0.001,
+        voltage_limit_v=0.2,
+        measurement_count=3,
+        measurement_profile=profile,
+    )
+
+    M4RuntimeController(transport, runtime_config()).prepare_current_hold_acquisition(acquisition)
+
+    assert transport.writes[0].endswith(f",{profile_code})")
+
+
+def test_prepare_acquisition_rejects_profile_queryback_mismatch():
+    transport = FakeRuntimeTransport(
+        status_line("prepared"), "0\t0\t0\t16", "2\t0.1\t0.2\t0\t0\t0\t0"
+    )
+    acquisition = CurrentHoldAcquisitionProof(
+        current_a=0.001,
+        source_range_a=0.001,
+        voltage_limit_v=0.2,
+        measurement_count=3,
+    )
+
+    with pytest.raises(TransportProtocolError, match="do not match"):
+        M4RuntimeController(transport, runtime_config()).prepare_current_hold_acquisition(
+            acquisition
+        )
+
+
 def test_prepare_timestamp_proof_requires_one_external_reading_and_serializes_run_id():
-    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t16")
+    transport = FakeRuntimeTransport(status_line("prepared"), "0\t0\t0\t16", PROFILE_1_STATUS)
     config = runtime_config(io=DigitalIOConfig(start_edge="rising"))
     acquisition = CurrentHoldAcquisitionProof(
         current_a=0.001,
@@ -602,6 +698,7 @@ def test_prepare_timestamp_proof_requires_one_external_reading_and_serializes_ru
         "oe_m5_prepare_timestamp_proof(42,0.001,0.001,0.20000000000000001,2,0.01,1,1,1,2,3,1,1,1)",
         "print(oe_m4_status())",
         "print(oe_m5_buffer_status())",
+        "print(oe_m5_measurement_profile_status())",
     ]
 
 
@@ -610,6 +707,7 @@ def test_prepare_timestamp_proof_requires_one_external_reading_and_serializes_ru
     [
         {"measurement_count": 2},
         {"start_mode": StartMode.IMMEDIATE},
+        {"measurement_profile": K2460MeasurementProfile.NPLC_0_1},
     ],
 )
 def test_prepare_timestamp_proof_rejects_wrong_acquisition_shape(changes):
@@ -762,6 +860,51 @@ def test_offset_buffer_chunks_are_retryable_and_discard_is_explicit():
         "oe_m5_discard_buffer()",
         "print(oe_m5_buffer_status())",
     ]
+
+
+def test_read_buffer_chunk_after_recover_reads_retained_records():
+    data = "0.001,0.1025,0,136,8,0.001,0.1026,0.0825,136,8"
+    transport = FakeRuntimeTransport(
+        status_line("idle", block=7),
+        status_line("idle", block=7),
+        "2\t1\t2\t2",
+        data,
+    )
+    controller = M4RuntimeController(transport, runtime_config())
+
+    assert controller.recover().state == RuntimeState.IDLE
+    chunk = controller.read_buffer_chunk(offset=0, max_records=2)
+
+    assert [record.sample_index for record in chunk.records] == [0, 1]
+    assert chunk.total_records == 2 and chunk.final
+    assert len(chunk.records_sha256) == 64
+    assert "oe_m5_discard_buffer()" not in transport.writes
+    assert transport.writes == [
+        "oe_m4_recover()",
+        "print(oe_m4_status())",
+        "print(oe_m4_status())",
+        "print(oe_m5_buffer_status())",
+        "oe_m5_print_buffer(1,2)",
+    ]
+
+
+@pytest.mark.parametrize(
+    ("state", "output", "message"),
+    [
+        ("prepared", 0, "stopped runtime state"),
+        ("waiting_start", 0, "stopped runtime state"),
+        ("running", 0, "stopped runtime state"),
+        ("idle", 1, "confirmed output OFF"),
+    ],
+)
+def test_buffer_retrieval_rejects_active_or_output_on_state(state, output, message):
+    transport = FakeRuntimeTransport(status_line(state, output=output))
+    controller = M4RuntimeController(transport, runtime_config())
+
+    with pytest.raises(TransportProtocolError, match=message):
+        controller.read_buffer_chunk(offset=0, max_records=2)
+
+    assert transport.writes == ["print(oe_m4_status())"]
 
 
 def test_prepare_rejects_config_limits_off_mode_and_event_poll_before_write():

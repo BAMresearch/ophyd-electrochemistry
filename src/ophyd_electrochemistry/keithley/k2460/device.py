@@ -20,7 +20,7 @@ from event_model.documents import DataKey, PartialEvent
 from ophyd.device import Device
 from ophyd.status import Status
 
-from ...acquisition import AcquisitionRequest, StartMode
+from ...acquisition import AcquisitionRequest, PreparedAcquisition, StartMode
 from ...exceptions import (
     AcquisitionAborted,
     ElectrochemistryError,
@@ -39,6 +39,7 @@ from ...measurement import (
     source_setpoint_unit,
 )
 from ...protocols import CurrentPulseSequence, GalvanostaticHold
+from ...serialization import request_sha256
 from ...state import DeviceState
 from ...validation import integer, positive, text
 
@@ -54,7 +55,9 @@ class AcquisitionBackend(Protocol):
 
     def start_edge(self) -> str: ...
 
-    def prepare(self, request: AcquisitionRequest, *, acquisition_id: str) -> object: ...
+    def prepare(
+        self, request: AcquisitionRequest, *, acquisition_id: str
+    ) -> PreparedAcquisition: ...
 
     def kickoff(self) -> None: ...
 
@@ -152,6 +155,8 @@ class Keithley2460Device(Device):
         self._acquisition_id: str | None = None
         self._completion_status: Status | None = None
         self._completion_monitor_started = False
+        self._prepared_acquisition: PreparedAcquisition | None = None
+        self._effective_completion_timeout_s: float | None = None
         self._retained_schema: MeasurementSchema | None = None
         self._retained_metadata: RetainedBufferMetadata | None = None
         self._emitted = 0
@@ -267,21 +272,33 @@ class Keithley2460Device(Device):
             acquisition_id = text(self._acquisition_id_factory(), "acquisition_id")
             status = Status(obj=self)
             self._state = DeviceState.PREPARING
-            self._request = value
-            self._acquisition_id = acquisition_id
-            self._completion_status = Status(obj=self)
-            self._completion_monitor_started = False
-            self._retained_schema = None
-            self._retained_metadata = None
-            self._emitted = 0
-            self._snapshot = None
-            self._snapshot_timestamp = None
 
         def action() -> None:
-            self._backend.prepare(value, acquisition_id=acquisition_id)
+            prepared = self._backend.prepare(value, acquisition_id=acquisition_id)
+            if not isinstance(prepared, PreparedAcquisition):
+                raise ValidationError("Backend prepare must return a PreparedAcquisition")
+            if prepared.request_sha256 != request_sha256(value):
+                raise ValidationError("Backend prepared the wrong acquisition request")
             state, output = self._inspect()
             if state != DeviceState.PREPARED or output is not False:
                 raise ShutdownUnconfirmed("Prepare did not confirm PREPARED with output OFF")
+            effective_timeout = max(
+                self._completion_timeout_s,
+                prepared.completion_bound_s
+                + max(prepared.communication_margin_s, 2 * self._poll_period_s),
+            )
+            with self._lock:
+                self._request = value
+                self._acquisition_id = acquisition_id
+                self._completion_status = Status(obj=self)
+                self._completion_monitor_started = False
+                self._prepared_acquisition = prepared
+                self._effective_completion_timeout_s = effective_timeout
+                self._retained_schema = None
+                self._retained_metadata = None
+                self._emitted = 0
+                self._snapshot = None
+                self._snapshot_timestamp = None
 
         self._start_worker(status, action)
         return status
@@ -327,15 +344,23 @@ class Keithley2460Device(Device):
             status = self._completion_status
             if self._completion_monitor_started or status.done:
                 return status
+            if self._effective_completion_timeout_s is None:
+                return _failed_status(
+                    self,
+                    ElectrochemistryError(
+                        "Complete requires reviewed timing from successful prepare"
+                    ),
+                )
             self._completion_monitor_started = True
+            completion_timeout_s = self._effective_completion_timeout_s
 
         def monitor() -> None:
-            deadline = time.monotonic() + self._completion_timeout_s
+            deadline = time.monotonic() + completion_timeout_s
             try:
                 while True:
                     outcome = self._backend.completion()
-                    state, output = self._inspect()
                     if outcome is not None:
+                        state, output = self._inspect()
                         if state != DeviceState.COMPLETE or output is not False:
                             raise ShutdownUnconfirmed(
                                 "Normal completion did not confirm COMPLETE with output OFF"
@@ -432,6 +457,17 @@ class Keithley2460Device(Device):
         with self._lock:
             if metadata.acquisition_id != self._acquisition_id:
                 raise RetainedDataError("Backend returned the wrong retained acquisition")
+            prepared = self._prepared_acquisition
+            if prepared is None:
+                raise RetainedDataError("Retained data lack a successful prepare result")
+            if metadata.request_sha256 != prepared.request_sha256:
+                raise RetainedDataError("Retained request digest differs from prepare")
+            if metadata.program_sha256 != prepared.program_sha256:
+                raise RetainedDataError("Retained program digest differs from prepare")
+            if metadata.expected_records != prepared.expected_records:
+                raise RetainedDataError("Retained record count differs from prepare")
+            if metadata.capacity_records != prepared.capacity_records:
+                raise RetainedDataError("Retained capacity differs from prepare")
             self._retained_schema = schema
             self._retained_metadata = metadata
             return schema, metadata
@@ -588,11 +624,34 @@ class Keithley2460Device(Device):
             acquisition_id = self._acquisition_id or "none"
             start_edge = self._start_edge
             retained_schema = self._retained_schema
+            prepared = self._prepared_acquisition
+            effective_completion_timeout_s = self._effective_completion_timeout_s
         backend = type(self._backend)
         return {
             self._field_name("backend"): f"{backend.__module__}.{backend.__qualname__}",
             self._field_name("poll_period"): self._poll_period_s,
             self._field_name("completion_timeout"): self._completion_timeout_s,
+            self._field_name("completion_timeout_effective"): (
+                0.0 if effective_completion_timeout_s is None else effective_completion_timeout_s
+            ),
+            self._field_name("prepared_completion_bound"): (
+                0.0 if prepared is None else prepared.completion_bound_s
+            ),
+            self._field_name("prepared_communication_margin"): (
+                0.0 if prepared is None else prepared.communication_margin_s
+            ),
+            self._field_name("prepared_request_sha256"): (
+                "unavailable" if prepared is None else prepared.request_sha256
+            ),
+            self._field_name("prepared_program_sha256"): (
+                "unavailable" if prepared is None else prepared.program_sha256
+            ),
+            self._field_name("prepared_expected_records"): (
+                0 if prepared is None else prepared.expected_records
+            ),
+            self._field_name("prepared_capacity_records"): (
+                0 if prepared is None else prepared.capacity_records
+            ),
             self._field_name("collection_chunk_records"): self._collection_chunk_records,
             self._field_name("start_mode"): start_mode,
             self._field_name("start_edge"): start_edge,
@@ -633,7 +692,13 @@ class Keithley2460Device(Device):
                 "dtype": dtype,  # type: ignore[typeddict-item]
                 "shape": [],
             }
-            if suffix in ("poll_period", "completion_timeout"):
+            if suffix in (
+                "poll_period",
+                "completion_timeout",
+                "completion_timeout_effective",
+                "prepared_completion_bound",
+                "prepared_communication_margin",
+            ):
                 result[key]["units"] = "s"
         return result
 
@@ -673,6 +738,8 @@ class Keithley2460Device(Device):
         with self._lock:
             self._retained_schema = None
             self._retained_metadata = None
+            self._prepared_acquisition = None
+            self._effective_completion_timeout_s = None
             self._emitted = 0
             self._snapshot = None
             self._snapshot_timestamp = None

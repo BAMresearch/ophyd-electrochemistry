@@ -51,24 +51,34 @@ export failure stops the sequence and leaves that acquisition retained.
 ## Implemented lifecycle
 
 - `prepare()` creates a unique acquisition ID, delegates bounded backend
-  validation and requires PREPARED with output OFF.
+  validation, requires PREPARED with output OFF, and stores a validated
+  `PreparedAcquisition` identity/storage/timing result for this request. A
+  returned request digest must match the submitted request.
 - `kickoff()` returns an Ophyd `Status`. Immediate mode requires RUNNING or an
   already-complete short program. External mode succeeds at WAITING_START with
   output OFF; it does not wait for START.
 - `complete()` returns the same acquisition Status on repeated calls and uses a
   background monitor. Normal completion requires COMPLETE and confirmed output
-  OFF. Abort, local START timeout and faults fail acquisition completion.
+  OFF. Its host watchdog is recalculated after every successful prepare from
+  the backend-reviewed local completion bound and communication margin, with
+  constructor `completion_timeout_s` retained only as a minimum. Abort, local
+  START timeout and faults fail acquisition completion.
 - `abort()` has a distinct successful shutdown Status while failing the
   acquisition Status. `recover()` requires ABORTED or ERROR and confirms IDLE/OFF.
 - `stop()` is bounded and synchronous for Bluesky cleanup. `unstage()` confirms
   output OFF before closing the backend. Pause aborts; resume is rejected.
 - `describe_collect()` and `collect()` emit the fixed M5 electrochemistry stream.
   Collection is terminal-only and requests retryable offset-addressed chunks;
-  it neither materializes the full buffer in the Device nor discards retained data.
+  it neither materializes the full buffer in the Device nor discards retained
+  data. Before reading chunks, acquisition ID, request/program digests, expected
+  records and capacity must match the successful prepare result.
 - Terminal `trigger()` latches the most recent retained record for `read()`.
   A live running snapshot remains open work.
 - Diagnostic export and reason-bearing exact-acquisition discard remain explicit
 operations. Collection does not imply durable archival or authorize discard.
+Rejected re-preparation leaves an earlier retained acquisition's identity and
+collection path intact. Explicit discard clears its prepared/effective watchdog
+metadata before another request is accepted.
 
 `collection_chunk_records` is the only runtime-configurable field in this slice.
 It defaults to 128 and is bounded to 1–4,096 records. Configuration changes are
@@ -77,6 +87,12 @@ remain constructor/backend configuration rather than mutable Ophyd settings.
 The backend-selected `start_edge` (`rising`, `falling` or `either`) is reported
 as read-only Device configuration after staging. It belongs to the commissioned
 I/O profile and cannot be changed through `configure()` while running a plan.
+`read_configuration()` reports `completion_timeout` as the configured minimum,
+plus `prepared_completion_bound`, `prepared_communication_margin`, and the
+resulting `completion_timeout_effective`. It also reports the prepared request
+and program SHA-256 digests plus expected and capacity record counts. Numeric
+prepared/effective values are zero and digests are `unavailable` until a prepare
+succeeds; they are replaced, not accumulated, for each new acquisition.
 
 When a `ClockMapping` exists, event-envelope time is mapped from the instrument
 timestamp. Otherwise the required Bluesky event envelope uses host emission

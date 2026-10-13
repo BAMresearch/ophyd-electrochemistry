@@ -28,6 +28,14 @@ instrument compliance and the selected terminals/sense configuration, allocate
 run-specific storage, install/check the runtime, verify output OFF, and reach
 PREPARED. READY and BUSY remain deasserted. Preparation MUST NOT accept START or
 begin the trigger model; this resolves the earlier contradictory descriptions.
+Successful operational preparation MUST return a validated `PreparedAcquisition`
+with request/program digests, expected/capacity record bounds, a backend-reviewed
+local completion bound and a communication-observation margin. For external
+start, the local bound MUST include the complete configured START wait followed
+by the complete achieved program duration. The request digest MUST match the
+submitted request before preparation is accepted. Failed re-preparation MUST
+preserve the identity, timing metadata and collectability of an earlier retained
+acquisition; after explicit disposition, stale bounds MUST NOT be reused.
 
 ## C03 — Kickoff and completion
 
@@ -44,6 +52,10 @@ acquisition. It MAY be called immediately after kickoff. It MUST NOT request
 early termination; it waits for normal completion, abort, or fault. Repeated
 calls MUST refer to the same acquisition outcome. It succeeds only after normal
 termination and confirmed safe output/flags, and fails on abort/fault/timeout.
+The host watchdog MUST be recomputed for every successful prepare from that
+request's reviewed bounds. A constructor `completion_timeout_s` MAY remain as a
+backwards-compatible minimum, but changing finite program duration MUST NOT
+require users to repurpose per-transaction or shutdown timeouts.
 
 ## C04 — Abort and recovery
 
@@ -87,10 +99,16 @@ single-point acquisition is deferred until it has its own validated mode.
 `collect()` MUST yield partial events with `time`, `data`, and `timestamps`,
 without `uid`, `descriptor`, or `seq_num`. It MUST work after normal completion
 and after a confirmed abort/fault when storage is readable. Version one collects
-only a frozen terminal buffer. Repeated collection yields only previously
-unemitted records; buffer retrieval MUST NOT clear data. An explicit diagnostic
-export permits recovery if document emission fails. New preparation MUST reject
-uncollected previous data unless explicitly archived/discarded by the operator.
+only a frozen terminal buffer. A successful recovery to output-OFF IDLE MUST
+preserve access to that frozen buffer; IDLE does not change the recorded
+acquisition outcome or imply that data were archived. Repeated collection yields
+only previously unemitted records; buffer retrieval MUST NOT clear data. An
+explicit diagnostic export permits recovery if document emission fails. New
+preparation MUST reject uncollected previous data unless explicitly
+archived/discarded by the operator.
+Before emitting records, retained metadata MUST match the successful prepare
+result's acquisition ID, request/program digests, expected record count and
+capacity. A mismatch MUST fail collection without discarding the buffer.
 
 ## C07 — Configuration and transport
 

@@ -1,8 +1,154 @@
 # Template validation record
 
-Updated: 2026-10-10. Scope: contracts, transport/runtime commissioning, bounded
+Updated: 2026-10-13. Scope: contracts, transport/runtime commissioning, bounded
 nominal-100-ohm tests, a narrow target-buffer proof, and the first operational
 simulator-backed M6 Flyer; not operational hardware sourcing or acquisition.
+
+## Per-request completion watchdog
+
+Operational backend preparation now returns a validated immutable
+`PreparedAcquisition`, binding request/program digests, expected/capacity record
+bounds and operational timing. The simulator compiler defines its local
+completion bound as achieved quantized duration plus the complete configured
+local START wait for external-start requests, separately reports the configured
+one-transaction communication margin, and applies the configured buffer ceiling.
+`Keithley2460Device` verifies the request digest and recomputes the effective
+host watchdog after every successful prepare as the larger of its constructor
+minimum and the prepared bound plus the larger of the communication margin or
+two host polling periods. Explicit disposition clears prior timing values.
+
+Contract tests cover immediate and external-start arithmetic, a run delayed
+beyond a deliberately undersized constructor minimum, replacement across
+successive short and long requests, malformed prepare results, and clearing a
+previous value after failed preparation. Unit tests reject nonfinite or
+nonpositive prepared bounds, malformed digests/counts and programs exceeding a
+configured buffer ceiling. Additional contract tests reject a result for a
+different request, cross-check retained request/program/capacity metadata, and
+show that rejected re-preparation leaves an earlier retained acquisition
+collectable under its original identity. The living quickstart now relies on
+this prepare contract rather than passing a manually derived per-request timeout
+to the device. These are offline simulator/host-contract results; a future
+target adapter must provide independently reviewed bounds from its own
+commissioned runtime. The complete offline suite reports 359 passing tests.
+
+## Recovered-IDLE retained-buffer retrieval
+
+The host controller now permits bounded `read_buffer_chunk()` calls after
+`recover()` has safely returned the runtime to output-OFF IDLE. This matches the
+retention contract and the instrument-side guard, which already permits reads
+only while the trigger model is inactive and output is off. PREPARED,
+WAITING_START, RUNNING and output-on IDLE are rejected before querying buffer
+metadata or records. Retrieval remains offset-bounded, deterministic and
+non-destructive; IDLE does not alter the original acquisition outcome or imply
+durable archival.
+
+Focused tests exercise a recover-then-read sequence with retained records and
+verify each rejected state. The guarded M5 notebook's independent audit now
+rereads every post-recovery chunk from a fresh connection and compares the
+records with the checked archive. This is an offline host-lifecycle correction;
+the TSP artifact and hardware capability claims are unchanged. The complete
+offline suite reports 334 passing tests; Ruff lint/format, strict mypy, strict
+MkDocs and `git diff --check` also pass.
+
+## Measurement profiles commissioned on the resistor
+
+Runtime v14 adds three versioned K2460 commissioning profiles at 1, 0.1 and
+0.01 NPLC. Each fixes the voltage measurement range at 0.2 V, disables
+autorange, filtering and relative measurement, and performs one autozero while
+output is off before leaving autozero disabled. The host sends only an
+allowlisted integer selector and queries back the applied code, NPLC, range and
+four switch states before accepting PREPARED. `CurrentHoldAcquisitionProof`
+rejects strings, arbitrary settings and voltage limits above the fixed range.
+
+Raw archive v3 records the versioned profile identity. Its allowlisted parser
+continues to read v2 and v1 archives as the original 1 NPLC policy. Focused
+runtime/archive tests pass for all selectors, query-back mismatch, timestamp
+proof pinning, checksums and legacy decoding. The profile selector was added to
+the guarded M5 notebook; the timestamp notebook is explicitly pinned to 1 NPLC.
+The complete offline suite reports 329 passing tests; Ruff lint/format, strict
+source mypy, strict MkDocs and `git diff --check` also pass.
+
+The first intended v13-to-v14 target replacement did not begin: two attempts to
+open the VISA raw socket failed before any command was sent. Connectivity was
+later restored without rebooting. Read-only preflight found the exact v13
+runtime IDLE, trigger model idle, output OFF, programmed level 0 A, an empty
+buffer, and zero unread warnings/errors. After explicit authorization, the
+guarded replacement path installed the exact packaged v14 artifact with SHA-256
+`c4c40686bf2016f5c55c820b5d0bd34f78915dd10e6a77823d0a9cad245c6e82`.
+The installation session and an independent query-only session both confirmed
+v14 IDLE, trigger model idle, output OFF, 0 A, no retained records, and zero
+unread warnings/errors. No acquisition was prepared or armed during installation.
+
+All three profiles were then exercised with immediate 256-reading acquisitions
+at +1 mA and a 0.2 V limit on the front-terminal four-wire nominal 100 ohm
+resistor. The fixed 0.2 V range and queried profile settings matched before each
+arm. Results were:
+
+| NPLC | Mean interval | Mean rate | Voltage population SD | Mean V/I |
+|---:|---:|---:|---:|---:|
+| 1 | 40.8206 ms | 24.497 Hz | 0.982 µV | 102.4960 Ω |
+| 0.1 | 4.83012 ms | 207.034 Hz | 275.822 µV | 102.5000 Ω |
+| 0.01 | 1.21776 ms | 821.183 Hz | 302.250 µV | 102.5332 Ω |
+
+Every run produced exactly 256 strictly ordered timestamps, source status 200
+for every record, and the documented measurement-status pattern 264 for the
+first record then 8. Warning/error counts remained zero and output OFF/0 A was
+confirmed after each run. Each v3 archive decoded successfully and a fresh
+session matched all retained live records to it before any authorized discard.
+Each instrument buffer was then discarded only after separate user
+authorization; a final fresh session confirmed v14 IDLE, trigger model idle,
+output OFF, 0 A, an empty buffer, and zero warnings/errors.
+The complete comparison and archive checksums are retained in
+[`k2460-2026-10-12-measurement-profile-benchmark.json`](evidence/k2460-2026-10-12-measurement-profile-benchmark.json).
+
+These rates characterize paired source-readback/voltage acquisition on this
+firmware and setup; they are not guaranteed maxima. The uncalibrated resistor
+does not establish absolute accuracy, and first-reading-relative buffer time
+does not establish external START or aperture timing. No timestamp or
+operational Ophyd-adapter hardware gate is promoted by this benchmark.
+
+## 10,000-record fill-once and transfer proof
+
+The same confirmed resistor setup completed an immediate +1 mA acquisition at
+0.01 NPLC into an exact 10,000-record standard fill-once buffer. Host-observed
+acquisition time was 12.181 s; buffer-relative timestamps increased strictly
+across 12.17023136 s, corresponding to 821.595 paired I/V records/s. The full
+extent was 1–10,000 with no wrap. Retrieval used bounded 4096+4096+1808-record
+chunks, and retrying the first chunk was identical.
+
+The v3 archive decoded equal to the in-memory record set. Before recovery, a
+fresh VISA session reread and matched every retained record. Source status was
+200 throughout; measurement status was 264 on the first record and 8 thereafter.
+Warning/error counts remained zero. After recovery retained all records at
+IDLE/OFF/0 A, explicit user authorization permitted discard; another fresh
+session confirmed an empty 10,000-record-capacity buffer and the same safe state.
+See the [archive](evidence/k2460-2026-10-12-capacity-10000-archive.json),
+[summary](evidence/k2460-2026-10-12-capacity-10000-evidence.json), and
+[discard record](evidence/k2460-2026-10-12-capacity-10000-discard.json).
+
+This is strong bounded fill-once/no-wrap and multi-chunk transfer evidence, but
+it does not establish the configured 250,000-record ceiling, calibrated
+accuracy, external-START/aperture timing, clock-to-epoch mapping, or a complete
+G03/G04/G05/G06 gate.
+
+## Rejected external-START timestamp attempt
+
+On 12 October 2026 the front-terminal four-wire nominal 100 ohm resistor and
+physical output-off state were reconfirmed. Read-only identity/TSP/output checks
+passed at `169.254.113.151`, and the exact v13 volatile runtime was installed
+at IDLE/OFF/0 A with an empty buffer. The first arm was correctly rejected
+because START read high; force-safe plus recovery returned IDLE/OFF/0 A.
+
+A second attempt reached WAITING_START/OFF/READY, but the generator transitioned
+before the operator had a scope or logic analyzer ready. The run completed one
+reading and reported `start_overrun=true`. At 1.000013 mA it measured
+102.512836 mV; the raw source and measurement statuses were 200 and 8. The four
+run-tagged instrument event markers were captured, but there was no independent
+physical START/BUSY trace. The attempt is therefore explicitly rejected for
+timestamp validation. Its checksummed diagnostic record is
+[`k2460-2026-10-12-timestamp-proof-rejected.json`](evidence/k2460-2026-10-12-timestamp-proof-rejected.json).
+Only after that record was verified was the single retained reading explicitly
+discarded; IDLE/OFF/0 A and an empty buffer were confirmed. G03/G06 remain open.
 
 ## Available-sequence assessment
 
@@ -19,7 +165,8 @@ Strict MkDocs and `git diff --check` passed after adding the page and navigation
 
 ## Timestamp-proof fixture prepared offline
 
-Runtime v13 and `notebooks/keithley_2460_timestamp_proof.ipynb` add a guarded
+Runtime v14 retains the v13 timestamp fixture, and
+`notebooks/keithley_2460_timestamp_proof.ipynb` provides a guarded
 one-reading proof that brackets BUSY assertion and digitization with uniquely
 tagged instrument event-log timestamps. It retrieves the buffered absolute
 timestamp, NPLC and detected line frequency only after a terminal/output-off

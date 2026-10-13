@@ -1,0 +1,172 @@
+{
+  "assessment": {
+    "hardware_gate_claim": false,
+    "result": "REJECTED",
+    "reasons": [
+      "No oscilloscope or logic-analyzer trace observed the physical START edge or BUSY edge.",
+      "The terminal runtime status reported start_overrun=true.",
+      "The acquisition began before the operator was ready to produce and observe a controlled single START edge."
+    ]
+  },
+  "buffer_after_event_capture": {
+    "capacity_records": 16,
+    "end_index": 1,
+    "record_count": 1,
+    "start_index": 1
+  },
+  "event_counts": {
+    "after_consuming_remote_unread_information": {
+      "errors": 0,
+      "information_remote_unread": 0,
+      "warnings": 0
+    },
+    "before_arm": {
+      "errors": 1,
+      "information": 2,
+      "warnings": 1
+    },
+    "before_consuming_remote_unread_information": {
+      "errors": 1,
+      "information": 9,
+      "warnings": 2
+    }
+  },
+  "events_consumed": [
+    {
+      "event_number": 4917,
+      "message": "Reading buffer defbuffer1 is 0% filled",
+      "node_id": 2,
+      "severity": 4,
+      "utc_nanoseconds_part": 916234580,
+      "utc_seconds": 1791809941
+    },
+    {
+      "event_number": 4917,
+      "message": "Reading buffer defbuffer2 is 0% filled",
+      "node_id": 2,
+      "severity": 4,
+      "utc_nanoseconds_part": 921454440,
+      "utc_seconds": 1791809941
+    },
+    {
+      "event_number": 2753,
+      "message": "Trigger model is not optimized for speed due to multiple blocks waiting on same event",
+      "node_id": 2,
+      "severity": 4,
+      "utc_nanoseconds_part": 181601840,
+      "utc_seconds": 1791810789
+    },
+    {
+      "event_number": 2731,
+      "message": "Trigger model path #1 has been initiated",
+      "node_id": 2,
+      "severity": 4,
+      "utc_nanoseconds_part": 181637660,
+      "utc_seconds": 1791810789
+    },
+    {
+      "event_number": 2734,
+      "message": "TM path #1 block #7 logged: OE_TS_PRE_BUSY:2026101202",
+      "node_id": 2,
+      "severity": 4,
+      "utc_nanoseconds_part": 408405940,
+      "utc_seconds": 1791810824
+    },
+    {
+      "event_number": 2735,
+      "message": "TM path #1 block #9 logged: OE_TS_POST_BUSY:2026101202",
+      "node_id": 2,
+      "severity": 4,
+      "utc_nanoseconds_part": 408432460,
+      "utc_seconds": 1791810824
+    },
+    {
+      "event_number": 2736,
+      "message": "TM path #1 block #12 logged: OE_TS_PRE_MEASURE:2026101202",
+      "node_id": 2,
+      "severity": 4,
+      "utc_nanoseconds_part": 410882100,
+      "utc_seconds": 1791810824
+    },
+    {
+      "event_number": 2737,
+      "message": "TM path #1 block #14 logged: OE_TS_POST_MEASURE:2026101202",
+      "node_id": 2,
+      "severity": 4,
+      "utc_nanoseconds_part": 451909640,
+      "utc_seconds": 1791810824
+    },
+    {
+      "event_number": 2732,
+      "message": "Trigger model path #1 has been idled",
+      "node_id": 2,
+      "severity": 4,
+      "utc_nanoseconds_part": 453806940,
+      "utc_seconds": 1791810824
+    }
+  ],
+  "instrument_identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "manual": {
+    "part": "2460-901-01C",
+    "revision": "C / September 2019",
+    "url": "https://download.tek.com/manual/2460-901-01C_Sept_2019_Ref.pdf"
+  },
+  "proof_run_id": 2026101202,
+  "raw_record": {
+    "buffer_relative_time_s": 0.0,
+    "measured_voltage_v": 0.10251283646,
+    "measurement_status": 8,
+    "sample_index": 0,
+    "source_current_a": 0.0010000134353,
+    "source_status": 200
+  },
+  "recorded_at_utc": "2026-10-12T12:25:30Z",
+  "request": {
+    "current_a": 0.001,
+    "measurement_count": 1,
+    "source_range_a": 0.001,
+    "start_mode": "external_trigger",
+    "voltage_limit_v": 0.2
+  },
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v13",
+    "script_name": "oe_m4_5f667d74698798e6eef9ec9b",
+    "sha256": "5f667d74698798e6eef9ec9b505e802d8cc96c30d4f9bd496ebac77449c97d8e"
+  },
+  "schema": "ophyd-electrochemistry/k2460-timestamp-proof-attempt-v1",
+  "sha256": "bbbd4fea45dc275817641da8e618680f64b00bb92195b9a8761ea4627b99ed14",
+  "scope": null,
+  "status_after_recovery": {
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_IDLE",
+    "model_substate": "trigger.STATE_IDLE",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": true,
+    "state": "idle",
+    "timer_overrun": false
+  },
+  "terminal_before_recovery": {
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_IDLE",
+    "model_substate": "trigger.STATE_IDLE",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": true,
+    "state": "complete",
+    "timer_overrun": false
+  },
+  "timestamp_reading": {
+    "fractional_seconds": 0.45178434,
+    "line_frequency_hz": 50,
+    "nplc": 1.0,
+    "relative_timestamp_s": 0.0,
+    "utc_seconds": 1791810824
+  }
+}

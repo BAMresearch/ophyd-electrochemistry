@@ -559,11 +559,11 @@ class SimulatedRuntime:
 
     def _capacity(self) -> int:
         override = self.faults.buffer_capacity_records
-        return (
-            self.capabilities.max_buffer_records
-            if override is None
-            else min(override, self.capabilities.max_buffer_records)
+        configured = min(
+            self.capabilities.max_buffer_records,
+            self.config.buffer.capacity_ceiling_records,
         )
+        return configured if override is None else min(override, configured)
 
     def _event(self, kind: str, index: int) -> None:
         if kind == "start_timeout":

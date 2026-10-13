@@ -1,6 +1,6 @@
 """Validated models, transport, simulation, and a simulator-backed Ophyd Flyer."""
 
-from .acquisition import AcquisitionRequest, StartMode
+from .acquisition import AcquisitionRequest, PreparedAcquisition, StartMode
 from .measurement import (
     MEASUREMENT_SCHEMA,
     ClockMapping,
@@ -48,6 +48,7 @@ __all__ = [
     "MultisineSpec",
     "PRBSWaveform",
     "PotentiostaticHold",
+    "PreparedAcquisition",
     "RecordChunk",
     "RetainedBuffer",
     "RetainedBufferMetadata",

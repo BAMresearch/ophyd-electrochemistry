@@ -7,7 +7,7 @@
 -- The host accepts only this packaged source and verifies the ABI.
 
 oe_m4_runtime_abi = "oe-k2460-m4-hold-v1"
-oe_m4_runtime_build = "m4-finite-current-hold-v13"
+oe_m4_runtime_build = "m4-finite-current-hold-v14"
 
 oe_m4_state = "idle"
 oe_m4_mode = "none"
@@ -24,6 +24,7 @@ oe_m4_timeout_block = 0
 oe_m5_buffer = nil
 oe_m5_buffer_capacity = 0
 oe_m5_measurement_count = 0
+oe_m5_measurement_profile_code = 0
 
 local function oe_m4_require_number(value, name)
     if type(value) ~= "number" or value ~= value then
@@ -98,9 +99,21 @@ function oe_m4_initialize()
     oe_m4_mode = "none"
     oe_m4_start_level = -1
     oe_m5_measurement_count = 0
+    oe_m5_measurement_profile_code = 0
 end
 
-function oe_m5_prepare_current_hold_acquisition(
+local function oe_m5_nplc_for_profile(profile_code)
+    oe_m4_require_number(profile_code, "measurement_profile")
+    if profile_code ~= math.floor(profile_code) then
+        error("M5 measurement profile code must be an integer")
+    end
+    if profile_code == 1 then return 1 end
+    if profile_code == 2 then return 0.1 end
+    if profile_code == 3 then return 0.01 end
+    error("M5 measurement profile code is not allowlisted")
+end
+
+function oe_m5_prepare_profiled_current_hold_acquisition(
     current_a,
     source_range_a,
     voltage_limit_v,
@@ -115,7 +128,8 @@ function oe_m5_prepare_current_hold_acquisition(
     start_line,
     ready_asserted,
     busy_asserted,
-    start_edge_mode)
+    start_edge_mode,
+    measurement_profile)
 
     oe_m4_require_number(measurement_count, "measurement_count")
     if measurement_count < 1 or measurement_count > 5000000 or
@@ -125,6 +139,10 @@ function oe_m5_prepare_current_hold_acquisition(
     if oe_m5_buffer ~= nil and oe_m5_buffer.n > 0 then
         error("retained M5 proof data must be explicitly discarded before prepare")
     end
+    if voltage_limit_v > 0.2 then
+        error("M5 voltage limit exceeds the fixed 0.2 V measurement range")
+    end
+    local measurement_nplc = oe_m5_nplc_for_profile(measurement_profile)
 
     oe_m4_prepare_current_hold(
         current_a,
@@ -163,8 +181,8 @@ function oe_m5_prepare_current_hold_acquisition(
     oe_m5_buffer.fillmode = buffer.FILL_ONCE
     smu.measure.func = smu.FUNC_DC_VOLTAGE
     smu.measure.autorange = smu.OFF
-    smu.measure.range = voltage_limit_v
-    smu.measure.nplc = 1
+    smu.measure.range = 0.2
+    smu.measure.nplc = measurement_nplc
     smu.measure.filter.enable = smu.OFF
     smu.measure.rel.enable = smu.OFF
     smu.measure.autozero.enable = smu.OFF
@@ -205,7 +223,54 @@ function oe_m5_prepare_current_hold_acquisition(
         oe_m4_timeout_block = 0
     end
     oe_m5_measurement_count = measurement_count
+    oe_m5_measurement_profile_code = measurement_profile
     oe_m4_state = "prepared"
+end
+
+function oe_m5_prepare_current_hold_acquisition(
+    current_a,
+    source_range_a,
+    voltage_limit_v,
+    measurement_count,
+    external_start,
+    start_timeout_s,
+    event_poll_s,
+    front_terminals,
+    remote_sense,
+    ready_line,
+    busy_line,
+    start_line,
+    ready_asserted,
+    busy_asserted,
+    start_edge_mode)
+
+    oe_m5_prepare_profiled_current_hold_acquisition(
+        current_a,
+        source_range_a,
+        voltage_limit_v,
+        measurement_count,
+        external_start,
+        start_timeout_s,
+        event_poll_s,
+        front_terminals,
+        remote_sense,
+        ready_line,
+        busy_line,
+        start_line,
+        ready_asserted,
+        busy_asserted,
+        start_edge_mode,
+        1)
+end
+
+function oe_m5_measurement_profile_status()
+    return oe_m5_measurement_profile_code,
+        smu.measure.nplc,
+        smu.measure.range,
+        smu.measure.autorange,
+        smu.measure.filter.enable,
+        smu.measure.rel.enable,
+        smu.measure.autozero.enable
 end
 
 function oe_m5_prepare_timestamp_proof(

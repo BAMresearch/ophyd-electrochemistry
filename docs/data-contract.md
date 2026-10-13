@@ -73,6 +73,12 @@ ABI/version/digest; contract revision; clock mapping and uncertainty; outcome,
 termination cause, and complete/partial status. Outcomes require terminal records
 or stop metadata because initial configuration cannot foresee an abort.
 
+Operational preparation binds the request/program digests, expected measurement
+records and effective buffer capacity in `PreparedAcquisition`. Before collection,
+terminal `RetainedBufferMetadata` must match those four prepared values plus the
+acquisition ID. This check detects stale or mis-associated buffers; a mismatch
+fails collection and never implies permission to discard retained data.
+
 ## Waveform provenance and sample mapping
 
 For PRBS/arbitrary/multisine programs in contract revision 0.2,

@@ -11,6 +11,7 @@ from ophyd_electrochemistry.keithley.k2460 import (
     K2460_BUFFER_SCHEMA,
     BufferedReading,
     CurrentHoldAcquisitionProof,
+    K2460MeasurementProfile,
     RuntimeRecordChunk,
     assemble_runtime_buffer_archive,
     runtime_buffer_archive_from_json,
@@ -88,7 +89,7 @@ def test_archive_is_canonical_checksummed_and_round_trips():
     assert runtime_buffer_archive_json(runtime_buffer_archive_from_json(encoded)) == encoded
 
 
-def test_archive_v2_preserves_external_start_and_reads_legacy_v1():
+def test_archive_v3_preserves_profile_and_reads_legacy_v2_and_v1():
     external = archive(
         request=CurrentHoldAcquisitionProof(
             current_a=0.001,
@@ -96,21 +97,35 @@ def test_archive_v2_preserves_external_start_and_reads_legacy_v1():
             voltage_limit_v=0.2,
             measurement_count=3,
             start_mode=StartMode.EXTERNAL_TRIGGER,
+            measurement_profile=K2460MeasurementProfile.NPLC_0_1,
         )
     )
     encoded = runtime_buffer_archive_json(external)
-    assert json.loads(encoded)["payload"]["request"]["start_mode"] == "external_trigger"
-    assert (
-        runtime_buffer_archive_from_json(encoded).request.start_mode == StartMode.EXTERNAL_TRIGGER
-    )
+    encoded_request = json.loads(encoded)["payload"]["request"]
+    assert encoded_request["start_mode"] == "external_trigger"
+    assert encoded_request["measurement_profile"] == "k2460_0p2v_0p1nplc_v1"
+    decoded_external = runtime_buffer_archive_from_json(encoded).request
+    assert decoded_external.start_mode == StartMode.EXTERNAL_TRIGGER
+    assert decoded_external.measurement_profile == K2460MeasurementProfile.NPLC_0_1
+
+    legacy_v2 = json.loads(runtime_buffer_archive_json(archive()))
+    legacy_v2["payload"]["schema"] = "ophyd-electrochemistry/k2460-buffer-archive-v2"
+    del legacy_v2["payload"]["request"]["measurement_profile"]
+    legacy_v2["sha256"] = sha256_json(canonical_json(legacy_v2["payload"]))
+    decoded_v2 = runtime_buffer_archive_from_json(canonical_json(legacy_v2))
+    assert decoded_v2.schema.endswith("v2")
+    assert decoded_v2.request.start_mode == StartMode.IMMEDIATE
+    assert decoded_v2.request.measurement_profile == K2460MeasurementProfile.NPLC_1
 
     legacy = json.loads(runtime_buffer_archive_json(archive()))
     legacy["payload"]["schema"] = "ophyd-electrochemistry/k2460-buffer-archive-v1"
     del legacy["payload"]["request"]["start_mode"]
+    del legacy["payload"]["request"]["measurement_profile"]
     legacy["sha256"] = sha256_json(canonical_json(legacy["payload"]))
     decoded = runtime_buffer_archive_from_json(canonical_json(legacy))
     assert decoded.schema.endswith("v1")
     assert decoded.request.start_mode == StartMode.IMMEDIATE
+    assert decoded.request.measurement_profile == K2460MeasurementProfile.NPLC_1
 
 
 def test_archive_accepts_current_and_predecessor_runtime_builds():
@@ -123,6 +138,7 @@ def test_archive_accepts_current_and_predecessor_runtime_builds():
     assert archive(runtime_build="m4-finite-current-hold-v11").runtime_build.endswith("v11")
     assert archive(runtime_build="m4-finite-current-hold-v12").runtime_build.endswith("v12")
     assert archive(runtime_build="m4-finite-current-hold-v13").runtime_build.endswith("v13")
+    assert archive(runtime_build="m4-finite-current-hold-v14").runtime_build.endswith("v14")
 
 
 def test_archive_writer_exclusively_creates_and_never_overwrites(tmp_path):

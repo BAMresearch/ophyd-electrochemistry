@@ -26,6 +26,7 @@ from ophyd_electrochemistry.exceptions import (
     AcquisitionAborted,
     RetainedDataError,
     UnsupportedCapabilityError,
+    ValidationError,
 )
 from ophyd_electrochemistry.keithley.k2460 import Keithley2460Device
 from ophyd_electrochemistry.simulation import FakeCell, FakeTransport, SimulatedRuntime
@@ -60,11 +61,14 @@ def pulse_request(mode: StartMode = StartMode.IMMEDIATE, *, count: int = 2) -> A
     )
 
 
-def device_stack() -> tuple[Keithley2460Device, SimulatedRuntime, FakeTransport]:
+def device_stack(
+    *, completion_timeout_s: float = 1, command_timeout_s: float = 1
+) -> tuple[Keithley2460Device, SimulatedRuntime, FakeTransport]:
     config = replace(
         example_config,
         timing=replace(
             example_config.timing,
+            command_timeout_s=command_timeout_s,
             external_start_timeout_s=0.03,
             poll_period_s=0.001,
         ),
@@ -80,7 +84,7 @@ def device_stack() -> tuple[Keithley2460Device, SimulatedRuntime, FakeTransport]
         backend,
         name="ec",
         poll_period_s=0.001,
-        completion_timeout_s=1,
+        completion_timeout_s=completion_timeout_s,
         shutdown_timeout_s=1,
         collection_chunk_records=2,
         acquisition_id_factory=lambda: next(ids),
@@ -183,6 +187,15 @@ def test_real_runengine_operates_device_and_emits_fixed_m5_schema(mode):
     assert configuration["ec_measurement_schema"] == "ophyd-electrochemistry/measurement-v2"
     assert "compliance" in configuration["ec_source_status_definition"]
     assert "no measurement-status bits" in configuration["ec_measurement_status_definition"]
+    expected_bound = 0.04 + (0.03 if mode == StartMode.EXTERNAL_TRIGGER else 0)
+    assert configuration["ec_completion_timeout"] == 1
+    assert configuration["ec_prepared_completion_bound"] == pytest.approx(expected_bound)
+    assert configuration["ec_prepared_communication_margin"] == 1
+    assert configuration["ec_completion_timeout_effective"] == pytest.approx(expected_bound + 1)
+    assert configuration["ec_prepared_request_sha256"] == runtime.retained_buffer().request_sha256
+    assert configuration["ec_prepared_program_sha256"] == runtime.retained_buffer().program_sha256
+    assert configuration["ec_prepared_expected_records"] == 4
+    assert configuration["ec_prepared_capacity_records"] == 20_000
     assert chunk_requests == [(0, 2), (2, 2)]
     assert device.read_configuration()["ec_start_edge"]["value"] == "rising"
 
@@ -389,6 +402,169 @@ def test_no_start_timeout_fails_completion_with_empty_collectable_buffer():
     assert device.describe_collect()["electrochemistry"]
     assert list(device.collect()) == []
     device.recover().wait(timeout=1)
+    device.unstage()
+
+
+@pytest.mark.parametrize(
+    ("mode", "expected_bound"),
+    [
+        (StartMode.IMMEDIATE, 0.04),
+        (StartMode.EXTERNAL_TRIGGER, 0.07),
+    ],
+)
+def test_prepare_derives_per_request_completion_watchdog(mode, expected_bound):
+    device, _, _ = device_stack(completion_timeout_s=0.001, command_timeout_s=0.002)
+    device.stage()
+
+    before = device.read_configuration()
+    assert before["ec_completion_timeout_effective"]["value"] == 0
+    device.prepare(request(mode)).wait(timeout=1)
+    after = device.read_configuration()
+
+    assert after["ec_completion_timeout"]["value"] == 0.001
+    assert after["ec_prepared_completion_bound"]["value"] == pytest.approx(expected_bound)
+    assert after["ec_prepared_communication_margin"]["value"] == 0.002
+    assert after["ec_completion_timeout_effective"]["value"] == pytest.approx(
+        expected_bound + 0.002
+    )
+    device.abort(reason="test-cleanup").wait(timeout=1)
+    device.unstage()
+
+
+def test_derived_watchdog_prevents_short_static_minimum_from_aborting_longer_run():
+    device, runtime, _ = device_stack(completion_timeout_s=0.001, command_timeout_s=0.001)
+    device.stage()
+    device.prepare(request()).wait(timeout=1)
+    device.kickoff().wait(timeout=1)
+    completion = device.complete()
+
+    time.sleep(0.01)  # Longer than the configured minimum, shorter than the derived bound.
+    runtime.advance_ticks(40)
+    completion.wait(timeout=1)
+
+    assert device.state == DeviceState.COMPLETE and device.output_enabled is False
+    device.unstage()
+
+
+def test_effective_watchdog_is_replaced_for_each_successive_request():
+    device, runtime, _ = device_stack(completion_timeout_s=0.001, command_timeout_s=0.001)
+    device.stage()
+    effective = []
+
+    for value, terminal_ticks in ((request(), 40), (pulse_request(count=10), 300)):
+        device.prepare(value).wait(timeout=1)
+        effective.append(device.read_configuration()["ec_completion_timeout_effective"]["value"])
+        device.kickoff().wait(timeout=1)
+        runtime.advance_ticks(terminal_ticks)
+        device.complete().wait(timeout=1)
+        acquisition_id = device.acquisition_id
+        assert acquisition_id is not None
+        device.discard_retained_data(
+            acquisition_id=acquisition_id, reason="successive-request-contract"
+        )
+
+    assert effective == pytest.approx([0.042, 0.302])
+    device.unstage()
+
+
+def test_failed_prepare_clears_previous_effective_watchdog():
+    device, runtime, backend = device_stack(completion_timeout_s=0.001, command_timeout_s=0.001)
+    device.stage()
+    device.prepare(request()).wait(timeout=1)
+    first = device.read_configuration()["ec_completion_timeout_effective"]["value"]
+    device.kickoff().wait(timeout=1)
+    runtime.advance_ticks(40)
+    device.complete().wait(timeout=1)
+    acquisition_id = device.acquisition_id
+    assert acquisition_id is not None
+    device.discard_retained_data(acquisition_id=acquisition_id, reason="contract-test")
+
+    prepare = backend.prepare
+
+    def malformed_prepare(value, *, acquisition_id):
+        prepare(value, acquisition_id=acquisition_id)
+        return object()
+
+    backend.prepare = malformed_prepare
+    with pytest.raises(ValidationError, match="PreparedAcquisition"):
+        device.prepare(request()).wait(timeout=1)
+
+    configuration = device.read_configuration()
+    assert first > 0
+    assert configuration["ec_completion_timeout_effective"]["value"] == 0
+    assert configuration["ec_prepared_completion_bound"]["value"] == 0
+    assert runtime.output is False
+    device.stop(success=False)
+    device.unstage()
+
+
+def test_rejected_reprepare_preserves_the_retained_acquisition_identity_and_data():
+    device, runtime, _ = device_stack()
+    device.stage()
+    device.prepare(request()).wait(timeout=1)
+    original_id = device.acquisition_id
+    device.kickoff().wait(timeout=1)
+    runtime.advance_ticks(40)
+    device.complete().wait(timeout=1)
+    original_timeout = device.read_configuration()["ec_completion_timeout_effective"]["value"]
+
+    with pytest.raises(RetainedDataError, match="discard retained acquisition"):
+        device.prepare(request()).wait(timeout=1)
+
+    assert device.state == DeviceState.COMPLETE
+    assert device.acquisition_id == original_id
+    assert (
+        device.read_configuration()["ec_completion_timeout_effective"]["value"] == original_timeout
+    )
+    assert [event["data"]["ec_sample_index"] for event in device.collect()] == [0, 1, 2, 3]
+    assert runtime.output is False
+    device.unstage()
+
+
+def test_prepare_rejects_a_result_for_a_different_request():
+    device, runtime, backend = device_stack()
+    device.stage()
+    prepare = backend.prepare
+
+    def wrong_request_prepare(value, *, acquisition_id):
+        prepared = prepare(value, acquisition_id=acquisition_id)
+        return replace(prepared, request_sha256="0" * 64)
+
+    backend.prepare = wrong_request_prepare
+    with pytest.raises(ValidationError, match="wrong acquisition request"):
+        device.prepare(request()).wait(timeout=1)
+
+    assert runtime.state == DeviceState.PREPARED and runtime.output is False
+    assert device.read_configuration()["ec_completion_timeout_effective"]["value"] == 0
+    device.stop(success=False)
+    device.unstage()
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    [
+        ("request_sha256", "0" * 64, "request digest"),
+        ("program_sha256", "0" * 64, "program digest"),
+        ("capacity_records", 20_001, "capacity"),
+    ],
+)
+def test_collect_cross_checks_retained_metadata_against_prepare(field, value, message):
+    device, runtime, backend = device_stack()
+    device.stage()
+    device.prepare(request()).wait(timeout=1)
+    device.kickoff().wait(timeout=1)
+    runtime.advance_ticks(40)
+    device.complete().wait(timeout=1)
+    retained_metadata = backend.retained_metadata
+
+    def mismatched_metadata():
+        return replace(retained_metadata(), **{field: value})
+
+    backend.retained_metadata = mismatched_metadata
+    with pytest.raises(RetainedDataError, match=message):
+        list(device.collect())
+
+    assert runtime.output is False
     device.unstage()
 
 

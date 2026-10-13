@@ -4,6 +4,34 @@
 
 ## Unreleased
 
+- Add a validated `PreparedAcquisition` result and per-request completion
+  watchdogs. The result also binds request/program digests and record/capacity
+  bounds. The compiler includes achieved duration, the full external-START wait
+  when applicable, a bounded communication margin and the configured buffer
+  ceiling; the Flyer retains its constructor timeout only as a minimum and
+  reports the prepared/effective values as Ophyd configuration. Collection
+  cross-checks retained metadata, while rejected re-preparation preserves an
+  earlier retained acquisition and explicit disposition clears stale bounds.
+- Allow bounded retained-buffer retrieval after safe recovery returns the
+  Keithley runtime to output-OFF IDLE. Active/prepared and output-on states
+  remain rejected, and retrieval remains non-destructive.
+- Add runtime v14 with immutable, versioned 1, 0.1 and 0.01 NPLC Keithley
+  measurement profiles. All three fix the measurement range at 0.2 V, disable
+  autorange/filter/relative measurement, perform one output-off autozero, and
+  are queried back before PREPARED is accepted. Raw archive v3 retains the
+  profile identity while preserving v1/v2 decoding as legacy 1 NPLC behavior.
+- Commission those profiles on the front-terminal four-wire nominal 100 ohm
+  resistor with checked 256-record archives, observing approximately 24.5,
+  207 and 821 paired readings/s at 1, 0.1 and 0.01 NPLC respectively.
+- Fill and retrieve an exact 10,000-record buffer at 0.01 NPLC as bounded
+  4096+4096+1808-record chunks. A fresh session matched every archived record,
+  no wrap or new warning/error was observed, and explicit post-verification
+  discard ended IDLE/OFF/0 A with an empty buffer.
+- Retain the 12 October uncontrolled-START attempt as explicitly rejected
+  diagnostic evidence: the single resistor reading was plausible and output
+  returned off, but `start_overrun` was true and no scope trace existed, so no
+  timestamp or hardware gate was promoted. The archived record was verified
+  before explicit buffer discard.
 - Document the available excitation-sequence library, including current
   representations, uniform-grid limitations, hardware-support boundaries, and
   phased plans for examples, finite segment composition, waveform generators,

@@ -62,6 +62,9 @@ The compiler returns an immutable `CompiledProgram`:
 | `measurement` | First integration start, period, aperture, overhead and count in ticks |
 | `sample_mapping(i)` | Planned aperture and first/last logical points, repeat/point position and settled single-dwell flag |
 | `requested_duration_s`, `achieved_duration_s` | Intent versus quantized planning duration; not observed physical timing |
+| `completion_bound_s` | Achieved duration plus the complete configured local START wait for external-start requests |
+| `communication_margin_s` | Configured bound for one host/backend observation transaction; not acquisition duration |
+| `expected_records`, `capacity_records` | Planned measurement count and effective buffer capacity after the configured ceiling |
 | `achieved_source_period_s` | Uniform waveform/CV dwell; None for holds/nonuniform pulse dwell pairs |
 | `mean_level`, `ac_rms_level`, `ac_crest_factor` | Dwell-weighted source statistics; constant excitation has zero AC crest factor by convention |
 | `commanded_charge_c` | Mean commanded current times plan duration, or None for voltage sourcing |

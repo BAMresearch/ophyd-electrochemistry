@@ -112,8 +112,15 @@ def test_quickstart_derives_runtime_bounds_for_longer_program(
 
     compiled = namespace["compiled"]
     assert compiled.achieved_duration_s == 2.0
+    assert compiled.completion_bound_s == 2.0
+    assert compiled.communication_margin_s == 10.0
     assert namespace["simulation_advance_ticks"] == compiled.source.duration_ticks + 1
     assert namespace["host_completion_timeout_s"] >= 12.0
+    assert namespace["host_completion_timeout_minimum_s"] == 0.1
+    assert (
+        namespace["ec"].read_configuration()["ec_completion_timeout_effective"]["value"]
+        == namespace["host_completion_timeout_s"]
+    )
     assert len(namespace["rows"]) == 200
     assert namespace["ec"].state.value == "complete"
     assert namespace["ec"].output_enabled is False

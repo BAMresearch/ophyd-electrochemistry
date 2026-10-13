@@ -11,6 +11,7 @@ import hashlib
 from dataclasses import dataclass
 from enum import StrEnum
 from importlib.resources import files
+from math import isclose
 from typing import Protocol
 
 from ...acquisition import StartMode
@@ -18,10 +19,11 @@ from ...exceptions import IncompatibleInstrumentError, TransportProtocolError, V
 from ...serialization import canonical_json, sha256_json
 from ...validation import integer, number, positive, text
 from .config import Keithley2460Config
+from .measurement_profiles import K2460MeasurementProfile, resolve_measurement_profile
 from .transport import CommandLanguage, parse_source_output_enabled
 
 RUNTIME_ABI = "oe-k2460-m4-hold-v1"
-RUNTIME_BUILD = "m4-finite-current-hold-v13"
+RUNTIME_BUILD = "m4-finite-current-hold-v14"
 RUNTIME_RESOURCE = "tsp/runtime.tsp"
 K2460_BUFFER_SCHEMA = "ophyd-electrochemistry/k2460-buffer-proof-v1"
 _MAX_CURRENT_A = 0.01
@@ -70,6 +72,11 @@ _RUNTIME_GLOBALS_V13 = _RUNTIME_GLOBALS_V5 + (
     "oe_m5_prepare_timestamp_proof",
     "oe_m5_timestamp_proof_reading",
 )
+_RUNTIME_GLOBALS_V14 = _RUNTIME_GLOBALS_V13 + (
+    "oe_m5_measurement_profile_code",
+    "oe_m5_prepare_profiled_current_hold_acquisition",
+    "oe_m5_measurement_profile_status",
+)
 _REPLACEABLE_RUNTIMES = {
     "m4-finite-current-hold-v4": (
         "oe_m4_ce741e17ffcdd7f55d489c7b",
@@ -116,6 +123,11 @@ _REPLACEABLE_RUNTIMES = {
         _RUNTIME_GLOBALS_V5,
         True,
     ),
+    "m4-finite-current-hold-v13": (
+        "oe_m4_5f667d74698798e6eef9ec9b",
+        _RUNTIME_GLOBALS_V13,
+        True,
+    ),
 }
 
 TIMESTAMP_PROOF_MARKERS = (
@@ -130,6 +142,14 @@ def _tsp_start_edge(edge: str) -> str:
     """Encode the validated START edge for the narrow TSP runtime."""
 
     return {"falling": "0", "rising": "1", "either": "2"}[edge]
+
+
+def _parse_tsp_switch(value: str, name: str) -> bool:
+    if value in ("0", "smu.OFF"):
+        return False
+    if value in ("1", "smu.ON"):
+        return True
+    raise TransportProtocolError(f"Invalid {name} state: {value!r}")
 
 
 class RuntimeState(StrEnum):
@@ -179,13 +199,14 @@ class CurrentHoldProof:
 
 @dataclass(frozen=True, kw_only=True)
 class CurrentHoldAcquisitionProof:
-    """Finite 1 NPLC resistor acquisition for narrow M5 commissioning."""
+    """Finite profiled resistor acquisition for narrow M5 commissioning."""
 
     current_a: float
     source_range_a: float
     voltage_limit_v: float
     measurement_count: int
     start_mode: StartMode = StartMode.IMMEDIATE
+    measurement_profile: K2460MeasurementProfile = K2460MeasurementProfile.NPLC_1
 
     def __post_init__(self) -> None:
         for name in ("current_a", "source_range_a", "voltage_limit_v"):
@@ -203,6 +224,11 @@ class CurrentHoldAcquisitionProof:
             )
         if not isinstance(self.start_mode, StartMode):
             raise ValidationError("start_mode must be a StartMode")
+        settings = resolve_measurement_profile(self.measurement_profile)
+        if self.voltage_limit_v > settings.voltage_range_v:
+            raise ValidationError(
+                "M5 voltage limit must not exceed the fixed measurement-profile range"
+            )
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -770,8 +796,9 @@ class M4RuntimeController:
                 "Measurement count exceeds the configured buffer capacity ceiling"
             )
         io = self.config.io
+        measurement = resolve_measurement_profile(acquisition.measurement_profile)
         command = (
-            "oe_m5_prepare_current_hold_acquisition("
+            "oe_m5_prepare_profiled_current_hold_acquisition("
             + ",".join(
                 (
                     _tsp_number(acquisition.current_a),
@@ -789,6 +816,7 @@ class M4RuntimeController:
                     str(io.ready_asserted_level),
                     str(io.busy_asserted_level),
                     _tsp_start_edge(io.start_edge),
+                    str(measurement.instrument_code),
                 )
             )
             + ")"
@@ -802,6 +830,7 @@ class M4RuntimeController:
             raise TransportProtocolError(
                 "M5 runtime buffer is not empty or is smaller than the requested count"
             )
+        self._confirm_measurement_profile(acquisition.measurement_profile)
         return status
 
     def prepare_timestamp_proof(
@@ -816,6 +845,8 @@ class M4RuntimeController:
             raise ValidationError("Timestamp proof requires exactly one measurement")
         if acquisition.start_mode != StartMode.EXTERNAL_TRIGGER:
             raise ValidationError("Timestamp proof requires external start")
+        if acquisition.measurement_profile != K2460MeasurementProfile.NPLC_1:
+            raise ValidationError("Timestamp proof requires the commissioned 1 NPLC profile")
         self._validate_against_config(acquisition)
         self._validate_runtime_config()
         io = self.config.io
@@ -848,7 +879,40 @@ class M4RuntimeController:
         info = self.buffer_info()
         if info.record_count != 0 or info.capacity_records < 1:
             raise TransportProtocolError("M5 timestamp proof buffer is not empty or unavailable")
+        self._confirm_measurement_profile(acquisition.measurement_profile)
         return status
+
+    def _confirm_measurement_profile(self, profile: K2460MeasurementProfile) -> None:
+        expected = resolve_measurement_profile(profile)
+        fields = self.transport.query("print(oe_m5_measurement_profile_status())").split("\t")
+        if len(fields) != 7:
+            raise TransportProtocolError(
+                "M5 measurement-profile status must contain 7 tab-separated fields"
+            )
+        try:
+            code = int(fields[0])
+            nplc = number(float(fields[1]), "instrument NPLC")
+            voltage_range_v = number(float(fields[2]), "instrument measurement range")
+            autorange = _parse_tsp_switch(fields[3], "measurement autorange")
+            filter_enabled = _parse_tsp_switch(fields[4], "measurement filter")
+            relative_enabled = _parse_tsp_switch(fields[5], "relative measurement")
+            autozero_enabled = _parse_tsp_switch(fields[6], "measurement autozero")
+        except (TypeError, ValueError, ValidationError) as exc:
+            raise TransportProtocolError(
+                "M5 measurement-profile status contains invalid fields"
+            ) from exc
+        if (
+            code != expected.instrument_code
+            or not isclose(nplc, expected.nplc, rel_tol=0, abs_tol=1e-12)
+            or not isclose(voltage_range_v, expected.voltage_range_v, rel_tol=0, abs_tol=1e-12)
+            or autorange != expected.autorange_enabled
+            or filter_enabled != expected.filter_enabled
+            or relative_enabled != expected.relative_enabled
+            or autozero_enabled
+        ):
+            raise TransportProtocolError(
+                "Instrument measurement settings do not match the requested profile"
+            )
 
     def arm(self) -> RuntimeStatus:
         self.transport.write("oe_m4_arm()")
@@ -909,8 +973,13 @@ class M4RuntimeController:
         if max_records > _MAX_TRANSFER_CHUNK_RECORDS:
             raise ValidationError(f"M5 max_records must not exceed {_MAX_TRANSFER_CHUNK_RECORDS:,}")
         status = self.status()
-        if status.state not in (RuntimeState.COMPLETE, RuntimeState.ABORTED, RuntimeState.ERROR):
-            raise TransportProtocolError("M5 buffer retrieval requires a terminal runtime state")
+        if status.state not in (
+            RuntimeState.IDLE,
+            RuntimeState.COMPLETE,
+            RuntimeState.ABORTED,
+            RuntimeState.ERROR,
+        ):
+            raise TransportProtocolError("M5 buffer retrieval requires a stopped runtime state")
         if status.output_enabled:
             raise TransportProtocolError("M5 buffer retrieval requires confirmed output OFF")
         info = self.buffer_info()

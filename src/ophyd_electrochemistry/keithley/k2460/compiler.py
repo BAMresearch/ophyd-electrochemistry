@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from decimal import ROUND_CEILING, ROUND_HALF_UP, Decimal
 from itertools import accumulate
 
-from ...acquisition import AcquisitionRequest, StartMode
+from ...acquisition import AcquisitionRequest, PreparedAcquisition, StartMode
 from ...exceptions import UnsupportedCapabilityError, ValidationError
 from ...protocols import (
     CurrentPulseSequence,
@@ -104,11 +104,9 @@ class ResourceBudget:
 
 
 @dataclass(frozen=True, kw_only=True)
-class CompiledProgram:
+class CompiledProgram(PreparedAcquisition):
     canonical_request_json: str
-    request_sha256: str
     canonical_program_json: str
-    program_sha256: str
     waveform_sha256: str
     generator_provenance_json: str
     source_function: SourceFunction
@@ -245,7 +243,8 @@ class Keithley2460Compiler:
         count = available // sample_ticks + 1
         source_records = source.logical_points * caps.source_records_per_point
         blocks = caps.fixed_trigger_blocks + len(source.steps) * caps.trigger_blocks_per_point
-        if count > caps.max_measurement_records or count + source_records > caps.max_buffer_records:
+        capacity_records = min(caps.max_buffer_records, config.buffer.capacity_ceiling_records)
+        if count > caps.max_measurement_records or count + source_records > capacity_records:
             raise ValidationError("Measurement/source buffer budget exceeded")
         if blocks > caps.max_trigger_blocks:
             raise ValidationError("Declared trigger-block layout budget exceeded")
@@ -340,10 +339,19 @@ class Keithley2460Compiler:
             upload_bytes=size,
         )
         result = CompiledProgram(
-            canonical_request_json=request_json,
             request_sha256=sha256_json(request_json),
-            canonical_program_json=encoded,
             program_sha256=sha256_json(encoded),
+            expected_records=count,
+            capacity_records=capacity_records,
+            completion_bound_s=duration
+            + (
+                config.timing.external_start_timeout_s
+                if request.start_mode == StartMode.EXTERNAL_TRIGGER
+                else 0.0
+            ),
+            communication_margin_s=config.timing.command_timeout_s,
+            canonical_request_json=request_json,
+            canonical_program_json=encoded,
             waveform_sha256=sha256_json(waveform_json),
             generator_provenance_json=canonical_json(provenance),
             source_function=function,
