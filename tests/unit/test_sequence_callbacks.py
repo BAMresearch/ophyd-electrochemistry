@@ -231,3 +231,28 @@ def test_live_plot_cutoff_markers_and_outcome(seq_request):
     assert "stopped_cutoff" in rendered[-1].layout.title.text
     assert any("cutoff: v_max" in a.text for a in rendered[-1].layout.annotations)
     assert len(rendered[-1].layout.shapes) == 4
+
+
+def test_live_plot_updates_one_display_in_place(seq_request, monkeypatch):
+    # Displaying the Figure itself would append a new output per redraw,
+    # because plotly's _ipython_display_ ignores display_id.
+    calls = []
+
+    class Handle:
+        def update(self, obj, **kwargs):
+            calls.append(("update", obj, kwargs))
+
+    def display(obj, **kwargs):
+        calls.append(("display", obj, kwargs))
+        return Handle()
+
+    monkeypatch.setattr("IPython.display.display", display)
+    # Plotly picks a notebook renderer inside a kernel; outside it is "browser".
+    monkeypatch.setattr("plotly.io.renderers.default", "plotly_mimetype")
+    plot = LiveSequencePlot(min_redraw_s=0)
+    execute(seq_request, plot)
+    assert [call[0] for call in calls] == ["display"] + ["update"] * (len(calls) - 1)
+    assert len(calls) > 1
+    assert calls[0][2] == {"raw": True, "display_id": True}
+    assert all(kwargs == {"raw": True} for _, _, kwargs in calls[1:])
+    assert all("application/vnd.plotly.v1+json" in bundle for _, bundle, _ in calls)

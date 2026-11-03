@@ -14,6 +14,46 @@ executable example. It provides three selectable simulated pulse programs, runs
 the selected one through a real Bluesky RunEngine, tabulates the emitted records
 and draws a preliminary I/V time-series plot. It never opens a VISA connection.
 
+## Per-run sequence notebook (simulator)
+
+`notebooks/k2460_run.ipynb` loads one Excel row, prints the full request and
+session limits, previews a synthetic cell, and runs the sequence with live
+voltage/current plots. It then plots the full-resolution HDF5 file and reports
+events, final outcome and record count. Hardware selection currently raises
+`NotImplementedError` before any run file is created.
+
+Use the development environment or install with `uv sync --locked --extra
+experiment --group notebook`. Create an example workbook if needed:
+
+```python
+from ophyd_electrochemistry.sequences.run_sheet import make_template
+
+make_template("runs.xlsx")  # Refuses to overwrite an existing workbook.
+```
+
+Create a clean notebook for the selected row using explicit session limits:
+
+```sh
+uv run --locked ophyd-electrochemistry-new-run runs.xlsx example-rest ~/k2460-data \
+  --v-min 0 --v-max 3 --i-max 0.01 --max-duration-s 200000 --max-records 1000000
+```
+
+These are dummy-cell example limits. The generator validates the entire sheet
+with the supplied limits and writes them into the copy's `LIMITS`; the copy's
+`DATA_DIR` is the output directory, so the HDF5 file lands beside the notebook.
+The copy contains the selected ID and absolute workbook path with all outputs
+cleared; existing notebook files are never overwritten. The default
+template is located in this repository; Python callers can pass an explicit
+`template` path to `sequences.notebook.new_run_notebook`.
+
+Keep `DATA_DIR` on local disk for SWMR and save the executed notebook beside its
+HDF5 file. `SIM_SPEED = 10.0` accelerates the demo; use `1.0` for realistic
+pacing. An external-start row gets a synthetic START after 0.5 seconds in this
+notebook. The preview is a simulated cell, not a prediction. After an abort,
+inspect the partial file and call `flyer.recover().wait(timeout=5)`. Crashed
+writer files remain readable with `read_run_file`; use `repair_run_file` to
+make a separate copy for other HDF5 tools.
+
 ## Configuration model
 
 Configuration is divided into three layers. This prevents an experiment from

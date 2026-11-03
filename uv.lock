@@ -1727,6 +1727,7 @@ dependencies = [
 [package.optional-dependencies]
 experiment = [
     { name = "h5py" },
+    { name = "nbformat" },
     { name = "openpyxl" },
     { name = "pandas" },
     { name = "plotly" },
@@ -1777,6 +1778,7 @@ requires-dist = [
     { name = "bluesky", specifier = ">=1.16,<1.17" },
     { name = "event-model", specifier = ">=1.23,<2" },
     { name = "h5py", marker = "extra == 'experiment'", specifier = ">=3.11,<4" },
+    { name = "nbformat", marker = "extra == 'experiment'", specifier = ">=5.10,<6" },
     { name = "openpyxl", marker = "extra == 'experiment'", specifier = ">=3.1,<4" },
     { name = "ophyd", specifier = ">=1.11.2,<2" },
     { name = "pandas", marker = "extra == 'experiment'", specifier = ">=2.2,<3" },

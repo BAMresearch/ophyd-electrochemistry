@@ -4,6 +4,12 @@
 
 ## Unreleased
 
+- Add the simulator-first per-run sequence notebook with Excel selection,
+  request summaries, simulated previews, live plots and HDF5 result review.
+  Add clean notebook generation and the `ophyd-electrochemistry-new-run` CLI
+  with explicit session limits, overwrite protection and hardware confirmation
+  helper. Hardware execution remains unavailable pending O5.
+
 - Add an explicitly opted-in resistor-only timed-hold backend and separate
   packaged v17 candidate with measurement-range-before-compliance setup and
   nonconsuming pre-arm error checks and mode-specific trigger-graph validation. Preserve requested duration/sample spacing, local

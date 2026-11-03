@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1008 tests pass. Pure models/compiler, independent simulator,
+- **Offline:** 1029 tests pass. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -26,6 +26,10 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 - **Sequence simulation:** deterministic pure engine with OCV + R0 + R1‖C1,
   scheduled two-phase samples, CC/CV/rest, cutoff next/stop, repeat events and
   run-file-compatible readout chunks. Synthetic cell, not bench validated.
+- **Per-run notebook (O6):** Excel selection, request summary, synthetic preview,
+  live plot and saved-file review; clean copies via `ophyd-electrochemistry-new-run`
+  with explicit session limits. Simulator only; hardware selection fails before
+  creating a run file. Save the executed notebook beside its HDF5 file.
 - **Run files:** incremental HDF5 writer/reader with separate equipment/run
   metadata, compressed readouts and events; exclusive creation, per-append flush
   and explicit terminal outcomes. SWMR mode (HDF5 1.10 format): other
@@ -51,7 +55,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 - `runtime.tsp` sets `smu.source.offmode = smu.OFFMODE_NORMAL` — unsafe for cells.
   The sequencer must use HIGH-Z.
 - Hard-coded commissioning limits (10 mA, 2 V, 60 s) are too small for cycling.
-- No QueueServer profile or per-run notebook.
+- No QueueServer profile.
 
 ## Last known hardware state (historical — reconfirm before use)
 
@@ -67,7 +71,7 @@ not confirmed.
 
 1. Check the Rev. C manual items listed under "To verify" in the plan, then O5
    (sequencer TSP + backend). O1–O4 and O9 are implemented offline.
-2. Build the per-run simulator notebook (O6) on the sequence Flyer and callbacks.
+2. Build the QueueServer profile (O7) using the sequence Flyer and run-sheet loader.
 3. Prepare the bench-day B1 test matrix and runner (O8).
 
 Bench test B0 (`bench/feature_probe.py`, output OFF only) is ready to run on

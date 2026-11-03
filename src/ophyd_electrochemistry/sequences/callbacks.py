@@ -152,12 +152,13 @@ class RunFileWriter(_SequenceCallback):
             self._close()
 
 
-def _figure(
+def sequence_figure(
     readout: dict[str, Any],
     events: list[tuple[float, str, str]],
     title: str,
     max_points: int | None = None,
 ) -> Any:
+    """Shared voltage/current layout for previews, live data and saved runs."""
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.08)
     count = len(readout["t_s"])
     stride = 1 if max_points is None else max(1, math.ceil(count / max_points))
@@ -205,12 +206,16 @@ class LiveSequencePlot(_SequenceCallback):
         self._outcome = "running"
 
     def _display(self, fig: Any) -> None:
-        if self._handle is None:
-            from IPython.display import display
+        from IPython.display import display
 
-            self._handle = display(fig, display_id=True)
+        # Plotly figures implement _ipython_display_, which ignores display_id:
+        # every update would append a new figure. A raw MIME bundle keeps one
+        # output that is replaced in place.
+        bundle = fig._repr_mimebundle_()
+        if self._handle is None:
+            self._handle = display(bundle, raw=True, display_id=True)
         else:
-            self._handle.update(fig)
+            self._handle.update(bundle, raw=True)
 
     def start(self, doc: RunStart) -> None:
         if not self._start(doc):
@@ -230,7 +235,7 @@ class LiveSequencePlot(_SequenceCallback):
         title = f"{self._measurement_id} — {self._outcome}"
         if self._title:
             title = f"{self._title}: {title}"
-        self._render(_figure(self._readout, self._events, title, self._max_points))
+        self._render(sequence_figure(self._readout, self._events, title, self._max_points))
         self._last_redraw = now
 
     def event_page(self, doc: EventPage) -> EventPage:
@@ -270,6 +275,6 @@ def plot_run_file(path: str | PathLike[str]) -> Any:
     events = list(
         zip(data["events"]["t_s"], data["events"]["kind"], data["events"]["detail"], strict=True)
     )
-    return _figure(
+    return sequence_figure(
         data["readout"], events, f"{data['attrs']['measurement_id']} — {data['run']['outcome']}"
     )

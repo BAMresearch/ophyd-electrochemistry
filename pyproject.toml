@@ -14,7 +14,7 @@ classifiers = ["Development Status :: 1 - Planning", "Programming Language :: Py
 
 [project.optional-dependencies]
 visa = ["pyvisa>=1.14,<2", "pyvisa-py>=0.7,<1"]
-experiment = ["pandas>=2.2,<3", "openpyxl>=3.1,<4", "h5py>=3.11,<4", "plotly>=6,<7"]
+experiment = ["pandas>=2.2,<3", "openpyxl>=3.1,<4", "h5py>=3.11,<4", "plotly>=6,<7", "nbformat>=5.10,<6"]
 
 [project.urls]
 repository = "https://github.com/BAMresearch/ophyd-electrochemistry"
@@ -22,6 +22,7 @@ issues = "https://github.com/BAMresearch/ophyd-electrochemistry/issues"
 
 [project.scripts]
 ophyd-electrochemistry-k2460-diagnose = "ophyd_electrochemistry.keithley.k2460.commissioning:main"
+ophyd-electrochemistry-new-run = "ophyd_electrochemistry.sequences.notebook:main"
 
 [dependency-groups]
 test = ["pytest>=8,<10"]
