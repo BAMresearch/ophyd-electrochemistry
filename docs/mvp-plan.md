@@ -118,7 +118,7 @@ Off-day (no hardware):
 |---|---|---|
 | O1 | `Step`/`Sequence` models, validation, protocol builders (cycling, bipolar pulse block, Renard helper) | Done 3 Nov (brief 01, reviewed) |
 | O2 | Excel run-sheet template + loader | Done 3 Nov (brief 02, reviewed) |
-| O3 | Simulator backend with cell model | Codex brief 04 (pure engine) |
+| O3 | Simulator backend with cell model | Done 3 Nov (brief 04, reviewed; Flyer integration in O4) |
 | O4 | Flyer integration with live chunk reads; `run_sequence` plan; live plot callback | todo |
 | O5 | Sequencer TSP + host backend, mocked-transport tests, offline Lua syntax check | todo |
 | O6 | Per-run notebook template (simulator first) | todo |
