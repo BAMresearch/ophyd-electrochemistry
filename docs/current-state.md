@@ -107,12 +107,8 @@ latches. S1/S2 (scope): prototype step layout runs as designed, external START
 
 ## Information still needed from the user
 
-Answers so far are recorded in the plan. Still open:
-
-1. Cell capacity / active mass, voltage window, intended currents (C-rates).
-2. Cycling: CC only or CC-CV; number of cycles.
-3. Pulse amplitude(s).
-4. Beamline trigger: signal type, level (5 V TTL?), polarity, pulse width,
-   connector; whether the beamline can instead (or also) record a TTL from us.
-5. Software start: what sends it (beamline control system, a person, a
-   script) and over which channel; which clock beamline data are stamped with.
+A preliminary measurement concept arrived on 3 Nov: `docs/beamtime-concept.md`
+(window 5 mV–0.2 V, 15–30 µA reference cycling, 300–600 µA pulses). Its open
+questions (dates, cell count, pulse definition, t_p/t_r/n, I_min, capacity)
+replace the earlier list. Still open from us: beamline trigger signal (level,
+polarity, connector) and the RC dummy cell's values for B1.
