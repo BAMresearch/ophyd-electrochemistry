@@ -9,12 +9,21 @@ P4  BRANCH_ON_EVENT latch semantics (the suspected v17 failure cause)
       A: event consumed by WAIT between two passes of the same branch block
       B: event occurring before a branch block is first reached
 P5  largest reading buffer that can be allocated (allocated, then deleted)
+P6  the reading buffer can be read in chunks while a trigger model is still
+      measuring into it (live reads during a run), measured with output OFF
+P7  one trigger model switches source AND measure function via config lists
+      (BLOCK_CONFIG_RECALL), as a CC step followed by a CV step needs
 
 Preconditions (checked): identity/serial, TSP mode, output OFF, trigger model
 not running. The output is never turned on. Touches only: offmode (left at
-HIGH-Z), source function/level (restored to current, 0 A), a temporary config
-list and buffer (deleted), timer 1 and the trigger model (left EMPTY). The
-runtime's retained buffer and defbuffer1/2 are not touched.
+HIGH-Z), source function/level (restored to current, 0 A), measure function
+and NPLC (set to voltage, 1 NPLC; the runtime sets its own at prepare),
+temporary config lists and buffers (deleted), timer 1 and the trigger model
+(left EMPTY). The runtime's retained buffer and defbuffer1/2 are not touched.
+Every probe runs under Lua pcall, so an unsupported command is a result, not
+an abort; cleanup always aborts the model and deletes temporaries.
+
+Run from the repository root (the evidence file goes to docs/evidence/).
 
 Usage:  uv run python bench/feature_probe.py --i-confirm-output-off
 """
@@ -89,6 +98,130 @@ def run_parked_model(t: PyVisaKeithley2460Transport, blocks: list[str], wait_s: 
     return state
 
 
+def cleanup(t: PyVisaKeithley2460Transport, buffer_name: str) -> None:
+    """Stop the model, delete temporaries, restore current source at 0 A."""
+    w(t, "trigger.model.abort()")
+    time.sleep(0.2)
+    q(
+        t,
+        guarded(
+            f"if {buffer_name} ~= nil then buffer.delete({buffer_name}) {buffer_name} = nil end "
+            "for _, name in ipairs({'OE_SRC', 'OE_MEAS'}) do "
+            "pcall(smu.source.configlist.delete, name) "
+            "pcall(smu.measure.configlist.delete, name) end "
+            "smu.source.func = smu.FUNC_DC_CURRENT smu.source.level = 0 "
+            "smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.nplc = 1 "
+            'trigger.model.load("Empty") return smu.source.output'
+        ),
+    )
+
+
+def probe_live_reads(t: PyVisaKeithley2460Transport) -> dict[str, str]:
+    """Measure 2000 readings at 0.01 NPLC; read new records every 0.25 s meanwhile."""
+    results = {
+        "P6_setup": q(
+            t,
+            guarded(
+                "smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.nplc = 0.01 "
+                "oe_live = buffer.make(2000, buffer.STYLE_STANDARD) "
+                'trigger.model.load("Empty") '
+                "trigger.model.setblock(1, trigger.BLOCK_MEASURE_DIGITIZE, oe_live, 2000) "
+                "return oe_live.capacity"
+            ),
+        )
+    }
+    if not results["P6_setup"].startswith("OK"):
+        return results
+    w(t, "trigger.model.initiate()")
+    reads, read_while_running, last, started = [], 0, 0, time.monotonic()
+    while time.monotonic() - started < 30:
+        time.sleep(0.25)
+        state = q(t, "print(trigger.model.state())")
+        count = int(float(q(t, "print(oe_live.n)")))
+        if count > last:
+            # Fetch only the new records, as a live plot would.
+            reply = q(
+                t,
+                guarded(
+                    f"printbuffer({last + 1}, {count}, oe_live.relativetimestamps) "
+                    f"return {count - last}"
+                ),
+            )
+            reads.append(f"{time.monotonic() - started:.2f}s n={count} state={state} {reply}")
+            if "RUNNING" in state and reply.startswith("OK"):
+                read_while_running += 1
+            last = count
+        if "RUNNING" not in state and "WAITING" not in state:
+            break
+    results["P6_reads"] = " | ".join(reads)
+    results["P6_reads_while_running"] = str(read_while_running)
+    results["P6_final_n"] = str(last)
+    print(f"    interpret: reads while running = {read_while_running} (>0 means live reads work)")
+    return results
+
+
+def probe_function_switch(t: PyVisaKeithley2460Transport) -> dict[str, str]:
+    """Two config-list entries: (I source, V measure) then (V source, I measure)."""
+    results = {
+        "P7_lists": q(
+            t,
+            guarded(
+                'smu.source.configlist.create("OE_SRC") smu.measure.configlist.create("OE_MEAS") '
+                "smu.source.func = smu.FUNC_DC_CURRENT smu.source.level = 0 "
+                "smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.nplc = 1 "
+                'smu.source.configlist.store("OE_SRC") smu.measure.configlist.store("OE_MEAS") '
+                "smu.source.func = smu.FUNC_DC_VOLTAGE smu.source.level = 0 "
+                "smu.measure.func = smu.FUNC_DC_CURRENT smu.measure.nplc = 1 "
+                'smu.source.configlist.store("OE_SRC") smu.measure.configlist.store("OE_MEAS") '
+                "smu.source.func = smu.FUNC_DC_CURRENT smu.measure.func = smu.FUNC_DC_VOLTAGE "
+                "return 1"
+            ),
+        )
+    }
+    if not results["P7_lists"].startswith("OK"):
+        return results
+    results["P7_list_sizes"] = q(
+        t,
+        guarded(
+            'return smu.source.configlist.size("OE_SRC") .. " / " .. '
+            'smu.measure.configlist.size("OE_MEAS")'
+        ),
+    )
+    results["P7_model"] = q(
+        t,
+        guarded(
+            "oe_switch = buffer.make(10, buffer.STYLE_STANDARD) "
+            'trigger.model.load("Empty") '
+            'trigger.model.setblock(1, trigger.BLOCK_CONFIG_RECALL, "OE_SRC", 1, "OE_MEAS", 1) '
+            "trigger.model.setblock(2, trigger.BLOCK_MEASURE_DIGITIZE, oe_switch, 2) "
+            'trigger.model.setblock(3, trigger.BLOCK_CONFIG_RECALL, "OE_SRC", 2, "OE_MEAS", 2) '
+            "trigger.model.setblock(4, trigger.BLOCK_MEASURE_DIGITIZE, oe_switch, 2) "
+            "return 1"
+        ),
+    )
+    if not results["P7_model"].startswith("OK"):
+        return results
+    w(t, "trigger.model.initiate()")
+    time.sleep(1.5)
+    results["P7_state"] = q(t, "print(trigger.model.state())")
+    results["P7_units"] = q(
+        t,
+        guarded(
+            "local r = {} for i = 1, oe_switch.n do "
+            "r[#r + 1] = tostring(oe_switch.units[i]) .. '/' .. tostring(oe_switch.sourceunits[i]) "
+            "end return table.concat(r, ' ')"
+        ),
+    )
+    results["P7_func_after"] = q(
+        t, guarded('return tostring(smu.source.func) .. " / " .. tostring(smu.measure.func)')
+    )
+    print(
+        "    interpret: units per reading measured/source. Volt/Amp twice then Amp/Volt"
+        " twice = both functions switch inside one model"
+    )
+    return results
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--resource", default=RESOURCE)
@@ -156,7 +289,10 @@ def main() -> None:
             ],
             wait_s=1.0,
         )
-        print("    interpret: parked at 3 = not latched (waits for new event); 7 = latched")
+        print(
+            "    interpret: parked at 7 = latched; 3 = not latched and WAIT needs a new event;"
+            " 6 = not latched but WAIT (CLEAR_NEVER) accepted the old event"
+        )
 
         print("P4B latch: event occurs before the branch block is first reached")
         setup_timer1(t, 0.05)
@@ -181,13 +317,29 @@ def main() -> None:
             reply = q(
                 t,
                 guarded(
-                    f'local b = buffer.make("oe_probe", {size}) '
+                    f"local b = buffer.make({size}, buffer.STYLE_STANDARD) "
                     "local c = b.capacity buffer.delete(b) return c"
                 ),
             )
             results[f"P5_{size}"] = reply
             if reply.startswith("OK"):
                 break
+
+        print("P6 live buffer reads while the trigger model measures (output OFF)")
+        cleanup(t, "oe_live")  # Leftovers of an interrupted earlier run.
+        try:
+            results.update(probe_live_reads(t))
+        finally:
+            cleanup(t, "oe_live")
+        require_idle_off(t)
+
+        print("P7 source + measure function switch inside one trigger model (output OFF)")
+        cleanup(t, "oe_switch")  # Leftovers of an interrupted earlier run.
+        try:
+            results.update(probe_function_switch(t))
+        finally:
+            cleanup(t, "oe_switch")
+        require_idle_off(t)
 
         print("Final state")
         require_idle_off(t)
