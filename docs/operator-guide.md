@@ -14,10 +14,43 @@ source .venv/bin/activate
 
 ## 1. Install (once per laptop)
 
+Needs [uv](https://docs.astral.sh/uv/getting-started/installation/) and git.
+uv downloads Python 3.14 itself if it is missing. The branch must be on GitHub;
+as of 3 Nov `mvp-sprint` is still local, so push it first.
+
+**A. Clone the repository (recommended).** The QueueServer startup files
+(`qserver/`), the example session files and the bench scripts live in the
+repository, not in the installed package. The tests need a clone too.
+
 ```sh
+git clone -b mvp-sprint https://github.com/BAMresearch/ophyd-electrochemistry.git
+cd ophyd-electrochemistry
 uv sync --locked --extra experiment --extra visa --extra queueserver
 brew install redis
 ```
+
+`uv sync` creates `.venv` with Python 3.14 and the exact package versions in
+`uv.lock`. It also installs the development tools: pytest, the Lua runtime
+checker (lupa), ruff and mypy. To check the installation, run
+`uv run --locked pytest`. Everything should pass; the QueueServer tests need
+redis.
+
+**B. Package only.** This gives the notebook and the `oe-*`, `qserver` and
+`start-re-manager` commands, but not the `qserver/` startup files, the tests or
+lupa:
+
+```sh
+uv venv --python 3.14 ~/oe-env
+source ~/oe-env/bin/activate
+uv pip install "ophyd-electrochemistry[experiment,visa,queueserver] @ git+https://github.com/BAMresearch/ophyd-electrochemistry@mvp-sprint"
+```
+
+- Keep the `git+` prefix and the extras in brackets:
+  - `visa` adds PyVISA, needed to talk to the 2460;
+  - `experiment` adds Excel, HDF5, plots and notebooks;
+  - `queueserver` adds the RE Manager.
+- `uv pip install` takes the newest compatible dependencies, not the tested
+  versions in `uv.lock`.
 
 ## 2. Write the run sheet (Excel)
 
