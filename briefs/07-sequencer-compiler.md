@@ -21,17 +21,20 @@ deterministic; no I/O.
 - `src/ophyd_electrochemistry/keithley/k2460/sequencer.py`
 - `tests/unit/test_k2460_sequencer.py`
 
-Read: `docs/sequencer-design.md`, `keithley/k2460/tsp/sequencer.tsp`, `sequences/models.py`, `sequences/simulator.py`,
-`sequences/backend.py` (`READOUT_FIELDS`), `keithley/k2460/config.py` (line numbers).
+Read: `docs/sequencer-design.md`, `keithley/k2460/tsp/sequencer.tsp`, `sequences/models.py`,
+`sequences/simulator.py`, `sequences/backend.py` (`READOUT_FIELDS`). The sequencer's
+digital lines come from `SequencerProfile`, not `Keithley2460Config` (legacy M4 runtime).
 
 ## Profile
 
 ```python
 @dataclass(frozen=True)
 class SequencerProfile:
-    marker_line: int = 1          # Keithley2460Config.ready
-    busy_line: int = 2
-    start_line: int = 3
+    # Digital lines decided 3 Nov: outputs 1-2, 4; START input 6 (lines 3, 5 unused).
+    ready_line: int = 1           # high while armed and waiting for an external START
+    busy_line: int = 2            # high from START until output OFF
+    marker_line: int = 4          # pulse at every step start
+    start_line: int = 6           # START input
     vlimit_margin_v: float = 0.1
     # Auto-zero OFF, 2 V range, 4-wire, 50 Hz line (bench E3/T4, 3 Nov 2026):
     reading_s: Mapping[float, float] = {1: 0.04084, 0.5: 0.02083, 0.2: 0.00884,
@@ -108,7 +111,9 @@ current 0 A), measures by `(function, nplc)`.
 
 ### Layout (design §5; block numbers are 1-based)
 
-- Prologue: `WAIT_START` (external only), `LOG T0`, `DIGIO busy high`.
+- Prologue, immediate start: `LOG T0`, `DIGIO busy high` (mask busy).
+  External start: `DIGIO ready high` (mask ready), `WAIT_START`, `LOG T0`,
+  `DIGIO busy high + ready low` (pattern busy, mask busy|ready).
 - Per step, per phase: phase 1 = `RESET_COUNTER c1`, `RECALL`, [`OUTPUT 1`],
   `DIGIO marker high`, `DELAY`, `MEASURE 1`, `DIGIO marker low`, limit block(s),
   `COUNTER n1 → DELAY`; phase 2 = `RESET_COUNTER c2`, `RECALL` (same source,
@@ -125,9 +130,10 @@ current 0 A), measures by `(function, nplc)`.
   block's last step the repeat `COUNTER`.
 - Repeat: `RESET_COUNTER r` right before the block's first step; after its last
   step `COUNTER count → block's first step start`.
-- End: `OUTPUT 0`, `DIGIO 0 (marker|busy)`, `LOG END`; then, only if some block
-  targets the stop path: `ALWAYS → done`, stop path `OUTPUT 0`, `DIGIO 0`,
-  `LOG STOP`, and `done` = `LOG DONE`. No unreachable blocks; assert it.
+- End: `OUTPUT 0`, `DIGIO 0 (mask ready|busy|marker)`, `LOG END`; then, only if
+  some block targets the stop path: `ALWAYS → done`, stop path `OUTPUT 0`,
+  `DIGIO 0` (same mask), `LOG STOP`, and `done` = `LOG DONE`. No unreachable
+  blocks; assert it.
 - Delay per phase: `d = Δ − reading_s[nplc] − block_overhead_s − step_entry_s / n`
   with NPLC = the largest table entry giving `d ≥ margin_s`. None → `ValidationError`
   naming the step and the shortest feasible interval.
@@ -177,8 +183,10 @@ class Replayer:
    repeat) and an external-start variant: block lists match hand-checked
    expectations (assert on kinds and every branch target), no unreachable block,
    OUTPUT 1 exactly where required.
-2. The S1 bench layout: rest + (+4.9 mA, 0, −4.9 mA, 0)×3 at 6.25 ms gives the
-   same structure as `bench/marker_start_s1.py` (block count 53, same targets).
+2. The S1 bench layout: rest + (+4.9 mA, 0, −4.9 mA, 0)×3 at 6.25 ms, immediate
+   start, gives the structure of `bench/marker_start_s1.py` (53 blocks, same
+   kinds and branch targets; the bench script used marker line 1 instead of 4).
+   External start adds the READY block (55 blocks).
 3. Delays: 6 ms at 0.1 NPLC → d = 6 − 4.827 − 0.14 − 1.32/n ms; 0.1 s pulse with
    two-phase sampling picks 0.1 NPLC (fast) and 1 NPLC (slow); 2 ms interval →
    0.01 NPLC; 1 ms → `ValidationError`.

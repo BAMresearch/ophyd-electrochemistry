@@ -57,6 +57,12 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 - Hard-coded commissioning limits (10 mA, 2 V, 60 s) are too small for cycling.
 - No QueueServer profile.
 
+## Before the next bench session
+
+Rewire the digital I/O (decided 3 Nov): READY out line 1, BUSY out line 2,
+step MARKER out line 4 (scope probe moves from line 1), START in line 6 (the
+generator and its 1 kohm resistor move from line 3). Confirm the DB-9 pins.
+
 ## Last known hardware state (reconfirm before use)
 
 As of 2026-11-03 ~12:40 CET, after B0: K2460 serial `04686198`, firmware 1.7.16a

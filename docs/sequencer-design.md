@@ -111,8 +111,8 @@ counter part-way, and it costs nothing measurable.
 
 Around the steps:
 
-- Prologue: `WAIT` on the START line (external start only), `BLOCK_LOG_EVENT`
-  "OE_T0" (time origin, §8), busy line high.
+- Prologue: external start only: READY high, `WAIT` on the START line; then
+  `BLOCK_LOG_EVENT` "OE_T0" (time origin, §8), busy high (and READY low).
 - Repeat block: `RESET` of the repeat counter before the block's first step;
   `BRANCH_COUNTER count → first step of the block` after its last step.
 - Normal end: `SOURCE_OUTPUT OFF`, marker and busy low. **Stop path** (separate
@@ -165,6 +165,8 @@ takes `DELAY d → MEASURE → limit/counter blocks` per sample:
 
 ## 8. Start, markers, busy line, time base
 
+- READY (external start): high from arming until the START edge, so the
+  beamline can see that the 2460 is waiting for its trigger.
 - START: `immediate` arms and runs; `external` waits on the START input line
   (`digio.MODE_TRIGGER_IN`, `trigger.digin[line].edge`, `BLOCK_WAIT` with
   `CLEAR_ENTER`, so only an edge after arming starts the run). S2 scope: START →
@@ -291,7 +293,9 @@ Remaining, with the full runtime:
 ## 14. Decisions (user, 3 Nov)
 
 1. Fast sampling: 6 ms at 0.1 NPLC.
-2. Digital lines: as already configured in `Keithley2460Config` (line 1
-   "ready", 2 busy, 3 START). Step markers use line 1 unless the beamline
-   wiring says otherwise (to confirm with the trigger details).
+2. Digital lines (revised later on 3 Nov, outputs and the input kept apart):
+   READY output line 1 (high while armed and waiting for an external START),
+   BUSY output line 2, step MARKER output line 4, START input line 6; lines 3
+   and 5 unused. The S1/S2 bench runs used markers on 1 and START on 3: rewire
+   before B1.
 3. `vlimit_margin_v` = 0.1 V.

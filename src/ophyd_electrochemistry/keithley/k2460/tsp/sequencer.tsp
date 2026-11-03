@@ -56,6 +56,29 @@ local function oe_seq_bit(line)
     return 2 ^ (line - 1)
 end
 
+-- Lua 5.0 has no bit operators. Returns the lines whose bits sum to value, or
+-- nil if value is not a sum of distinct bits of those lines. Greedy from the
+-- highest bit is exact: distinct lower powers of two sum to less than a higher one.
+local function oe_seq_split(value, lines)
+    local sorted = {}
+    for _, line in ipairs(lines) do
+        table.insert(sorted, line)
+    end
+    table.sort(sorted, function(x, y) return x > y end)
+    local rest = value
+    local used = {}
+    for _, line in ipairs(sorted) do
+        if rest >= oe_seq_bit(line) then
+            rest = rest - oe_seq_bit(line)
+            table.insert(used, line)
+        end
+    end
+    if rest ~= 0 then
+        return nil
+    end
+    return used
+end
+
 local oe_seq_digio_events = {
     trigger.EVENT_DIGIO1, trigger.EVENT_DIGIO2, trigger.EVENT_DIGIO3,
     trigger.EVENT_DIGIO4, trigger.EVENT_DIGIO5, trigger.EVENT_DIGIO6,
@@ -83,6 +106,7 @@ function oe_seq_off()
         smu.source.func = func
     end
     if oe_seq_cfg ~= nil then
+        digio.line[oe_seq_cfg.ready].state = digio.STATE_LOW
         digio.line[oe_seq_cfg.marker].state = digio.STATE_LOW
         digio.line[oe_seq_cfg.busy].state = digio.STATE_LOW
     end
@@ -100,9 +124,10 @@ function oe_seq_initialize()
     oe_seq_state = "idle"
 end
 
--- Session settings. four_wire, front: 1/0. edge: 1 rising, 2 falling.
-function oe_seq_configure(v_min_abs, v_max_abs, i_max_abs, vlimit_max, marker, busy, start,
-        four_wire, front, edge)
+-- Session settings. Lines: ready, busy, marker outputs; start input.
+-- four_wire, front: 1/0. edge: 1 rising, 2 falling.
+function oe_seq_configure(v_min_abs, v_max_abs, i_max_abs, vlimit_max, ready, busy, marker,
+        start, four_wire, front, edge)
     oe_seq_require_inactive_off()
     oe_seq_number(v_min_abs, "v_min_abs")
     oe_seq_number(v_max_abs, "v_max_abs")
@@ -117,11 +142,13 @@ function oe_seq_configure(v_min_abs, v_max_abs, i_max_abs, vlimit_max, marker, b
     if vlimit_max <= 0 or vlimit_max > 100 then
         error("vlimit_max must be in (0, 100] V")
     end
-    oe_seq_integer(marker, "marker line", 1, 6)
+    oe_seq_integer(ready, "ready line", 1, 6)
     oe_seq_integer(busy, "busy line", 1, 6)
+    oe_seq_integer(marker, "marker line", 1, 6)
     oe_seq_integer(start, "start line", 1, 6)
-    if marker == busy or marker == start or busy == start then
-        error("marker, busy and start lines must differ")
+    if ready == busy or ready == marker or ready == start or busy == marker
+            or busy == start or marker == start then
+        error("ready, busy, marker and start lines must differ")
     end
     oe_seq_integer(four_wire, "four_wire", 0, 1)
     oe_seq_integer(front, "front", 0, 1)
@@ -141,10 +168,10 @@ function oe_seq_configure(v_min_abs, v_max_abs, i_max_abs, vlimit_max, marker, b
     if voltage_off ~= smu.OFFMODE_HIGHZ or smu.source.offmode ~= smu.OFFMODE_HIGHZ then
         error("HIGH-Z output-off mode not confirmed for both source functions")
     end
-    digio.line[marker].mode = digio.MODE_DIGITAL_OUT
-    digio.line[marker].state = digio.STATE_LOW
-    digio.line[busy].mode = digio.MODE_DIGITAL_OUT
-    digio.line[busy].state = digio.STATE_LOW
+    for _, line in ipairs({ ready, busy, marker }) do
+        digio.line[line].mode = digio.MODE_DIGITAL_OUT
+        digio.line[line].state = digio.STATE_LOW
+    end
     digio.line[start].mode = digio.MODE_TRIGGER_IN
     if edge == 1 then
         trigger.digin[start].edge = trigger.EDGE_RISING
@@ -156,7 +183,7 @@ function oe_seq_configure(v_min_abs, v_max_abs, i_max_abs, vlimit_max, marker, b
     format.asciiprecision = 15
     oe_seq_cfg = {
         v_min = v_min_abs, v_max = v_max_abs, i_max = i_max_abs, vlimit_max = vlimit_max,
-        marker = marker, busy = busy, start = start, four_wire = four_wire,
+        ready = ready, busy = busy, marker = marker, start = start, four_wire = four_wire,
     }
     print("OK")
 end
@@ -304,15 +331,14 @@ function oe_seq_block(i, code, a, b, c, d)
             oe_seq_count.output_off = oe_seq_count.output_off + 1
         end
     elseif code == 3 then
-        local allowed = oe_seq_bit(cfg.marker) + oe_seq_bit(cfg.busy)
+        local outputs = { cfg.ready, cfg.busy, cfg.marker }
         oe_seq_integer(a, "pattern", 0, 63)
         oe_seq_integer(b, "mask", 1, 63)
-        if b ~= oe_seq_bit(cfg.marker) and b ~= oe_seq_bit(cfg.busy) and b ~= allowed then
-            error("digital mask may only cover the marker and busy lines")
+        local masked = oe_seq_split(b, outputs)
+        if masked == nil then
+            error("digital mask may only cover the ready, busy and marker lines")
         end
-        -- Pattern: 0, the whole mask, or one of the two lines under a two-line mask.
-        if a ~= 0 and a ~= b and not (b == allowed and
-                (a == oe_seq_bit(cfg.marker) or a == oe_seq_bit(cfg.busy))) then
+        if oe_seq_split(a, masked) == nil then
             error("digital pattern outside its mask")
         end
         trigger.model.setblock(i, trigger.BLOCK_DIGITAL_IO, a, b)

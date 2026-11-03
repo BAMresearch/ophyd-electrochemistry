@@ -135,14 +135,16 @@ def out(lua) -> list[str]:
 
 
 def configure(lua, **overrides):
+    # Lines decided 3 Nov: outputs READY 1, BUSY 2, MARKER 4; START input 6.
     args = dict(
         v_min=0.0,
         v_max=2.5,
         i_max=0.005,
         vlimit_max=2.6,
-        marker=1,
+        ready=1,
         busy=2,
-        start=3,
+        marker=4,
+        start=6,
         four_wire=1,
         front=1,
         edge=1,
@@ -239,8 +241,9 @@ def test_configure_sets_highz_for_both_functions_and_lines(lua):
         "smu.FUNC_DC_CURRENT": "smu.OFFMODE_HIGHZ",
         "smu.FUNC_DC_VOLTAGE": "smu.OFFMODE_HIGHZ",
     }
-    assert g.digio.line[1].mode == "OUT" and g.digio.line[2].mode == "OUT"
-    assert g.digio.line[3].mode == "TRIGIN" and g.trigger.digin[3].edge == "RISING"
+    assert all(g.digio.line[line].mode == "OUT" for line in (1, 2, 4))
+    assert g.digio.line[3].mode is None and g.digio.line[5].mode is None
+    assert g.digio.line[6].mode == "TRIGIN" and g.trigger.digin[6].edge == "RISING"
     assert g.format.asciiprecision == 15
     assert g.src.func == "smu.FUNC_DC_CURRENT" and g.src.level == 0
     assert out(lua)[-1] == "OK"
@@ -253,6 +256,7 @@ def test_configure_sets_highz_for_both_functions_and_lines(lua):
         dict(i_max=0),
         dict(i_max=8),
         dict(marker=2),
+        dict(ready=6),
         dict(start=7),
         dict(four_wire=2),
         dict(edge=3),
@@ -363,7 +367,7 @@ def test_each_block_code_builds_the_documented_trigger_block(lua):
     assert blocks[7] == ["LIMIT", "INSIDE", -0.001, 0.001, 12, 5]
     assert blocks[8] == ["COUNTER", 16, 4]
     assert blocks[9] == ["RESET", 8]
-    assert blocks[10] == ["WAIT", "DIGIO3", "CLEAR_ENTER"]
+    assert blocks[10] == ["WAIT", "DIGIO6", "CLEAR_ENTER"]
     assert blocks[11] == ["LOG", "INFO1", "OE_T0"]
     assert blocks[12] == ["ALWAYS", 2]
 
@@ -372,8 +376,10 @@ def test_each_block_code_builds_the_documented_trigger_block(lua):
     "call,message",
     [
         ((1, 1, 3, 1, 0, 0), "source entry"),
-        ((1, 3, 4, 4, 0, 0), "mask"),  # line 3 is START, not an output
-        ((1, 3, 2, 1, 0, 0), "pattern"),  # busy bit under a marker-only mask
+        ((1, 3, 4, 4, 0, 0), "mask"),  # line 3 is not an output
+        ((1, 3, 32, 32, 0, 0), "mask"),  # line 6 is the START input
+        ((1, 3, 2, 8, 0, 0), "pattern"),  # busy bit under a marker-only mask
+        ((1, 3, 1, 10, 0, 0), "pattern"),  # ready bit under a busy+marker mask
         ((1, 4, -1, 0, 0, 0), "delay"),
         ((1, 5, 11, 0, 0, 0), "measure count"),
         ((2, 6, -0.1, 2.5, 3, 1), "absolute window"),
@@ -399,6 +405,13 @@ def test_blocks_are_validated(lua, call, message):
 # Commit, arm, data, shutdown
 
 
+@pytest.mark.parametrize("pattern,mask", [(0, 11), (11, 11), (8, 11), (2, 3), (10, 10), (1, 1)])
+def test_digital_blocks_accept_any_pattern_within_the_output_lines(lua, pattern, mask):
+    g = build(lua, n_blocks=1)
+    g.oe_seq_block(1, 3, pattern, mask, 0, 0)
+    assert list(g.blocks[1].values()) == ["DIGIO", pattern, mask]
+
+
 def test_commit_requires_complete_program_with_output_off(lua):
     g = build(lua, n_blocks=2)
     g.oe_seq_source(1, 1, 0.001, 0.01, 2.6)
@@ -418,7 +431,7 @@ def test_commit_and_arm(lua):
     g.oe_seq_arm()
     assert g.oe_seq_state == "armed" and g.model_state == "trigger.STATE_RUNNING"
     events = [list(e.values()) for e in g.log.values()]
-    assert events[-2:] == [["digin_clear", 3], ["initiate"]]
+    assert events[-2:] == [["digin_clear", 6], ["initiate"]]
     with pytest.raises(lupa.LuaError):
         g.oe_seq_arm()
 
@@ -484,7 +497,7 @@ def test_off_handles_the_stale_output_attribute(lua):
     assert out(lua)[-1] == "OFF"
     assert g.src.output == "smu.OFF" and g.src.func == "smu.FUNC_DC_CURRENT"
     assert g.oe_seq_state == "aborted" and g.model_state == "trigger.STATE_IDLE"
-    assert g.digio.line[1].state == "LOW" and g.digio.line[2].state == "LOW"
+    assert all(g.digio.line[line].state == "LOW" for line in (1, 2, 4))
 
 
 def test_ping_posts_a_timestamped_event(lua):
