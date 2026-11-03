@@ -98,6 +98,24 @@ def run_parked_model(t: PyVisaKeithley2460Transport, blocks: list[str], wait_s: 
     return state
 
 
+def drain_stale_output(resource: str) -> None:
+    """Read and discard reply lines an interrupted session left unread."""
+    import pyvisa
+
+    session = pyvisa.ResourceManager("@py").open_resource(resource, open_timeout=5000)
+    try:
+        session.read_termination = session.write_termination = "\n"
+        session.timeout = 3000
+        session.write('print("OE-SYNC")')
+        stale = []
+        while (line := session.read()) != "OE-SYNC":
+            stale.append(line)
+        log.append({"drained_stale_lines": str(len(stale))})
+        print(f"Drained {len(stale)} stale reply line(s)")
+    finally:
+        session.close()
+
+
 def cleanup(t: PyVisaKeithley2460Transport, buffer_name: str) -> None:
     """Stop the model, delete temporaries, restore current source at 0 A."""
     w(t, "trigger.model.abort()")
@@ -140,11 +158,13 @@ def probe_live_reads(t: PyVisaKeithley2460Transport) -> dict[str, str]:
         count = int(float(q(t, "print(oe_live.n)")))
         if count > last:
             # Fetch only the new records, as a live plot would.
+            # One reply line per query: printbuffer would add a second one.
             reply = q(
                 t,
                 guarded(
-                    f"printbuffer({last + 1}, {count}, oe_live.relativetimestamps) "
-                    f"return {count - last}"
+                    f"local r = {{}} for i = {last + 1}, {count} do "
+                    "r[#r + 1] = string.format('%.6f', oe_live.relativetimestamps[i]) end "
+                    "return #r .. ' ' .. r[1] .. '..' .. r[#r]"
                 ),
             )
             reads.append(f"{time.monotonic() - started:.2f}s n={count} state={state} {reply}")
@@ -232,6 +252,7 @@ def main() -> None:
     config = VisaTransportConfig(
         resource_name=args.resource, backend="@py", required_language="TSP", io_timeout_ms=5_000
     )
+    drain_stale_output(args.resource)
     t = PyVisaKeithley2460Transport(config)
     t.connect()
     try:
@@ -245,11 +266,23 @@ def main() -> None:
         results["P1_offmode"] = q(t, "print(smu.source.offmode)")
         results["P1_func"] = q(t, "print(smu.source.func)")
         results["P1_event_count"] = q(t, "print(eventlog.getcount(eventlog.SEV_ALL))")
+        results["P1_defbuffers"] = q(t, "print(defbuffer1.n, defbuffer1.capacity, defbuffer2.n)")
+        results["P1_continuous"] = q(t, "print(trigger.continuous)")
 
-        print("P2 HIGH-Z off mode")
+        print("P2 HIGH-Z off mode, per source function")
         results["P2_set_highz"] = q(
-            t, guarded("smu.source.offmode = smu.OFFMODE_HIGHZ return smu.source.offmode")
+            t,
+            guarded(
+                "smu.source.func = smu.FUNC_DC_VOLTAGE smu.source.offmode = smu.OFFMODE_HIGHZ "
+                "local a = tostring(smu.source.offmode) "
+                "smu.source.func = smu.FUNC_DC_CURRENT local b = tostring(smu.source.offmode) "
+                "smu.source.offmode = smu.OFFMODE_HIGHZ local c = tostring(smu.source.offmode) "
+                "smu.source.func = smu.FUNC_DC_VOLTAGE local d = tostring(smu.source.offmode) "
+                "smu.source.func = smu.FUNC_DC_CURRENT "
+                "return 'V set:' .. a .. ' I before:' .. b .. ' I set:' .. c .. ' V after:' .. d"
+            ),
         )
+        print("    interpret: 'I before' NORMAL = off mode is per function; set it for both")
 
         print("P3 config list with mixed source functions")
         results["P3_configlist"] = q(
@@ -346,6 +379,7 @@ def main() -> None:
         results["final_offmode"] = q(t, "print(smu.source.offmode)")
         results["final_model"] = q(t, "print(trigger.model.state())")
         results["final_event_count"] = q(t, "print(eventlog.getcount(eventlog.SEV_ALL))")
+        results["final_defbuffers"] = q(t, "print(defbuffer1.n, defbuffer1.capacity, defbuffer2.n)")
     finally:
         t.close()
 
