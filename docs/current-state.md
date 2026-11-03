@@ -47,7 +47,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   sheet's SHA-256 (refused if the sheet changed); `oe-enqueue` asks for a
   typed confirmation per hardware run (`oe-validate` checks a sheet first); only `run_from_sheet` and
   `recover_sequencer` permitted. Tested against a real RE Manager + redis with
-  the simulator (`qserver/README.md`).
+  the simulator (`qserver/README.md`); operator steps in `docs/operator-guide.md`.
 - **Run files:** incremental HDF5 writer/reader with separate equipment/run
   metadata, compressed readouts and events; exclusive creation, per-append flush
   and explicit terminal outcomes. SWMR mode (HDF5 1.10 format): other

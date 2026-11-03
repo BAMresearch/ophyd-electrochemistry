@@ -24,6 +24,7 @@ issues = "https://github.com/BAMresearch/ophyd-electrochemistry/issues"
 [project.scripts]
 oe-diagnose = "ophyd_electrochemistry.keithley.k2460.commissioning:main"
 oe-new-run = "ophyd_electrochemistry.sequences.notebook:main"
+oe-template = "ophyd_electrochemistry.sequences.run_sheet:template_main"
 oe-enqueue = "ophyd_electrochemistry.sequences.queueserver:enqueue_main"
 oe-validate = "ophyd_electrochemistry.sequences.queueserver:validate_main"
 

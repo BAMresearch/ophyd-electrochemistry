@@ -445,3 +445,15 @@ def test_template_documents_the_new_columns(tmp_path):
     sheet = load_workbook(make_template(tmp_path / "runs.xlsx"))["Runs"]
     header = [cell.value for cell in sheet[1]]
     assert {"start_with", "cv_after"} <= set(header)
+
+
+def test_template_command_writes_once(tmp_path, capsys):
+    from ophyd_electrochemistry.sequences.run_sheet import template_main
+
+    path = tmp_path / "runs.xlsx"
+    assert template_main([str(path)]) == 0
+    assert capsys.readouterr().out.strip() == str(path)
+    before = path.read_bytes()
+    with pytest.raises(SystemExit):
+        template_main([str(path)])
+    assert path.read_bytes() == before

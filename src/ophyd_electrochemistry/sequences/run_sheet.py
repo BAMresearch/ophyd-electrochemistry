@@ -4,6 +4,7 @@ Install the ``experiment`` extra to read or create workbooks. Limits, wiring,
 output-off mode and hardware approval belong to the notebook/session.
 """
 
+import argparse
 import math
 from collections import Counter
 from collections.abc import Mapping
@@ -481,3 +482,14 @@ def make_template(path: str | Path, *, overwrite: bool = False) -> Path:
             readme_sheet.column_dimensions["A"].width = 18
             readme_sheet.column_dimensions["B"].width = 100
     return path
+
+
+def template_main(argv: list[str] | None = None) -> int:
+    """Write a run-sheet template: example rows, column descriptions and a README sheet."""
+    parser = argparse.ArgumentParser(prog="oe-template", description=template_main.__doc__)
+    parser.add_argument("path", type=Path, help="new .xlsx file (never overwritten)")
+    args = parser.parse_args(argv)
+    if args.path.exists():
+        parser.error(f"{args.path} exists; choose a new file name")
+    print(make_template(args.path))
+    return 0

@@ -50,7 +50,8 @@ def wait(condition, timeout, what):
 
 
 @pytest.fixture
-def manager(tmp_path):
+def manager(tmp_path, request):
+    speed = getattr(request, "param", "inf")  # simulator speed; 1.0 = real time
     redis_port, control, info = free_port(), free_port(), free_port()
     redis = subprocess.Popen(
         [REDIS, "--port", str(redis_port), "--save", "", "--appendonly", "no"],
@@ -61,7 +62,7 @@ def manager(tmp_path):
         (QSERVER / "session-simulator.toml")
         .read_text()
         .replace('"~/k2460-data/qserver-sim"', repr(str(tmp_path / "data")))
-        .replace("sim_speed = 10.0", "sim_speed = inf")
+        .replace("sim_speed = 10.0", f"sim_speed = {speed}")
     )
     log = (tmp_path / "manager.log").open("w")
     process = subprocess.Popen(
@@ -151,3 +152,40 @@ def test_enqueued_row_runs_in_the_worker_and_writes_its_file(manager, tmp_path):
     saved = read_run_file(files[0])
     assert saved["run"]["outcome"] == "completed"
     assert saved["run_sheet_row"]["measurement_id"] == "example-rest"
+
+
+@pytest.mark.parametrize("manager", ["1.0"], indirect=True)
+def test_pause_immediate_abort_recover_and_run_again(manager, tmp_path):
+    """The operator guide's stop procedure: pause immediate, abort, recover_sequencer."""
+    api, session, address = manager
+    api.environment_open()
+    api.wait_for_idle(timeout=120)
+    sheet = make_template(tmp_path / "runs.xlsx")  # example-rest lasts 10 s at speed 1
+    items = queue_items(session, sheet, ["example-rest"], show=lambda _: None)
+    enqueue(items, address, api=api)
+    api.queue_start()
+    wait(lambda: api.status(reload=True)["manager_state"] == "executing_queue", 30, "run start")
+    time.sleep(2)
+    api.re_pause(option="immediate")
+    wait(lambda: api.status(reload=True)["manager_state"] == "paused", 30, "pause")
+    api.re_abort()
+    api.wait_for_idle(timeout=60)
+    assert api.history_get()["items"][-1]["result"]["exit_status"] == "aborted"
+    (aborted,) = (tmp_path / "data").rglob("*.h5")
+    assert read_run_file(aborted)["run"]["outcome"] == "aborted"
+    # QueueServer returns an aborted plan to the front of the queue: remove it,
+    # recover first, then run the row again.
+    queue = api.queue_get()["items"]
+    assert [i["name"] for i in queue] == ["run_from_sheet"]
+    api.item_remove(pos="front")
+    api.item_add(BPlan("recover_sequencer"), pos="front")
+    time.sleep(1.1)  # run files are named to the second
+    enqueue(items, address, api=api)
+    api.queue_start()
+    api.wait_for_idle(timeout=120)
+    results = [item["result"]["exit_status"] for item in api.history_get()["items"][-2:]]
+    assert results == ["completed", "completed"], [
+        i["result"].get("msg") for i in api.history_get()["items"]
+    ]
+    rerun = [f for f in (tmp_path / "data").rglob("*.h5") if f != aborted]
+    assert read_run_file(rerun[0])["run"]["outcome"] == "completed"
