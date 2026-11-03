@@ -50,22 +50,17 @@ not confirmed.
    (sequencer TSP + backend).
 3. Prepare the bench-day B1 test matrix and runner (O8).
 
-## Information needed from the user
+Bench test B0 (`bench/feature_probe.py`, output OFF only) is ready to run on
+the next bench session; it writes its own evidence file.
 
-1. Cells: format (coin/pouch/in-situ beamline cell), 2- or 3-electrode, counter
-   electrode (Na metal?), voltage window, capacity/active mass, intended currents
-   (C-rates) — this sets current/voltage ranges and limits.
-2. Cycling: CC only or CC-CV; number of cycles; expected step durations.
-3. Pulses: amplitude(s), shortest and longest pulse time (Renard series range),
-   rest durations, repetitions, how SOC is set (by charge or by voltage), and the
-   sample interval needed during pulses.
-4. Start: TTL source and logic levels for external START. Does "Ethernet start"
-   mean starting from our notebook/QueueServer, or a message from the beamline
-   control system (which protocol)? Does the beamline want a TTL marker from the
-   2460 at pulse/step starts?
-5. Notebook vs QueueServer: should the notebook run its own RunEngine, or submit
-   to the QueueServer and plot from saved data?
-6. Data: required output format and location (CSV, HDF5/NeXus, Tiled/databroker).
-7. Bench days available, and whether an RC dummy cell (e.g. resistor +
-   supercapacitor) and a sacrificial cell can be prepared.
-8. Experiment dates.
+## Information still needed from the user
+
+Answers so far are recorded in the plan. Still open:
+
+1. Cell capacity / active mass, voltage window, intended currents (C-rates).
+2. Cycling: CC only or CC-CV; number of cycles.
+3. Pulse amplitude(s); how to trim the ~7.6 h-per-SOC pulse series.
+4. Start: TTL source and logic levels; what "Ethernet start" means (our notebook
+   vs. a beamline control-system message, and which protocol); whether the
+   beamline wants a TTL marker from the 2460 at step starts.
+5. Experiment dates.

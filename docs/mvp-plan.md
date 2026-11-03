@@ -18,6 +18,26 @@ The beamline does not run Bluesky; we run our own stack next to it.
 5. Plans launchable through a single QueueServer that owns the 2460 (no
    leader/follower setup yet).
 
+**Decided 2026-11-03:** the notebook runs its own RunEngine (simplest path);
+QueueServer comes later and may not be needed for this beamtime. Output is one
+structured HDF5 file per run with separate groups for equipment settings, run
+settings (including the full Excel row, optional sample IDs and notes) and
+readouts. Bench days are normally Thu/Fri/Mon.
+
+**Protocol estimates (user, 2026-11-03, may change):** two-electrode cells;
+capacity and currents TBD. Pulse times 0.1–100 s (Renard series); rest = pulse
+time, minimum 1 s; repeats ~100 at the shortest to ~20 at the longest; SOC set
+and checked by voltage (CC to a target voltage, then rest).
+Consequences:
+
+- A full R5 series (16 pulse times) with log-interpolated repeats takes about
+  **7.6 h per SOC**; 100 s × 20 alone is 2.2 h. Needs trimming for a two-day
+  beamtime (fewer long-pulse repeats, a coarser series, or an upper cap).
+- 0.1 s pulses need sub-10 ms sampling (0.1 NPLC ≈ 5 ms/reading on the resistor);
+  100 s pulses at that rate would produce ~10⁶ records. Steps therefore get
+  two-phase sampling: a fast interval for an initial window after the edge,
+  then a slow interval.
+
 **Out (for now):** leader/follower QueueServers, PRBS/multisine/arbitrary
 waveform playback, aperture/timestamp metrology beyond buffer timestamps,
 voltage pulse trains, EIS.
@@ -33,7 +53,8 @@ A run is a finite `Sequence` of `Step`s, plus an optional repeated block:
 | `mode` | `current`, `voltage` or `rest` (rest = 0 A, output on, measures OCV) |
 | `level` | A or V |
 | `duration_s` | maximum step duration |
-| `sample_interval_s` | measurement spacing within the step |
+| `sample_interval_s` | measurement spacing within the step (slow phase) |
+| `fast_interval_s`, `fast_window_s` | optional faster spacing for the first part of the step |
 | `v_min`, `v_max` | (current/rest steps) voltage cutoffs |
 | `i_abs_min` | (voltage steps) taper cutoff for CV holds |
 | `on_cutoff` | `next` (end step, continue) or `stop` (end run, output OFF) |
@@ -94,13 +115,15 @@ Off-day (no hardware):
 | O4 | Flyer integration with live chunk reads; `run_sequence` plan; live plot callback | todo |
 | O5 | Sequencer TSP + host backend, mocked-transport tests, offline Lua syntax check | todo |
 | O6 | Per-run notebook template (simulator first) | todo |
-| O7 | QueueServer startup profile + integration tests against the simulator | todo |
+| O7 | QueueServer startup profile + integration tests against the simulator | deferred |
+| O9 | HDF5 writer (equipment / run settings incl. Excel row / readouts) | todo |
 | O8 | Bench runner script that executes a test matrix and writes one evidence file | todo |
 
 Bench days (in order):
 
 | # | Load | Test matrix (summary) |
 |---|---|---|
+| B0 | resistor, output OFF throughout | `bench/feature_probe.py`: HIGH-Z off mode, mixed-function config list, BRANCH_ON_EVENT latch semantics, max buffer size |
 | B1 | 100 Ω resistor, then RC dummy cell | Install sequencer; current/rest steps; bipolar pulse block; cutoff `next`/`stop` on the RC dummy; live reads during run; external START and software start; step-marker TTL on scope; HIGH-Z off state; measurement time per profile |
 | B2 | RC dummy, then a sacrificial Na/hard-carbon cell | Notebook flow end to end; QueueServer flow; a multi-hour cycling run; pulse runs at two SOCs |
 | B3 | Real cell, beamline-like setup | Full dress rehearsal from the Excel sheet, including trigger wiring |
