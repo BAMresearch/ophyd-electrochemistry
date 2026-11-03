@@ -112,17 +112,13 @@ R3). A 5 mV cutoff is well above the 2 V range's resolution and offset.
      compliance (|V| ≤ 0.4 V here) does not stop the voltage from going below
      0 V between samples, so sampling near 5 mV should be ≤ 1 s.
    - The CV hold at 5 mV (P4) itself sits close to plating conditions.
-5. **What the run sheet can express today.**
-   - The bipolar pulse protocol always starts with +I.
-   - The cycling protocol puts the CV hold after the charge, not after the
-     sodiation.
-   - There is no "CC approach, then pulses" protocol (P3), and no unipolar pulse
-     train (P2).
-
-   All four are small extensions of existing builders (a pulse-polarity
-   option, a CV-after-discharge option, an optional approach step, unipolar
-   pulses), with no new instrument features. They are proposed here, not yet
-   implemented.
+5. **What the run sheet can express.** Added 3 Nov: `start_with = discharge`
+   (bipolar pulses −I first; cycling starts with the sodiation) and
+   `cv_after = discharge` (CV hold at v_low after the sodiation), so P0, P1
+   and P4 can be written as sheet rows today. Still missing, pending the
+   answers to question 3: a "CC approach, then pulses" protocol (P3) and a
+   unipolar pulse train (P2). Both are small builder extensions with no new
+   instrument features.
 6. **Pulse-length series.** Since pulsed vs non-pulsed matters more than t_p,
    the template's 16-run t_p series can give way to pairs (pulsed, non-pulsed)
    at one or two t_p values.
@@ -154,8 +150,8 @@ R3). A 5 mV cutoff is well above the 2 V range's resolution and offset.
 
 ## Next steps (after answers)
 
-- Implement the builder and run-sheet extensions from point 5 that the answers
-  confirm.
+- Implement the remaining protocol extensions from point 5 (P2, P3) that the
+  answers confirm.
 - Write the beamtime run sheet. Run `oe-validate` with the beamtime session
   file, then rehearse it on the RC dummy cell (B2) with the same windows.
 - Add a dummy-cell check of the 5 mV cutoff and HIGH-Z hold at low voltage to

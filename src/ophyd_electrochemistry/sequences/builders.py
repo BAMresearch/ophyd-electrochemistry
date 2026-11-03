@@ -131,10 +131,19 @@ def bipolar_pulse_sequence(
     fast_interval_s: float = DEFAULT_FAST_INTERVAL_S,
     fast_window_s: float = 0.5,
     interval_s: float = 0.1,
+    start: str = "charge",
     name: str = "",
 ) -> Sequence:
+    """Rest, then {pulse, rest, opposite pulse, rest} x repeats.
+
+    ``start="charge"`` pulses +I first; ``"discharge"`` pulses -I first (e.g.
+    sodiation first for hard carbon against Na).
+    """
     positive(current_a, "current_a")
     positive(pulse_s, "pulse_s")
+    if start not in ("charge", "discharge"):
+        raise ValidationError("start must be charge or discharge")
+    first = current_a if start == "charge" else -current_a
     if rest_s is None:
         rest_s = max(pulse_s, 1.0)
 
@@ -156,9 +165,9 @@ def bipolar_pulse_sequence(
     return Sequence(
         (
             rest_step(pre_rest_s, sampling(pre_rest_s)),
-            pulse(current_a),
+            pulse(first),
             rest,
-            pulse(-current_a),
+            pulse(-first),
             rest,
         ),
         RepeatBlock(1, 4, repeats),
@@ -177,10 +186,15 @@ def cycling_sequence(
     cv_max_s: float = 3600.0,
     max_step_s: float = 86400.0,
     start: str = "charge",
+    cv_after: str = "charge",
     interval_s: float = 1.0,
     name: str = "",
 ) -> Sequence:
-    """Repeat charge/[CV]/rest/discharge/rest; CV belongs to the charge half."""
+    """Repeat charge/rest and discharge/rest halves, ``start`` first.
+
+    With ``cv_i_abs_min`` a CV hold follows the CC step of the ``cv_after`` half:
+    at v_high after the charge, or at v_low after the discharge.
+    """
     positive(current_a, "current_a")
     number(v_low, "v_low")
     number(v_high, "v_high")
@@ -188,14 +202,20 @@ def cycling_sequence(
         raise ValidationError("v_low must be below v_high")
     if start not in ("charge", "discharge"):
         raise ValidationError("start must be charge or discharge")
+    if cv_after not in ("charge", "discharge"):
+        raise ValidationError("cv_after must be charge or discharge")
     positive(cv_max_s, "cv_max_s")
     sampling = Sampling(interval_s)
     rest = rest_step(rest_s, sampling)
     charge = [cc_step(current_a, v_high, max_step_s, sampling)]
+    discharge = [cc_step(-current_a, v_low, max_step_s, sampling)]
     if cv_i_abs_min is not None:
-        charge.append(cv_step(v_high, cv_i_abs_min, cv_max_s, sampling))
+        if cv_after == "charge":
+            charge.append(cv_step(v_high, cv_i_abs_min, cv_max_s, sampling))
+        else:
+            discharge.append(cv_step(v_low, cv_i_abs_min, cv_max_s, sampling))
     charge.append(rest)
-    discharge = [cc_step(-current_a, v_low, max_step_s, sampling), rest]
+    discharge.append(rest)
     steps = tuple(charge + discharge if start == "charge" else discharge + charge)
     return Sequence(steps, RepeatBlock(0, len(steps) - 1, cycles), name)
 

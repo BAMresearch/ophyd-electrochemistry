@@ -684,3 +684,28 @@ def test_replay_chunk_independence_with_cutoffs_and_errors(limits):
     assert chunked.finish("end") == reference.finish("end")
     assert expected_records(sequence) == 30
     assert len(expanded(sequence)) == 3
+
+
+def test_hard_carbon_reference_cycle_compiles():
+    # docs/beamtime-concept.md P4: CC sodiation to 5 mV, CV hold there, rest, CC to 0.2 V, rest.
+    sequence = cycling_sequence(
+        2e-5,
+        0.005,
+        0.2,
+        1,
+        start="discharge",
+        cv_after="discharge",
+        cv_i_abs_min=4e-6,
+        rest_s=60,
+        max_step_s=3600,
+        cv_max_s=600,
+    )
+    program = compile_program(sequence, SafetyLimits(0.0, 0.3, 1e-3, 1e5, 10**6))
+    cv = program.sources[program.steps[1].source_entry - 1]
+    assert (cv.mode, cv.level, cv.range, cv.limit) == ("voltage", 0.005, 0.2, 1e-3)
+    assert program.sources[0].range == 1e-4  # 20 uA on the 100 uA range
+    assert program.steps[1].taper == 4e-6
+    # Output ON at the start and after each source-function switch (CV, then the rest).
+    on = [b for b in program.blocks if b.kind == K.OUTPUT and b.args == (1,)]
+    assert len(on) == 3
+    assert_reachable(program)

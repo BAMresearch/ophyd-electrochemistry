@@ -45,13 +45,18 @@ _COLUMNS = {
     "start_mode": "immediate: start when the notebook arms the run. external: wait for the "
     "hardware start trigger. Blank = immediate.",
     "current_a": "Current in A; positive current raises the cell voltage. bipolar_pulse: "
-    "amplitude, applied as +I then -I. cycling: magnitude for both directions. "
+    "amplitude, applied as +I then -I (or -I then +I, see start_with). cycling: magnitude "
+    "for both directions. "
     "soc_position: signed, the sign sets the direction.",
     "pulse_s": "bipolar_pulse: duration of each +I and -I pulse in s.",
+    "start_with": "charge (positive current, voltage rises) or discharge (negative current; "
+    "for hard carbon against Na: sodiation). bipolar_pulse: sign of the first pulse in each "
+    "block. cycling: the first half-cycle. Blank = charge.",
     "rest_s": "Zero-current rest in s. bipolar_pulse: after each pulse (blank = larger of "
     "pulse_s and 1). cycling: after each half-cycle (blank = 600). soc_position: after "
     "reaching target_v. rest: total duration.",
-    "repeats": "bipolar_pulse: number of +I / rest / -I / rest blocks. Blank = 100 at 0.1 s "
+    "repeats": "bipolar_pulse: number of pulse / rest / opposite pulse / rest blocks. Blank = "
+    "100 at 0.1 s "
     "down to 6 at 100 s.",
     "pre_rest_s": "bipolar_pulse: rest before the first pulse in s. Blank = 10.",
     "v_low": "Lower voltage threshold in V; the 2460 watches the voltage, it does not hold "
@@ -59,14 +64,16 @@ _COLUMNS = {
     "if a pulse reaches it. Not the absolute safety limit (set in the notebook).",
     "v_high": "Upper voltage threshold in V; the 2460 watches the voltage, it does not hold "
     "it. cycling: the upward step ends here (and the CV hold, if any, holds this "
-    "voltage). bipolar_pulse (optional): the run stops if a pulse reaches it. Not the "
-    "absolute safety limit (set in the notebook).",
+    "voltage after the charge). bipolar_pulse (optional): the run stops if a pulse reaches "
+    "it. Not the absolute safety limit (set in the notebook).",
     "target_v": "soc_position: constant current until the cell voltage reaches this value "
     "in V, then rest_s at zero current.",
-    "cycles": "cycling: number of up/down cycles; each starts with the upward (positive "
-    "current) step.",
-    "cv_i_abs_min_a": "cycling: after the upward step, hold v_high until |current| falls "
-    "to this value in A (at most 3600 s). Blank = no voltage hold.",
+    "cycles": "cycling: number of cycles; each starts with the half set by start_with.",
+    "cv_i_abs_min_a": "cycling: after a constant-current step, hold its end voltage until "
+    "|current| falls to this value in A (at most 3600 s); which step is set by cv_after. "
+    "Blank = no voltage hold.",
+    "cv_after": "cycling with cv_i_abs_min_a: hold after the charge (at v_high) or after the "
+    "discharge (at v_low). Blank = charge.",
     "max_step_s": "Time limit in s for each constant-current step; the step ends then "
     "even if its voltage was not reached. cycling: blank = 86400. soc_position: required.",
     "fast_interval_s": "Sampling interval in s during the first fast_window_s of every "
@@ -79,17 +86,14 @@ _COLUMNS = {
     "notes": "Optional free text; stored with the data.",
 }
 _PROTOCOLS = {"bipolar_pulse", "cycling", "soc_position", "rest"}
+_TEXT = ("measurement_id", "protocol", "start_mode", "start_with", "cv_after", "sample_id", "notes")
 _REQUIRED = {
     "bipolar_pulse": ("current_a", "pulse_s"),
     "cycling": ("current_a", "v_low", "v_high", "cycles"),
     "soc_position": ("current_a", "target_v", "max_step_s", "rest_s"),
     "rest": ("rest_s",),
 }
-_NUMERIC = tuple(
-    column
-    for column in _COLUMNS
-    if column not in {"measurement_id", "protocol", "start_mode", "sample_id", "notes"}
-)
+_NUMERIC = tuple(column for column in _COLUMNS if column not in _TEXT)
 
 
 def _json_cell(value: object) -> object:
@@ -117,7 +121,7 @@ def _blank(value: object) -> bool:
 def _parse_row(row: Mapping[str, object]) -> tuple[dict[str, object], list[str]]:
     parsed = dict(row)
     errors = []
-    for column in ("measurement_id", "protocol", "start_mode", "sample_id", "notes"):
+    for column in _TEXT:
         value = row.get(column)
         if _blank(value):
             parsed[column] = None
@@ -142,6 +146,10 @@ def _parse_row(row: Mapping[str, object]) -> tuple[dict[str, object], list[str]]
         parsed["start_mode"] = "immediate"
     elif isinstance(start, str) and start not in ("immediate", "external"):
         errors.append("start_mode: must be immediate or external")
+    for column in ("start_with", "cv_after"):
+        choice = parsed.get(column)
+        if isinstance(choice, str) and choice not in ("charge", "discharge"):
+            errors.append(f"{column}: must be charge or discharge")
     for column in _NUMERIC:
         value = row.get(column)
         if _blank(value):
@@ -184,6 +192,10 @@ def _build_sequence(row: Mapping[str, object]) -> Sequence:
     def optional(column: str) -> float | None:
         return None if row.get(column) is None else value(column)
 
+    def choice(column: str) -> str:
+        result = row.get(column)
+        return "charge" if result is None else str(result)
+
     protocol = row["protocol"]
     if protocol == "bipolar_pulse":
         pulse_s = value("pulse_s")
@@ -198,6 +210,7 @@ def _build_sequence(row: Mapping[str, object]) -> Sequence:
             fast_interval_s=value("fast_interval_s", DEFAULT_FAST_INTERVAL_S),
             fast_window_s=value("fast_window_s", 0.5),
             interval_s=value("interval_s", 0.1),
+            start=choice("start_with"),
         )
     interval = value("interval_s", 1)
     if protocol == "cycling":
@@ -209,6 +222,8 @@ def _build_sequence(row: Mapping[str, object]) -> Sequence:
             rest_s=value("rest_s", 600),
             cv_i_abs_min=optional("cv_i_abs_min_a"),
             max_step_s=value("max_step_s", 86400),
+            start=choice("start_with"),
+            cv_after=choice("cv_after"),
             interval_s=interval,
         )
     elif protocol == "soc_position":

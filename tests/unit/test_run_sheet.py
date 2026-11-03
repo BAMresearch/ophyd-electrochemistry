@@ -401,3 +401,47 @@ def test_empty_workbook_and_header_only(tmp_path, limits):
         load_run_sheet(path, limits)
     path = write_sheet(tmp_path, [], columns=["measurement_id", "protocol"])
     assert load_run_sheet(path, limits) == {}
+
+
+def test_start_with_and_cv_after_columns(tmp_path, limits):
+    rows = [
+        pulse(measurement_id="p", start_with="discharge"),
+        dict(
+            measurement_id="ref",
+            protocol="cycling",
+            current_a=2e-5,
+            v_low=0.005,
+            v_high=0.2,
+            cycles=1,
+            cv_i_abs_min_a=4e-6,
+            start_with=" discharge ",
+            cv_after="discharge",
+        ),
+        dict(
+            measurement_id="plain",
+            protocol="cycling",
+            current_a=2e-5,
+            v_low=0.005,
+            v_high=0.2,
+            cycles=1,
+            cv_i_abs_min_a=4e-6,
+        ),
+    ]
+    runs = load_run_sheet(write_sheet(tmp_path, rows), limits)
+    assert runs["p"].sequence.steps[1].level < 0 < runs["p"].sequence.steps[3].level
+    assert runs["ref"].sequence == cycling_sequence(
+        2e-5, 0.005, 0.2, 1, cv_i_abs_min=4e-6, start="discharge", cv_after="discharge"
+    )
+    assert runs["plain"].sequence == cycling_sequence(2e-5, 0.005, 0.2, 1, cv_i_abs_min=4e-6)
+
+
+@pytest.mark.parametrize("column", ["start_with", "cv_after"])
+def test_start_with_and_cv_after_values_are_checked(tmp_path, limits, column):
+    with pytest.raises(ValidationError, match=f"{column}: must be charge or discharge"):
+        load_run_sheet(write_sheet(tmp_path, [pulse(**{column: "sodiation"})]), limits)
+
+
+def test_template_documents_the_new_columns(tmp_path):
+    sheet = load_workbook(make_template(tmp_path / "runs.xlsx"))["Runs"]
+    header = [cell.value for cell in sheet[1]]
+    assert {"start_with", "cv_after"} <= set(header)

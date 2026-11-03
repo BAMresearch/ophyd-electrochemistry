@@ -582,3 +582,32 @@ def test_validate_rejects_effective_interval_below_instrument_minimum():
     step = current_step(duration_s=0.101, sampling=Sampling(0.005))
     with pytest.raises(ValidationError, match="effective interval"):
         validate(Sequence((step,)), limits)
+
+
+def test_bipolar_pulses_can_start_with_discharge():
+    sequence = bipolar_pulse_sequence(0.0005, 1, 3, start="discharge")
+    assert [step.level for step in sequence.steps] == [0, -0.0005, 0, 0.0005, 0]
+    assert sequence.repeat == RepeatBlock(1, 4, 3)
+    with pytest.raises(ValidationError, match="start must be charge or discharge"):
+        bipolar_pulse_sequence(0.0005, 1, 3, start="negative")
+
+
+@pytest.mark.parametrize("start", ["charge", "discharge"])
+def test_cv_hold_after_the_discharge(start):
+    # Hard carbon reference cycle: sodiate to 5 mV, hold there, rest, desodiate to 0.2 V, rest.
+    sequence = cycling_sequence(
+        2e-5, 0.005, 0.2, 2, start=start, cv_after="discharge", cv_i_abs_min=4e-6, rest_s=60
+    )
+    discharge = [(StepMode.CURRENT, -2e-5, 0.005, None), (StepMode.VOLTAGE, 0.005, None, 4e-6)]
+    charge = [(StepMode.CURRENT, 2e-5, None, 0.2)]
+    rest = [(StepMode.REST, 0.0, None, None)]
+    halves = (discharge + rest, charge + rest)
+    expected = halves[0] + halves[1] if start == "discharge" else halves[1] + halves[0]
+    steps = [
+        (s.mode, s.level, s.v_min, s.v_max if s.mode != StepMode.VOLTAGE else s.i_abs_min)
+        for s in sequence.steps
+    ]
+    assert steps == expected
+    assert sequence.repeat == RepeatBlock(0, 4, 2)
+    with pytest.raises(ValidationError, match="cv_after must be charge or discharge"):
+        cycling_sequence(2e-5, 0.005, 0.2, 2, cv_after="sodiation")
