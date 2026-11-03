@@ -112,7 +112,12 @@ validated against them before arming.
 - **E3/E4 (3 Nov):** reading spacing with auto-zero OFF: 40.8 ms (1 NPLC),
   4.83 ms (0.1 NPLC), 1.24 ms (0.01 NPLC). `BRANCH_LIMIT_CONSTANT` (LIMIT_OUTSIDE)
   cuts off on the first sample past the window. `BRANCH_COUNTER N` = N passes.
-  Avoid unreachable blocks (validation fails at initiate). Still open (B1): step-marker TTL timing,
+  Avoid unreachable blocks (validation fails at initiate).
+- **T1–T5 (3 Nov):** counters restart on re-entry, reset block exists; stale
+  ON avoided by an ON block after every function switch (toggle fallback kept);
+  6 ms loop at 0.1 NPLC = 6.002 ms; UTC mapping via `eventlog.post` ~1 ms;
+  live reads 250 records / 17 ms. Decided: 6 ms fast phase, 0.1 V compliance
+  margin, lines as in `Keithley2460Config`. Still open (B1): step-marker TTL timing,
   off-state at a cutoff, the stale `smu.source.output` reading seen once.
 
 ### Host side

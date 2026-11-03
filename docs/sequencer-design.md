@@ -1,8 +1,8 @@
 # Sequencer runtime design (O5)
 
-Status: design, 3 Nov 2026. Based on bench evidence B0 and E1–E4 of 3 Nov
-(`docs/validation.md`). Items marked **[B1]** are unverified and go into the B1
-test matrix before the design is relied on.
+Status: design, 3 Nov 2026. Based on bench evidence B0, E1–E4 and the
+preliminary B1 checks T1–T5 of 3 Nov (`docs/validation.md`). Items still marked
+**[B1]** need the scope, the signal generator or the RC dummy cell.
 
 ## 1. Goal and constraints
 
@@ -28,7 +28,13 @@ Facts this design rests on (all measured on serial 04686198, firmware 1.7.16a):
 | `BRANCH_ON_EVENT` latches events: unusable for per-sample deadlines | B0 P4A rerun |
 | The buffer can be read in chunks while the model writes it; 1M-record buffers allocate | B0 P5, P6 |
 | With HIGH-Z and 4-wire, nothing can be measured while the output is OFF | E1 (event 5078) |
-| `smu.source.output` once read ON after OFF commands while the relay was open | after E1, not reproduced |
+| `smu.source.output` reads ON (front panel OFF, OFF command ineffective) after an in-model function switch that left the output off; a function toggle clears it. With an ON block after every switch it does not occur | E1, T3, T3b |
+| A second `SOURCE_OUTPUT ON` while on is harmless (+0.2 ms) | T3 |
+| Counters restart on loop re-entry after completing; `BLOCK_RESET_BRANCH_COUNT` exists | T1 |
+| Loop overhead (marker + two limit blocks + counter) 0.14 ms; a 6 ms loop at 0.1 NPLC runs at 6.002 ms | T4 |
+| Reading timestamps mark the end of the measurement (first reading 40.9 ms after an in-model log event at 1 NPLC) | T2 |
+| `eventlog.post` is timestamped: clock offset to UTC within ~1 ms (round trip 1.7 ms) | T2 |
+| Live reads of 250 records (≤ 28 KB) take 17 ms; no gaps at 200 Hz | T5 |
 
 ## 2. Overview
 
@@ -89,7 +95,7 @@ Per step (one or two sampling phases):
 
 | Block | Phase 1 | Phase 2 (if any) |
 |---|---|---|
-| `BLOCK_RESET_BRANCH_COUNT` (this phase's counter) **[B1]** | ✓ | ✓ |
+| `BLOCK_RESET_BRANCH_COUNT` (this phase's counter) | ✓ | ✓ |
 | `BLOCK_CONFIG_RECALL OE_SRC[s], OE_MEAS[m]` | ✓ | ✓ (same s, phase-2 m) |
 | `BLOCK_SOURCE_OUTPUT ON` — only if the step can follow a step of the other source function, or is the first step | if needed | – |
 | `BLOCK_DIGITAL_IO` marker line high | ✓ | – |
@@ -99,9 +105,9 @@ Per step (one or two sampling phases):
 | `BLOCK_BRANCH_LIMIT_CONSTANT` cutoff(s), see §7 | 1–2 | 1–2 |
 | `BLOCK_BRANCH_COUNTER n → DELAY` | ✓ | ✓ |
 
-About 16–18 blocks per two-phase step. Counter resets make re-entry correct
-inside the repeat block and after a cutoff left a counter part-way **[B1: do
-counters reset on completion; does the reset block exist under this name]**.
+About 16–18 blocks per two-phase step. Counters restart by themselves after
+completing (T1); the reset block is still needed because a cutoff can leave a
+counter part-way, and it costs nothing measurable.
 
 Around the steps:
 
@@ -128,13 +134,13 @@ takes `DELAY d → MEASURE → limit/counter blocks` per sample:
 `d = Δ − t_meas(nplc) − t_blocks`.
 
 - NPLC per phase: the largest commissioned NPLC with
-  `t_meas + t_blocks + margin ≤ Δ`, from a per-instrument timing table (E3,
-  auto-zero OFF): 1 NPLC 40.8 ms, 0.1 NPLC 4.83 ms, 0.01 NPLC 1.24 ms;
-  `t_blocks` ≈ 0.2 ms (E4 loop vs E3), margin 0.3 ms. **[B1: 0.5, 0.2 and 0.05
-  NPLC, and `t_blocks` with marker and two limit blocks]**
-- Consequence for the plan's proposal "5 ms at 0.1 NPLC": infeasible (4.83 +
-  0.2 + 0.3 > 5). Options: fast interval 6 ms at 0.1 NPLC, or 5 ms at about
-  0.05 NPLC (to be measured). See §12.
+  `t_meas + t_blocks + margin ≤ Δ`, from a per-instrument timing table (E3, T4;
+  auto-zero OFF, 2 V range, 4-wire): 1 NPLC 40.8 ms, 0.5 NPLC 20.83 ms,
+  0.2 NPLC 8.84 ms, 0.1 NPLC 4.83 ms, 0.05 NPLC 2.83 ms, 0.01 NPLC 1.24 ms;
+  `t_blocks` 0.14 ms (T4), margin 0.3 ms.
+- **Decided (user, 3 Nov): fast phase 6 ms at 0.1 NPLC** (5 ms is infeasible at
+  0.1 NPLC; T4 measured 6.002 ms for a 6 ms loop). The delay is calibrated from
+  the measured loop period: `d = Δ − period(d = 0)`.
 - Validation rejects a phase whose interval cannot be met at the smallest NPLC.
 - Duration accuracy is whatever the timestamps show: a 0.1 ms per-sample error
   over 20,000 samples is 2 s. The host reports actual vs nominal step durations
@@ -164,6 +170,8 @@ takes `DELAY d → MEASURE → limit/counter blocks` per sample:
 - Marker line: high at every step start (each repeat too), low after the step's
   first sample; pulse width = first sample interval (≥ ~1.5 ms). Busy line: high
   from START to output OFF. Both are TTL outputs for the beamline.
+- Reading timestamps mark the end of each measurement (T2), which matches
+  "sample k at the end of its k-th interval".
 - Time base: every reading has instrument `seconds + fractionalseconds`. t = 0
   is the `OE_T0` event-log entry written right after START by
   `BLOCK_LOG_EVENT, trigger.LOG_INFO1, "OE_T0"` (same clock; in-model log events
@@ -172,7 +180,8 @@ takes `DELAY d → MEASURE → limit/counter blocks` per sample:
 - UTC mapping (`measurement.ClockMapping`): at prepare the host brackets
   `eventlog.post("OE_PING", …)` between two host UTC readings; the event's
   timestamp gives the offset with uncertainty ≈ half the round trip (~1 ms on
-  the link-local cable) **[B1: `eventlog.post` exists and is timestamped]**.
+  the link-local cable; T2: spread 0.18 ms, round trip 1.7 ms). The instrument
+  clock is not assumed correct (it ran 4,168 s ahead of UTC on 3 Nov).
 
 ## 9. Readout and live polling
 
@@ -202,6 +211,9 @@ takes `DELAY d → MEASURE → limit/counter blocks` per sample:
   = OFF`, then require `smu.source.output == smu.OFF`; if it still reads ON,
   change the source function and back (forces off, event 5073) and read again;
   still ON → `ShutdownUnconfirmed`. Used after every run, abort and recovery.
+  The stale-ON case is reproducible (T3) and arises only when a model leaves the
+  output off through a function switch; the compiler always emits an ON block
+  after a switch (T3b: no stale state), so the fallback is defence in depth.
 - Abort: `oe_seq_abort(reason)` = the confirmation above; reports records
   written so far; the host drains them (`SequenceFlyer.abort` already does).
 - Host death: the finite model completes and turns the output OFF itself.
@@ -250,23 +262,23 @@ check, allow-listed in `transport.load_runtime`.
 
 ## 13. B1 verification (resistor, then RC dummy cell)
 
-1. `BLOCK_RESET_BRANCH_COUNT` name/behaviour; counter state after natural
-   completion and after a cutoff exit; repeat block of 3 × 2 steps.
-2. `SOURCE_OUTPUT ON` while already on (no glitch, no error).
-3. Timing table: 0.5/0.2/0.05 NPLC; `t_blocks` with marker + two limit blocks;
-   nominal vs actual step durations over a 5-minute pulse run.
-4. `eventlog.post` timestamps; `BLOCK_LOG_EVENT` in the prologue; clock offset.
-5. Marker and busy lines on the scope; external START from the generator.
-6. Live poll at 200 Hz for 5 minutes (0.1 s pulses), host CPU and lag.
-7. Abort mid-run; host-kill mid-run (model completes, output OFF); stale-ON
-   attribute check after a function switch inside a model.
+Done on 3 Nov (T1–T5): reset block and counter re-entry, ON-while-on, timing
+table and loop overhead, `eventlog.post` and log-event timestamps, live polling
+at 200 Hz, stale-ON reproduction. Remaining, with the full runtime:
+
+1. A counter left part-way by a cutoff inside the repeat block (reset block).
+2. Nominal vs actual step durations over a 5-minute pulse run.
+3. Marker and busy lines on the scope; external START from the generator.
+4. Live poll for 5 minutes at 200 Hz through the backend; host CPU and lag.
+5. Abort mid-run; host-kill mid-run (model completes, output OFF).
 8. RC dummy: CC to cutoff (NEXT and STOP), CV taper cutoff, HIGH-Z off state at
    a STOP (voltage after output OFF recorded by a separate DMM or by the next
    run's first reading).
 
-## 14. Decisions needed from the user
+## 14. Decisions (user, 3 Nov)
 
-1. Fast sampling: 6 ms at 0.1 NPLC, or 5 ms at ~0.05 NPLC (noisier)?
-2. Digital lines: which line carries step markers to the beamline, which is
-   busy, which is START (defaults: marker 1, busy 2, START 3)?
-3. `vlimit_margin_v` above the absolute window (default 0.1 V)?
+1. Fast sampling: 6 ms at 0.1 NPLC.
+2. Digital lines: as already configured in `Keithley2460Config` (line 1
+   "ready", 2 busy, 3 START). Step markers use line 1 unless the beamline
+   wiring says otherwise (to confirm with the trigger details).
+3. `vlimit_margin_v` = 0.1 V.

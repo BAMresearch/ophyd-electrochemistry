@@ -12,6 +12,35 @@ JSON files** parsed. The software check record is
 (repository-relative path). These checks do not override the failed hardware
 cadence result.
 
+## Preliminary B1 checks T1–T5 on the resistor (3 November 2026)
+
+Same tier-1 set-up, 2 mA, after a power cycle (HIGH-Z set for both functions).
+`bench/b1_prelim.py`; output confirmed OFF after every test.
+
+- T1 (output OFF, counted with log events): an inner `BRANCH_COUNTER` restarts
+  when its loop is re-entered after completing; `BLOCK_RESET_BRANCH_COUNT`
+  exists.
+- T2: `eventlog.post` entries are timestamped; instrument clock minus host UTC
+  +4,167.75 s, spread 0.18 ms over 5 pings, round trip 1.7 ms. The first reading
+  came 40.9 ms after an in-model `BLOCK_LOG_EVENT` at 1 NPLC: reading timestamps
+  mark the end of the measurement.
+- T3: a second `SOURCE_OUTPUT ON` while on adds 0.2 ms and nothing else. The
+  stale `smu.source.output` = ON reproduced after CC -> CV (no ON block) -> CC ->
+  OFF; front panel OFF; a function toggle cleared it. T3b: with an ON block after
+  every function switch the output stays on (status 200) and the attribute reads
+  OFF afterwards.
+- T4 (auto-zero OFF): reading spacing 0.5 NPLC 20.83 ms, 0.2 NPLC 8.84 ms,
+  0.05 NPLC 2.83 ms; sequencer-shaped loop (marker + two limit blocks + counter)
+  period 4.968 ms at 0.1 NPLC with zero delay (overhead 0.14 ms); a 6 ms loop
+  ran at 6.002 ms (5.989–6.027 ms), a 5 ms loop at 0.05 NPLC at 5.001 ms.
+- T5: 6,000 records of a 200 Hz run read live in 29 chunks (<= 28 KB, 17 ms per
+  read), contiguous.
+
+A first run stopped after T3 on the stale reading (the script then required
+`smu.source.output == OFF` without the toggle fallback); its T1/T2 output was
+not saved and the tests were rerun. Evidence:
+[`k2460-2026-11-03-b1-prelim.json`](evidence/k2460-2026-11-03-b1-prelim.json).
+
 ## E3/E4 measurement timing and limit-branch cutoff on the resistor (3 November 2026)
 
 Same tier-1 authorization and set-up as E1/E2 (current source only, <= 4 mA).
