@@ -214,8 +214,9 @@ class SequencerProgram:
             result[name] = getattr(self.profile, name)
         for name in ("v_min_abs", "v_max_abs", "i_max_abs"):
             result[name] = getattr(self.limits, name)
+        # Bluesky metadata keys may not contain '.': 0.1 NPLC -> reading_s_nplc_0p1.
         for nplc, seconds in sorted(self.profile.reading_s.items()):
-            result[f"reading_s_nplc_{nplc:g}"] = seconds
+            result[f"reading_s_nplc_{nplc:g}".replace(".", "p")] = seconds
         for i, source in enumerate(self.sources, 1):
             for name in ("mode", "level", "range", "limit"):
                 result[f"source_{i}_{name}"] = getattr(source, name)

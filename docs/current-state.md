@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1151 tests pass. Pure models/compiler, independent simulator,
+- **Offline:** 1176 tests pass. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -29,7 +29,14 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 - **Sequencer compiler/replay (brief 07):** pure config/block/sample compilation,
   numeric runtime uploads, calibrated delay selection and incremental cutoff /
   readback replay. Golden S1 layouts and noisy simulator comparisons pass;
-  runtime requires positive CV taper. Hardware backend and B1 validation remain.
+  runtime requires positive CV taper.
+- **Sequencer hardware backend (O5, offline):** `Keithley2460SequenceBackend`
+  installs the runtime, uploads under `pcall` (runtime errors come back as
+  `ERR` lines), maps the clock by `eventlog.post` pings, polls status, event log
+  and records through the replay, aborts with OFF confirmation and refuses to
+  prepare over unread records of another session until `archive_retained`.
+  Tested against the real runtime under Lua, including a RunEngine run; not
+  yet run on the 2460 (B1).
 - **Per-run notebook (O6):** Excel selection, request summary, synthetic preview,
   live plot and saved-file review; clean copies via `ophyd-electrochemistry-new-run`
   with explicit session limits. Simulator only; hardware selection fails before
@@ -54,8 +61,8 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 - Timed-hold runtime v17 (`timed_hold.tsp`, `Keithley2460Backend`) fails after
   the first sample (`cadence_overrun`); superseded by the sequencer design in the
   plan. Do not develop it further.
-- No hardware-backed Bluesky path, no voltage-source mode on hardware, no
-  instrument-local voltage cutoffs tested, no live data reads during a run.
+- The hardware Bluesky path exists but has not run on the 2460; no
+  voltage-source (CV) step on hardware yet; the notebook cannot select it yet.
 - `runtime.tsp` sets `smu.source.offmode = smu.OFFMODE_NORMAL` — unsafe for cells.
   The sequencer must use HIGH-Z.
 - Hard-coded commissioning limits (10 mA, 2 V, 60 s) are too small for cycling.
@@ -79,9 +86,9 @@ survive that). `defbuffer1` holds 1,337 continuous-mode readings from today
 
 ## Next steps
 
-1. O5: finish the hardware backend atop the compiler/replay (brief 07 done)
-   and packaged runtime, per `docs/sequencer-design.md`. O1–O4, O6, O9, O10
-   are implemented offline.
+1. O5: notebook `BACKEND = "k2460"` option; then B1 on the resistor and RC
+   dummy cell (`docs/sequencer-design.md` §13). O1–O6, O9, O10 are
+   implemented offline.
 2. Build the QueueServer profile (O7) using the sequence Flyer and run-sheet loader.
 3. Prepare the bench-day B1 test matrix and runner (O8).
 

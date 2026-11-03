@@ -290,7 +290,11 @@ Remaining, with the full runtime:
 5. RC dummy cell: cutoffs, CV taper, marker lag with a capacitive load.
 6. Reading time on the 7 V measure range (the timing table is from the 2 V
    range); update `SequencerProfile.reading_s` if it differs.
-7. RC dummy: CC to cutoff (NEXT and STOP), CV taper cutoff, HIGH-Z off state at
+7. Backend assumptions: upload logs no warnings (prepare fails on any error or
+   warning event); `trigger.model.state()` reports block 2 while waiting for
+   START (else waiting shows as RUNNING); log-event text `TM path #1 block #N
+   logged: OE_T0`; `oe_seq_status` numbers parse.
+8. RC dummy: CC to cutoff (NEXT and STOP), CV taper cutoff, HIGH-Z off state at
    a STOP (voltage after output OFF recorded by a separate DMM or by the next
    run's first reading).
 
