@@ -1,8 +1,11 @@
 # Brief 07 — sequencer compiler and replay (pure Python)
 
 Requires briefs 01–05. Design: `docs/sequencer-design.md` (read §3–§9 and §12).
-Claude writes the instrument runtime (`tsp/sequencer.tsp`) and the hardware
-backend against the interface below; do not write TSP or touch transports.
+The instrument runtime already exists and is not part of this brief:
+`keithley/k2460/tsp/sequencer.tsp` and `keithley/k2460/sequencer_runtime.py`
+(Claude). Do not modify them, the transport or their tests. Your block codes
+and `oe_seq_*` call signatures must match `sequencer.tsp` exactly; read it to
+check. Claude writes the hardware backend on top of your module afterwards.
 
 ## Goal
 
@@ -18,7 +21,7 @@ deterministic; no I/O.
 - `src/ophyd_electrochemistry/keithley/k2460/sequencer.py`
 - `tests/unit/test_k2460_sequencer.py`
 
-Read: `docs/sequencer-design.md`, `sequences/models.py`, `sequences/simulator.py`,
+Read: `docs/sequencer-design.md`, `keithley/k2460/tsp/sequencer.tsp`, `sequences/models.py`, `sequences/simulator.py`,
 `sequences/backend.py` (`READOUT_FIELDS`), `keithley/k2460/config.py` (line numbers).
 
 ## Profile
