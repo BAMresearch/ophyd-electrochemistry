@@ -1,6 +1,8 @@
 """A real RE Manager on qserver/startup with the simulator session (needs redis-server)."""
 
+import os
 import shutil
+import signal
 import socket
 import subprocess
 import sys
@@ -80,7 +82,10 @@ def manager(tmp_path):
             "--zmq-info-addr",
             f"tcp://127.0.0.1:{info}",
         ],
-        env={**__import__("os").environ, "OE_SESSION": str(session_file)},
+        env={**os.environ, "OE_SESSION": str(session_file)},
+        # Own process group: the manager and worker are spawned children that
+        # outlive start-re-manager unless the whole group is stopped.
+        start_new_session=True,
         stdout=log,
         stderr=subprocess.STDOUT,
     )
@@ -96,11 +101,34 @@ def manager(tmp_path):
             api.manager_stop()
             process.wait(timeout=30)
         except Exception:
-            process.kill()
+            pass
         api.close()
-        redis.terminate()
-        redis.wait(timeout=10)
-        log.close()
+        try:
+            stop_group(process.pid)
+        finally:
+            redis.terminate()
+            redis.wait(timeout=10)
+            log.close()
+        assert not group_alive(process.pid), "RE Manager processes survived the test"
+
+
+def group_alive(pgid):
+    # pgrep, not killpg(pgid, 0): macOS answers EPERM for a group of exited processes.
+    return subprocess.run(["pgrep", "-g", str(pgid)], capture_output=True).returncode == 0
+
+
+def stop_group(pgid):
+    """Stop every process start-re-manager spawned, gracefully first."""
+    for sig, grace in ((signal.SIGTERM, 10), (signal.SIGKILL, 5)):
+        if not group_alive(pgid):
+            return
+        try:
+            os.killpg(pgid, sig)
+        except (ProcessLookupError, PermissionError):
+            return
+        deadline = time.monotonic() + grace
+        while group_alive(pgid) and time.monotonic() < deadline:
+            time.sleep(0.1)
 
 
 def test_enqueued_row_runs_in_the_worker_and_writes_its_file(manager, tmp_path):
