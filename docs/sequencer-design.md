@@ -168,8 +168,15 @@ takes `DELAY d → MEASURE → limit/counter blocks` per sample:
 - START: `immediate` arms and runs; `external` waits on the START input line
   (`digio.MODE_TRIGGER_IN`, `trigger.digin[line].edge`, as in runtime v14). The output stays OFF while waiting.
 - Marker line: high at every step start (each repeat too), low after the step's
-  first sample; pulse width = first sample interval (≥ ~1.5 ms). Busy line: high
-  from START to output OFF. Both are TTL outputs for the beamline.
+  first sample; pulse width = first sample interval (S1 scope: 6.24–6.29 ms at
+  6.25 ms, 13/13 markers). The marker rises 1.07 ms **after** the source level
+  change (recall then marker; S1 scope, resistor); `step_start` events are placed
+  at marker time − 1.07 ms. Busy line: high from START to output OFF (falls
+  about 1 ms after the last reading). Both are TTL outputs for the beamline.
+- Step-change overhead (reset + recall + marker) is 1.32 ms; the compiler takes
+  it off the step's sample delays (`t_entry / n` per sample) so steps keep their
+  nominal length. Switching the output on in HIGH-Z takes about 30 ms (first
+  step), visible in the timestamps.
 - Reading timestamps mark the end of each measurement (T2), which matches
   "sample k at the end of its k-th interval".
 - Time base: every reading has instrument `seconds + fractionalseconds`. t = 0
