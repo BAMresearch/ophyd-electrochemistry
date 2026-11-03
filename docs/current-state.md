@@ -67,8 +67,8 @@ Answers so far are recorded in the plan. Still open:
 
 1. Cell capacity / active mass, voltage window, intended currents (C-rates).
 2. Cycling: CC only or CC-CV; number of cycles.
-3. Pulse amplitude(s); how to trim the ~7.6 h-per-SOC pulse series.
-4. Start: TTL source and logic levels; what "Ethernet start" means (our notebook
-   vs. a beamline control-system message, and which protocol); whether the
-   beamline wants a TTL marker from the 2460 at step starts.
-5. Experiment dates.
+3. Pulse amplitude(s).
+4. Beamline trigger: signal type, level (5 V TTL?), polarity, pulse width,
+   connector; whether the beamline can instead (or also) record a TTL from us.
+5. Software start: what sends it (beamline control system, a person, a
+   script) and over which channel; which clock beamline data are stamped with.

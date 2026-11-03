@@ -13,7 +13,12 @@ The beamline does not run Bluesky; we run our own stack next to it.
    instrument-local voltage cutoffs (optionally a CV hold with current cutoff).
 2. Bipolar square current pulses with zero-current rests, repeated N times for
    reproducibility, at several states of charge, for a Renard series of pulse times.
-3. Start by external TTL trigger (START line) or by software/LAN start.
+3. The user's own laptop runs the notebook and owns the 2460 (Ethernet link).
+   Start by an external hardware trigger on a 2460 digital input, or by a
+   software start whose source is not yet specified. The sequence runs
+   instrument-locally either way; the start method only gates its first step.
+   Step-start TTL markers and UTC-anchored buffer timestamps let the data be
+   aligned with beamline data afterwards.
 4. One Jupyter notebook per run, live plotting, run parameters read from an Excel
    run sheet (one row per run, `measurement_id` first). Slowly changing settings
    (limits, ranges, wiring, off-mode) live in the notebook.
