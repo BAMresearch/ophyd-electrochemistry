@@ -25,8 +25,12 @@ The beamline does not run Bluesky; we run our own stack next to it.
 5. Plans launchable through a single QueueServer that owns the 2460 (no
    leader/follower setup yet).
 
-**Decided 2026-11-03:** the notebook runs its own RunEngine (simplest path);
-QueueServer comes later and may not be needed for this beamtime. Output is one
+**Decided 2026-11-03:** the notebook runs its own RunEngine (simplest path)
+and stays the beamline fallback. A QueueServer profile (O7) follows the notebook,
+reusing the MOUSE stack (Redis + RE Manager already in use); whether the dress
+rehearsal runs through it is decided at the 19–20 Nov gate. Python 3.14,
+bluesky 1.16.x; take patch releases until the 30 Nov freeze. Tiled is optional
+(the per-run HDF5 file is the primary record). Output is one
 structured HDF5 file per run with separate groups for equipment settings, run
 settings (including the full Excel row, optional sample IDs and notes) and
 readouts. Bench days are normally Thu/Fri/Mon.
@@ -122,8 +126,9 @@ Off-day (no hardware):
 | O4 | Flyer integration with live chunk reads; `run_sequence` plan; live plot callback | Done 3 Nov (brief 05; simulator only) |
 | O5 | Sequencer TSP + host backend, mocked-transport tests, offline Lua syntax check | todo |
 | O6 | Per-run notebook template (simulator first) | todo |
-| O7 | QueueServer startup profile + integration tests against the simulator | deferred |
+| O7 | QueueServer startup profile (MOUSE pattern: run-sheet rows → `run_from_sheet` queue items) + integration tests against the simulator | planned after O6; go/no-go at the 19–20 Nov gate |
 | O9 | HDF5 writer (equipment / run settings incl. Excel row / readouts) | Done 3 Nov (brief 03, reviewed) |
+| O10 | Run file in SWMR mode: live cross-process reads (notebook plot while a QueueServer worker writes); our reader opens SWMR so crashed files read back; `repair_run_file` for other tools | todo (Claude) |
 | O8 | Bench runner script that executes a test matrix and writes one evidence file | todo |
 
 Bench days (in order):
