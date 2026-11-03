@@ -139,7 +139,7 @@ Off-day (no hardware):
 | O2 | Excel run-sheet template + loader | Done 3 Nov (brief 02, reviewed) |
 | O3 | Simulator backend with cell model | Done 3 Nov (brief 04, reviewed; Flyer integration in O4) |
 | O4 | Flyer integration with live chunk reads; `run_sequence` plan; live plot callback | Done 3 Nov (brief 05; simulator only) |
-| O5 | Sequencer TSP + host backend, mocked-transport tests, offline Lua syntax check | todo |
+| O5 | Sequencer TSP + host backend, mocked-transport tests, offline Lua syntax check | Design written 3 Nov (`docs/sequencer-design.md`) |
 | O6 | Per-run notebook template (simulator first) | Done 3 Nov (brief 06; simulator only) |
 | O7 | QueueServer startup profile (MOUSE pattern: run-sheet rows → `run_from_sheet` queue items) + integration tests against the simulator | planned after O6; go/no-go at the 19–20 Nov gate |
 | O9 | HDF5 writer (equipment / run settings incl. Excel row / readouts) | Done 3 Nov (brief 03, reviewed) |

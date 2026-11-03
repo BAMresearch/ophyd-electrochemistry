@@ -69,8 +69,8 @@ survive that). `defbuffer1` holds 1,337 continuous-mode readings from today
 
 ## Next steps
 
-1. Check the Rev. C manual items listed under "To verify" in the plan, then O5
-   (sequencer TSP + backend). O1–O4 and O9 are implemented offline.
+1. O5: implement the sequencer per `docs/sequencer-design.md` (design done;
+   three user decisions in its §14). O1–O4, O6, O9, O10 are implemented offline.
 2. Build the QueueServer profile (O7) using the sequence Flyer and run-sheet loader.
 3. Prepare the bench-day B1 test matrix and runner (O8).
 
