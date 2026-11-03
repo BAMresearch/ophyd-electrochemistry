@@ -20,8 +20,9 @@ HIGH-Z), source function/level (restored to current, 0 A), measure function
 and NPLC (set to voltage, 1 NPLC; the runtime sets its own at prepare),
 temporary config lists and buffers (deleted), timer 1 and the trigger model
 (left EMPTY). The runtime's retained buffer and defbuffer1/2 are not touched.
-Every probe runs under Lua pcall, so an unsupported command is a result, not
-an abort; cleanup always aborts the model and deletes temporaries.
+TSP is Lua 5.0.2 (no ``#`` operator). Every probe runs under Lua pcall, so an
+unsupported command is a result, not an abort; cleanup always aborts the model
+and deletes temporaries.
 
 Run from the repository root (the evidence file goes to docs/evidence/).
 
@@ -124,9 +125,8 @@ def cleanup(t: PyVisaKeithley2460Transport, buffer_name: str) -> None:
         t,
         guarded(
             f"if {buffer_name} ~= nil then buffer.delete({buffer_name}) {buffer_name} = nil end "
-            "for _, name in ipairs({'OE_SRC', 'OE_MEAS'}) do "
-            "pcall(smu.source.configlist.delete, name) "
-            "pcall(smu.measure.configlist.delete, name) end "
+            "if oe_lists then smu.source.configlist.delete('OE_SRC') "
+            "smu.measure.configlist.delete('OE_MEAS') oe_lists = nil end "
             "smu.source.func = smu.FUNC_DC_CURRENT smu.source.level = 0 "
             "smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.nplc = 1 "
             'trigger.model.load("Empty") return smu.source.output'
@@ -162,9 +162,9 @@ def probe_live_reads(t: PyVisaKeithley2460Transport) -> dict[str, str]:
             reply = q(
                 t,
                 guarded(
-                    f"local r = {{}} for i = {last + 1}, {count} do "
-                    "r[#r + 1] = string.format('%.6f', oe_live.relativetimestamps[i]) end "
-                    "return #r .. ' ' .. r[1] .. '..' .. r[#r]"
+                    f"local first = string.format('%.6f', oe_live.relativetimestamps[{last + 1}]) "
+                    f"local final = string.format('%.6f', oe_live.relativetimestamps[{count}]) "
+                    f"return '{count - last} ' .. first .. '..' .. final"
                 ),
             )
             reads.append(f"{time.monotonic() - started:.2f}s n={count} state={state} {reply}")
@@ -187,6 +187,7 @@ def probe_function_switch(t: PyVisaKeithley2460Transport) -> dict[str, str]:
             t,
             guarded(
                 'smu.source.configlist.create("OE_SRC") smu.measure.configlist.create("OE_MEAS") '
+                "oe_lists = true "
                 "smu.source.func = smu.FUNC_DC_CURRENT smu.source.level = 0 "
                 "smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.nplc = 1 "
                 'smu.source.configlist.store("OE_SRC") smu.measure.configlist.store("OE_MEAS") '
@@ -227,9 +228,9 @@ def probe_function_switch(t: PyVisaKeithley2460Transport) -> dict[str, str]:
     results["P7_units"] = q(
         t,
         guarded(
-            "local r = {} for i = 1, oe_switch.n do "
-            "r[#r + 1] = tostring(oe_switch.units[i]) .. '/' .. tostring(oe_switch.sourceunits[i]) "
-            "end return table.concat(r, ' ')"
+            "local r = '' for i = 1, oe_switch.n do "
+            "r = r .. tostring(oe_switch.units[i]) .. '/' .. tostring(oe_switch.sourceunits[i]) "
+            "end return r"
         ),
     )
     results["P7_func_after"] = q(

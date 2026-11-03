@@ -96,9 +96,13 @@ validated against them before arming.
   likely BRANCH_ON_EVENT latching the first deadline event.)
 - Start: immediate on kickoff, or wait for the START digital line (v14 approach).
 - Output-off mode HIGH-Z; output OFF at normal end, cutoff-stop and abort.
-- **To verify against Rev. C before coding:** whether source configuration lists
-  can switch source function (current↔voltage) within one trigger model; buffer
-  reads while the model runs; HIGH-Z off-mode behaviour; max buffer size.
+- **B0 answers (3 Nov, output OFF):** a source + measure config-list recall
+  switches both functions inside one model; the buffer can be read in chunks
+  while the model runs; 1M-record buffers allocate; off mode is per source
+  function (set and verify HIGH-Z for both at prepare; power-on resets it to
+  NORMAL); BRANCH_ON_EVENT does not re-fire on a timer event on a later pass.
+  TSP is Lua 5.0.2. Still open (B1, output ON): function switch with output on,
+  step-marker TTL, off-state behaviour at a cutoff.
 
 ### Host side
 
@@ -135,7 +139,7 @@ Bench days (in order):
 
 | # | Load | Test matrix (summary) |
 |---|---|---|
-| B0 | resistor, output OFF throughout | `bench/feature_probe.py`: HIGH-Z off mode, mixed-function config list, BRANCH_ON_EVENT latch semantics, max buffer size |
+| B0 | resistor, output OFF throughout | Done 3 Nov: `bench/feature_probe.py` (HIGH-Z per function, config-list function switch, BRANCH_ON_EVENT, 1M buffer, live reads) |
 | B1 | 100 Ω resistor, then RC dummy cell | Install sequencer; current/rest steps; bipolar pulse block; cutoff `next`/`stop` on the RC dummy; live reads during run; external START and software start; step-marker TTL on scope; HIGH-Z off state; measurement time per profile |
 | B2 | RC dummy, then a sacrificial Na/hard-carbon cell | Notebook flow end to end; QueueServer flow; a multi-hour cycling run; pulse runs at two SOCs |
 | B3 | Real cell, beamline-like setup | Full dress rehearsal from the Excel sheet, including trigger wiring |

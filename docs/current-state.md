@@ -57,15 +57,15 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 - Hard-coded commissioning limits (10 mA, 2 V, 60 s) are too small for cycling.
 - No QueueServer profile.
 
-## Last known hardware state (historical — reconfirm before use)
+## Last known hardware state (reconfirm before use)
 
-As of 2026-11-02: K2460 serial `04686198`, firmware 1.7.16a, TSP mode,
-`169.254.113.151:5025`. Runtime v17 installed (SHA-256 `68b25b2e…b521`), IDLE,
-output OFF, 0 A. Front terminals, 4-wire, 100 Ω / 1 W resistor. Runtime buffer
-holds **one retained run-05 reading** (archived in
-`docs/evidence/k2460-2026-11-02-timed-v17-run-05*.json`). `defbuffer1` holds
-12,867 older records — do not clear without asking. Equipment power-down was
-not confirmed.
+As of 2026-11-03 ~12:40 CET, after B0: K2460 serial `04686198`, firmware 1.7.16a
+(TSP, Lua 5.0.2), `169.254.113.151:5025`. Output OFF, source current 0 A,
+off mode HIGH-Z for current and voltage, trigger model EMPTY, no runtime loaded
+(the instrument is powered off overnight; runtime, buffers and off mode do not
+survive that). `defbuffer1` holds 1,337 continuous-mode readings from today
+(`trigger.continuous` is `CONT_AUTO`); event log read and empty. Front terminals,
+4-wire, 100 Ω / 1 W resistor; trigger generator and scope off.
 
 ## Next steps
 
@@ -74,8 +74,8 @@ not confirmed.
 2. Build the QueueServer profile (O7) using the sequence Flyer and run-sheet loader.
 3. Prepare the bench-day B1 test matrix and runner (O8).
 
-Bench test B0 (`bench/feature_probe.py`, output OFF only) is ready to run on
-the next bench session; it writes its own evidence file.
+B0 is done (3 Nov): HIGH-Z per function, mixed-function config lists in one
+model, live buffer reads during a run, 1M-record buffers; see `docs/validation.md`.
 
 ## Information still needed from the user
 

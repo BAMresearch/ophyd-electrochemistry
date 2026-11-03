@@ -1,6 +1,6 @@
 # Template validation record
 
-Updated: 2026-11-02. Scope: contracts, transport/runtime commissioning, bounded
+Updated: 2026-11-03. Scope: contracts, transport/runtime commissioning, bounded
 nominal-100-ohm tests, a narrow target-buffer proof, and the first operational
 simulator-backed M6 Flyer; not operational hardware sourcing or acquisition.
 
@@ -11,6 +11,37 @@ JSON files** parsed. The software check record is
 `evidence/k2460-2026-11-02-timed-v17-software-validation.json`
 (repository-relative path). These checks do not override the failed hardware
 cadence result.
+
+## B0 output-OFF firmware feature probe (3 November 2026)
+
+`bench/feature_probe.py` on serial 04686198, firmware 1.7.16a, with a 100 ohm
+four-wire resistor connected and the output OFF throughout. The instrument had
+been powered off overnight: its power-on events report `defbuffer1`/`defbuffer2`
+0 % filled, so the 12,867 unretrieved `defbuffer1` records of 2 November were
+lost to the power-off, and the v17 runtime was no longer loaded. Run 1 stopped in
+P6 (a probe bug: two reply lines for one query) and run 2 in P6 (Lua 5.0.2 has no
+`#` operator); both left the output OFF. Run 3 completed with no event-log errors.
+Findings:
+
+- Output-off mode is stored **per source function**; power-on default NORMAL.
+  HIGH-Z is settable for both (direct check). The sequencer must set and verify
+  HIGH-Z for current and voltage at every prepare.
+- One source configuration list holds current and voltage entries, and
+  `BLOCK_CONFIG_RECALL` with a source and a measure list switches both functions
+  inside one trigger model (readings Volt/Amp, then Amp/Volt). Output OFF only;
+  switching with output ON is a B1 item.
+- `BRANCH_ON_EVENT` did not branch on a timer event on its second pass, while a
+  `WAIT` with `CLEAR_NEVER` accepted the already-occurred event; an event before
+  the branch block's first pass is seen. Consistent with the v17 failure; the
+  sequencer times steps by sample count instead.
+- A 1,000,000-record reading buffer can be allocated.
+- A reading buffer can be read in chunks while the trigger model measures into
+  it: 26 reads during RUNNING, contiguous through 2,000 records (about 3.4 ms per
+  reading at 0.01 NPLC, output OFF).
+
+Evidence: [`k2460-2026-11-03-feature-probe.json`](evidence/k2460-2026-11-03-feature-probe.json)
+(run 3 and the direct off-mode check) and
+[`k2460-2026-11-03-feature-probe-run1-partial.json`](evidence/k2460-2026-11-03-feature-probe-run1-partial.json).
 
 ## Timed-hold candidate software and installation
 
