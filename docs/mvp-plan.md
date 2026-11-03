@@ -151,6 +151,7 @@ Off-day (no hardware):
 | O6 | Per-run notebook template (simulator first) | Done 3 Nov (brief 06; simulator only) |
 | O7 | QueueServer startup profile (MOUSE pattern: run-sheet rows → `run_from_sheet` queue items) + integration tests against the simulator | Done 3 Nov (simulator; real RE Manager + redis test); hardware flow in B2 |
 | O9 | HDF5 writer (equipment / run settings incl. Excel row / readouts) | Done 3 Nov (brief 03, reviewed) |
+| O11 | Read-only run viewer notebook (overview, follow live, V vs charge overlay); Grafana deferred | Brief 08 (Codex), 3 Nov |
 | O10 | Run file in SWMR mode: live cross-process reads (notebook plot while a QueueServer worker writes); our reader opens SWMR so crashed files read back; `repair_run_file` for other tools | Done 3 Nov |
 | O8 | Bench runner script that executes a test matrix and writes one evidence file | B1 runner + plan ready 3 Nov (`bench/b1_sequencer.py`, `bench/plan-b1.md`), offline |
 
