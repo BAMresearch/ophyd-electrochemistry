@@ -29,10 +29,12 @@ from .models import (
     to_dict,
     validate,
 )
+from .run_sheet import RunSpec, load_run_sheet, make_template
 
 __all__ = [
     "CutoffAction",
     "RepeatBlock",
+    "RunSpec",
     "SafetyLimits",
     "Sampling",
     "Sequence",
@@ -46,6 +48,8 @@ __all__ = [
     "expected_records",
     "limits_from_dict",
     "log_repeats",
+    "load_run_sheet",
+    "make_template",
     "nominal_duration_s",
     "renard_series",
     "rest_step",

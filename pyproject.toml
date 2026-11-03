@@ -14,6 +14,7 @@ classifiers = ["Development Status :: 1 - Planning", "Programming Language :: Py
 
 [project.optional-dependencies]
 visa = ["pyvisa>=1.14,<2", "pyvisa-py>=0.7,<1"]
+experiment = ["pandas>=2.2,<3", "openpyxl>=3.1,<4"]
 
 [project.urls]
 repository = "https://github.com/BAMresearch/ophyd-electrochemistry"
@@ -30,6 +31,8 @@ notebook = ["ipykernel>=6,<8", "nbformat>=5.10,<6", "plotly>=6,<7"]
 build = ["twine>=6,<7"]
 release = ["python-semantic-release==10.7.0"]
 dev = [
+    "pandas>=2.2,<3",
+    "openpyxl>=3.1,<4",
     {include-group = "test"},
     {include-group = "lint"},
     {include-group = "docs"},
