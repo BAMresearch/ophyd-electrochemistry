@@ -1,0 +1,164 @@
+{
+  "schema": "ophyd-electrochemistry.bench-probe.v1",
+  "observed_at_utc": "2026-11-03T11:41:11.691232+00:00",
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "load": "100 ohm 1 W resistor, four-wire, front terminals (user-confirmed)",
+  "authorization": "user 2026-11-03: |I| <= 5 mA, busy line 2 as marker",
+  "summary": [
+    "E4 15 readings: 0.2050 0.2050 0.2050 0.2050 0.2050 0.2050 0.2050 0.2050 0.2050 0.4100 -0.0000 -0.0000 -0.0000 -0.0000 -0.0000",
+    "E4 UNEXPECTED path"
+  ],
+  "results": {
+    "offmode": "OK smu.OFFMODE_HIGHZ / smu.OFFMODE_HIGHZ",
+    "E4": {
+      "model_state": "trigger.STATE_IDLE\ttrigger.STATE_IDLE\t14",
+      "readout": "OK 0.000000,0.20500779,200;0.041020,0.20500588,200;0.082035,0.20500588,200;0.123034,0.20500493,200;0.164049,0.20500493,200;0.205036,0.20500422,200;0.246036,0.20500445,200;0.287031,0.20500374,200;0.328026,0.20500422,200;0.370204,0.41000438,200;0.412357,-2.6226044e-06,200;0.453198,-2.1457672e-06,200;0.494039,-1.9073486e-06,200;0.534878,-2.1457672e-06,200;0.575719,-2.8610229e-06,200;",
+      "output_final": "smu.OFF"
+    },
+    "output_final": "smu.OFF",
+    "event_log": [
+      "2731\tTrigger model path #1 has been initiated\t4\t2\t1793710237\t520192860",
+      "2732\tTrigger model path #1 has been idled\t4\t2\t1793710238\t199180920"
+    ]
+  },
+  "transcript": [
+    {
+      "drained_stale_lines": "0"
+    },
+    {
+      "query": "print(smu.source.output == smu.OFF)",
+      "reply": "true"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t16"
+    },
+    {
+      "query": "print(smu.terminals)",
+      "reply": "smu.TERMINALS_FRONT"
+    },
+    {
+      "query": "local ok, r = pcall(function() if oe_e3 ~= nil then buffer.delete(oe_e3) oe_e3 = nil end if oe_e3_lists then smu.source.configlist.delete('SE') smu.measure.configlist.delete('ME') oe_e3_lists = nil end smu.source.func = smu.FUNC_DC_CURRENT smu.source.autorange = smu.OFF smu.source.range = 0.01 smu.source.vlimit.level = 1 smu.source.readback = smu.ON smu.source.level = 0 smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.sense = smu.SENSE_4WIRE smu.measure.autorange = smu.OFF smu.measure.range = 2 smu.measure.nplc = 1 smu.measure.autozero.enable = smu.ON trigger.model.load(\"Empty\") return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.source.func = smu.FUNC_DC_VOLTAGE smu.source.offmode = smu.OFFMODE_HIGHZ local v = smu.source.offmode smu.source.func = smu.FUNC_DC_CURRENT smu.source.offmode = smu.OFFMODE_HIGHZ local i = smu.source.offmode digio.line[2].mode = digio.MODE_DIGITAL_OUT digio.line[2].state = 0 return tostring(i) .. ' / ' .. tostring(v) end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK smu.OFFMODE_HIGHZ / smu.OFFMODE_HIGHZ"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.source.configlist.create(\"SE\") smu.measure.configlist.create(\"ME\") oe_e3_lists = true return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.source.func = smu.FUNC_DC_CURRENT smu.source.autorange = smu.OFF smu.source.range = 0.01 smu.source.vlimit.level = 1 smu.source.readback = smu.ON smu.source.level = 0.002 smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.sense = smu.SENSE_4WIRE smu.measure.autorange = smu.OFF smu.measure.range = 2 smu.measure.nplc = 1 smu.measure.autozero.enable = smu.OFF smu.source.configlist.store(\"SE\") smu.measure.configlist.store(\"ME\") return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.source.func = smu.FUNC_DC_CURRENT smu.source.autorange = smu.OFF smu.source.range = 0.01 smu.source.vlimit.level = 1 smu.source.readback = smu.ON smu.source.level = 0.004 smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.sense = smu.SENSE_4WIRE smu.measure.autorange = smu.OFF smu.measure.range = 2 smu.measure.nplc = 1 smu.measure.autozero.enable = smu.OFF smu.source.configlist.store(\"SE\") smu.measure.configlist.store(\"ME\") return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.source.func = smu.FUNC_DC_CURRENT smu.source.autorange = smu.OFF smu.source.range = 0.01 smu.source.vlimit.level = 1 smu.source.readback = smu.ON smu.source.level = 0 smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.sense = smu.SENSE_4WIRE smu.measure.autorange = smu.OFF smu.measure.range = 2 smu.measure.nplc = 1 smu.measure.autozero.enable = smu.OFF smu.source.configlist.store(\"SE\") smu.measure.configlist.store(\"ME\") return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.source.func = smu.FUNC_DC_CURRENT smu.source.autorange = smu.OFF smu.source.range = 0.01 smu.source.vlimit.level = 1 smu.source.readback = smu.ON smu.source.level = 0 smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.sense = smu.SENSE_4WIRE smu.measure.autorange = smu.OFF smu.measure.range = 2 smu.measure.nplc = 1 smu.measure.autozero.enable = smu.ON return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() if oe_e3 ~= nil then buffer.delete(oe_e3) end oe_e3 = buffer.make(40, buffer.STYLE_STANDARD) trigger.model.load(\"Empty\") return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() trigger.model.setblock(1, trigger.BLOCK_DIGITAL_IO, 2, 2) trigger.model.setblock(2, trigger.BLOCK_CONFIG_RECALL, \"SE\", 1, \"ME\", 1) trigger.model.setblock(3, trigger.BLOCK_SOURCE_OUTPUT, smu.ON) trigger.model.setblock(4, trigger.BLOCK_MEASURE_DIGITIZE, oe_e3, 1) trigger.model.setblock(5, trigger.BLOCK_BRANCH_LIMIT_CONSTANT, trigger.LIMIT_OUTSIDE, -1, 0.3, 13, 4) return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() trigger.model.setblock(6, trigger.BLOCK_BRANCH_COUNTER, 9, 4) trigger.model.setblock(7, trigger.BLOCK_CONFIG_RECALL, \"SE\", 2, \"ME\", 2) trigger.model.setblock(8, trigger.BLOCK_MEASURE_DIGITIZE, oe_e3, 1) trigger.model.setblock(9, trigger.BLOCK_BRANCH_LIMIT_CONSTANT, trigger.LIMIT_OUTSIDE, -1, 0.3, 11, 8) trigger.model.setblock(10, trigger.BLOCK_BRANCH_COUNTER, 9, 8) return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() trigger.model.setblock(11, trigger.BLOCK_CONFIG_RECALL, \"SE\", 3, \"ME\", 3) trigger.model.setblock(12, trigger.BLOCK_MEASURE_DIGITIZE, oe_e3, 5) trigger.model.setblock(13, trigger.BLOCK_SOURCE_OUTPUT, smu.OFF) trigger.model.setblock(14, trigger.BLOCK_DIGITAL_IO, 0, 2) return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "print(smu.source.output == smu.OFF)",
+      "reply": "true"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_BUILDING\ttrigger.STATE_BUILDING\t16"
+    },
+    {
+      "write": "trigger.model.initiate()"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t4"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t4"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t12"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_IDLE\ttrigger.STATE_IDLE\t14"
+    },
+    {
+      "query": "local ok, r = pcall(function() local r = '' for i = 1, oe_e3.n do r = r .. string.format('%.6f', oe_e3.relativetimestamps[i]) .. ',' .. string.format('%.8g', oe_e3.readings[i]) .. ',' .. tostring(oe_e3.sourcestatuses[i]) .. ';' end return r end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 0.000000,0.20500779,200;0.041020,0.20500588,200;0.082035,0.20500588,200;0.123034,0.20500493,200;0.164049,0.20500493,200;0.205036,0.20500422,200;0.246036,0.20500445,200;0.287031,0.20500374,200;0.328026,0.20500422,200;0.370204,0.41000438,200;0.412357,-2.6226044e-06,200;0.453198,-2.1457672e-06,200;0.494039,-1.9073486e-06,200;0.534878,-2.1457672e-06,200;0.575719,-2.8610229e-06,200;"
+    },
+    {
+      "write": "trigger.model.abort()"
+    },
+    {
+      "write": "smu.source.output = smu.OFF"
+    },
+    {
+      "query": "local ok, r = pcall(function() digio.line[2].state = 0 return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "print(smu.source.output)",
+      "reply": "smu.OFF"
+    },
+    {
+      "query": "local ok, r = pcall(function() if oe_e3 ~= nil then buffer.delete(oe_e3) oe_e3 = nil end if oe_e3_lists then smu.source.configlist.delete('SE') smu.measure.configlist.delete('ME') oe_e3_lists = nil end smu.source.func = smu.FUNC_DC_CURRENT smu.source.autorange = smu.OFF smu.source.range = 0.01 smu.source.vlimit.level = 1 smu.source.readback = smu.ON smu.source.level = 0 smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.sense = smu.SENSE_4WIRE smu.measure.autorange = smu.OFF smu.measure.range = 2 smu.measure.nplc = 1 smu.measure.autozero.enable = smu.ON trigger.model.load(\"Empty\") return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "write": "trigger.model.abort()"
+    },
+    {
+      "write": "smu.source.output = smu.OFF"
+    },
+    {
+      "query": "local ok, r = pcall(function() digio.line[2].state = 0 return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "print(smu.source.output)",
+      "reply": "smu.OFF"
+    },
+    {
+      "query": "local ok, r = pcall(function() if oe_e3 ~= nil then buffer.delete(oe_e3) oe_e3 = nil end if oe_e3_lists then smu.source.configlist.delete('SE') smu.measure.configlist.delete('ME') oe_e3_lists = nil end smu.source.func = smu.FUNC_DC_CURRENT smu.source.autorange = smu.OFF smu.source.range = 0.01 smu.source.vlimit.level = 1 smu.source.readback = smu.ON smu.source.level = 0 smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.sense = smu.SENSE_4WIRE smu.measure.autorange = smu.OFF smu.measure.range = 2 smu.measure.nplc = 1 smu.measure.autozero.enable = smu.ON trigger.model.load(\"Empty\") return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "print(eventlog.getcount(eventlog.SEV_ALL))",
+      "reply": "2"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "2731\tTrigger model path #1 has been initiated\t4\t2\t1793710237\t520192860"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "2732\tTrigger model path #1 has been idled\t4\t2\t1793710238\t199180920"
+    }
+  ]
+}

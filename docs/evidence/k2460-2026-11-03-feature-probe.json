@@ -640,7 +640,7 @@
   "interpretation": {
     "P2": "HIGH-Z is settable and the output-off mode is stored per source function (direct check). Power-on default was NORMAL. The sequencer must set and verify HIGH-Z for both current and voltage at every prepare.",
     "P3": "One source configuration list holds current and voltage entries.",
-    "P4A": "Parked at block 6 (same as run 1): BRANCH_ON_EVENT did not branch on its second pass after the timer event had fired; WAIT with CLEAR_NEVER accepted the already-occurred event.",
+    "P4A": "INVALID as run: BRANCH_COUNTER 1 means one pass in total (E4 showed the value is the number of passes), so block 2 was never re-entered and the model always fell through to block 6. Rerun with BRANCH_COUNTER 2 parked at block 7: BRANCH_ON_EVENT latches (see k2460-2026-11-03-feature-probe-p4a-rerun.json).",
     "P4B": "Parked at block 5: an event that occurred before BRANCH_ON_EVENT was first reached is seen on that first pass.",
     "P5": "A 1,000,000-record standard reading buffer can be allocated.",
     "P6": "26 chunked reads succeeded while the trigger model was RUNNING, contiguous through all 2000 records; about 3.4 ms per reading at 0.01 NPLC, output OFF. Live buffer reads during a run work.",

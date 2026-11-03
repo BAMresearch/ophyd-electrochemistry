@@ -100,7 +100,7 @@ validated against them before arming.
   switches both functions inside one model; the buffer can be read in chunks
   while the model runs; 1M-record buffers allocate; off mode is per source
   function (set and verify HIGH-Z for both at prepare; power-on resets it to
-  NORMAL); BRANCH_ON_EVENT does not re-fire on a timer event on a later pass.
+  NORMAL); BRANCH_ON_EVENT latches an event (confirms the v17 failure).
   TSP is Lua 5.0.2.
 - **E1/E2 answers (3 Nov, resistor, output ON):** a source-function change
   (also via config recall in a model) turns the output OFF; CC -> CV needs a
@@ -108,7 +108,11 @@ validated against them before arming.
   Same-function recalls keep the output ON (+1.5 ms): pulses and rests share
   one current-mode list. Set source settings before the measure function.
   Keep command lines under ~900 characters. Set auto-zero explicitly (1 NPLC
-  spacing was 82.6 ms with defaults). Still open (B1): step-marker TTL timing,
+  spacing was 82.6 ms with defaults).
+- **E3/E4 (3 Nov):** reading spacing with auto-zero OFF: 40.8 ms (1 NPLC),
+  4.83 ms (0.1 NPLC), 1.24 ms (0.01 NPLC). `BRANCH_LIMIT_CONSTANT` (LIMIT_OUTSIDE)
+  cuts off on the first sample past the window. `BRANCH_COUNTER N` = N passes.
+  Avoid unreachable blocks (validation fails at initiate). Still open (B1): step-marker TTL timing,
   off-state at a cutoff, the stale `smu.source.output` reading seen once.
 
 ### Host side
@@ -146,7 +150,7 @@ Bench days (in order):
 
 | # | Load | Test matrix (summary) |
 |---|---|---|
-| B0 | resistor, output OFF throughout | Done 3 Nov: `bench/feature_probe.py` (HIGH-Z per function, config-list function switch, BRANCH_ON_EVENT, 1M buffer, live reads) |
+| B0 | resistor, output OFF throughout | Done 3 Nov: `bench/feature_probe.py` (HIGH-Z per function, config-list function switch, BRANCH_ON_EVENT latches, 1M buffer, live reads); E1–E4 energized on the resistor |
 | B1 | 100 Ω resistor, then RC dummy cell | Install sequencer; current/rest steps; bipolar pulse block; cutoff `next`/`stop` on the RC dummy; live reads during run; external START and software start; step-marker TTL on scope; HIGH-Z off state; measurement time per profile |
 | B2 | RC dummy, then a sacrificial Na/hard-carbon cell | Notebook flow end to end; QueueServer flow; a multi-hour cycling run; pulse runs at two SOCs |
 | B3 | Real cell, beamline-like setup | Full dress rehearsal from the Excel sheet, including trigger wiring |

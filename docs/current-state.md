@@ -76,7 +76,9 @@ survive that). `defbuffer1` holds 1,337 continuous-mode readings from today
 
 B0 and E1/E2 done (3 Nov): HIGH-Z per function, live buffer reads during a
 run, 1M-record buffers; a function change (I<->V) turns the output off even
-inside a model, same-function recalls keep it on. See `docs/validation.md`.
+inside a model, same-function recalls keep it on. E3/E4: auto-zero-off timing
+(4.83 ms at 0.1 NPLC), instrument-local voltage cutoff works, BRANCH_ON_EVENT
+latches. See `docs/validation.md`.
 
 ## Information still needed from the user
 

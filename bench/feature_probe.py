@@ -317,7 +317,7 @@ def main() -> None:
                 "trigger.BLOCK_BRANCH_ON_EVENT, trigger.EVENT_TIMER1, 7",  # 2 pass 1 at t~0
                 "trigger.BLOCK_WAIT, trigger.EVENT_TIMER1, trigger.CLEAR_NEVER",  # 3 consumes
                 "trigger.BLOCK_DELAY_CONSTANT, 0.1",  # 4
-                "trigger.BLOCK_BRANCH_COUNTER, 1, 2",  # 5 back to block 2 once
+                "trigger.BLOCK_BRANCH_COUNTER, 2, 2",  # 5 two passes in total: back to block 2 once
                 f"trigger.BLOCK_WAIT, {PARK}",  # 6 park: fell through
                 f"trigger.BLOCK_WAIT, {PARK}",  # 7 park: branch taken
             ],
@@ -325,7 +325,8 @@ def main() -> None:
         )
         print(
             "    interpret: parked at 7 = latched; 3 = not latched and WAIT needs a new event;"
-            " 6 = not latched but WAIT (CLEAR_NEVER) accepted the old event"
+            " 6 = not latched but WAIT (CLEAR_NEVER) accepted the old event."
+            " BRANCH_COUNTER's value is the total number of passes (E4, 3 Nov)"
         )
 
         print("P4B latch: event occurs before the branch block is first reached")

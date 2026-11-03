@@ -1,0 +1,99 @@
+{
+  "schema": "ophyd-electrochemistry.bench-probe.v1",
+  "observed_at_utc": "2026-11-03T11:41:40Z",
+  "note": "P4A rerun with BRANCH_COUNTER 2 (E4 showed the counter value is the total number of passes, so the original P4A with value 1 never re-entered block 2). Output OFF.",
+  "results": {
+    "P4A_fixed": "trigger.STATE_WAITING\ttrigger.STATE_WAITING\t7",
+    "errors": []
+  },
+  "transcript": [
+    {
+      "drained_stale_lines": "0"
+    },
+    {
+      "query": "print(smu.source.output == smu.OFF)",
+      "reply": "true"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t14"
+    },
+    {
+      "write": "trigger.timer[1].reset()"
+    },
+    {
+      "write": "trigger.timer[1].delay = 0.05"
+    },
+    {
+      "write": "trigger.timer[1].count = 1"
+    },
+    {
+      "write": "trigger.timer[1].start.stimulus = trigger.EVENT_NOTIFY1"
+    },
+    {
+      "write": "trigger.timer[1].start.generate = trigger.OFF"
+    },
+    {
+      "write": "trigger.timer[1].enable = trigger.ON"
+    },
+    {
+      "write": "trigger.model.load(\"Empty\")"
+    },
+    {
+      "write": "trigger.model.setblock(1, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY1)"
+    },
+    {
+      "write": "trigger.model.setblock(2, trigger.BLOCK_BRANCH_ON_EVENT, trigger.EVENT_TIMER1, 7)"
+    },
+    {
+      "write": "trigger.model.setblock(3, trigger.BLOCK_WAIT, trigger.EVENT_TIMER1, trigger.CLEAR_NEVER)"
+    },
+    {
+      "write": "trigger.model.setblock(4, trigger.BLOCK_DELAY_CONSTANT, 0.1)"
+    },
+    {
+      "write": "trigger.model.setblock(5, trigger.BLOCK_BRANCH_COUNTER, 2, 2)"
+    },
+    {
+      "write": "trigger.model.setblock(6, trigger.BLOCK_WAIT, trigger.EVENT_NOTIFY8)"
+    },
+    {
+      "write": "trigger.model.setblock(7, trigger.BLOCK_WAIT, trigger.EVENT_NOTIFY8)"
+    },
+    {
+      "write": "trigger.model.initiate()"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_WAITING\ttrigger.STATE_WAITING\t7"
+    },
+    {
+      "write": "trigger.model.abort()"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_ABORTED\ttrigger.STATE_ABORTED\t7"
+    },
+    {
+      "write": "trigger.timer[1].enable = trigger.OFF"
+    },
+    {
+      "write": "trigger.timer[1].reset()"
+    },
+    {
+      "write": "trigger.model.load(\"Empty\")"
+    },
+    {
+      "query": "print(smu.source.output == smu.OFF)",
+      "reply": "true"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t7"
+    },
+    {
+      "query": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "reply": "0"
+    }
+  ]
+}

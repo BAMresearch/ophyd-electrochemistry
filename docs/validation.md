@@ -12,6 +12,26 @@ JSON files** parsed. The software check record is
 (repository-relative path). These checks do not override the failed hardware
 cadence result.
 
+## E3/E4 measurement timing and limit-branch cutoff on the resistor (3 November 2026)
+
+Same tier-1 authorization and set-up as E1/E2 (current source only, <= 4 mA).
+
+- E3, reading spacing / standard deviation at 0.41 V (2 V range, 4-wire), auto-zero
+  ON vs OFF: 1 NPLC 82.6 / 40.8 ms (0.9 / 0.7 uV); 0.1 NPLC 10.6 / 4.83 ms
+  (5.2 / 4.1 uV); 0.01 NPLC 3.38 / 1.24 ms (11.8 / 6.7 uV). Jitter about
+  +-20 us. The planned 5 ms fast phase at 0.1 NPLC needs auto-zero OFF.
+- E4: `BLOCK_BRANCH_LIMIT_CONSTANT` with `LIMIT_OUTSIDE [-1, 0.3] V` after a
+  one-reading measure block did not fire at 0.205 V and fired on the first
+  0.410 V sample, jumping to a 0 A rest (output stayed on). Instrument-local
+  voltage cutoffs work. `BLOCK_BRANCH_COUNTER N` gives N passes in total (the
+  first included). A first E4 model with an unreachable block after
+  `BRANCH_ALWAYS` failed validation at initiate (event 2709, output never on).
+
+Evidence: [`k2460-2026-11-03-timing-cutoff-e3-e4.json`](evidence/k2460-2026-11-03-timing-cutoff-e3-e4.json)
+(E3; its E4 is the failed first model) and
+[`k2460-2026-11-03-timing-cutoff-e4.json`](evidence/k2460-2026-11-03-timing-cutoff-e4.json);
+script `bench/timing_cutoff_e3.py`.
+
 ## E1/E2 energized config-list recall on the resistor (3 November 2026)
 
 Tier 1, user-authorized: 100 ohm four-wire resistor (front), |I| <= 5 mA, voltage
@@ -64,10 +84,13 @@ Findings:
   `BLOCK_CONFIG_RECALL` with a source and a measure list switches both functions
   inside one trigger model (readings Volt/Amp, then Amp/Volt). Output OFF only;
   switching with output ON is a B1 item.
-- `BRANCH_ON_EVENT` did not branch on a timer event on its second pass, while a
-  `WAIT` with `CLEAR_NEVER` accepted the already-occurred event; an event before
-  the branch block's first pass is seen. Consistent with the v17 failure; the
-  sequencer times steps by sample count instead.
+- **`BRANCH_ON_EVENT` latches:** once the timer event has occurred, the branch
+  block takes the branch on every later pass, even after a `WAIT` consumed the
+  event; an event before the block's first pass is also seen. This confirms the
+  suspected v17 failure (a deadline branch firing on every sample). The first
+  P4A run used `BRANCH_COUNTER 1`, which never re-enters the loop (see E4), and
+  was misread; the rerun is
+  [`k2460-2026-11-03-feature-probe-p4a-rerun.json`](evidence/k2460-2026-11-03-feature-probe-p4a-rerun.json).
 - A 1,000,000-record reading buffer can be allocated.
 - A reading buffer can be read in chunks while the trigger model measures into
   it: 26 reads during RUNNING, contiguous through 2,000 records (about 3.4 ms per
