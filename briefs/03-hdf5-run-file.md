@@ -68,6 +68,8 @@ def read_run_file(path) -> dict  # {"attrs", "equipment", "run", "sequence",
 Non-scalar or non-JSON-safe equipment values raise `ValidationError`. JSON uses
 `sort_keys=True`. Use the default HDF5 format (not `libver="latest"`, which
 leaves a killed writer's file locked); live plots read in the writer process.
+(Superseded 3 Nov: run files now use SWMR with the HDF5 1.10 format; see the
+`run_file` module docstring and O10 in the plan.)
 
 ## Tests
 

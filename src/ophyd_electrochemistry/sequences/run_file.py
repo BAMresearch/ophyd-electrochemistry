@@ -1,15 +1,23 @@
 """Incremental per-run HDF5 files (install the ``experiment`` extra).
 
-Every append and finalization flushes the file. A notebook in the writer's
-process can call ``read_run_file(path)`` between appends for a fresh snapshot.
-Cross-process SWMR is not used: live plots take data from the writer process.
+Every append and finalization flushes the file. Files are written in HDF5 SWMR
+mode (single writer, multiple readers), so ``read_run_file(path)`` returns a
+fresh snapshot from any process while a run is in progress, e.g. a notebook
+plotting a run written by a QueueServer worker. Keep run files on a local
+disk while they are written: SWMR is not reliable on network file systems.
 
-Files use the default (earliest) HDF5 format on purpose. With
-``libver="latest"`` a killed writer (e.g. a crashed Jupyter kernel) leaves the
-file flagged "already open for write" and unreadable without ``h5clear``; with
-the default format everything flushed before the crash reads back, with outcome
-``incomplete``. Closing, including context-manager exception cleanup, preserves
-received data. Flush is not an fsync or a power-loss guarantee.
+The file format is pinned to HDF5 1.10 (the minimum for SWMR), so HDF5 1.10+
+tools read it. SWMR's documented guarantees cover appends to the numeric
+readout datasets; the UTF-8 event datasets and the outcome attributes are also
+updated during the run, which a cross-process stress test with HDF5 2.0 read
+back without errors.
+
+A killed writer (e.g. a crashed Jupyter kernel) leaves the file flagged as
+open for writing. ``read_run_file`` still reads everything flushed before the
+crash, with outcome ``incomplete``; other HDF5 tools refuse the file until it
+is copied with ``repair_run_file`` (or cleared with HDF5's ``h5clear``).
+Closing, including context-manager exception cleanup, preserves received data.
+Flush is not an fsync or a power-loss guarantee.
 """
 
 import json
@@ -43,6 +51,8 @@ _EVENT_FIELDS = ("t_s", "step_index", "repeat_index", "kind", "detail")
 _EVENT_KINDS = {"step_start", "cutoff", "stop", "abort", "error"}
 _OUTCOMES = {"completed", "stopped_cutoff", "aborted", "error"}
 _Path = str | PathLike[str]
+# HDF5 1.10 file format: the minimum for SWMR, readable by HDF5 1.10+ tools.
+_LIBVER = ("v110", "v110")
 
 
 def _utc_now() -> str:
@@ -153,7 +163,7 @@ class RunFile:
             "extra": _json({} if extra is None else extra, "extra"),
         }
         # HDF5's exclusive mode handles races; never use a check followed by "w".
-        file = h5py.File(path, "x")
+        file = h5py.File(path, "x", libver=_LIBVER)
         try:
             file.attrs.update(
                 schema=SCHEMA,
@@ -187,6 +197,8 @@ class RunFile:
                 events.create_dataset(
                     name, shape=(0,), maxshape=(None,), chunks=(128,), dtype=dtype
                 )
+            # SWMR forbids creating objects from here on; everything exists now.
+            file.swmr_mode = True
             file.flush()
         except BaseException:
             file.close()
@@ -293,9 +305,9 @@ def read_run_file(path: _Path) -> dict[str, Any]:
     """Return detached arrays, decoded UTF-8 and parsed JSON metadata.
 
     ``events`` is a dict of parallel arrays (kind/detail arrays contain str).
-    Call between appends in the writer process, or after closing the writer.
+    Safe from any process while the writer appends, and after a writer crash.
     """
-    with h5py.File(path, "r") as file:
+    with h5py.File(path, "r", libver=_LIBVER, swmr=True) as file:
         if file.attrs.get("schema") != SCHEMA:
             raise ValidationError("unsupported run-file schema")
         result = {
@@ -315,3 +327,20 @@ def read_run_file(path: _Path) -> dict[str, Any]:
         for name in ("sequence", "safety_limits", "run_sheet_row", "extra"):
             result[name] = json.loads(file["run"][name].asstr()[()])
     return result
+
+
+def repair_run_file(path: _Path, destination: _Path) -> None:
+    """Copy a run file into a new file that any HDF5 1.10+ tool can open.
+
+    Use after a writer crash. The source is only read; the copy keeps every
+    flushed record and the ``incomplete`` outcome. ``destination`` must not exist.
+    """
+    with (
+        h5py.File(path, "r", libver=_LIBVER, swmr=True) as source,
+        h5py.File(destination, "x", libver=_LIBVER) as target,
+    ):
+        if source.attrs.get("schema") != SCHEMA:
+            raise ValidationError("unsupported run-file schema")
+        target.attrs.update(source.attrs)
+        for name in source:
+            source.copy(source[name], target, name=name)

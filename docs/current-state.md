@@ -28,8 +28,10 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   run-file-compatible readout chunks. Synthetic cell, not bench validated.
 - **Run files:** incremental HDF5 writer/reader with separate equipment/run
   metadata, compressed readouts and events; exclusive creation, per-append flush
-  and explicit terminal outcomes. A killed kernel leaves all flushed data
-  readable (outcome `incomplete`); no cross-process SWMR.
+  and explicit terminal outcomes. SWMR mode (HDF5 1.10 format): other
+  processes read live snapshots while a run is written. After a killed kernel
+  `read_run_file` reads all flushed data (outcome `incomplete`); other HDF5
+  tools need the `repair_run_file` copy. Write run files to local disk.
 - **On the 2460, via scripts (not via Bluesky):** PyVISA transport, identity/TSP
   checks, query-only inspection, packaged runtime install/replace, count-bounded
   current holds (runtime v14) with immediate or external START, buffered

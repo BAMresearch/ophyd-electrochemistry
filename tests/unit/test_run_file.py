@@ -19,7 +19,12 @@ from ophyd_electrochemistry.sequences import (
     sequence_from_dict,
     to_dict,
 )
-from ophyd_electrochemistry.sequences.run_file import READOUT_FIELDS, RunFile, read_run_file
+from ophyd_electrochemistry.sequences.run_file import (
+    READOUT_FIELDS,
+    RunFile,
+    read_run_file,
+    repair_run_file,
+)
 
 
 @pytest.fixture
@@ -152,7 +157,7 @@ def test_read_flushed_snapshot_while_writer_is_open(tmp_path, settings):
 
 
 def test_killed_writer_leaves_flushed_data_readable(tmp_path):
-    # A crashed Jupyter kernel must not lock the file (libver="latest" would).
+    # A crashed Jupyter kernel leaves the SWMR file flagged as open for writing.
     path = tmp_path / "killed.h5"
     script = f"""
 import os
@@ -174,6 +179,63 @@ os._exit(0)
     assert len(result["readout"]["t_s"]) == 1500
     assert list(result["events"]["kind"]) == ["step_start"]
     assert result["run"]["outcome"] == "incomplete"
+    # Plain HDF5 readers refuse the flagged file; the repaired copy opens anywhere.
+    with pytest.raises(OSError, match="open for write"):
+        h5py.File(path, "r")
+    repaired = tmp_path / "repaired.h5"
+    repair_run_file(path, repaired)
+    with h5py.File(repaired, "r") as file:
+        assert len(file["readout"]["t_s"]) == 1500
+    copy = read_run_file(repaired)
+    for name in ("attrs", "equipment", "run", "sequence", "safety_limits", "events"):
+        assert repr(copy[name]) == repr(result[name])
+    for name in READOUT_FIELDS:
+        np.testing.assert_array_equal(copy["readout"][name], result["readout"][name])
+    with pytest.raises(FileExistsError):
+        repair_run_file(path, repaired)
+
+
+def test_other_process_reads_while_writer_appends(tmp_path, settings):
+    # The QueueServer case: a worker writes, a notebook process plots.
+    path = tmp_path / "live.h5"
+    script = f"""
+import sys
+import numpy as np
+from ophyd_electrochemistry.sequences import SafetyLimits, bipolar_pulse_sequence
+from ophyd_electrochemistry.sequences.run_file import READOUT_FIELDS, RunFile
+with RunFile.create(
+    {str(path)!r}, measurement_id="m", equipment={{}},
+    sequence=bipolar_pulse_sequence(1e-4, 0.1, 2),
+    limits=SafetyLimits(0, 3, 0.01, 1e6, 10**7), start_mode="immediate",
+) as writer:
+    for index in range(4):
+        writer.append_readout({{name: np.arange(100) for name in READOUT_FIELDS}})
+        writer.append_event(float(index), 0, index, "step_start", "é" * index)
+        print(index, flush=True)
+        sys.stdin.readline()
+    writer.finalize("completed")
+"""
+    writer = subprocess.Popen(
+        [sys.executable, "-c", script],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        text=True,
+    )
+    try:
+        for index in range(4):
+            assert writer.stdout.readline().strip() == str(index)
+            snapshot = read_run_file(path)
+            assert len(snapshot["readout"]["t_s"]) == 100 * (index + 1)
+            assert list(snapshot["events"]["detail"]) == ["é" * i for i in range(index + 1)]
+            assert snapshot["run"]["outcome"] == "incomplete"
+            writer.stdin.write("\n")
+            writer.stdin.flush()
+        assert writer.wait(timeout=60) == 0
+    finally:
+        writer.kill()
+    assert read_run_file(path)["run"]["outcome"] == "completed"
+    with h5py.File(path, "r") as file:  # Closed normally: plain readers work.
+        assert len(file["readout"]["t_s"]) == 400
 
 
 @pytest.mark.parametrize("exception", [False, True])

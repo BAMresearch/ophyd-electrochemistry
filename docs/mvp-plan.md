@@ -128,7 +128,7 @@ Off-day (no hardware):
 | O6 | Per-run notebook template (simulator first) | todo |
 | O7 | QueueServer startup profile (MOUSE pattern: run-sheet rows → `run_from_sheet` queue items) + integration tests against the simulator | planned after O6; go/no-go at the 19–20 Nov gate |
 | O9 | HDF5 writer (equipment / run settings incl. Excel row / readouts) | Done 3 Nov (brief 03, reviewed) |
-| O10 | Run file in SWMR mode: live cross-process reads (notebook plot while a QueueServer worker writes); our reader opens SWMR so crashed files read back; `repair_run_file` for other tools | todo (Claude) |
+| O10 | Run file in SWMR mode: live cross-process reads (notebook plot while a QueueServer worker writes); our reader opens SWMR so crashed files read back; `repair_run_file` for other tools | Done 3 Nov |
 | O8 | Bench runner script that executes a test matrix and writes one evidence file | todo |
 
 Bench days (in order):
