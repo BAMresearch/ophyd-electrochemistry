@@ -1,0 +1,12 @@
+# QueueServer session: OE_SESSION=qserver/session-simulator.toml
+backend = "simulator"
+data_dir = "~/k2460-data/qserver-sim"
+sim_speed = 10.0
+poll_period_s = 0.5
+
+[limits]  # dummy-cell values: review for every real session
+v_min_abs = 0.0
+v_max_abs = 3.0
+i_max_abs = 0.01
+max_duration_s = 200000.0
+max_records = 1000000

@@ -1,0 +1,17 @@
+# QueueServer session for the 2460: copy, review every value, then
+# OE_SESSION=<copy>.toml. Limits apply to every queued run; HIGH-Z off mode is
+# set and read back by the runtime for both source functions.
+backend = "k2460"
+data_dir = "~/k2460-data"
+resource = "TCPIP0::169.254.113.151::5025::SOCKET"
+serial = "04686198"
+terminals = "front"
+poll_period_s = 1.0
+# start_timeout_s = 600.0  # external START: abort if none arrives in time
+
+[limits]  # PLACEHOLDERS: set from the cell's window and current
+v_min_abs = 0.0
+v_max_abs = 2.5
+i_max_abs = 0.005
+max_duration_s = 200000.0
+max_records = 1000000

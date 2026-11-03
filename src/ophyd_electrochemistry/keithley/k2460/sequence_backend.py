@@ -628,8 +628,9 @@ class Keithley2460SequenceBackend:
     def recover(self) -> None:
         with self._lock:
             if not self._connected:
-                raise ElectrochemistryError("Backend is not connected")
-            if self._broken:
+                # The Flyer unstages (closes) after an abort; reconnect by inspection.
+                self.connect()
+            elif self._broken:
                 # Reconnect by inspection only; the OFF below is the one mutation.
                 self._io(self._transport.connect)
                 self._broken = False

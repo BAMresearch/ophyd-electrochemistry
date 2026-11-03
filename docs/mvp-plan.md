@@ -149,7 +149,7 @@ Off-day (no hardware):
 | O4 | Flyer integration with live chunk reads; `run_sequence` plan; live plot callback | Done 3 Nov (brief 05; simulator only) |
 | O5 | Sequencer TSP + host backend, mocked-transport tests, offline Lua syntax check | Compiler + replay (brief 07), runtime and hardware backend done 3 Nov, offline (Lua-mocked); notebook option and B1 remain |
 | O6 | Per-run notebook template (simulator first) | Done 3 Nov (brief 06; simulator only) |
-| O7 | QueueServer startup profile (MOUSE pattern: run-sheet rows → `run_from_sheet` queue items) + integration tests against the simulator | planned after O6; go/no-go at the 19–20 Nov gate |
+| O7 | QueueServer startup profile (MOUSE pattern: run-sheet rows → `run_from_sheet` queue items) + integration tests against the simulator | Done 3 Nov (simulator; real RE Manager + redis test); hardware flow in B2 |
 | O9 | HDF5 writer (equipment / run settings incl. Excel row / readouts) | Done 3 Nov (brief 03, reviewed) |
 | O10 | Run file in SWMR mode: live cross-process reads (notebook plot while a QueueServer worker writes); our reader opens SWMR so crashed files read back; `repair_run_file` for other tools | Done 3 Nov |
 | O8 | Bench runner script that executes a test matrix and writes one evidence file | B1 runner + plan ready 3 Nov (`bench/b1_sequencer.py`, `bench/plan-b1.md`), offline |

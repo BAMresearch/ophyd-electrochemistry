@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1185 tests pass. Pure models/compiler, independent simulator,
+- **Offline:** 1202 tests pass. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -42,6 +42,12 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   with explicit session limits. `BACKEND = "k2460"` selects the sequencer
   backend (confirmation gate before any I/O; not yet run on hardware). Save the
   executed notebook beside its HDF5 file.
+- **QueueServer (O7):** `qserver/startup` + session TOML (`OE_SESSION`): RE
+  Manager worker owns the instrument; queue items are run-sheet rows with the
+  sheet's SHA-256 (refused if the sheet changed); `ophyd-electrochemistry-enqueue`
+  asks for a typed confirmation per hardware run; only `run_from_sheet` and
+  `recover_sequencer` permitted. Tested against a real RE Manager + redis with
+  the simulator (`qserver/README.md`).
 - **Run files:** incremental HDF5 writer/reader with separate equipment/run
   metadata, compressed readouts and events; exclusive creation, per-append flush
   and explicit terminal outcomes. SWMR mode (HDF5 1.10 format): other
@@ -67,7 +73,6 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 - `runtime.tsp` sets `smu.source.offmode = smu.OFFMODE_NORMAL` — unsafe for cells.
   The sequencer must use HIGH-Z.
 - Hard-coded commissioning limits (10 mA, 2 V, 60 s) are too small for cycling.
-- No QueueServer profile.
 
 ## Before the next bench session
 
@@ -91,7 +96,7 @@ survive that). `defbuffer1` holds 1,337 continuous-mode readings from today
    `bench/b1_sequencer.py` (R1–R11 resistor, C1–C2 RC dummy; `--dry-run`
    compiles the matrix offline). Needs the RC dummy's values. O1–O6, O9, O10 are
    implemented offline.
-2. Build the QueueServer profile (O7) using the sequence Flyer and run-sheet loader.
+2. QueueServer flow on hardware after B1 (B2: RC dummy, then a sacrificial cell).
 
 B0 and E1/E2 done (3 Nov): HIGH-Z per function, live buffer reads during a
 run, 1M-record buffers; a function change (I<->V) turns the output off even

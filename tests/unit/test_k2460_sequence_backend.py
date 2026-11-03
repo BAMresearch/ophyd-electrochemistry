@@ -688,3 +688,18 @@ def test_close_does_not_acknowledge_an_unfinished_read(backend, instrument, limi
     backend.connect()
     with pytest.raises(RetainedDataError):
         backend.prepare(request)
+
+
+def test_recover_reconnects_after_the_flyer_closed_the_session(backend, instrument, limits):
+    request = pulse_request(limits)
+    _, rows = instrument_records(request.sequence, limits)
+    backend.prepare(request)
+    backend.kickoff()
+    instrument.start()
+    instrument.add(rows[:20])
+    backend.abort("user")
+    drain(backend)
+    backend.close()  # Flyer unstage after the abort
+    assert not instrument.connected
+    backend.recover()
+    assert backend.inspect() == (DeviceState.IDLE, False)
