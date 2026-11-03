@@ -12,6 +12,28 @@ JSON files** parsed. The software check record is
 (repository-relative path). These checks do not override the failed hardware
 cadence result.
 
+## S1/S2 sequencer-shaped model with scope (3 November 2026)
+
+Same tier-1 set-up; ±4.9 mA (±0.50 V, user asked for >= 0.5 V on the scope).
+`bench/marker_start_s1.py` builds a 53/54-block prototype of the design's step
+layout: 13 steps (rest, then +4.9 mA / 0 A / -4.9 mA / 0 A x 3), 16 samples per
+step at 6.25 ms, 0.1 NPLC, marker on line 1, busy on line 2, START on line 3.
+
+- S1 (immediate, twice; logged): 208/208 readings, normal end block, levels
+  ±0.5022 V, sample spacing 6.2575 ms, +1.32 ms per step change, first reading
+  36.8 ms after t = 0 (HIGH-Z output-on), total 1348 ms for 1300 nominal.
+  Scope (user): 13 markers, widths 6.24–6.29 ms; the resistor voltage step comes
+  1.07 ms before its marker; busy high 1.349 s, falling 101.07 ms after the last
+  marker.
+- S2 (external START from a 0.01 Hz square wave, 28 mV / 4.5 V via 1 kohm; waited
+  30.3 s): identical run. Scope (user): START -> busy 65 us, START -> first marker
+  30.66 ms, START -> first voltage step 131.31 ms.
+
+Evidence: [`k2460-2026-11-03-scope-s1-immediate.json`](evidence/k2460-2026-11-03-scope-s1-immediate.json),
+[`k2460-2026-11-03-scope-s1-readings.json`](evidence/k2460-2026-11-03-scope-s1-readings.json),
+[`k2460-2026-11-03-scope-s1-external.json`](evidence/k2460-2026-11-03-scope-s1-external.json),
+[`k2460-2026-11-03-scope-s2-readings.json`](evidence/k2460-2026-11-03-scope-s2-readings.json).
+
 ## Preliminary B1 checks T1–T5 on the resistor (3 November 2026)
 
 Same tier-1 set-up, 2 mA, after a power cycle (HIGH-Z set for both functions).

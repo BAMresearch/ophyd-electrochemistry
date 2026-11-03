@@ -117,7 +117,10 @@ validated against them before arming.
   ON avoided by an ON block after every function switch (toggle fallback kept);
   6 ms loop at 0.1 NPLC = 6.002 ms; UTC mapping via `eventlog.post` ~1 ms;
   live reads 250 records / 17 ms. Decided: 6 ms fast phase, 0.1 V compliance
-  margin, lines as in `Keithley2460Config`. Still open (B1): step-marker TTL timing,
+  margin, lines as in `Keithley2460Config`.
+- **S1/S2 (3 Nov, scope):** a 53-block prototype of the step layout runs as
+  designed; markers 13/13, lag the level change by 1.07 ms; +1.32 ms per step
+  change (compensated in the delays); external START -> busy 65 us. Still open (B1):
   off-state at a cutoff, the stale `smu.source.output` reading seen once.
 
 ### Host side

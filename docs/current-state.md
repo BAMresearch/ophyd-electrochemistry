@@ -78,7 +78,8 @@ B0 and E1/E2 done (3 Nov): HIGH-Z per function, live buffer reads during a
 run, 1M-record buffers; a function change (I<->V) turns the output off even
 inside a model, same-function recalls keep it on. E3/E4: auto-zero-off timing
 (4.83 ms at 0.1 NPLC), instrument-local voltage cutoff works, BRANCH_ON_EVENT
-latches. See `docs/validation.md`.
+latches. S1/S2 (scope): prototype step layout runs as designed, external START
+-> busy 65 us, markers lag the level change by 1.07 ms. See `docs/validation.md`.
 
 ## Information still needed from the user
 

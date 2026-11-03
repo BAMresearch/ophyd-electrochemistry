@@ -6,11 +6,17 @@
   "reported_verbatim": "first marker pulse (low-high-low) on CH1: 6.285 ms. second marker pulse 6.239 ms, third marker 6.259. there are 13 markers in total. first channel 4 move (first rising step) is 1.07 ms before the rising edge (start) of the second marker. busy starts before the first marker, and falls 101.07 ms after the rising edge of the last marker",
   "readings": {
     "marker_count": 13,
-    "marker_widths_ms": [6.285, 6.239, 6.259],
+    "marker_widths_ms": [
+      6.285,
+      6.239,
+      6.259
+    ],
     "resistor_step_to_marker_rising_ms": 1.07,
     "resistor_step_relative_to_marker": "before (the level changes during the config recall, the marker block follows it)",
     "busy_rising": "before the first marker",
-    "last_marker_rising_to_busy_falling_ms": 101.07
+    "last_marker_rising_to_busy_falling_ms": 101.07,
+    "busy_high_duration_s": 1.349
   },
-  "interpretation": "Markers mark every step (13/13) with width = first sample interval. The step-start marker lags the source level change by 1.07 ms with the block order recall -> marker; the sequencer records step_start = marker time - 1.07 ms (resistor; recheck on the RC dummy at B1). Busy covers the sourcing period and falls about 1 ms after the last reading."
+  "interpretation": "Markers mark every step (13/13) with width = first sample interval. The step-start marker lags the source level change by 1.07 ms with the block order recall -> marker; the sequencer records step_start = marker time - 1.07 ms (resistor; recheck on the RC dummy at B1). Busy covers the sourcing period and falls about 1 ms after the last reading.",
+  "reported_verbatim_followup": "busy is high for 1.349s"
 }

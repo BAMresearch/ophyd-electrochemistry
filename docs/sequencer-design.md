@@ -166,7 +166,10 @@ takes `DELAY d → MEASURE → limit/counter blocks` per sample:
 ## 8. Start, markers, busy line, time base
 
 - START: `immediate` arms and runs; `external` waits on the START input line
-  (`digio.MODE_TRIGGER_IN`, `trigger.digin[line].edge`, as in runtime v14). The output stays OFF while waiting.
+  (`digio.MODE_TRIGGER_IN`, `trigger.digin[line].edge`, `BLOCK_WAIT` with
+  `CLEAR_ENTER`, so only an edge after arming starts the run). S2 scope: START →
+  busy 65 µs (v14 polling: 5.0 ms); t = 0 (`OE_T0`, logged just before busy) is
+  within ~0.1 ms of the START edge; first marker 30.66 ms after START. The output stays OFF while waiting.
 - Marker line: high at every step start (each repeat too), low after the step's
   first sample; pulse width = first sample interval (S1 scope: 6.24–6.29 ms at
   6.25 ms, 13/13 markers). The marker rises 1.07 ms **after** the source level
@@ -269,15 +272,18 @@ check, allow-listed in `transport.load_runtime`.
 
 ## 13. B1 verification (resistor, then RC dummy cell)
 
-Done on 3 Nov (T1–T5): reset block and counter re-entry, ON-while-on, timing
-table and loop overhead, `eventlog.post` and log-event timestamps, live polling
-at 200 Hz, stale-ON reproduction. Remaining, with the full runtime:
+Done on 3 Nov (T1–T5, S1, S2): reset block and counter re-entry, ON-while-on,
+timing table and loop overhead, `eventlog.post` and log-event timestamps, live
+polling at 200 Hz, stale-ON reproduction, a 53-block prototype of the step
+layout with markers and busy on the scope, external START from the generator.
+Remaining, with the full runtime:
 
 1. A counter left part-way by a cutoff inside the repeat block (reset block).
-2. Nominal vs actual step durations over a 5-minute pulse run.
-3. Marker and busy lines on the scope; external START from the generator.
-4. Live poll for 5 minutes at 200 Hz through the backend; host CPU and lag.
-5. Abort mid-run; host-kill mid-run (model completes, output OFF).
+2. Nominal vs actual step durations over a 5-minute pulse run (with the
+   `t_entry / n` delay correction).
+3. Live poll for 5 minutes at 200 Hz through the backend; host CPU and lag.
+4. Abort mid-run; host-kill mid-run (model completes, output OFF).
+5. RC dummy cell: cutoffs, CV taper, marker lag with a capacitive load.
 8. RC dummy: CC to cutoff (NEXT and STOP), CV taper cutoff, HIGH-Z off state at
    a STOP (voltage after output OFF recorded by a separate DMM or by the next
    run's first reading).

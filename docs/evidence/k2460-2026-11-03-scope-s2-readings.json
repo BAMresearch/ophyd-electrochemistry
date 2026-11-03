@@ -1,0 +1,13 @@
+{
+  "schema": "ophyd-electrochemistry.bench-probe.v1",
+  "recorded_on": "2026-11-03",
+  "source": "User scope readings of S2 (bench/marker_start_s1.py --start external); trigger CH3 rising. Generator: square wave 0.01 Hz, 4.5 Vpp, 2.3 V offset (28 mV / 4.5 V), high-Z output setting, into line 3 through 1 kohm. Model waited 30.324 s for the edge (event log).",
+  "run_evidence": "k2460-2026-11-03-scope-s1-external.json",
+  "reported_verbatim": "start -> busy is 65 \u00b5s. start -> first marker rising 30.66(1) ms. start -> first voltage step 131.31(1) ms.",
+  "readings": {
+    "start_to_busy_rising_us": 65,
+    "start_to_first_marker_rising_ms": 30.66,
+    "start_to_first_voltage_step_ms": 131.31
+  },
+  "interpretation": "In-model WAIT on the START line (CLEAR_ENTER) reacts in 65 us (runtime v14 polling: 5.0 ms). OE_T0 is logged in the block before busy, so t = 0 is within ~0.1 ms of the START edge. The first marker follows after the ~30 ms HIGH-Z output-on; the first level step (+4.9 mA after the 0.1 s rest) at 131.31 ms agrees with the logged step timing and the 1.07 ms marker lag."
+}
