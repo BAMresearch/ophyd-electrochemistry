@@ -176,3 +176,50 @@ def test_permissions_allow_only_the_sequencer_plans():
     for group in groups["user_groups"].values():
         assert group["allowed_plans"] == ["run_from_sheet", "recover_sequencer"]
         assert group["allowed_functions"] == []
+
+
+def session_file(tmp_path, **limits):
+    values = {
+        "v_min_abs": 0.0,
+        "v_max_abs": 3.0,
+        "i_max_abs": 0.01,
+        "max_duration_s": 200000.0,
+        "max_records": 1000000,
+    }
+    values.update(limits)
+    path = tmp_path / "session.toml"
+    path.write_text(
+        f'backend = "simulator"\ndata_dir = "{tmp_path}"\n[limits]\n'
+        + "".join(f"{k} = {v}\n" for k, v in values.items())
+    )
+    return path
+
+
+def test_validate_compiles_every_row(tmp_path, sheet, capsys):
+    from ophyd_electrochemistry.sequences.queueserver import validate_main
+
+    assert validate_main([str(sheet), "--session", str(session_file(tmp_path))]) == 0
+    out = capsys.readouterr().out.splitlines()
+    assert out[-1].startswith("20 of 20 run(s) valid")
+    assert any(
+        line.startswith("ok   example-pulse: bipolar_pulse") and "blocks" in line for line in out
+    )
+
+
+def test_validate_reports_rows_the_sequencer_cannot_run(tmp_path, sheet, capsys):
+    from ophyd_electrochemistry.sequences.queueserver import validate_main
+
+    path = session_file(tmp_path, i_max_abs=10.0)  # valid limits, beyond the 2460's 7 A
+    assert validate_main([str(sheet), "example-rest", "nope", "--session", str(path)]) == 1
+    out = capsys.readouterr().out
+    assert "FAIL example-rest: i_max_abs exceeds runtime maximum 7 A" in out
+    assert "FAIL nope: not in the sheet" in out
+    assert "0 of 2 run(s) valid" in out
+
+
+def test_validate_reports_sheet_level_errors(tmp_path, sheet, capsys):
+    from ophyd_electrochemistry.sequences.queueserver import validate_main
+
+    path = session_file(tmp_path, i_max_abs=0.00005)  # template rows use 0.1 mA
+    assert validate_main([str(sheet), "--session", str(path)]) == 1
+    assert capsys.readouterr().out.startswith(f"INVALID {sheet}:")

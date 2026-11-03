@@ -1,6 +1,6 @@
 # mypy: disable-error-code="no-untyped-call"
 
-"""QueueServer integration: session file, startup namespace and the enqueue command.
+"""QueueServer integration: session file, startup namespace, oe-validate and oe-enqueue.
 
 The RE Manager worker is the one process that owns the instrument. A session
 TOML file (``OE_SESSION``) fixes the backend, data directory and safety limits
@@ -211,9 +211,73 @@ def enqueue(items: Iterable[Mapping[str, Any]], zmq_control_addr: str, *, api: A
             manager.close()
 
 
-def main(argv: list[str] | None = None) -> int:
+def validate_rows(
+    session: Session, run_sheet: str | Path, measurement_ids: Iterable[str] = ()
+) -> list[tuple[str, str | None, str]]:
+    """``(measurement_id, problem or None, summary)`` per selected row (default all).
+
+    Each row is checked against the session limits and compiled for the 2460
+    sequencer (sampling feasibility, ranges, trigger-block budget). No
+    instrument or RE Manager is contacted. A sheet-level error raises.
+    """
+    from ..keithley.k2460.sequencer import compile_program
+    from .models import expected_records, nominal_duration_s
+
+    runs = load_run_sheet(Path(run_sheet), session.limits)
+    selected = list(measurement_ids) or list(runs)
+    results: list[tuple[str, str | None, str]] = []
+    for measurement_id in selected:
+        if measurement_id not in runs:
+            results.append((measurement_id, "not in the sheet", ""))
+            continue
+        try:
+            request = SequenceRequest.from_run_spec(runs[measurement_id], session.limits)
+            program = compile_program(
+                request.sequence,
+                session.limits,
+                external_start=request.start_mode == "external",
+            )
+        except ValidationError as exc:
+            results.append((measurement_id, str(exc), ""))
+            continue
+        minutes, seconds = divmod(round(nominal_duration_s(request.sequence)), 60)
+        nplc = "/".join(f"{m.nplc:g}" for m in program.measures)
+        results.append(
+            (
+                measurement_id,
+                None,
+                f"{request.run_sheet_row.get('protocol', '')}, {request.start_mode} start, "
+                f"{minutes // 60}:{minutes % 60:02d}:{seconds:02d}, "
+                f"<= {expected_records(request.sequence)} records, "
+                f"{len(program.blocks)} blocks, NPLC {nplc}",
+            )
+        )
+    return results
+
+
+def validate_main(argv: list[str] | None = None) -> int:
+    """Check run-sheet rows against a session file without touching the instrument."""
+    parser = argparse.ArgumentParser(prog="oe-validate", description=validate_main.__doc__)
+    parser.add_argument("run_sheet", type=Path)
+    parser.add_argument("measurement_ids", nargs="*", help="default: every row")
+    parser.add_argument("--session", type=Path, required=True, help="the session TOML (OE_SESSION)")
+    args = parser.parse_args(argv)
+    try:
+        session = load_session(args.session)
+        results = validate_rows(session, args.run_sheet, args.measurement_ids)
+    except ValidationError as exc:
+        print(f"INVALID {args.run_sheet}: {exc}")
+        return 1
+    for measurement_id, problem, summary in results:
+        print(f"{'FAIL' if problem else 'ok  '} {measurement_id}: {problem or summary}")
+    failed = sum(problem is not None for _, problem, _ in results)
+    print(f"{len(results) - failed} of {len(results)} run(s) valid for session {args.session}")
+    return 1 if failed else 0
+
+
+def enqueue_main(argv: list[str] | None = None) -> int:
     """Enqueue run-sheet rows into a running RE Manager (one confirmation per hardware run)."""
-    parser = argparse.ArgumentParser(description=main.__doc__)
+    parser = argparse.ArgumentParser(prog="oe-enqueue", description=enqueue_main.__doc__)
     parser.add_argument("run_sheet", type=Path)
     parser.add_argument("measurement_ids", nargs="+")
     parser.add_argument("--session", type=Path, required=True, help="the RE Manager's OE_SESSION")

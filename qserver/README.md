@@ -20,8 +20,9 @@ OE_SESSION=~/k2460-session.toml uv run --locked start-re-manager \
 In another terminal:
 
 ```sh
+uv run --locked oe-validate runs.xlsx --session ~/k2460-session.toml   # every row; no I/O
 uv run --locked qserver environment open        # connects nothing yet
-uv run --locked ophyd-electrochemistry-enqueue runs.xlsx R5-001 R5-002 \
+uv run --locked oe-enqueue runs.xlsx R5-001 R5-002 \
   --session ~/k2460-session.toml                 # summary + typed confirmation per run
 uv run --locked qserver queue start
 uv run --locked qserver status

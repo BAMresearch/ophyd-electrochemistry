@@ -44,8 +44,8 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   executed notebook beside its HDF5 file.
 - **QueueServer (O7):** `qserver/startup` + session TOML (`OE_SESSION`): RE
   Manager worker owns the instrument; queue items are run-sheet rows with the
-  sheet's SHA-256 (refused if the sheet changed); `ophyd-electrochemistry-enqueue`
-  asks for a typed confirmation per hardware run; only `run_from_sheet` and
+  sheet's SHA-256 (refused if the sheet changed); `oe-enqueue` asks for a
+  typed confirmation per hardware run (`oe-validate` checks a sheet first); only `run_from_sheet` and
   `recover_sequencer` permitted. Tested against a real RE Manager + redis with
   the simulator (`qserver/README.md`).
 - **Run files:** incremental HDF5 writer/reader with separate equipment/run

@@ -24,7 +24,8 @@ issues = "https://github.com/BAMresearch/ophyd-electrochemistry/issues"
 [project.scripts]
 ophyd-electrochemistry-k2460-diagnose = "ophyd_electrochemistry.keithley.k2460.commissioning:main"
 ophyd-electrochemistry-new-run = "ophyd_electrochemistry.sequences.notebook:main"
-ophyd-electrochemistry-enqueue = "ophyd_electrochemistry.sequences.queueserver:main"
+oe-enqueue = "ophyd_electrochemistry.sequences.queueserver:enqueue_main"
+oe-validate = "ophyd_electrochemistry.sequences.queueserver:validate_main"
 
 [dependency-groups]
 test = ["pytest>=8,<10", "lupa>=2.8,<3"]
