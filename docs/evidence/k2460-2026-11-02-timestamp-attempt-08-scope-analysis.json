@@ -1,0 +1,87 @@
+{
+  "analog_crosscheck": {
+    "assessment": "Rough 0/100/0 mV scope report is qualitatively compatible with 102.489 mV instrument reading. Does not establish amplitude accuracy, cause of prior discrepancy, accurate settling or either integration window.",
+    "instrument_measured_voltage_v": 0.10248923302
+  },
+  "analysis": {
+    "busy_marker_span_s": 2.75e-05,
+    "configured_aperture_s": 0.02,
+    "measurement_block_span_s": 0.0410107,
+    "pre_measure_to_reading_s": 0.04089554,
+    "reading_after_start_max_s": 0.04952228,
+    "reading_after_start_min_s": 0.04949278,
+    "reading_to_post_measure_s": 0.00011516
+  },
+  "assessment": [
+    "No more identical constant-resistor START/BUSY repeats proposed: they cannot identify separate electrical integration windows.",
+    "Conditional START-to-buffered-timestamp arithmetic is not calibrated timing accuracy and does not establish the actual timestamp reference.",
+    "Next work is define initial usability/timing requirement and close software/acceptance scope. Existing actual-START/target-adapter gate is unchanged; any initial interface with unknown START needs an explicit contract revision and meaningful lifecycle acceptance.",
+    "No new hardware commands were sent. Run08 record remains retained; no new discard or acquisition authorized."
+  ],
+  "hardware_gates_promoted": [],
+  "last_observed_hardware_state": {
+    "default_buffers": {
+      "defbuffer1": "12867\t100000\t1\t12867",
+      "defbuffer2": "0\t100000\t0\t0"
+    },
+    "programmed_source_level_a": 0.0,
+    "retained_proof_records": 1,
+    "status": {
+      "abi": "oe-k2460-m4-hold-v1",
+      "busy_level": 0,
+      "last_block": 17,
+      "model_state": "trigger.STATE_IDLE",
+      "model_substate": "trigger.STATE_IDLE",
+      "output_enabled": false,
+      "ready_level": 0,
+      "start_level": -1,
+      "start_overrun": false,
+      "state": "idle",
+      "timer_overrun": false
+    },
+    "unread_event_counts": {
+      "errors": 0,
+      "information": 0,
+      "warnings": 0
+    }
+  },
+  "proof_run_id": 2026110208,
+  "recorded_at_utc": "2026-11-02T14:24:50.733475+00:00",
+  "schema": "ophyd-electrochemistry/k2460-timestamp-scope-analysis-v1",
+  "scope": {
+    "actual_record_length_points": null,
+    "actual_sample_rate_sa_per_s": null,
+    "all_edges_retained_explicitly_reconfirmed_in_this_reply": false,
+    "confirmed_start_observation_node": "Physical Keithley START pin3 after 1 kohm",
+    "derived_busy_high_duration_s": 0.045299,
+    "derived_busy_rise_to_ch4_rise_s": 0.000638,
+    "derived_ch4_fall_before_busy_fall_s": 0.001161,
+    "derived_ch4_midpoint_duration_s": 0.0435,
+    "interpreted_busy_delay_uncertainty_s": 1e-06,
+    "interpreted_ch4_delay_uncertainty_s": 0.0001,
+    "raw_trace_available_in_repository": false,
+    "reported_ch4_after_v": 0.0,
+    "reported_ch4_before_v": 0.0,
+    "reported_ch4_plateau_v": 0.1,
+    "reported_start_to_busy_falling_s": 0.051461,
+    "reported_start_to_busy_rising_s": 0.006162,
+    "reported_start_to_ch4_falling_s": 0.0503,
+    "reported_start_to_ch4_rising_s": 0.0068,
+    "reported_transition_duration_order_s": 0.002,
+    "reported_verbatim": {
+      "delays": "start->busy rise 6.162(1) ms, start -> busy fall 51.461(1) ms, start -> ch4 rise 6.8(1) ms, start -> ch4 fall 50.3(1) ms",
+      "transitions_and_user_question": "CH4 rise and fall durations are not accurately measurable but on the order of 2 ms. how many more tests do we need before we have a reasonably usable interface?",
+      "voltages": "signal is incredibly noisy for some reason, but it looks like it's close to 0->100->0 mV"
+    },
+    "threshold_request": "50 percent of LOW-to-HIGH swing requested; actual threshold use not independently confirmed",
+    "timebase_s_per_div_confirmed_before_arm": 0.02,
+    "transition_duration_qualification": "User says not accurately measurable; order of magnitude only, not a resolved 10-90/90-10 duration.",
+    "uncertainty_interpretation": "Parenthetical last digits interpreted as 1 us on BUSY delays and 0.1 ms on CH4 delays. Confidence/coverage, correlations, channel skew and full scope/threshold error budget remain unspecified; no combined interval uncertainty assigned.",
+    "voltage_qualification": "Approximate visual report with substantial noise; not calibrated amplitude evidence or precise baseline/plateau measurements.",
+    "voltage_uncertainty_v": null
+  },
+  "source_artifact": {
+    "path": "docs/evidence/k2460-2026-11-02-timestamp-attempt-08.json",
+    "sha256": "4b8d75e96f9d32458712ab6cbecb5ab43d78d5d2ee13283267c9b118601a7e39"
+  }
+}

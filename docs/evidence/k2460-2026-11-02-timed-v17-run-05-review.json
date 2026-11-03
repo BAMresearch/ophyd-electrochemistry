@@ -1,0 +1,56 @@
+{
+  "case": "Immediate +5 mA / 1 V / 1 s hold, 1 s spacing, one reading, unchanged exact v17 artifact. Isolates duration path without repeating the sample loop.",
+  "expected_records": 1,
+  "export_artifact": {
+    "file_sha256": "8d61c8310db8c31aed09ba2421415dc50c43a6db4a076450537da2c8946177d0",
+    "path": "/Users/bpauw/Code/ophyd-electrochemistry/docs/evidence/k2460-2026-11-02-timed-v17-run-05-export.json",
+    "payload_sha256": "207779dcf3582e48d384ca904cb849780256c834dd44766b131c87bc77cf3b21"
+  },
+  "hardware_gates_promoted": [],
+  "instrument_event_initiated_to_idled_span_s": 1.00257588,
+  "instrument_events": {
+    "errors": 0,
+    "information": 3,
+    "warnings": 2
+  },
+  "open_issue": "Repeated cadence remains failed from run-04; single-reading success does not commission multi-reading holds or physical duration.",
+  "prior_run04_disposition": "Explicitly authorized; checksum-verified archive and fresh exact raw chunk equality before discarding only its one proof record. Original evidence retained.",
+  "reading": {
+    "buffer_relative_time_s": 0.0,
+    "measured_voltage_v": 0.51248002052,
+    "measurement_status": 8,
+    "sample_index": 0,
+    "source_current_a": 0.0049842773005,
+    "source_status": 200
+  },
+  "retained_records": 1,
+  "retention": "Run-05 reading retained on instrument; no further disposition authorized. Default-buffer counts/extents/capacities preserved; contents not compared.",
+  "reviewed_at_utc": "2026-11-02T16:20:50.919760+00:00",
+  "schema": "ophyd-electrochemistry/timed-resistor-review-v1",
+  "scope_report": {
+    "capture_confirmed": false,
+    "clarification": "Immediate software start ignores generator START waveform. Scope should trigger on CH4 voltage rise or CH2 BUSY. No new run authorized or performed.",
+    "physical_plateau_voltage_v": null,
+    "physical_pulse_duration_s": null,
+    "verbatim": "I think my trigger setting is off. we're no longer using the signal generator square wave trigger?"
+  },
+  "software_checks_this_step": "63 timed-runtime unit tests passed; offline one-reading plan and prior archive checksum checks passed. No package source or runtime bytes changed.",
+  "source_artifact": {
+    "path": "docs/evidence/k2460-2026-11-02-timed-v17-run-05.json",
+    "sha256": "a446e24975b6532676777074f3fe4ba9717737391cb7abd5c2b02ec2feb16ff6"
+  },
+  "terminal_cause": "normal_completion",
+  "timing": {
+    "actual_start_known": false,
+    "electrical_apertures_known": false,
+    "physical_duration_verified": false
+  },
+  "verified_checks": [
+    "Fresh raw record equals projected I/V/time/status/index",
+    "Export payload and file checksums verified",
+    "Independent final runtime IDLE/model EMPTY/output OFF/programmed 0 A",
+    "All five events archived; final unread counts zero",
+    "One retained record/capacity 16; default extents unchanged"
+  ],
+  "waveform_complete": true
+}

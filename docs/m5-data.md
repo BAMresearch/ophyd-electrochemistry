@@ -11,57 +11,100 @@ backend.
 
 Import the immutable models from `ophyd_electrochemistry`:
 
-- `MeasurementSchema` holds run-constant source function, voltage/current field
-  origins, timing origin, timestamp reference and resolution, actual-START clock
-  anchor, separate source/measurement status definitions, optional clock-to-epoch
-  mapping, and the explicit
-  synthetic flag.
-- `MeasurementRecord` holds one complete paired V/I record, raw instrument and
-  actual-START-relative timestamps, aperture start/end/availability, source
-  setpoint, separate source/measurement status words and source-schedule association.
-- `RetainedBuffer` binds records to acquisition/request/program identities and
-  finite capacity/expected-count/outcome metadata.
-- `RetainedBufferMetadata` reports the retained extent and a checksum over all
-  records. `RecordChunk` reports one bounded offset-addressed slice and its own
-  checksum.
+- `MeasurementSchema` declares source function, each electrical field's origin,
+  record timing origin, raw timestamp reference and selected electrical field,
+  relative-time origin, raw clock origin, optional clock resolution/START anchor,
+  independent status definitions and optional clock mapping. Synthetic evidence
+  remains explicitly identified.
+- `MeasurementAperture` describes one field's half-open integration window
+  relative to actual START, its `TimingOrigin`, and an optional conservative
+  uncertainty on each boundary. `None` uncertainty means no quantitative bound
+  has been established; it does not mean zero uncertainty.
+- `MeasurementRecord` contains separate `voltage_aperture` and `current_aperture`
+  values, either of which may be `None` when unproved. It retains raw instrument
+  and explicitly referenced relative timestamps, optional complete-record
+  availability, paired electrical values, commanded source level, untouched
+  status words and mapping.
+- `RetainedBuffer` binds frozen records to acquisition/request/program identities
+  and bounded extent/outcome metadata. `RecordChunk` provides deterministic,
+  checksummed offset-addressed slices.
 
-The schema identifier is `ophyd-electrochemistry/measurement-v2`. Version 2
-replaces the ambiguous single status word with independent, nonnegative
-`source_status` and `measurement_status` values and independent definitions.
-All electrical
-and time values use SI units. Nonfinite values, invalid apertures, inconsistent
-mapping indices, record gaps, capacity overruns, source-function changes and
-timestamp-reference mismatches are rejected.
+The schema identifier is `ophyd-electrochemistry/measurement-v4`. Version 4 adds
+an explicit relative-time origin and permits unknown actual START under the
+constraints below. Version 3 introduced independent field windows and explicit
+unknown timing. Version 2's independent source/measurement status
+words remain. Older shared-schema identifiers are rejected rather than silently
+reinterpreted; this change does not alter the independent raw Keithley archive
+v1/v2/v3 formats or the packaged TSP artifact.
 
-`FieldOrigin` distinguishes measured, source-readback and synthetic electrical
-values. `TimingOrigin` independently distinguishes instrument-reported,
-configuration-derived and synthetic timing. A record set may only claim
-`synthetic=True` when both electrical values and timing are explicitly synthetic.
-This prevents simulator output from being mistaken for target measurements.
+All electrical/time values are finite SI quantities. Known apertures have positive
+width and nonnegative boundaries. A known complete-record availability cannot
+precede either known aperture's end. Unknown windows and availability remain
+Python `None`; they are never fabricated from NPLC or timestamp resolution.
+Checksums include each field's complete aperture/provenance/uncertainty values.
 
-## Aperture and waveform mapping
+`FieldOrigin` identifies measured, source-readback or synthetic values.
+`TimingOrigin` identifies instrument-reported, configuration-derived or synthetic
+timing. A synthetic buffer requires two synthetic electrical origins, synthetic
+record timing and two known synthetic apertures. Hardware-labelled buffers
+reject synthetic apertures. A known timing origin is evidence provenance, not
+an accuracy guarantee.
 
-Every record contains a half-open integration aperture `[start, end)` and the
-time at which the complete value became available. `TimestampReference` says
-whether `time_relative_s` denotes aperture start, midpoint or end. The raw
-instrument timestamp, actual-START instrument timestamp and clock resolution are
-retained separately.
+## Apertures, timestamps and waveform mapping
 
-`MappingQuality` has four values:
+`TimestampReference.APERTURE_START`, `APERTURE_MIDPOINT` and `APERTURE_END`
+require `MeasurementSchema.timestamp_field` to select `ElectricalField.VOLTAGE`
+or `CURRENT`. The retained buffer verifies the raw START-relative timestamp
+against that field's known aperture to within the declared clock resolution.
+It does not compare against the other field's window or require simultaneity.
+
+`BUFFER_STORED` declares a storage timestamp without calling it an integration
+boundary. `UNRESOLVED` preserves a raw timestamp whose physical reference is
+unproved. Both require `timestamp_field=None`; neither can be used to derive an
+aperture. A stored timestamp must follow both known aperture ends and cannot exceed
+known complete-record availability (within declared clock resolution).
+
+`RelativeTimeOrigin.ACTUAL_START` requires a known instrument START anchor for
+populated buffers. `FIRST_STORED_READING` instead requires
+`instrument_start_timestamp_s=None`; the first relative timestamp is zero and
+subsequent values are raw timestamp differences from that record. Both field
+windows, complete-record availability and program mapping must then be unknown,
+and the timestamp reference must be `BUFFER_STORED` or `UNRESOLVED`. This preserves
+usable paired I/V data without inventing physical START, electrical apertures or
+10 ms alignment accuracy. The relative-time origin is independent of
+`instrument_timestamp_origin` (the raw clock's origin) and `timestamp_reference`
+(the physical meaning of each timestamp). None establishes epoch calibration.
+`instrument_timestamp_resolution_s=None` explicitly declines a physical clock
+resolution claim in first-reading mode. In that case the validator checks exact
+consistency of copied raw timestamp differences, not a physical timing tolerance.
+Printed decimal precision does not establish clock resolution or accuracy.
+Actual-START mode requires a known positive clock resolution.
+
+`MappingQuality` describes the association of the paired record with the source
+schedule:
 
 | Value | Meaning |
 |---|---|
-| `settled_single_dwell` | Complete aperture lies in one source dwell after settling |
-| `unsettled_single_dwell` | Complete aperture lies in one dwell but is not wholly settled |
-| `crosses_transition` | Aperture spans more than one logical source point |
-| `unknown` | No valid program association is available |
+| `settled_single_dwell` | Both field windows lie in one settled source dwell |
+| `unsettled_single_dwell` | Both windows lie in one dwell, with settling unproved |
+| `crosses_transition` | The field windows collectively cover multiple source points |
+| `unknown` | No proved association for the complete pair |
 
-Known mappings require first/last logical point plus repeat, point, cycle and
-segment indices. Unknown mappings require all six indices to be absent. The
-future fixed Bluesky event projection will encode an absent index as `-1`; the
-typed Python record keeps `None` so it cannot be mistaken for a valid index.
-The source setpoint is the commanded value at aperture start and is never a
-substitute for voltage or current.
+If either window is unknown, mapping must be `UNKNOWN` and all six program
+indices must be absent. A known mapping requires all indices and must account
+for both windows, including transitions between separated windows. A backend
+must establish these associations from its reviewed schedule/timing evidence;
+the record validator cannot independently reconstruct a physical waveform.
+An absent index is projected as `-1` in Bluesky. The source setpoint remains a
+commanded value, never a substitute for measured current or voltage; a backend
+must state its association when source levels vary across the pair.
+
+The simulator uses `ACTUAL_START` and explicitly supplies identical synthetic
+windows with zero virtual uncertainty. The real Keithley source readback and
+DUT measurement are sequential;
+those windows must not be copied from one another without evidence. The planned
+[aperture calibration](timestamp-aperture-calibration.md) explains the remaining
+physical proof.
 
 ## Deterministic readback
 
@@ -91,6 +134,25 @@ remains for compatibility and still demonstrates why lost cursor replies are
 not exactly-once.
 
 ## Narrow target proof
+
+`project_current_hold_buffer`, exported from
+`ophyd_electrochemistry.keithley.k2460`, is a pure conversion of frozen
+`RuntimeRecordChunk` values into a shared `RetainedBuffer`. It revalidates raw
+chunk checksums and requires a complete contiguous retained extent, including
+all retained records from an interrupted acquisition. A partial acquisition's
+retained prefix is preserved without declaring the requested waveform complete.
+The caller supplies acquisition/request/program identities, capacity and expected
+count, terminal outcome and commanded current setpoint; chunk integrity alone
+does not establish those associations.
+
+The conversion copies buffer-relative timestamps unchanged into both timestamp
+columns, measured voltage, source-current readback and both untouched status
+words. Its schema declares `FIRST_STORED_READING`, `UNRESOLVED` reference,
+instrument-reported timing provenance, and unknown physical clock resolution,
+actual START, field windows, availability and program mapping. No epoch mapping
+is supplied. This function owns no connection and performs no acquisition or
+runtime mutation. It does not verify a raw archive's physical timing claims or
+provide the live Flyer backend.
 
 Runtime build `m4-finite-current-hold-v14` provides
 `CurrentHoldAcquisitionProof`, `RuntimeBufferInfo`, `BufferedReading`, and
@@ -253,8 +315,8 @@ The following remain open before M5 is complete:
 - map target timestamps/apertures to actual START without inventing precision;
 - extend the 10,000-record fill-once/no-wrap proof to the selected operational
   ceiling and characterize interrupted transfer;
-- map this raw archive into the shared `MeasurementRecord` archive only after
-  the START/aperture relationship is established;
+- integrate the pure frozen-record projection into a reviewed live backend,
+  preserving unknown timing unless scoped evidence establishes it;
 - calibrate or explicitly decline instrument-clock-to-epoch mapping;
 - complete G03, G04 and G06 hardware evidence.
 
@@ -272,10 +334,13 @@ guarded notebook archives every consumed information event.
 The instrument-clock portion is combined with a scope measurement of physical
 rising START to rising BUSY. The pre/post-BUSY event timestamps bound the
 instrument time of that physical edge, including a user-supplied scope
-uncertainty. The pre/post-measure events then locate the reading timestamp and
-the configured integration aperture on the same instrument clock. This can
-establish an evidence-backed START-to-reading interval and help determine the
-timestamp reference without using host command timing.
+uncertainty. The pre/post-measure events locate the reading timestamp within
+the containing measurement operation on the same instrument clock. They do not
+identify the individual source-readback or DUT integration windows; configured
+NPLC supplies a nominal duration only. The combined evidence can bound a
+START-to-reading timestamp interval without using host command timing, while
+the physical timestamp reference and electrical aperture placement require
+further evidence.
 
 The procedure is in
 `notebooks/keithley_2460_timestamp_proof.ipynb`. It defaults every mutating,
@@ -286,7 +351,13 @@ until that notebook has run and its trace and JSON have been reviewed. The
 field and event semantics follow the
 [Keithley 2460 Reference Manual, revision C](https://download.tek.com/manual/2460-901-01C_Sept_2019_Ref.pdf).
 
-The first M6 `describe_collect()`/`collect()` projection now consumes this fixed
-record meaning through the simulator-backed typed backend. It is deliberately
-not connected to the raw target buffer: that adapter remains blocked until the
-START/aperture relationship can be represented without inventing precision.
+The first M6 `describe_collect()`/`collect()` projection consumes this fixed
+record meaning through the simulator-backed typed backend. The pure target-record
+projection above is implemented; no live target backend is supplied yet. An
+explicitly uncalibrated resistor integration may use
+first-stored-reading time after its bounded acquisition and projection have been
+reviewed. The reviewed runtime v14 proof accepts a finite measurement count;
+it does not implement requested hold duration or sample spacing. Choosing a
+count-bounded first integration versus a new instrument-timed path remains an
+open interface decision. Neither route grants hardware acceptance or a timing
+accuracy claim.

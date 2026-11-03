@@ -67,3 +67,23 @@ Protection or deadline faults preserve partial data and mark the waveform
 incomplete. A locally generated list must not monopolize control/abort handling.
 No clipping, waveform normalization or source-OFF substitution is an implicit
 safety fallback. See [waveform semantics](waveforms.md) and gate G08.
+
+## Timed resistor commissioning candidate
+
+The new timed-hold backend requires explicit `commissioning_resistor=True` and
+keeps `hardware_ready=False`. Its programmed voltage-cutoff and half-slot deadline
+checks act between sequential measurements; neither preemption nor a worst-case
+latency is established. The `LIMIT_OUTSIDE` command's behavior at the exact cutoff
+boundaries must also be verified before claiming inclusive cutoff semantics.
+The broader cell-protection contract remains unaccepted for this candidate.
+Its first energized timed run stopped with `cadence_overrun` after one reading;
+the event-consumption design needs review and no timing gate is promoted.
+A known terminal fault with output ON permits one explicit run-cleanup shutdown
+attempt; failed/uncertain delivery remains ERROR/UNKNOWN until stopped/OFF
+inspection and explicit recovery. It is never retried automatically.
+
+For the scoped 100 ohm / 1 W resistor case, +5 mA predicts 0.5 V and 2.5 mW;
+1 V compliance gives a 5 mW request power envelope. These bounds do not authorize
+unknown DUTs, battery work, or use of the full resistor rating. Apply the
+[commissioning procedure](timed-hold-commissioning.md) before any installation or
+energized run.

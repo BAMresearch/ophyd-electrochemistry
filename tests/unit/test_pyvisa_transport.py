@@ -21,6 +21,7 @@ from ophyd_electrochemistry.exceptions import (
 )
 from ophyd_electrochemistry.keithley.k2460.commissioning import run_read_only_diagnostic
 from ophyd_electrochemistry.keithley.k2460.runtime import packaged_runtime
+from ophyd_electrochemistry.keithley.k2460.timed_runtime import timed_packaged_runtime
 from ophyd_electrochemistry.keithley.k2460.transport import (
     PyVisaKeithley2460Transport,
     VisaTransportConfig,
@@ -377,8 +378,9 @@ def test_runtime_upload_rejects_every_source_except_packaged_artifact():
         transport.load_runtime("print('not sent')", abi="x", sha256="0" * 64)
 
 
-def test_runtime_upload_is_serialized_verified_and_leaves_output_off():
-    artifact = packaged_runtime()
+@pytest.mark.parametrize("runtime_factory", [packaged_runtime, timed_packaged_runtime])
+def test_runtime_upload_is_serialized_verified_and_leaves_output_off(runtime_factory):
+    artifact = runtime_factory()
     resource = FakeResource(
         IDENTITY,
         b"TSP\n",
@@ -412,8 +414,9 @@ def test_runtime_upload_is_serialized_verified_and_leaves_output_off():
     assert resource.writes[end_index + 1] == f"print({artifact.script_name} == nil)"
 
 
-def test_runtime_upload_reuses_digest_named_runtime_without_replacing_it():
-    artifact = packaged_runtime()
+@pytest.mark.parametrize("runtime_factory", [packaged_runtime, timed_packaged_runtime])
+def test_runtime_upload_reuses_digest_named_runtime_without_replacing_it(runtime_factory):
+    artifact = runtime_factory()
     resource = FakeResource(
         IDENTITY,
         b"TSP\n",

@@ -1,6 +1,6 @@
 # Available excitation sequences
 
-Updated: 2026-10-10
+Updated: 2026-11-02
 
 This document records which finite electrochemistry sequences can be expressed
 with the current package, which can be useful offline examples, and what work is
@@ -30,9 +30,11 @@ separate execution protocol.
 The default Flyer accepts only `GalvanostaticHold` and
 `CurrentPulseSequence`. A simulator caller may explicitly widen that allowlist,
 as the quickstart does for voltage pulses, but doing so does not create target
-support. The real 2460 adapter remains blocked on the START-to-aperture timestamp
-projection. Existing target evidence covers scoped runtime, hold, buffer, and
-state paths—not a generally commissioned sequence library.
+support. A separate, explicitly opted-in `Keithley2460Backend` now implements
+only timed `GalvanostaticHold` resistor commissioning. It has no target execution
+acceptance yet (`hardware_ready=False`) and leaves START/aperture alignment
+unknown. See the [timed-hold procedure](timed-hold-commissioning.md). Existing
+hardware evidence does not commission a general sequence library.
 
 ## Sequence availability
 

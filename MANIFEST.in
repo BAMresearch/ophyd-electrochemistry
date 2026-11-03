@@ -3,5 +3,6 @@ recursive-include docs *.md *.json
 recursive-include notebooks *.ipynb
 recursive-include examples *.py
 recursive-include tests *.py *.md
+recursive-include tests/fixtures *.lua *.txt
 recursive-include src *.py py.typed *.tsp
 recursive-include scripts *.py

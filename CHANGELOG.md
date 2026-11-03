@@ -4,6 +4,39 @@
 
 ## Unreleased
 
+- Add an explicitly opted-in resistor-only timed-hold backend and separate
+  packaged v17 candidate with measurement-range-before-compliance setup and
+  nonconsuming pre-arm error checks and mode-specific trigger-graph validation. Preserve requested duration/sample spacing, local
+  cutoff/deadline branches, single-owner lifecycle, bounded terminal transfer,
+  exact artifact guards, explicit retained-data disposition and checksummed
+  exclusive-create exports. Add cached target configuration provenance and an
+  uncommissioned 2 V / 1 NPLC profile for the higher-signal resistor tests.
+  Hardware readiness remains false; physical timing and protection acceptance
+  require the scoped commissioning matrix. Existing v14 wire bytes are unchanged.
+
+- Preserve access to retained records and explicit disposition after recovery to
+  output-OFF IDLE, including when collection starts only after recovery.
+
+- Revise shared measurement records to v4 with independent voltage/current
+  integration windows, per-field timing provenance and optional uncertainty.
+  Preserve unknown windows/availability and unresolved or buffer-storage
+  timestamp references without inventing apertures. The 25-field Bluesky stream
+  exposes these distinctions; the simulator supplies explicit synthetic windows.
+  Add explicit actual-START versus first-stored-reading relative origins;
+  unknown START requires unknown windows, availability and program mapping.
+  Permit explicitly unknown physical clock resolution for first-reading data.
+  Report relative/raw clock origins, electrical/timing provenance, physical
+  clock resolution and START-anchor availability in Flyer configuration without
+  changing the 25-field stream. Raw Keithley archives
+  and the existing v14 runtime are unchanged. No timing accuracy is claimed.
+  Add the independent-aperture calibration design and its unresolved bench
+  prerequisites.
+- Add pure `project_current_hold_buffer` conversion of complete frozen raw chunk
+  extents into shared records, including partial acquisitions' retained prefixes.
+  Revalidate raw checksums, preserve paired I/V, buffer time and separate statuses,
+  and explicitly decline START/aperture/mapping/physical-resolution claims.
+  This adds no connection owner or live backend and changes no TSP runtime.
+
 - Add a validated `PreparedAcquisition` result and per-request completion
   watchdogs. The result also binds request/program digests and record/capacity
   bounds. The compiler includes achieved duration, the full external-START wait
@@ -66,8 +99,7 @@
 - Exercise that Flyer through a real Bluesky RunEngine for both start modes,
   full fixed-schema event emission, partial data after abort, no-START timeout,
   recovery and rejection of unsupported CV before output. The independent
-  simulator is the only backend; raw 2460 adaptation remains blocked on the
-  unresolved START/aperture timestamp mapping.
+  simulator is the only backend; raw 2460 adaptation remains unimplemented.
 - Enable finite `CurrentPulseSequence` acquisitions in the Flyer. One START runs
   a complete locally timed pulse train; trigger-per-pulse operation is expressed
   as separately armed `count=1` acquisitions, not an unproven multi-edge mode.
@@ -83,7 +115,8 @@
   terminal buffer metadata, canonical checksums and deterministic offset chunks.
 - Adapt frozen M2 records into that schema without weakening their synthetic
   provenance; retrying a lost offset-chunk reply no longer advances an implicit
-  cursor. Target START/aperture mapping and shared-record projection remain open.
+  cursor. Physical target START/aperture mapping and live-backend integration
+  remain open.
 - Add a narrow M5 target adapter and TSP buffer proof: at most eight immediate
   1 NPLC readings in a 16-record fill-once buffer, raw paired source-readback/V
   fields plus statuses, deterministic offset retrieval, and explicit discard.

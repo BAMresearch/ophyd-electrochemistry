@@ -1,8 +1,315 @@
 # Template validation record
 
-Updated: 2026-10-13. Scope: contracts, transport/runtime commissioning, bounded
+Updated: 2026-11-02. Scope: contracts, transport/runtime commissioning, bounded
 nominal-100-ohm tests, a narrow target-buffer proof, and the first operational
 simulator-backed M6 Flyer; not operational hardware sourcing or acquisition.
+
+Source/wheel builds and strict Twine checks passed. All 31 packaged source/
+resource files matched the checkout; isolated wheel v14/v17 reconstruction and
+source-distribution fixture byte equality passed. All **53 November evidence
+JSON files** parsed. The software check record is
+`evidence/k2460-2026-11-02-timed-v17-software-validation.json`
+(repository-relative path). These checks do not override the failed hardware
+cadence result.
+
+## Timed-hold candidate software and installation
+
+Latest scoped diagnostic, **run-05**, used unchanged v17 with +5 mA / 1 V /
+1 s duration and **1 s spacing (one reading)**. It completed normally with
+4.9842773005 mA / 512.48002052 mV, statuses 200/8, after run-04's single partial
+reading was checksum-verified, freshly matched and explicitly dispositioned.
+All five events were archived; no errors. Recovery and an independent connection
+verified IDLE/EMPTY/OFF/0 A, one retained record/capacity 16, unchanged default
+extents and zero unread events. New export checksums and raw/projected equality
+passed. The instrument initiation-to-idle event span was 1.00257588 s, not a
+physical-duration measurement. User reported trigger-setting uncertainty; no
+scope values/capture are confirmed. Immediate mode ignores generator START.
+Repeated cadence remains failed and no hardware gate is promoted. The user was
+told they can power down equipment; physical shutdown is unconfirmed. Evidence:
+`evidence/k2460-2026-11-02-timed-v17-run-05-review.json` and linked run/export.
+The focused 63 timed-runtime tests passed; package/runtime bytes were unchanged.
+
+Latest checkout validation after the host padding fix: **527 tests passed**, Ruff
+lint/format (94 files), strict mypy (29 source/helper files), strict MkDocs and
+whitespace checks. V17 wire source passed Lua 5.0.2 syntax compilation. The
+firmware block-list fixture and inert Lua graph checker are included in source
+distributions; these checks do not establish instrument event semantics.
+
+**Preceding hardware result: first energized v17 hold incomplete.** The
++5 mA / 1 V / 1 s / 0.1 s case collected one of ten requested readings and took
+the local `cadence_overrun` OFF path. The retained record is 4.983975552 mA /
+512.47859001 mV, statuses 200/8. The user reports the scope did not trigger;
+there is no new physical pulse-duration evidence. All five events (three
+information, two range warnings, zero errors) were archived. Recovery and a fresh
+connection verified IDLE/EMPTY/OFF/0 A, one retained record/capacity 16, unchanged
+default-buffer extents and zero unread events. Fresh raw equality, export payload
+SHA-256 and file checksum passed. See `evidence/k2460-2026-11-02-timed-v17-run-04-review.json`
+and its linked source/export. V17 is not accepted for timed holds. Event-consumption
+semantics require review; an inert graph recorder cannot validate them.
+
+V17's preceding OFF preparation was blocked by a whitespace-sensitive host parser;
+that was corrected against the actual firmware block list without changing TSP
+bytes. That attempt issued no arm and recovered with zero records before the
+same authorized single capture proceeded. Installation/raw attempt evidence use
+`timed-v17-install`, `timed-v17-run-03` and `timed-v17-run-04` filenames.
+
+Shared measurement v4, pure raw-record projection and the separate timed-resistor
+backend are implemented with explicit unknown START, physical clock resolution,
+I/V windows, availability and program mapping. The new backend uses one serialized
+connection, exact artifact/firmware checks, independently programmed nominal
+hold duration/sample spacing, terminal bounded transfer, checksummed export,
+explicit disposition and failure-preserving recovery. The new 2 V / 1 NPLC profile
+is uncommissioned and is rejected by the unchanged v14 count-proof API.
+
+Offline checks before installation passed 516 tests, Ruff lint/format, strict
+mypy (29 source/helper files), strict MkDocs and whitespace checks. Source and
+wheel distributions built and passed strict Twine checks. Wheel source/resource
+equality and isolated v14/v15 artifact reconstruction passed. Both wire artifacts
+passed standalone Lua 5.0.2 syntax compilation; this does not validate TSP commands
+or firmware event/timing semantics. The Lua version/grammar check used the
+[official Lua 5.0 reference](https://www.lua.org/manual/5.0/manual.html), consistent
+with Keithley's documented Lua 5.0.2 engine. Base v14 digest remains unchanged.
+A subsequent host-only kickoff-fault cleanup refinement passed 91 focused tests
+and strict mypy; it did not change the packaged TSP bytes.
+
+The subsequent full host-cleanup suite passed 517 tests. After the rejected v15
+preparation below, corrected v16 passed **521 tests**, strict mypy (29 files),
+Ruff format (94 files) and standalone Lua 5.0.2 syntax compilation before v16 installation. Tests cover measurement-range-before-compliance ordering, minimum
+profile-compatible compliance, retained-data rejection during exact v15
+replacement, and nonconsuming error checks before preparation and arm.
+
+With fresh front-four-wire 100 ohm / 1 W resistor and physical-OFF confirmation,
+the user explicitly authorized only old run08 disposition, exact v14-to-v15
+replacement, consuming event archival and independent safe-state verification.
+Two current sessions matched the old raw record/absolute timestamp to its verified
+archive before the authorized discard. V15 installed at SHA-256
+`d8d3bcdb948dde40be53f71d83a87df2679528e3bc81d3b73c43f035999e0712`.
+The installation session and an independent query-only session verified exact
+identity, IDLE/stopped/OFF/0 A, no proof records (capacity 0 before allocation),
+zero unread events and preserved default-buffer counts/extents/capacities. No
+installation events occurred. No acquisition was prepared or armed and no source,
+cadence, cutoff or protection gate is promoted. Evidence is
+`evidence/k2460-2026-11-02-timed-v15-preflight.json` and
+`evidence/k2460-2026-11-02-timed-v15-install.json`.
+
+V16 was then explicitly authorized, installed and independently verified safely.
+It prepared the requested 1 V compliance correctly, but initiate failed with nine
+2709 missing-block events for the immediate graph's external-only blocks. A
+separate fresh stopped/OFF inspection archived nine errors and two 5076 warnings,
+then performed the already authorized recovery. Independent final queries
+verified IDLE/EMPTY/OFF/0 A, zero readings/capacity 16, preserved defaults and zero
+unread events. See the v16 install/run-02/recovery evidence files. No acquisition
+gate passed. Before installation, corrected v17 passed 526 tests, Ruff lint, strict mypy and
+Lua 5.0.2 syntax compilation passed. An inert Lua recorder executed both mode
+constructors, verifying 29/39 contiguous reachable blocks and four/five explicit
+terminal-OFF paths; it reproduced an unreachable block in v16 immediate mode.
+Fixture: `tests/fixtures/timed_hold_graph.lua`. This does not establish firmware
+cadence, physical output duration, measurement timing or cutoff latency.
+
+The separately authorized first +5 mA / 1 V / 1 s / 0.1 s attempt failed during
+output-OFF preparation: 5077 rejected the source limit while measurement range
+was still 0.2 V; 5076 then reported automatic limit 0.212 V at the new 2 V range.
+Readback mismatch prevented arm. No output-ON command was issued and no readings
+were collected. Both events were archived under explicit consent; unread counts
+became zero. Recovery verified runtime IDLE/output OFF/programmed 0 A, model
+BUILDING (stopped), proof buffer count 0/capacity 16, unchanged defaults. The
+fresh session confirmed IDLE/OFF/BUILDING before an overly strict model-IDLE
+assertion stopped the remaining checks. Evidence:
+`evidence/k2460-2026-11-02-timed-v15-run-01.json`. This promotes no acquisition gate.
+
+
+The proposed first energized case is +5 mA / 1 V compliance / 1 s / 0.1 s spacing,
+10 expected records, 10 mA range and `NPLC_1_2V`. At nominal 100 ohm this predicts
+0.5 V and 2.5 mW, not measured accuracy. The user selected specified duration/sample
+spacing, requested a stronger CH4 signal and confirmed 100 ohm / 1 W; a separate
+scoped run/setup question is pending. All later gates remain subject to the
+[timed-hold acceptance matrix](timed-hold-commissioning.md).
+
+## Scope observation-node clarification
+
+Latest corrected-scope repeat **2026110208** completed after explicit fresh
+confirmation of CH4 1 Mohm/DC/1x at 50 mV/div with 0–200 mV visible, unchanged
+load/direct cable/START setup, physical output OFF and Single waiting on BUSY
+rising at 20 ms/div with 10–20 ms pretrigger. Authorization covered only the
+archived/matched run07 record discard, one +1 mA / 0.2 V / 1 NPLC repeat,
+consuming event archival and recovery. Query-only preflight, archive checksum
+and independent old-record equality passed before discard. The run reached
+WAITING_START/READY high/BUSY low/output OFF and completed at block 17 with both
+overrun flags false. Reading: **1.0000127368 mA / 102.48923302 mV**, statuses 200/8.
+Nine events (seven information, two mode-change warnings 1811, no errors) were
+archived. Four unique monotonic markers give BUSY bracket 27.50 us, paired block
+41.01070 ms and reading 0.11516 ms before POST_MEASURE. Fresh-session reading/
+timestamp matching and retained-IDLE retrieval passed; final IDLE/OFF/0 A,
+one new retained record, default-buffer counts/extents/capacities preserved
+(contents not compared). The scope subsequently showed very noisy but roughly
+0/100/0 mV, qualitatively compatible with the instrument reading. User-reported
+START-to-BUSY rise/fall are 6.162(1)/51.461(1) ms (45.299 ms BUSY high), and
+START-to-CH4 rise/fall 6.8(1)/50.3(1) ms (43.5 ms nominal crossing interval).
+CH4 rise is nominally 0.638 ms after BUSY rise and fall 1.161 ms before BUSY
+fall. Parentheses are interpreted as 1 us on BUSY and 0.1 ms on CH4, without a
+complete uncertainty budget. Transition durations are not accurately measurable,
+only order-of-2-ms estimates. The conditional marker interval is
+49.49278–49.52228 ms from START to buffered timestamp, not a field integration
+window. No fresh sample rate/record length or raw trace was supplied; no
+calibrated amplitude correction or individual aperture is established and no
+gate is promoted. Evidence: `evidence/k2460-2026-11-02-timestamp-attempt-08.json`
+and its checksum-linked review. Strict MkDocs, evidence JSON parsing and
+`git diff --check` passed for this documentation/evidence update.
+
+The user then selected **basic finite holds with timing explicitly uncalibrated**
+and stated rough calibration **on the order of 10 ms** is sufficient. This is a
+usability requirement, not a measured accuracy claim or new hardware-action
+authorization. No further identical timing repeats are proposed. Next work is
+coherent unknown-actual-START contract support, a limited real current-hold
+backend, offline lifecycle/projection validation and a predefined scoped
+acceptance set. Fine independent I/V aperture calibration is outside that first
+version; existing adapter gates remain unchanged until the implementation and
+contract revision. User reports and conditional arithmetic are retained in
+`evidence/k2460-2026-11-02-timestamp-attempt-08-scope-analysis.json`; accepted
+scope is `evidence/k2460-2026-11-02-initial-interface-scope.json`. No hardware
+commands were sent for these updates. Strict docs, evidence JSON parsing and
+whitespace checks passed.
+
+Earlier repeat **2026110207** used user-confirmed direct unattenuated CH4
+banana/BNC wiring (centre HI, shield LO), 1 Mohm/DC/1x, same four-wire resistor
+and START setup, physical output OFF and scope already waiting Single on BUSY
+rising at 20 ms/div with 10–20 ms pretrigger. Explicit authorization covered
+only run06 proof-record discard, one +1 mA / 0.2 V / 1 NPLC acquisition, event
+archival and recovery. Query-only preflight verified IDLE/OFF/0 A; archive
+checksum and fresh old-record matching passed before that discard. The run
+armed WAITING_START with output OFF and completed with both overrun flags false.
+It measured **1.0000149487 mA / 102.50234604 mV**, raw statuses 200/8. Nine events
+(seven information, two warnings 1811, no errors) were archived, with four
+unique monotonic run-tagged markers. BUSY bracket is 27.54 us, measurement block
+41.01130 ms and reading timestamp 0.10578 ms before POST_MEASURE. Fresh-session
+reading/timestamp matching and retained-IDLE retrieval passed; final
+IDLE/OFF/0 A with the new proof record retained and all default-buffer extents
+unchanged. Default-buffer contents were not compared. The user subsequently
+reported CH4 overload/wrong setting and requested a repeat: no scope baseline,
+amplitude, edge delay or rise/fall time is accepted from run07. The exact wrong
+setting/overload type is unspecified; a tentative approximately 100 mV later
+observation has no uncertainty or valid trace. The original instrument evidence
+remains archived and independently matched. The report is in
+`evidence/k2460-2026-11-02-timestamp-attempt-07-scope-status.json`; corrected
+settings/readiness and explicit run07 disposition/event-archival permission
+were subsequently received for completed run08 above.
+No new hardware command was sent for this capture-status update. The run06
+analog amplitude discrepancy has no established cause or
+correction. No aperture or timing gate is promoted. Raw evidence and the
+checksum-linked review are `evidence/k2460-2026-11-02-timestamp-attempt-07.json`
+and `timestamp-attempt-07-review.json` in the same directory. Strict MkDocs and
+`git diff --check` passed for this documentation/evidence update.
+
+Run **2026110206** subsequently completed after explicit fresh setup and scoped
+discard/run/event-archival authorization. The read-only connection retry
+verified IDLE/OFF/0 A and unchanged buffers; no reset or power cycle was needed.
+The prior run05 archive checksum and independently retrieved record matched
+before authorized discard. The one +1 mA / 0.2 V / 1 NPLC run reached
+WAITING_START with output OFF, then completed with both overrun flags false.
+It measured 1.0000148322 mA and 102.57840157 mV, raw statuses 200/8. Nine events
+were archived (seven information, two mode-change warnings 1811, no errors).
+Four run-tagged markers are unique and monotonic: BUSY bracket 26.82 us,
+measurement block 41.02950 ms, reading 0.11530 ms before POST_MEASURE. Fresh-session
+reading/timestamp matching and retained-IDLE retrieval passed; final state is
+IDLE/OFF/0 A with one new proof record retained and all default-buffer extents
+unchanged. Contents of default buffers were not compared. The user confirmed
+CH3 at physical START pin3 and CH4 across the resistor with LO intentionally
+earthed, 1 Mohm/DC/1x and scope already waiting on BUSY before arm. No individual
+integration window is established.
+See `evidence/k2460-2026-11-02-timestamp-attempt-06.json` and its checksum-linked
+`timestamp-attempt-06-review.json` companion. No gate is promoted.
+
+The subsequent scope report gives START-to-BUSY rise 8.740(1) ms and fall
+54.055(1) ms (45.315 ms BUSY high), with all edges visible at 10 MSa/s,
+20.0 ms/div and 2 Mpts. These actual settings imply a 200 ms record, superseding
+the nominal 100 ms setup report. Interpreting each delay parenthetical as 1 us,
+the conditional marker calculation is 52.08702–52.11584 ms from START to the
+buffered timestamp; thresholds, coverage and full scope error budget remain
+unverified. CH4 was reported as a noisy 29(1) mV plateau, with 0–100% rise
+0.90(1) ms and 100–0% fall 0.93(1) ms. These are preserved as reported, not
+relabelled 10–90% times or START-to-CH4 delays. The analog amplitude is unresolved
+against the instrument's 102.5784 mV reading: baseline versus excursion, actual
+input/coupling/attenuation, probe switch and connection nodes need checking.
+No cause or analog source timing/settling is established. The checksum-linked
+`evidence/k2460-2026-11-02-timestamp-attempt-06-scope-analysis.json` retains the
+verbatim report and conditional arithmetic; no raw trace is in the repository.
+No hardware commands were sent for this reduction. Strict MkDocs and
+`git diff --check` passed for the documentation/evidence update.
+
+In a later follow-up the user tentatively called 29 mV an absolute plateau,
+reported START-to-CH4 rising 9.6(1) ms and falling 52.7 ms, then replaced CH4's
+probe with banana wiring and requested a repeat. The original capture's nominal
+CH4 crossing interval is 43.1 ms, with rise 0.860 ms after BUSY rise and fall
+1.355 ms before BUSY fall. The rising parenthetical is interpreted as 0.1 ms;
+falling uncertainty and threshold confirmation are absent, and the amplitude
+discrepancy remains unresolved. These are provisional observations, not
+calibrated source timing or aperture evidence. The separate
+`evidence/k2460-2026-11-02-timestamp-attempt-06-scope-followup.json` links the
+unchanged original reports. New direct-cable node/input confirmation and explicit
+retained-run06 disposition/event-archival permission were subsequently received;
+run07 is recorded above. No hardware commands were sent for the follow-up
+arithmetic itself. Strict MkDocs and `git diff --check` passed.
+
+Latest user report replaces the probes with Tektronix P2220 at 1x and moves CH3
+to the Keithley side of the START series resistor. Official P2220 instructions
+establish 1x compensation for 1 Mohm inputs and nominal 6 MHz bandwidth; actual
+probe/channel response and a new pin-side trace have not been measured. The
+CH4 resistor-only connection is documented in the calibration procedure; its
+physical installation, settings, physical output OFF and capture readiness were
+subsequently explicitly confirmed for run06 above. The initial run-06 preflight timed out opening the established
+resource before any identity/state query. Its evidence contains no instrument
+observations. The subsequent read-only retry and authorized acquisition are
+recorded above; the failed preflight caused no hardware mutation.
+
+The user subsequently identified Agilent 54831B / P060-S, CH1 READY / CH2 BUSY /
+CH3 generator output before the 1 kohm START resistor, and DUT LO connected only
+to FORCE LO/SENSE LO with no earth bond. The
+[wiring report](evidence/k2460-2026-11-02-scope-wiring-clarification.json) qualifies
+all earlier generator-edge-to-BUSY/reading calculations: no measured series-path
+propagation/threshold correction establishes their physical Keithley START-pin
+reference. Original raw run/review/analysis files are retained unchanged. The
+BUSY-high difference cancels a common reference offset, subject to the original
+scope error budget. No new pin-side trace or analog DUT measurement was obtained,
+no hardware command was sent, and no timing gate was promoted. P060-S input and
+compensation specifications/compatibility remain unverified. Strict MkDocs and
+`git diff --check` passed for this documentation/evidence clarification.
+
+## Independent field timing — shared measurement v3
+
+`MeasurementRecord` now carries separate voltage/current `MeasurementAperture`
+values, each with timing origin and optional boundary uncertainty. An unproved
+window or availability stays `None`. Aperture timestamp references select a
+known electrical field; buffer-storage and unresolved references select none.
+Known storage timestamps must follow both known windows and precede known
+complete-record availability. Unknown field timing requires unknown schedule
+mapping. Synthetic and physical origins cannot be mixed as hardware evidence.
+Digests include field timing and uncertainty. Shared v1/v2 IDs are rejected
+rather than silently relabelled as v3; raw Keithley archive decoding is unchanged.
+
+The simulator explicitly supplies identical synthetic windows with zero virtual
+uncertainty. The fixed 25-field Bluesky projection exposes independent windows,
+origins and uncertainties, encoding unknown numeric timing as `-1` and unknown
+origin as `unknown`. Descriptor configuration identifies timestamp reference and
+field. User guide, quickstart, example, contracts and changelog are aligned.
+
+Validation: **379 tests passed**; Ruff lint/format, strict mypy (`src scripts`),
+strict MkDocs and `git diff --check` passed. Tests exercise sequential/differing
+windows, unresolved and storage references, unknown timing, false synthetic
+provenance, storage before integration finishes, independent retained-buffer
+checksums, Event Model documents and executed quickstart variants. The offline
+simulator example completed 635 synthetic records with schema v3 and
+`hardware_ready=False`. Packaged runtime SHA-256 stayed
+`c4c40686bf2016f5c55c820b5d0bd34f78915dd10e6a77823d0a9cad245c6e82`.
+
+The [calibration design](timestamp-aperture-calibration.md) specifies independent
+electrical phase scans, per-field analysis and evidence rejection criteria.
+The existing constant-resistor setup cannot identify either aperture from
+START/BUSY alone. Exact scope/channel/probe details, safe electrical coupling
+and grounding, and a feasible stimulus remain prerequisites. No new executable
+hardware fixture was packaged, uploaded or armed, no instrument commands were
+sent for this software increment, and no hardware gate or real-adapter support
+was promoted. The last physical observation remains run `2026110205` at
+IDLE/OFF/0 A with one retained proof reading and unchanged default buffers.
 
 ## Per-request completion watchdog
 
@@ -164,6 +471,187 @@ runtime, target adapter, hardware capability, or acceptance gate changed.
 Strict MkDocs and `git diff --check` passed after adding the page and navigation.
 
 ## Timestamp-proof fixture prepared offline
+
+Repeat `2026110205` used the same one-reading +1 mA / 0.2 V / 1 NPLC proof,
+with the unchanged physical setup freshly confirmed. After the missed capture
+on run `2026110204`, the scope was confirmed waiting in Single on CH2 BUSY rising
+before instrument arm, with a 100 ms window and 10–20 ms pretrigger. The user
+explicitly authorized discard of only the archived run `2026110204` reading,
+the repeat, event archival and recovery. Archive checksum and fresh record
+match passed before discard. The runner observed LOW, armed at
+WAITING_START/READY high/BUSY low/output OFF, and completed at block 17 with
+START/timer-overrun false. The record is 1.0000133188 mA source readback,
+102.50782967 mV, statuses 200/8. Nine events (seven information, two mode-change
+warnings 1811, no errors) were archived immediately; four unique monotonic
+markers give a 26.58 microsecond BUSY bracket, 41.01964 ms measurement block and
+buffered timestamp 0.11454 ms before POST_MEASURE. Fresh-session and
+retained-IDLE reads matched; final state was IDLE/OFF/0 A with one new retained
+record and zero unread events. Default-buffer counts/extents/capacities stayed
+unchanged. The user subsequently reported START-to-BUSY rise **5.009(1) ms**
+and fall **50.311(1) ms**, giving BUSY-high duration 45.302 ms. With the
+parenthetical interpreted as 0.001 ms uncertainty, the marker-bracketing model
+gives a conditional START-to-buffer-timestamp interval of
+**48.35098–48.37956 ms**, approximately 48.365 ms. Confidence/coverage and full
+scope/channel/threshold error budget are unknown; actual sample rate/settings
+were not supplied. No trace is exported to the repository, and actual save on
+the scope is not independently confirmed. The rise delay differs by 3.733 ms
+from run `2026110203`, consistent with the proof model's 10 ms START polling
+loop in blocks 3–6; that code-based interpretation does not establish a cause
+or latency distribution. No individual aperture, calibrated timing accuracy or
+hardware gate is established. No hardware commands were sent for the scope
+analysis. Evidence: [raw repeat](evidence/k2460-2026-11-02-timestamp-attempt-05.json),
+[checksum-linked review](evidence/k2460-2026-11-02-timestamp-attempt-05-review.json),
+and [scope analysis](evidence/k2460-2026-11-02-timestamp-attempt-05-scope-analysis.json).
+
+On 2 November 2026, repeat `2026110204` followed fresh user confirmation of
+the unchanged nominal 100 ohm front-terminal four-wire resistor, physical
+output OFF and START/scope setup. Query-only preflight confirmed v14
+IDLE/OFF/0 A, one retained record and no unread events; the idle START-overrun
+flag had become true after later continuous-generator edges. The user explicitly
+authorized disposition of only the archived run `2026110203` reading, one
++1 mA / 0.2 V / 1 NPLC repeat, event archival and recovery. Archive checksum
+and fresh retained-record match passed before that single-record discard.
+The guarded procedure waited for a fresh HIGH-to-LOW transition, armed at
+WAITING_START/READY high/BUSY low/output OFF, and completed at block 17 with
+START/timer-overrun false. The new record is 1.0000148322 mA source readback,
+102.4916172 mV, source/measurement statuses 200/8. Nine events (seven information,
+two mode-change warnings 1811, no errors) were saved as consumed. Four unique
+monotonic markers give a 23.88 microsecond BUSY bracket, 41.01732 ms measurement
+block and timestamp 0.11626 ms before POST_MEASURE. Independent-session and
+retained-IDLE reads matched. Final observation was IDLE/OFF/0 A, one new retained
+record and zero unread events. All default-buffer counts/extents/capacities
+remained unchanged, including 12,867 records in `defbuffer1`; contents were not
+compared. The user reported missing the scope trigger when selecting Single, so this
+run has no scope timing evidence. The scope is an older Agilent Infinium
+(exact model unspecified), with waveform retention reported possible only on
+the scope. This is preserved in the
+[scope status](evidence/k2460-2026-11-02-timestamp-attempt-04-scope-status.json).
+No individual aperture or hardware gate is established. Evidence:
+[preflight](evidence/k2460-2026-11-02-timestamp-attempt-04-preflight.json),
+[raw repeat](evidence/k2460-2026-11-02-timestamp-attempt-04.json), and
+[checksum-linked review](evidence/k2460-2026-11-02-timestamp-attempt-04-review.json).
+
+On 2 November 2026, clean-edge attempt `2026110203` repeated the one-reading
+proof with explicit authorization to discard only the archived diagnostic
+reading and archive the new run's events. Archive checksums and fresh-session
+record equality were verified before discard. The user confirmed a 33120A
+continuous 0.01 Hz, 50% square wave through 1 kohm to START pin 3 / ground pin 9,
+75 mV LOW, 4.5 V HIGH, a clean edge within input limits, and START/BUSY capture.
+The guarded procedure waited for LOW, then reached WAITING_START/READY high/
+BUSY low/output OFF. The next rising edge completed one reading at block 17
+with START-overrun and timer-overrun both false. Output returned OFF locally.
+The record contains 1.0000137845 mA source readback, 102.48708725 mV and
+source/measurement statuses 200/8. Nine events (seven information, two expected
+mode-change warnings 1811, no errors) were archived immediately. All four unique
+tagged markers are monotonic. A fresh session matched the raw record and absolute
+timestamp; recovery reached IDLE/OFF/programmed 0 A and retained-IDLE retrieval
+matched the same new reading. Default-buffer extent/capacity stayed unchanged
+at 12,867 records in `defbuffer1` and zero in `defbuffer2`. Final unread event
+counts were zero. This record was later explicitly dispositioned for run
+`2026110204`, after archive checksum verification and fresh record matching. Evidence is
+[`k2460-2026-11-02-timestamp-attempt-03.json`](evidence/k2460-2026-11-02-timestamp-attempt-03.json),
+with a checksum-linked
+[instrument review](evidence/k2460-2026-11-02-timestamp-attempt-03-review.json).
+
+The user reported START-to-BUSY rise as **1.276(1) ms**, interpreted as
+1.276 ms with 0.001 ms uncertainty; confidence/coverage and a full scope/
+threshold/channel error budget were not supplied. Falling timing was lost when
+the scope buffer cleared; no exported trace is available. It is not an input
+to the current timestamp calculation. The BUSY marker bracket is 22.28
+microseconds; measurement-block span is 41.03528 ms. The buffered timestamp is
+40.91820 ms after PRE_MEASURE and 0.11708 ms before POST_MEASURE. Combining
+the marker-bracketing model with the reported scope timing gives a conditional
+START-to-buffer-timestamp interval of **44.62756–44.65184 ms**, approximately
+44.64 ms. This is a calculated interval under stated assumptions, not a
+validated total timing-accuracy claim. Scope observations and calculation are
+preserved in
+[`k2460-2026-11-02-timestamp-attempt-03-scope-analysis.json`](evidence/k2460-2026-11-02-timestamp-attempt-03-scope-analysis.json).
+The nominal 20 ms integration setting does not establish the source-readback
+and DUT aperture positions or a shared aperture. This is a clean single-run
+START observation with retained-data and timestamp-marker evidence; complete
+START-race, timestamp-reference/aperture and hardware gates remain open. Later
+edges from the still-running square wave may change the historical overrun
+flag, so the clean flag claim is scoped to the recorded terminal/recovery
+observations.
+
+On 2 November 2026, authorized timestamp attempt `2026110201` prepared with
+four-wire remote sense but was rejected before trigger initiation because
+START was HIGH. Query-only inspection confirmed output OFF and an empty proof
+buffer. Force-safe/recovery reached IDLE/OFF/0 A. After the user drove START low,
+a query confirmed LOW and the user authorized archival of the rejection's
+warning 1811 and error -286. These diagnostic events are preserved in
+[`k2460-2026-11-02-start-low-diagnostics.json`](evidence/k2460-2026-11-02-start-low-diagnostics.json).
+
+Attempt `2026110202` reached WAITING_START/READY high/BUSY low/output OFF and
+completed one reading at terminal block 17 with output OFF. It reported
+`start_overrun=true`, so no clean timing or timestamp-reference claim is made.
+The raw record contains 1.0000156472 mA source readback, 102.48732567 mV and
+source/measurement statuses 200/8. Absolute timestamp and configured 1 NPLC /
+50 Hz are archived in
+[`k2460-2026-11-02-timestamp-attempt-02.json`](evidence/k2460-2026-11-02-timestamp-attempt-02.json).
+A fresh session matched the record and timestamp; recovery reached IDLE/OFF/
+programmed 0 A and retained-IDLE retrieval matched the same record. The verified
+audit is
+[`k2460-2026-11-02-timestamp-attempt-02-audit-verified.json`](evidence/k2460-2026-11-02-timestamp-attempt-02-audit-verified.json).
+The earlier audit file preserves a host assertion failure caused by comparing
+a tuple against a JSON list; it stopped before recovery. Both persisted records
+match exactly. Default-buffer count, index extent and capacity remained
+unchanged at 12,867 records in `defbuffer1` and zero in `defbuffer2`. After
+explicit user authorization, all seven information events and one warning were
+archived in sequence in
+[`k2460-2026-11-02-timestamp-attempt-02-events.json`](evidence/k2460-2026-11-02-timestamp-attempt-02-events.json).
+All four unique timestamp markers were present and monotonic. Final unread
+event counts were zero; the proof reading and default-buffer extents matched
+before/after retrieval. The warning was the digital-mode change warning 1811;
+information event 2753 reported multiple blocks waiting on the same event and
+a model not optimized for speed.
+
+The user reported approximately 1.8 ms START-to-BUSY-rise, 47.1 ms
+START-to-BUSY-fall, and 560 microseconds START-edge fuzziness. The edge was one
+intended DC-voltage-setting transition on the signal generator, held high
+through and after completion. No raw scope trace was supplied. BUSY-high time
+is therefore approximately 45.3 ms. Instrument markers bracket BUSY assertion
+over 28.58 microseconds and the measurement block over 41.02474 ms. The buffered
+timestamp is 40.91342 ms after PRE_MEASURE and only 0.11132 ms before
+POST_MEASURE. This is evidence that the timestamp lies near the end of the
+operation; it does not prove either electrical aperture's start or end.
+
+Using the full 560 microsecond fuzzy-edge width as a provisional plus/minus
+uncertainty gives a conditional START-to-buffer-timestamp interval of
+44.58650–45.73508 ms. That uncertainty is an explicit analysis assumption,
+without a characterized total scope/threshold/channel error budget. Configured
+1 NPLC at 50 Hz corresponds to a nominal 20 ms integration setting, not the
+total paired-record duration. The official
+[2460 reference manual](https://download.tek.com/manual/2460-901-01C_Sept_2019_Ref.pdf),
+sections 14-183–184, places source readback immediately before the DUT
+measurement, so the current and voltage must not be assumed simultaneous or
+given an identical proved aperture. Section 14-218 defines digital input
+overrun as an ignored event while the detector is already detected. A generator
+DC-setting transient/threshold recrossing is a plausible explanation for the
+flag, but its cause has not been established. The review and artifact checksums
+are in
+[`k2460-2026-11-02-timestamp-attempt-02-review.json`](evidence/k2460-2026-11-02-timestamp-attempt-02-review.json).
+This remains reviewed diagnostic evidence. Its proof reading was initially
+retained and matched independently, then explicitly discarded after archive
+verification under the user's authorization for attempt `2026110203`. The
+subsequent clean repeat is recorded above; justified aperture mapping remains
+open and no acceptance gate is promoted.
+
+On 2 November 2026, query-only resumption found the commissioned identity/TSP
+mode, output OFF at 0 A and an empty trigger model, but no loaded runtime.
+The user confirmed physical four-wire resistor wiring and explicitly authorized
+packaged volatile v14 installation only. Installation and a separate fresh
+query-only session verified the expected ABI/build/digest-named script, runtime
+IDLE, output OFF at 0 A, an empty trigger model and no allocated runtime buffer.
+The pre-existing `defbuffer1` count (12,867), index extent and capacity (100,000)
+were unchanged; `defbuffer2` remained empty. Record contents were not retrieved
+or compared. Event counts remained two information, zero warnings and zero
+errors, without event consumption. No preparation, arm or acquisition occurred.
+The instrument's two-wire setting was preserved; the timestamp proof must select
+remote sense for the confirmed physical four-wire wiring. Installation evidence
+is [`k2460-2026-11-02-runtime-v14-install.json`](evidence/k2460-2026-11-02-runtime-v14-install.json).
+This is installation/state evidence only and promotes no timing or hardware
+acceptance gate.
 
 Runtime v14 retains the v13 timestamp fixture, and
 `notebooks/keithley_2460_timestamp_proof.ipynb` provides a guarded

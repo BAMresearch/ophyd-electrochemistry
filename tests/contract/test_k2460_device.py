@@ -18,8 +18,14 @@ from ophyd_electrochemistry import (
     CurrentPulseSequence,
     CyclicVoltammetry,
     DeviceState,
+    FieldOrigin,
     GalvanostaticHold,
+    MappingQuality,
+    MeasurementAperture,
+    RelativeTimeOrigin,
     StartMode,
+    TimestampReference,
+    TimingOrigin,
     VoltagePulseSequence,
 )
 from ophyd_electrochemistry.exceptions import (
@@ -160,8 +166,14 @@ def test_real_runengine_operates_device_and_emits_fixed_m5_schema(mode):
         "ec_sample_index",
         "ec_time_relative",
         "ec_instrument_timestamp",
-        "ec_aperture_start",
-        "ec_aperture_end",
+        "ec_voltage_aperture_start",
+        "ec_voltage_aperture_end",
+        "ec_current_aperture_start",
+        "ec_current_aperture_end",
+        "ec_voltage_timing_origin",
+        "ec_current_timing_origin",
+        "ec_voltage_timing_uncertainty",
+        "ec_current_timing_uncertainty",
         "ec_available",
         "ec_voltage",
         "ec_current",
@@ -183,8 +195,22 @@ def test_real_runengine_operates_device_and_emits_fixed_m5_schema(mode):
     assert event_page["data"]["ec_current"] == pytest.approx([0.01] * 4)
     assert event_page["data"]["ec_source_status"] == [0] * 4
     assert event_page["data"]["ec_measurement_status"] == [0] * 4
+    assert event_page["data"]["ec_voltage_aperture_start"] == pytest.approx(
+        event_page["data"]["ec_time_relative"]
+    )
+    assert (
+        event_page["data"]["ec_voltage_aperture_end"]
+        == (event_page["data"]["ec_current_aperture_end"])
+    )
+    for field in ("voltage", "current"):
+        assert event_page["data"][f"ec_{field}_timing_origin"] == ["synthetic"] * 4
+        assert event_page["data"][f"ec_{field}_timing_uncertainty"] == [0] * 4
     configuration = descriptor["configuration"]["ec"]["data"]
-    assert configuration["ec_measurement_schema"] == "ophyd-electrochemistry/measurement-v2"
+    assert configuration["ec_measurement_schema"] == "ophyd-electrochemistry/measurement-v4"
+    assert configuration["ec_timestamp_reference"] == "aperture_start"
+    assert configuration["ec_timestamp_field"] == "voltage"
+    assert configuration["ec_relative_time_origin"] == "actual_start"
+    assert configuration["ec_actual_start_known"] == 1
     assert "compliance" in configuration["ec_source_status_definition"]
     assert "no measurement-status bits" in configuration["ec_measurement_status_definition"]
     expected_bound = 0.04 + (0.03 if mode == StartMode.EXTERNAL_TRIGGER else 0)
@@ -198,6 +224,174 @@ def test_real_runengine_operates_device_and_emits_fixed_m5_schema(mode):
     assert configuration["ec_prepared_capacity_records"] == 20_000
     assert chunk_requests == [(0, 2), (2, 2)]
     assert device.read_configuration()["ec_start_edge"]["value"] == "rising"
+
+
+def test_uncalibrated_first_reading_clock_is_explicit_in_flyer(monkeypatch):
+    device, runtime, _ = device_stack()
+    device.stage()
+    device.prepare(request()).wait(timeout=1)
+    device.kickoff().wait(timeout=1)
+    runtime.advance_ticks(40)
+    device.complete().wait(timeout=1)
+    original = runtime.retained_buffer()
+    first = original.records[0].instrument_timestamp_s
+    records = tuple(
+        replace(
+            record,
+            instrument_timestamp_s=record.instrument_timestamp_s - first,
+            time_relative_s=record.instrument_timestamp_s - first,
+            voltage_aperture=None,
+            current_aperture=None,
+            available_relative_s=None,
+            mapping_quality=MappingQuality.UNKNOWN,
+            first_logical_point=None,
+            last_logical_point=None,
+            repeat_index=None,
+            point_index=None,
+            cycle_index=None,
+            segment_index=None,
+        )
+        for record in original.records
+    )
+    retained = replace(
+        original,
+        schema=replace(
+            original.schema,
+            voltage_origin=FieldOrigin.MEASURED,
+            current_origin=FieldOrigin.SOURCE_READBACK,
+            timing_origin=TimingOrigin.INSTRUMENT_REPORTED,
+            timestamp_reference=TimestampReference.UNRESOLVED,
+            timestamp_field=None,
+            instrument_timestamp_origin="relative-to-first-buffer-reading",
+            instrument_start_timestamp_s=None,
+            instrument_timestamp_resolution_s=None,
+            relative_time_origin=RelativeTimeOrigin.FIRST_STORED_READING,
+            synthetic=False,
+        ),
+        records=records,
+    )
+    monkeypatch.setattr(runtime, "retained_buffer", lambda: retained)
+    device.describe_collect()
+    configuration = device.read_configuration()
+    assert configuration["ec_relative_time_origin"]["value"] == "first_stored_reading"
+    assert configuration["ec_actual_start_known"]["value"] == 0
+    assert configuration["ec_instrument_timestamp_origin"]["value"] == (
+        "relative-to-first-buffer-reading"
+    )
+    events = list(device.collect())
+    assert events[0]["data"]["ec_time_relative"] == 0
+    for record, event in zip(records, events, strict=True):
+        assert event["data"]["ec_instrument_timestamp"] == record.instrument_timestamp_s
+        assert event["data"]["ec_voltage_aperture_start"] == -1
+        assert event["data"]["ec_current_aperture_start"] == -1
+        assert event["data"]["ec_available"] == -1
+        assert event["data"]["ec_mapping_quality"] == "unknown"
+        assert event["time"] > 1_000_000_000  # Host envelope, never the raw buffer clock.
+
+
+@pytest.mark.parametrize(
+    ("timestamp_reference", "known_fields"),
+    [
+        (TimestampReference.BUFFER_STORED, ("voltage", "current")),
+        (TimestampReference.UNRESOLVED, ("voltage",)),
+        (TimestampReference.UNRESOLVED, ("current",)),
+        (TimestampReference.UNRESOLVED, ()),
+    ],
+)
+def test_field_timing_projection_preserves_independent_windows_and_unknowns(
+    monkeypatch, timestamp_reference, known_fields
+):
+    device, runtime, _ = device_stack()
+    assert device.read_configuration()["ec_timestamp_reference"]["value"] == "unknown"
+    assert device.read_configuration()["ec_timestamp_field"]["value"] == "unknown"
+    device.stage()
+    device.prepare(request()).wait(timeout=1)
+    device.kickoff().wait(timeout=1)
+    runtime.advance_ticks(40)
+    device.complete().wait(timeout=1)
+    original = runtime.retained_buffer()
+    voltage_aperture = MeasurementAperture(
+        start_relative_s=0.001,
+        end_relative_s=0.002,
+        origin=TimingOrigin.INSTRUMENT_REPORTED,
+        uncertainty_s=0.0001,
+    )
+    current_aperture = MeasurementAperture(
+        start_relative_s=0,
+        end_relative_s=0.0005,
+        origin=TimingOrigin.DERIVED_FROM_CONFIGURATION,
+        uncertainty_s=None,
+    )
+    records = tuple(
+        replace(
+            record,
+            voltage_aperture=voltage_aperture if "voltage" in known_fields else None,
+            current_aperture=current_aperture if "current" in known_fields else None,
+            available_relative_s=None,
+            source_status=200,
+            measurement_status=8,
+            mapping_quality=MappingQuality.UNKNOWN,
+            first_logical_point=None,
+            last_logical_point=None,
+            repeat_index=None,
+            point_index=None,
+            cycle_index=None,
+            segment_index=None,
+        )
+        for record in original.records
+    )
+    retained = replace(
+        original,
+        schema=replace(
+            original.schema,
+            voltage_origin=FieldOrigin.MEASURED,
+            current_origin=FieldOrigin.SOURCE_READBACK,
+            timing_origin=TimingOrigin.DERIVED_FROM_CONFIGURATION,
+            timestamp_reference=timestamp_reference,
+            timestamp_field=None,
+            synthetic=False,
+        ),
+        records=records,
+    )
+    monkeypatch.setattr(runtime, "retained_buffer", lambda: retained)
+    descriptor = device.describe_collect()["electrochemistry"]
+    events = list(device.collect())
+    assert len(events) == 4
+    for event in events:
+        data = event["data"]
+        assert set(data) == set(descriptor)
+        assert data["ec_available"] == -1
+        assert data["ec_source_status"] == 200 and data["ec_measurement_status"] == 8
+        assert data["ec_mapping_quality"] == "unknown"
+        for suffix in (
+            "first_logical_point",
+            "last_logical_point",
+            "repeat_index",
+            "point_index",
+            "cycle_index",
+            "segment_index",
+        ):
+            assert data[f"ec_{suffix}"] == -1
+        for field, aperture in (("voltage", voltage_aperture), ("current", current_aperture)):
+            known = field in known_fields
+            assert data[f"ec_{field}_aperture_start"] == (
+                aperture.start_relative_s if known else -1
+            )
+            assert data[f"ec_{field}_aperture_end"] == (aperture.end_relative_s if known else -1)
+            assert data[f"ec_{field}_timing_origin"] == (
+                aperture.origin.value if known else "unknown"
+            )
+            assert data[f"ec_{field}_timing_uncertainty"] == (
+                aperture.uncertainty_s if known and aperture.uncertainty_s is not None else -1
+            )
+            assert descriptor[f"ec_{field}_timing_uncertainty"]["units"] == "s"
+    configuration = device.read_configuration()
+    assert configuration["ec_timestamp_reference"]["value"] == timestamp_reference.value
+    assert configuration["ec_timestamp_field"]["value"] == "unknown"
+    device.trigger().wait(timeout=1)
+    snapshot = {key: value["value"] for key, value in device.read().items()}
+    assert snapshot == events[-1]["data"]
+    device.unstage()
 
 
 def test_abort_fails_completion_preserves_partial_data_and_recovers():
@@ -223,6 +417,31 @@ def test_abort_fails_completion_preserves_partial_data_and_recovers():
 
     device.recover().wait(timeout=1)
     assert device.state == DeviceState.IDLE and device.output_enabled is False
+    device.unstage()
+
+
+def test_recovery_before_collection_preserves_partial_data_and_explicit_disposition():
+    device, runtime, _ = device_stack()
+    device.stage()
+    device.prepare(request()).wait(timeout=1)
+    acquisition_id = device.acquisition_id
+    assert acquisition_id is not None
+    device.kickoff().wait(timeout=1)
+    runtime.advance_ticks(15)
+    completion = device.complete()
+    device.abort(reason="recover-before-collect").wait(timeout=1)
+    device.recover().wait(timeout=1)
+    assert device.state == DeviceState.IDLE and device.output_enabled is False
+    with pytest.raises(AcquisitionAborted):
+        completion.wait(timeout=1)
+    assert [event["data"]["ec_sample_index"] for event in device.collect()] == [0, 1]
+    device.trigger().wait(timeout=1)
+    assert device.read()["ec_sample_index"]["value"] == 1
+    with pytest.raises(RetainedDataError):
+        device.discard_retained_data(acquisition_id="wrong", reason="test")
+    device.discard_retained_data(acquisition_id=acquisition_id, reason="explicit-test-disposition")
+    with pytest.raises(RetainedDataError):
+        device.describe_collect()
     device.unstage()
 
 

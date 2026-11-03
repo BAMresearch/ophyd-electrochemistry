@@ -94,6 +94,16 @@ and program SHA-256 digests plus expected and capacity record counts. Numeric
 prepared/effective values are zero and digests are `unavailable` until a prepare
 succeeds; they are replaced, not accumulated, for each new acquisition.
 
+Retained-schema configuration reports `relative_time_origin`,
+`instrument_timestamp_origin`, `actual_start_known`, `timestamp_reference` and
+`timestamp_field`, plus `voltage_origin`, `current_origin`, `timing_origin` and
+`instrument_timestamp_resolution`. Resolution is in seconds and uses `-1` when
+unknown; printed raw precision does not establish physical resolution. Before
+retained schema is available, origins/references are
+`unknown` and `actual_start_known` is `0`; it is `1` only with an established
+instrument START anchor. These are configuration fields; the event stream
+remains fixed at 25 fields.
+
 When a `ClockMapping` exists, event-envelope time is mapped from the instrument
 timestamp. Otherwise the required Bluesky event envelope uses host emission
 time while the unmodified instrument and relative/aperture times remain explicit
@@ -105,21 +115,69 @@ The packaged 2460 runtime returns current readback, measured voltage, separate
 source and measurement status words
 and a `relativetimestamps` value whose first record is zero. That establishes a
 first-reading-relative buffer clock, not actual START or the integration aperture.
-The public M5 schema requires actual-START-relative aperture meaning. Therefore
-the M6 backend protocol consumes validated schema and retained metadata plus
-bounded, offset-addressed `RecordChunk` values, and no adapter from
-`M4RuntimeController` is supplied yet.
+Shared schema v4 can preserve this with `FIRST_STORED_READING`, unknown actual
+START, unknown field windows/availability and unknown program mapping. Its
+timestamp reference must remain honestly declared; neither a zero timestamp nor
+clock resolution establishes physical START or 10 ms accuracy.
+The shared schema also permits unknown physical clock resolution in first-reading
+mode; raw printed timestamp precision supplies no such evidence.
 
-This boundary prevents a convenient but false timestamp projection. Hardware
-connection requires either additional runtime fields or validated timing evidence
-that supplies the missing START/aperture relationship. The Device-side bounded
-chunk projection is ready; a target adapter must supply matching schema,
-metadata and retryable `RecordChunk` transactions.
+`project_current_hold_buffer` converts a complete frozen extent of validated raw
+chunks into shared records, including a partial acquisition's retained prefix.
+It preserves raw buffer time, measured voltage, current readback and separate
+statuses while declaring unknown START, windows, availability, mapping and
+physical resolution. It is a pure function, not a connection owner or live
+`M4RuntimeController` backend; it does not change the runtime or commission
+physical timestamp meaning.
+
+`Keithley2460Backend` now supplies an explicitly opted-in resistor commissioning
+candidate for `GalvanostaticHold`. It uses the exact separately installed v15
+artifact, one serialized connection owner, nominal local duration/cadence timers,
+local measured-voltage cutoff/deadline checks and bounded terminal chunk reads.
+It rejects pulses, voltage sourcing, unsupported firmware and unknown retained
+records. Connect performs inspection only; installation is a separate guarded
+operation. `hardware_ready=False` and `commissioning_resistor=True` keep its
+uncommissioned scope explicit. The independent simulator remains the operational
+offline backend.
+
+The new path preserves both requested duration and sample spacing; it does not
+infer execution duration from v14 average reading rates. Measurement requests
+are nominally at 0, P, ..., duration-P, followed by output OFF at the duration
+timer. The schedule requires an exact integer duration/P, P >= 0.1 s, duration
+<= 60 s and <= 600 records. A half-slot deadline checks for lateness before and
+after each sequential measurement; such checks cannot preempt that measurement.
+Timer consumption, physical cadence/duration and cutoff/abort latency remain
+bench gates. The returned completion bound is a candidate operational watchdog
+input, not an established physical protection bound. See the
+[commissioning procedure](timed-hold-commissioning.md).
+
+Target configuration reports cached `target_hardware_ready`, `target_timing_status`,
+instrument identity, runtime build/digest, profile and canonical request/plan/config
+JSON. No configuration read queries hardware. The candidate defaults to the new
+2 V / 1 NPLC measurement profile for the planned higher-signal resistor case.
+That profile is unavailable in the unchanged v14 count-proof API.
+
+A known terminal model fault with output still ON triggers one shutdown attempt
+during completion cleanup. Uncertain delivery latches ERROR/UNKNOWN and requires
+explicit stopped/OFF inspection and recovery; the mutation is not retried. Failed
+outcomes remain failed after recovery. Overrun flags are assessed at the first
+terminal observation; later idle START edges do not retroactively relabel a
+previously observed clean completion. Transfers validate unchanged retained
+extent and produce deterministic frozen shared chunks. Exclusive-create exports
+include full request/config/plan/identity/artifact/record provenance with a
+checksum; disposition requires the exact acquisition ID and a reason.
+Physical START/aperture calibration remains necessary for timing claims, rather
+than a prerequisite for retaining honestly uncalibrated I/V data.
 
 ## Validation scope
 
+Recovery preserves collection and snapshot access to the previous retained
+acquisition from confirmed output-OFF IDLE, even if no header was fetched before
+recovery. Explicit disposition still requires its exact acquisition ID and a
+reason. Recovery does not change the failed completion outcome.
+
 Contract tests run holds and two-pulse trains through Bluesky for immediate and
-external starts, validate Event Model documents, verify the complete 19-field
+external starts, validate Event Model documents, verify the complete 25-field
 stream, preserve partial records after abort, exercise no-START timeout and
 recovery, and reject unsupported CV before output. These are software lifecycle
 results over synthetic data; no hardware gate is promoted.

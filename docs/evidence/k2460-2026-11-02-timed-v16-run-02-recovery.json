@@ -1,0 +1,359 @@
+{
+  "after": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_EMPTY",
+    "model_substate": "trigger.STATE_EMPTY",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "idle",
+    "timer_overrun": false
+  },
+  "authorization": "User freshly confirmed unchanged 100 ohm / 1 W four-wire resistor and wiring, physical output OFF, and scope waiting Single on BUSY rising with CH4 1 Mohm/DC/1x about 200 mV/div, 200 ms/div and 100-200 ms pretrigger. Explicitly authorized exact empty v15-to-v16 replacement, independent verification, one immediate +5 mA / 1 V limit / 1 s hold at 100 ms spacing, consuming resulting event archival, record archival and recovery to IDLE/OFF/0 A. Retain new records and preserve all default-buffer records.",
+  "before": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_FAILED",
+    "model_substate": "trigger.STATE_FAILED",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "error",
+    "timer_overrun": false
+  },
+  "buffer_after": {
+    "capacity_records": 16,
+    "end_index": null,
+    "record_count": 0,
+    "start_index": null
+  },
+  "buffer_before": {
+    "capacity_records": 16,
+    "end_index": null,
+    "record_count": 0,
+    "start_index": null
+  },
+  "completed_at_utc": "2026-11-02T15:55:25.885330+00:00",
+  "defaults_after": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "defaults_before": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "event_counts_before": {
+    "errors": 9,
+    "information": 0,
+    "warnings": 2
+  },
+  "events": [
+    {
+      "parsed": {
+        "event_number": 5076,
+        "message": "Source Limit changed to 0.21 V due to new measure Range",
+        "node_id": 2,
+        "severity": 2,
+        "utc_nanoseconds_part": 773086380,
+        "utc_seconds": 1793639049
+      },
+      "raw": "5076\tSource Limit changed to 0.21 V due to new measure Range\t2\t2\t1793639049\t773086380"
+    },
+    {
+      "parsed": {
+        "event_number": 5076,
+        "message": "Source Limit changed to 0.212 V due to new measure Range",
+        "node_id": 2,
+        "severity": 2,
+        "utc_nanoseconds_part": 828096360,
+        "utc_seconds": 1793639049
+      },
+      "raw": "5076\tSource Limit changed to 0.212 V due to new measure Range\t2\t2\t1793639049\t828096360"
+    },
+    {
+      "parsed": {
+        "event_number": 2709,
+        "message": "Branch to block number 2 does not exist",
+        "node_id": 2,
+        "severity": 1,
+        "utc_nanoseconds_part": 994703340,
+        "utc_seconds": 1793639049
+      },
+      "raw": "2709\tBranch to block number 2 does not exist\t1\t2\t1793639049\t994703340"
+    },
+    {
+      "parsed": {
+        "event_number": 2709,
+        "message": "Branch to block number 3 does not exist",
+        "node_id": 2,
+        "severity": 1,
+        "utc_nanoseconds_part": 994729580,
+        "utc_seconds": 1793639049
+      },
+      "raw": "2709\tBranch to block number 3 does not exist\t1\t2\t1793639049\t994729580"
+    },
+    {
+      "parsed": {
+        "event_number": 2709,
+        "message": "Branch to block number 4 does not exist",
+        "node_id": 2,
+        "severity": 1,
+        "utc_nanoseconds_part": 994737560,
+        "utc_seconds": 1793639049
+      },
+      "raw": "2709\tBranch to block number 4 does not exist\t1\t2\t1793639049\t994737560"
+    },
+    {
+      "parsed": {
+        "event_number": 2709,
+        "message": "Branch to block number 5 does not exist",
+        "node_id": 2,
+        "severity": 1,
+        "utc_nanoseconds_part": 994745440,
+        "utc_seconds": 1793639049
+      },
+      "raw": "2709\tBranch to block number 5 does not exist\t1\t2\t1793639049\t994745440"
+    },
+    {
+      "parsed": {
+        "event_number": 2709,
+        "message": "Branch to block number 6 does not exist",
+        "node_id": 2,
+        "severity": 1,
+        "utc_nanoseconds_part": 994753320,
+        "utc_seconds": 1793639049
+      },
+      "raw": "2709\tBranch to block number 6 does not exist\t1\t2\t1793639049\t994753320"
+    },
+    {
+      "parsed": {
+        "event_number": 2709,
+        "message": "Branch to block number 32 does not exist",
+        "node_id": 2,
+        "severity": 1,
+        "utc_nanoseconds_part": 994761660,
+        "utc_seconds": 1793639049
+      },
+      "raw": "2709\tBranch to block number 32 does not exist\t1\t2\t1793639049\t994761660"
+    },
+    {
+      "parsed": {
+        "event_number": 2709,
+        "message": "Branch to block number 33 does not exist",
+        "node_id": 2,
+        "severity": 1,
+        "utc_nanoseconds_part": 994769540,
+        "utc_seconds": 1793639049
+      },
+      "raw": "2709\tBranch to block number 33 does not exist\t1\t2\t1793639049\t994769540"
+    },
+    {
+      "parsed": {
+        "event_number": 2709,
+        "message": "Branch to block number 34 does not exist",
+        "node_id": 2,
+        "severity": 1,
+        "utc_nanoseconds_part": 994777380,
+        "utc_seconds": 1793639049
+      },
+      "raw": "2709\tBranch to block number 34 does not exist\t1\t2\t1793639049\t994777380"
+    },
+    {
+      "parsed": {
+        "event_number": 2709,
+        "message": "Branch to block number 35 does not exist",
+        "node_id": 2,
+        "severity": 1,
+        "utc_nanoseconds_part": 994785240,
+        "utc_seconds": 1793639049
+      },
+      "raw": "2709\tBranch to block number 35 does not exist\t1\t2\t1793639049\t994785240"
+    }
+  ],
+  "events_after_archive": {
+    "errors": 0,
+    "information": 0,
+    "warnings": 0
+  },
+  "events_after_recovery": {
+    "errors": 0,
+    "information": 0,
+    "warnings": 0
+  },
+  "fresh_buffer": {
+    "capacity_records": 16,
+    "end_index": null,
+    "record_count": 0,
+    "start_index": null
+  },
+  "fresh_defaults": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "fresh_events": {
+    "errors": 0,
+    "information": 0,
+    "warnings": 0
+  },
+  "fresh_final": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_EMPTY",
+    "model_substate": "trigger.STATE_EMPTY",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "idle",
+    "timer_overrun": false
+  },
+  "no_acquisition_retry": true,
+  "phase": "complete_independent_safe_recovery_no_repeat",
+  "queries": [
+    {
+      "command": "print(oe_m4_runtime_build)",
+      "response": "m4-finite-current-hold-v16"
+    },
+    {
+      "command": "print(oe_m4_74194bbe335d7e3950f25143 == nil)",
+      "response": "false"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "response": "0.005"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "response": "0\t100000\t0\t0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "response": "2"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "response": "9"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "5076\tSource Limit changed to 0.21 V due to new measure Range\t2\t2\t1793639049\t773086380"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "5076\tSource Limit changed to 0.212 V due to new measure Range\t2\t2\t1793639049\t828096360"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2709\tBranch to block number 2 does not exist\t1\t2\t1793639049\t994703340"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2709\tBranch to block number 3 does not exist\t1\t2\t1793639049\t994729580"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2709\tBranch to block number 4 does not exist\t1\t2\t1793639049\t994737560"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2709\tBranch to block number 5 does not exist\t1\t2\t1793639049\t994745440"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2709\tBranch to block number 6 does not exist\t1\t2\t1793639049\t994753320"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2709\tBranch to block number 32 does not exist\t1\t2\t1793639049\t994761660"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2709\tBranch to block number 33 does not exist\t1\t2\t1793639049\t994769540"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2709\tBranch to block number 34 does not exist\t1\t2\t1793639049\t994777380"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2709\tBranch to block number 35 does not exist\t1\t2\t1793639049\t994785240"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "response": "0"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "response": "0"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "response": "0\t100000\t0\t0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "response": "0"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "response": "0"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "response": "0\t100000\t0\t0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "response": "0"
+    }
+  ],
+  "schema": "ophyd-electrochemistry/timed-run-recovery-v1",
+  "source_level_before": 0.005,
+  "started_at_utc": "2026-11-02T15:55:25.587528+00:00"
+}

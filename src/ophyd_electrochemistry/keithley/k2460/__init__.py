@@ -9,6 +9,7 @@ from .archive import (
     runtime_buffer_archive_json,
     write_runtime_buffer_archive,
 )
+from .backend import Keithley2460Backend
 from .capabilities import Keithley2460Capabilities, SourceCapabilities
 from .compiler import CompiledProgram, Keithley2460Compiler
 from .config import BufferPolicy, DigitalIOConfig, Keithley2460Config, SafetyConfig, TimingPolicy
@@ -18,6 +19,7 @@ from .measurement_profiles import (
     K2460MeasurementSettings,
     resolve_measurement_profile,
 )
+from .projection import project_current_hold_buffer
 from .runtime import (
     K2460_BUFFER_SCHEMA,
     TIMESTAMP_PROOF_MARKERS,
@@ -41,6 +43,12 @@ from .runtime import (
     parse_runtime_status,
     parse_timestamp_proof_reading,
 )
+from .timed_runtime import (
+    TIMED_RUNTIME_BUILD,
+    TimedHoldPlan,
+    TimedHoldRuntimeController,
+    timed_packaged_runtime,
+)
 from .transport import (
     InstrumentIdentity,
     PyVisaKeithley2460Transport,
@@ -59,6 +67,11 @@ __all__ = [
     "Keithley2460Compiler",
     "Keithley2460Config",
     "Keithley2460Device",
+    "Keithley2460Backend",
+    "TimedHoldPlan",
+    "TimedHoldRuntimeController",
+    "TIMED_RUNTIME_BUILD",
+    "timed_packaged_runtime",
     "K2460MeasurementProfile",
     "K2460MeasurementSettings",
     "SafetyConfig",
@@ -99,4 +112,5 @@ __all__ = [
     "parse_identity",
     "parse_source_output_enabled",
     "resolve_measurement_profile",
+    "project_current_hold_buffer",
 ]

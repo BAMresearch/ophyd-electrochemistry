@@ -15,6 +15,7 @@ class K2460MeasurementProfile(StrEnum):
     NPLC_1 = "k2460_0p2v_1nplc_v1"
     NPLC_0_1 = "k2460_0p2v_0p1nplc_v1"
     NPLC_0_01 = "k2460_0p2v_0p01nplc_v1"
+    NPLC_1_2V = "k2460_2v_1nplc_v1"
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -46,6 +47,13 @@ _SETTINGS = {
         profile=K2460MeasurementProfile.NPLC_0_01,
         instrument_code=3,
         nplc=0.01,
+    ),
+    # Timed v15 commissioning candidate only; no v14 rate/timing evidence.
+    K2460MeasurementProfile.NPLC_1_2V: K2460MeasurementSettings(
+        profile=K2460MeasurementProfile.NPLC_1_2V,
+        instrument_code=4,
+        nplc=1.0,
+        voltage_range_v=2.0,
     ),
 }
 

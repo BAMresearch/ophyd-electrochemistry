@@ -4,10 +4,13 @@ import pytest
 
 from ophyd_electrochemistry import (
     AcquisitionRequest,
+    ElectricalField,
     FieldOrigin,
     GalvanostaticHold,
     MappingQuality,
+    RelativeTimeOrigin,
     StartMode,
+    TimestampReference,
     TimingOrigin,
 )
 from ophyd_electrochemistry.exceptions import AcquisitionAborted, ShutdownUnconfirmed
@@ -34,12 +37,24 @@ def test_terminal_simulation_adapts_without_claiming_hardware_origin(runtime):
     assert retained.schema.synthetic
     assert retained.schema.voltage_origin == retained.schema.current_origin == FieldOrigin.SYNTHETIC
     assert retained.schema.timing_origin == TimingOrigin.SYNTHETIC
+    assert retained.schema.timestamp_reference == TimestampReference.APERTURE_START
+    assert retained.schema.timestamp_field == ElectricalField.VOLTAGE
+    assert retained.schema.relative_time_origin == RelativeTimeOrigin.ACTUAL_START
+    assert retained.schema.instrument_start_timestamp_s is not None
     assert retained.request_sha256 == program.request_sha256
     assert retained.program_sha256 == program.program_sha256
     assert retained.metadata.expected_records == retained.metadata.retained_records == 4
     for raw, value in zip(runtime.records, retained.records, strict=True):
         assert value.sample_index == raw.sample_index
         assert value.voltage_v == raw.voltage_v and value.current_a == raw.current_a
+        assert value.voltage_aperture == value.current_aperture
+        aperture = value.voltage_aperture
+        assert aperture is not None
+        assert aperture.start_relative_s == raw.aperture_start_tick * program.timer_resolution_s
+        assert aperture.end_relative_s == raw.aperture_end_tick * program.timer_resolution_s
+        assert aperture.origin == TimingOrigin.SYNTHETIC
+        assert aperture.uncertainty_s == 0
+        assert value.available_relative_s == raw.available_tick * program.timer_resolution_s
         assert value.mapping_quality in (
             MappingQuality.SETTLED_SINGLE_DWELL,
             MappingQuality.UNSETTLED_SINGLE_DWELL,
@@ -71,5 +86,6 @@ def test_no_start_timeout_has_empty_frozen_buffer_without_fake_start(runtime):
     retained = runtime.retained_buffer()
     assert retained.records == ()
     assert retained.schema.instrument_start_timestamp_s is None
+    assert retained.schema.relative_time_origin == RelativeTimeOrigin.ACTUAL_START
     assert retained.metadata.terminal_cause == "start_timeout"
     assert not retained.metadata.waveform_complete

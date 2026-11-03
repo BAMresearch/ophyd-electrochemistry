@@ -14,7 +14,10 @@ operational hardware sourcing driver. M5 adds a shared immutable record schema a
 narrow bounded target-buffer proof with deterministic chunk retry;
 operational target acquisition remains open. A first M6 classic-Ophyd Flyer now
 operates against the typed simulator backend and emits the fixed M5 schema through
-a real RunEngine; the real-2460 adapter remains intentionally absent.
+a real RunEngine. A separate timed-hold target adapter and packaged v17 runtime
+are now implemented as an explicitly opted-in resistor commissioning candidate,
+with unknown START/apertures and `hardware_ready=False`; see the
+[guarded bench procedure](timed-hold-commissioning.md).
 Documentation, mock tests and identity queries do not replace target-firmware
 and bench validation.
 

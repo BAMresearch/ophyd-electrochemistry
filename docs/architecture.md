@@ -25,6 +25,8 @@
 | `.../commissioning.py` | Implemented read-only identity/language/output-state diagnostic and JSON report |
 | `.../device.py` | First operational classic-Ophyd Flyer over a typed retained-buffer backend; simulator-backed only until target timestamp mapping is resolved |
 | `.../io.py` | Placeholder for the still-uncommissioned external-abort path |
+| `.../backend.py`, `.../timed_runtime.py`, `.../tsp/timed_hold.tsp` | Explicitly opted-in timed-resistor commissioning candidate; single owner and unknown START/apertures; hardware acceptance remains open |
+| `.../projection.py` | Pure validated raw-target to shared-v4 record conversion |
 | `.../runtime.py`, `.../tsp/runtime.tsp` | Offline-reviewed M4 finite-current-hold proof; exact packaged artifact only, not an acquisition backend |
 | `src/ophyd_electrochemistry/simulation/` | Implemented independent virtual-clock runtime and typed fake transport |
 | `tests/contract/` | Real RunEngine operating both the original minimal witness and the simulator-backed M6 Flyer |

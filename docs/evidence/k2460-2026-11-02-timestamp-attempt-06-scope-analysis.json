@@ -1,0 +1,91 @@
+{
+  "analog_crosscheck": {
+    "difference_from_reported_ch4_plateau_v": 0.07357840157000001,
+    "instrument_measured_voltage_v": 0.10257840157,
+    "status": "Unresolved amplitude discrepancy; whether reported plateau is absolute level or baseline-to-plateau excursion is unknown. Inspect baseline, input/coupling/attenuation and actual connection nodes before using analog trace for source timing/settling. No cause established."
+  },
+  "analysis": {
+    "busy_marker_span_s": 2.682e-05,
+    "configured_aperture_s": 0.02,
+    "measurement_block_span_s": 0.0410295,
+    "pre_measure_to_reading_s": 0.0409142,
+    "reading_after_start_max_s": 0.05211584,
+    "reading_after_start_min_s": 0.05208702,
+    "reading_to_post_measure_s": 0.0001153
+  },
+  "assessment": [
+    "BUSY duration is 45.315 ms; no combined uncertainty assigned because coverage/correlation/full scope error budget are unknown.",
+    "Marker-based START-to-buffered-timestamp interval uses reported pin-referenced rising delay and interpreted 1 us uncertainty only; it is conditional arithmetic, not calibrated absolute timing accuracy or integration-window evidence.",
+    "Reported CH4 0-100/100-0 transition durations are preserved as reported; they are not START-to-CH4 delays or measured 10-90/90-10 times.",
+    "Actual 20 ms/div, 10 MSa/s and 2 Mpts imply 200 ms record, differing from the earlier nominal 100 ms setup confirmation. Preserve both reports.",
+    "No hardware commands were sent for this reduction. New run06 reading remains retained; no new discard/run authorization."
+  ],
+  "hardware_gates_promoted": [],
+  "last_observed_hardware_state": {
+    "default_buffers": {
+      "defbuffer1": "12867\t100000\t1\t12867",
+      "defbuffer2": "0\t100000\t0\t0"
+    },
+    "programmed_source_level_a": 0.0,
+    "retained_proof_records": 1,
+    "status": {
+      "abi": "oe-k2460-m4-hold-v1",
+      "busy_level": 0,
+      "last_block": 17,
+      "model_state": "trigger.STATE_IDLE",
+      "model_substate": "trigger.STATE_IDLE",
+      "output_enabled": false,
+      "ready_level": 0,
+      "start_level": -1,
+      "start_overrun": false,
+      "state": "idle",
+      "timer_overrun": false
+    },
+    "unread_event_counts": {
+      "errors": 0,
+      "information": 0,
+      "warnings": 0
+    }
+  },
+  "proof_run_id": 2026110206,
+  "recorded_at_utc": "2026-11-02T13:56:54.119100+00:00",
+  "schema": "ophyd-electrochemistry/k2460-timestamp-scope-analysis-v1",
+  "scope": {
+    "all_edges_visible_reported": true,
+    "capture_retention_independently_verified": false,
+    "confirmed_start_observation_node": "Keithley START pin 3 after 1 kohm resistor",
+    "derived_busy_high_duration_s": 0.045315,
+    "derived_record_duration_s": 0.2,
+    "edge_thresholds_confirmed": false,
+    "interpreted_busy_delay_uncertainty_s": 1e-06,
+    "interpreted_ch4_plateau_uncertainty_v": 0.001,
+    "interpreted_ch4_transition_duration_uncertainty_s": 1e-05,
+    "off_baseline_v": null,
+    "probe_model_reported": "Tektronix P2220 at 1x",
+    "raw_trace_available_in_repository": false,
+    "record_length_points": 2000000,
+    "reported_ch4_fall_definition": "100-0 percent; not a 90-10 percent fall time",
+    "reported_ch4_fall_duration_s": 0.00093,
+    "reported_ch4_plateau_v": 0.029,
+    "reported_ch4_rise_definition": "0-100 percent; not a 10-90 percent rise time",
+    "reported_ch4_rise_duration_s": 0.0009,
+    "reported_start_to_busy_falling_s": 0.054055,
+    "reported_start_to_busy_rising_s": 0.00874,
+    "reported_verbatim": {
+      "analog": "voltage plateau approximately (it's a bit noisy) 29(1) mV. 0-100 rise time is about 0.90(1) ms, 100-0 falling time is about 0.93(1) ms.",
+      "busy": "start-busy rising 8.740(1) ms, start-busy falling 54.055(1) ms.",
+      "capture": "all edges are visible. sample rate is 10 MSa/s, timebase is 20.0 ms/div. 2 Mpts total"
+    },
+    "sample_interval_s": 1e-07,
+    "sample_rate_sa_per_s": 10000000,
+    "scope_model_reported": "Agilent 54831B",
+    "start_to_ch4_falling_midpoint_s": null,
+    "start_to_ch4_rising_midpoint_s": null,
+    "timebase_s_per_div": 0.02,
+    "uncertainty_interpretation": "Parentheses interpreted as last-digit uncertainty; confidence/coverage, channel skew, threshold definition and complete instrument error budget are unspecified. Sample spacing is not calibrated timing accuracy."
+  },
+  "source_artifact": {
+    "path": "docs/evidence/k2460-2026-11-02-timestamp-attempt-06.json",
+    "sha256": "47644615630fa568bde7c2022dac8eb22290d2a7b29a04109f976305782d0f77"
+  }
+}

@@ -1,14 +1,17 @@
-"""Validated models, transport, simulation, and a simulator-backed Ophyd Flyer."""
+"""Validated acquisition models, simulation, Ophyd and guarded target candidates."""
 
 from .acquisition import AcquisitionRequest, PreparedAcquisition, StartMode
 from .measurement import (
     MEASUREMENT_SCHEMA,
     ClockMapping,
+    ElectricalField,
     FieldOrigin,
     MappingQuality,
+    MeasurementAperture,
     MeasurementRecord,
     MeasurementSchema,
     RecordChunk,
+    RelativeTimeOrigin,
     RetainedBuffer,
     RetainedBufferMetadata,
     TimestampReference,
@@ -41,10 +44,13 @@ __all__ = [
     "GalvanostaticHold",
     "MEASUREMENT_SCHEMA",
     "ClockMapping",
+    "ElectricalField",
     "FieldOrigin",
     "MappingQuality",
+    "MeasurementAperture",
     "MeasurementRecord",
     "MeasurementSchema",
+    "RelativeTimeOrigin",
     "MultisineSpec",
     "PRBSWaveform",
     "PotentiostaticHold",

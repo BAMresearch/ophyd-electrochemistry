@@ -9,21 +9,25 @@ starts its elapsed clock on actual execution, not preparation or external arming
 ## Buffered record
 
 The hardware-neutral Python representation is now fixed as
-`ophyd-electrochemistry/measurement-v2`; see the [M5 data guide](m5-data.md).
+`ophyd-electrochemistry/measurement-v4`; see the [M5 data guide](m5-data.md).
 It separates run-constant `MeasurementSchema`, per-sample `MeasurementRecord`,
 terminal `RetainedBufferMetadata`, and offset-addressed `RecordChunk`. The first
-M6 Bluesky projection is implemented for a terminal validated `RetainedBuffer`;
-target acquisition and raw-2460-to-shared-record projection remain open.
+M6 Bluesky projection is implemented for a terminal validated `RetainedBuffer`.
+`project_current_hold_buffer` provides a pure frozen-2460-record projection;
+the live target acquisition backend remains open.
 
 Data keys are prefixed with the ophyd device name. The example device `ec` yields:
 
 | Key | Type/unit | Meaning |
 |---|---|---|
 | `ec_sample_index` | integer | Zero-based monotonic acquisition index |
-| `ec_time_relative` | number, s | Instrument time since actual START |
+| `ec_time_relative` | number, s | Time since the declared `relative_time_origin`: actual START or first stored reading |
 | `ec_instrument_timestamp` | number, s | Unmodified instrument clock value |
-| `ec_aperture_start`, `ec_aperture_end` | number, s | Half-open integration window relative to actual START |
-| `ec_available` | number, s | Earliest time this complete record became available |
+| `ec_voltage_aperture_start`, `ec_voltage_aperture_end` | number, s | Voltage integration window relative to actual START, or `-1` when unknown |
+| `ec_current_aperture_start`, `ec_current_aperture_end` | number, s | Current integration window relative to actual START, or `-1` when unknown |
+| `ec_voltage_timing_origin`, `ec_current_timing_origin` | string | Each aperture's provenance, or `unknown` |
+| `ec_voltage_timing_uncertainty`, `ec_current_timing_uncertainty` | number, s | Each window boundary's conservative uncertainty, or `-1` when unestablished |
+| `ec_available` | number, s | Earliest established complete-record availability, or `-1` when unknown |
 | `ec_voltage` | number, V | Measured voltage or explicitly identified source readback |
 | `ec_current` | number, A | Measured current or explicitly identified source readback |
 | `ec_source_function` | string | `voltage` or `current` |
@@ -37,7 +41,35 @@ Data keys are prefixed with the ophyd device name. The example device `ec` yield
 
 Source readback and measurement may be obtained sequentially or through buffer
 options; no simultaneous dual-channel V/I guarantee is assumed. Declare each
-field's origin, integration aperture, and any timestamp offset in metadata.
+field's origin and integration aperture independently. A known aperture carries
+its own timing origin and optional uncertainty; an unproved aperture is absent,
+not an assumed NPLC interval. The fixed stream uses `-1` only as a declared
+unknown sentinel; it is not a negative physical time. Unknown aperture timing
+requires unknown program mapping for the complete pair.
+
+Configuration declares `relative_time_origin`, `instrument_timestamp_origin`,
+`actual_start_known`, `timestamp_reference` and `timestamp_field`. The relative
+zero point, raw instrument clock origin and physical timestamp reference are
+independent. `RelativeTimeOrigin.ACTUAL_START` requires an instrument START
+anchor for populated buffers. `FIRST_STORED_READING` requires an unknown START
+anchor and zero relative time for the first stored reading. In that mode both
+field windows, availability and program mapping must remain unknown. First-
+reading zero is not physical START and supplies no START-alignment accuracy.
+`instrument_timestamp_resolution_s` may be `None` for first-reading-relative
+records when physical clock resolution is unestablished; printed timestamp
+precision is not resolution or accuracy. Actual-START mode requires a known
+positive resolution.
+Flyer configuration also reports `voltage_origin`, `current_origin`,
+`timing_origin` and `instrument_timestamp_resolution` (seconds, `-1` when
+unknown). Provenance and physical clock resolution are distinct claims.
+
+A timestamp at aperture start/midpoint/end selects one known field window.
+`buffer_stored` and `unresolved` references select no field and establish no aperture. The raw
+instrument timestamp and actual-START anchor remain separate. A known complete-
+record availability must follow both known windows and any stored timestamp.
+A stored timestamp must itself follow both known field windows. These checks
+apply on a known actual-START time axis; changing the relative zero cannot
+establish an aperture or a physical START observation.
 The run configuration records the measurement-schema ID plus independent source
 and measurement status-word definitions so the raw integer columns remain
 interpretable without backend-private knowledge.
@@ -98,11 +130,11 @@ canonical encoding so a digest can be checked without regenerating trigonometry.
 
 Waveform acquisitions must provide a reproducible mapping from each electrical
 record to logical waveform point/PRBS bit and repeat, relative to actual execution
-START. The descriptor must declare the sample timestamp's physical reference
-and aperture. A single point index is valid as a dwell association only when
-its integration aperture lies within that dwell; the reading is still integrated.
-Crossing an edge
-requires overlap information or an explicit ambiguous/invalid mapping flag;
+START, or explicitly declare unknown mapping. The descriptor must declare the
+sample timestamp's physical reference and aperture. A single point index is valid
+as a dwell association only when both field integration windows lie within that
+dwell; each reading is still integrated. Crossing an edge requires overlap
+information or an explicit ambiguous/invalid mapping flag;
 unknown phase must not be represented as a valid index. Fields needed to expose
 this mapping are now fixed in the M5 Python record contract. The M6 descriptor
 will keep the same meanings and encode absent indices as `-1`; it must not
@@ -151,3 +183,16 @@ are distinct. Collection is not a durable-storage acknowledgement: retain
 instrument data until explicitly archived or discarded. A document transport
 failure still has no guaranteed exactly-once document semantics; use
 sample_index/acquisition ID for reconciliation and diagnostic export for replay.
+
+## Timed target candidate provenance
+
+The timed-resistor candidate adds cached `ec_target_*` configuration: hardware
+readiness (0), timing status (`uncommissioned`), instrument identity, runtime
+build/full SHA-256, measurement profile and canonical request/plan/config/transport JSON and observed line frequency.
+Program identity covers the plan, configuration and exact runtime artifact.
+The target export wrapper `ophyd-electrochemistry/k2460-timed-hold-export-v1`
+contains these inputs and the complete retained buffer under a SHA-256 checksum,
+written with exclusive creation. It is separate from raw proof archives v1/v2/v3;
+no automatic import/adoption of an unknown retained hardware run is implemented.
+Physical cadence, output duration and protection latency require the
+[timed-hold commissioning checks](timed-hold-commissioning.md).

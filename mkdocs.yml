@@ -13,7 +13,9 @@ nav:
   - M3 transport: m3-transport.md
   - M4 local runtime: m4-runtime.md
   - M5 data records: m5-data.md
+  - Aperture calibration design: timestamp-aperture-calibration.md
   - M6 Ophyd device: m6-device.md
+  - Timed-hold commissioning: timed-hold-commissioning.md
   - Evidence: assumptions.md
   - Architecture: architecture.md
   - Triggering: triggering.md

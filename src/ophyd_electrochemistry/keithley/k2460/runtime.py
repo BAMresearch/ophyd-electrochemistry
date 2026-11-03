@@ -225,6 +225,8 @@ class CurrentHoldAcquisitionProof:
         if not isinstance(self.start_mode, StartMode):
             raise ValidationError("start_mode must be a StartMode")
         settings = resolve_measurement_profile(self.measurement_profile)
+        if settings.voltage_range_v != 0.2:
+            raise ValidationError("M5 proof supports only the commissioned 0.2 V profiles")
         if self.voltage_limit_v > settings.voltage_range_v:
             raise ValidationError(
                 "M5 voltage limit must not exceed the fixed measurement-profile range"

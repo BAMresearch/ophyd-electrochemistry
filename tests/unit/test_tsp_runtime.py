@@ -231,17 +231,18 @@ def test_current_hold_acquisition_rejects_values_outside_proof_envelope(changes)
 
 def test_measurement_profiles_are_exact_immutable_allowlisted_settings():
     expected = {
-        K2460MeasurementProfile.NPLC_1: (1, 1.0),
-        K2460MeasurementProfile.NPLC_0_1: (2, 0.1),
-        K2460MeasurementProfile.NPLC_0_01: (3, 0.01),
+        K2460MeasurementProfile.NPLC_1: (1, 1.0, 0.2),
+        K2460MeasurementProfile.NPLC_0_1: (2, 0.1, 0.2),
+        K2460MeasurementProfile.NPLC_0_01: (3, 0.01, 0.2),
+        K2460MeasurementProfile.NPLC_1_2V: (4, 1.0, 2.0),
     }
     assert set(K2460MeasurementProfile) == set(expected)
-    for profile, (code, nplc) in expected.items():
+    for profile, (code, nplc, voltage_range) in expected.items():
         settings = resolve_measurement_profile(profile)
         assert (settings.instrument_code, settings.nplc, settings.voltage_range_v) == (
             code,
             nplc,
-            0.2,
+            voltage_range,
         )
         assert not settings.autorange_enabled
         assert not settings.filter_enabled
@@ -249,6 +250,17 @@ def test_measurement_profiles_are_exact_immutable_allowlisted_settings():
         assert settings.autozero == "once_then_off"
     with pytest.raises(ValidationError):
         resolve_measurement_profile("k2460_0p2v_1nplc_v1")  # type: ignore[arg-type]
+
+
+def test_v14_count_proof_rejects_new_timed_only_profile_before_mutation():
+    with pytest.raises(ValidationError, match="only the commissioned 0.2 V profiles"):
+        CurrentHoldAcquisitionProof(
+            current_a=0.005,
+            source_range_a=0.01,
+            voltage_limit_v=1,
+            measurement_count=10,
+            measurement_profile=K2460MeasurementProfile.NPLC_1_2V,
+        )
 
 
 def test_runtime_status_parser_is_strict_and_typed():

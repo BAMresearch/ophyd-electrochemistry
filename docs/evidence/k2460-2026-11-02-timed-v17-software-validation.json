@@ -1,0 +1,39 @@
+{
+  "checks": {
+    "git_diff_check": "passed",
+    "inert_lua_graph": {
+      "does_not_emulate_event_semantics": true,
+      "external_contiguous_reachable_blocks": 39,
+      "external_terminal_off_paths": 5,
+      "fixture_sha256": "55393c56fc460d9a5f6941f580932d3ee6c42efff68d4f283100bed19e2f18ef",
+      "immediate_contiguous_reachable_blocks": 29,
+      "immediate_terminal_off_paths": 4
+    },
+    "isolated_wheel_v14_v17_reconstruction": "passed",
+    "lua_5_0_2_wire_syntax": "passed",
+    "november_evidence_json_files_parsed_before_this_record": 52,
+    "ruff_format_files": 94,
+    "ruff_lint": "passed",
+    "source_and_wheel_build": "passed",
+    "source_distribution_fixture_byte_equality": "passed",
+    "strict_mkdocs": "passed",
+    "strict_mypy_files": 29,
+    "strict_twine": "passed",
+    "wheel_source_resource_byte_equality_files": 31
+  },
+  "distributions": {
+    "dist/ophyd_electrochemistry-0.0.0-py3-none-any.whl": "9b56da5f7d37b8b51ecdad7c62f327d4faeb051028cf089959e06142f105053b",
+    "dist/ophyd_electrochemistry-0.0.0.tar.gz": "7d1ae1bdb2d1e7f75f2826e53cd942ada06c413a9ceba85ea56e34b60a0fe887"
+  },
+  "hardware_gates_promoted": [],
+  "hardware_result": "Installed v17 failed the first energized ten-reading hold with cadence_overrun and retained one record. It is not accepted for timed holds. Independent safe recovery and archive checks are in the separate run-04 evidence.",
+  "runtime": {
+    "build": "m4-finite-current-hold-v17",
+    "sha256": "68b25b2e332351cc134ccdf47d04799a365e2294776f9ab30ca78f6e5408b521"
+  },
+  "schema": "ophyd-electrochemistry/offline-validation-v1",
+  "scope": "Offline checkout/package validation; no hardware acceptance promotion",
+  "tests_passed": 527,
+  "v14_sha256": "c4c40686bf2016f5c55c820b5d0bd34f78915dd10e6a77823d0a9cad245c6e82",
+  "validated_at_utc": "2026-11-02T16:13:39.818948+00:00"
+}

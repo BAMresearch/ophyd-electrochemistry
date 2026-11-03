@@ -398,11 +398,19 @@ class PyVisaKeithley2460Transport:
         """
 
         from .runtime import packaged_runtime
+        from .timed_runtime import timed_packaged_runtime
 
-        artifact = packaged_runtime()
-        if (source, abi, sha256) != (artifact.source, artifact.abi, artifact.sha256):
+        artifact = next(
+            (
+                candidate
+                for candidate in (packaged_runtime(), timed_packaged_runtime())
+                if (source, abi, sha256) == (candidate.source, candidate.abi, candidate.sha256)
+            ),
+            None,
+        )
+        if artifact is None:
             raise UnsupportedCapabilityError(
-                "Only the exact packaged, reviewed M4 runtime may be loaded"
+                "Only the exact packaged, reviewed M4 runtimes may be loaded"
             )
         with self._lock:
             self._require_resource_locked()

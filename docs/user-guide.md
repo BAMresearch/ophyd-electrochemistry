@@ -2,8 +2,12 @@
 
 This is the user-facing entry point for configuring an experiment, running the
 Ophyd lifecycle and interpreting the resulting paired current/voltage records.
-The operational device currently runs against the independent simulator. The
-real 2460 adapter remains blocked on the target START/aperture timestamp proof.
+The operational device runs against the independent simulator. A separate
+`Keithley2460Backend` now connects the Flyer to a packaged timed-hold runtime
+candidate, restricted to explicitly opted-in resistor commissioning. It is not
+yet commissioned or approved for battery work. It preserves first-reading-relative
+I/V data with unknown START/aperture timing; no 10 ms accuracy is established.
+See the [timed-hold commissioning procedure](timed-hold-commissioning.md).
 
 The companion `notebooks/ophyd_electrochemistry_quickstart.ipynb` is an offline
 executable example. It provides three selectable simulated pulse programs, runs
@@ -212,8 +216,17 @@ acquisition. `read_configuration()` currently reports the backend, host polling,
 configured minimum and prepared/effective completion timing, chunk size, start
 mode, commissioned START edge and acquisition ID. The run descriptor also
 records the measurement-schema ID and,
-once retained data are available, the definitions of both status words. The
-target backend should additionally report model, serial,
+once retained data are available, the definitions of both status words and the
+`ec_timestamp_reference`, `ec_timestamp_field`, `ec_relative_time_origin`,
+`ec_instrument_timestamp_origin`, `ec_actual_start_known`, `ec_voltage_origin`,
+`ec_current_origin`, `ec_timing_origin` and `ec_instrument_timestamp_resolution`
+values. Physical clock resolution is reported in seconds, with `-1` for unknown.
+The relative origin is `actual_start` or `first_stored_reading`, independently of the raw
+clock origin and physical timestamp reference. `ec_actual_start_known` is `1`
+only with an established START anchor; before retained schema it is `0` and
+origins/references are `unknown`. The timestamp field is
+`voltage` or `current` for an aperture reference and `unknown` for a buffered or
+unresolved reference. The target backend should additionally report model, serial,
 firmware, terminals, sense, off mode, safety/capability profile and complete
 measurement settings.
 
@@ -315,8 +328,9 @@ ID and archive destination.
 
 ## Resulting I/V data
 
-Each sample is one paired record, not an independently timed voltage row and
-current row. A real current-source resistor proof produced:
+Each sample is one paired record. Its voltage and current can have different
+integration windows; pairing does not establish simultaneous measurement. A real
+current-source resistor proof produced:
 
 | sample | first-reading-relative time (s) | measured voltage (V) | source-current readback (A) | source status | measurement status |
 |---:|---:|---:|---:|---:|---:|
@@ -331,12 +345,78 @@ commanded current remains a separate source-setpoint field. The raw checked JSON
 archive also records request, instrument and runtime identities, capacity,
 checksums and the two untouched instrument status words.
 
-The normalized Bluesky stream is named `electrochemistry`. Every event includes
-sample index; actual-START-relative, instrument, aperture and availability
-times; voltage and current; source function and setpoint; aperture-to-program
-mapping quality; and pulse/repeat/cycle/segment indices. A missing program index
-is represented as `-1` in the fixed Bluesky event schema and as `None` in the
-typed Python record.
+The normalized Bluesky stream is named `electrochemistry` and uses
+`ophyd-electrochemistry/measurement-v4`. Its fixed 25 fields include sample index;
+explicitly referenced relative and raw instrument timestamps; separate voltage/current
+apertures and timing provenance; availability time; voltage and current; source
+function and setpoint; aperture-to-program mapping quality; and
+pulse/repeat/cycle/segment indices.
+
+| Fixed stream fields (device named `ec`) | Meaning |
+|---|---|
+| `ec_voltage_aperture_start`, `ec_voltage_aperture_end` | Voltage integration window relative to actual START, in seconds |
+| `ec_current_aperture_start`, `ec_current_aperture_end` | Current integration window relative to actual START, in seconds |
+| `ec_voltage_timing_origin`, `ec_current_timing_origin` | Per-field timing origin: `instrument_reported`, `derived_from_configuration`, `synthetic`, or `unknown` |
+| `ec_voltage_timing_uncertainty`, `ec_current_timing_uncertainty` | Per-field uncertainty in seconds, or `-1` when unknown |
+| `ec_available` | Record availability relative to actual START, in seconds, or `-1` when unknown |
+
+In the typed Python record, each aperture is a `MeasurementAperture` with start,
+end, origin and optional uncertainty, or `None` if its window is unknown.
+Unknown stream aperture endpoints and missing program indices use `-1`; their
+typed equivalents use `None`. Unknown aperture provenance uses `unknown`.
+An unknown field aperture also requires unknown program mapping. The simulator
+explicitly supplies identical voltage/current windows with synthetic origin and
+zero virtual-clock uncertainty with an `actual_start` relative origin; this does
+not establish timing on hardware.
+
+With `first_stored_reading`, zero is the first retained reading rather than
+physical START. Actual START, both field windows, availability and program
+mapping must remain unknown. Read configuration before interpreting
+`ec_time_relative`; first-reading zero supplies no external-trigger accuracy.
+The schema may leave physical instrument clock resolution unknown; printed raw
+timestamp precision is not a timing accuracy bound.
+
+For already retrieved target data, import `project_current_hold_buffer` from
+`ophyd_electrochemistry.keithley.k2460`. It validates the full contiguous frozen
+raw chunk extent and checksums, preserving voltage, source-current readback,
+separate statuses and raw first-reading-relative time, including an interrupted
+acquisition's retained prefix. The caller supplies matching acquisition metadata
+and terminal outcome. Its result explicitly leaves START, windows, availability,
+mapping and physical clock resolution unknown. It performs no hardware operation
+and does not provide a live Flyer backend or establish physical timing claims
+from a raw archive.
+
+The schema declares which timestamp reference is used: `aperture_start`,
+`aperture_midpoint`, or `aperture_end` names a selected voltage or current
+aperture. `buffer_stored` and `unresolved` name neither field and do not imply
+that the timestamp identifies an electrical integration boundary. Version 3
+introduced the field-specific aperture values above; version 4 adds the explicit
+relative-time origin and support for unknown actual START.
+
+The existing v14 proof accepts a finite reading count, not a requested hold
+duration or sample spacing. The new v17 candidate programs both settings on the
+instrument. `Keithley2460Backend` accepts only `GalvanostaticHold`; duration must
+be an exact multiple of sample spacing, with spacing at least 0.1 s, duration at
+most 60 s and at most 600 records. The half-slot measurement deadline and local
+voltage cutoff checks require physical commissioning. Preparation keeps output
+OFF; connecting never installs a runtime or changes command language.
+
+Construct it only for the reviewed resistor using `commissioning_resistor=True`,
+an explicit source range, safety configuration and the separately installed exact
+candidate artifact. Its `hardware_ready` remains false. The new `NPLC_1_2V` default
+uses a fixed 2 V measurement range at 1 NPLC and has no bench acceptance yet;
+the existing three 0.2 V profiles retain only their prior scoped evidence.
+The planned higher-signal case is +5 mA, 1 V compliance, 1 s duration and 0.1 s
+spacing into the freshly confirmed 100 ohm / 1 W resistor: nominally 0.5 V and
+2.5 mW in the resistor. This calculation is not an energized test or accuracy
+claim. The plan's limits and fresh wiring/output checks must be reviewed before
+any scoped installation or acquisition.
+
+Target Flyer configuration adds `ec_target_hardware_ready`, timing status,
+instrument identity, runtime build/digest, measurement profile and canonical
+request/plan/config JSON. These metadata are cached; reading configuration causes
+no hardware transaction. Preserve the distinction between nominal programmed
+settings and uncalibrated raw stored-reading times.
 
 For a pulse experiment, records are scheduled measurements rather than one row
 per pulse. Mapping metadata distinguishes a settled aperture inside one dwell,
@@ -386,3 +466,7 @@ changes:
 Milestone completion should include this review even when no edit is needed.
 The guide must distinguish implemented simulator behavior, prepared target code
 and reviewed hardware evidence.
+
+The installed v17 timed candidate stopped its first energized commissioning hold
+with `cadence_overrun` after one of ten readings. It is not accepted for timed
+holds; see [current state](current-state.md) before further hardware work.

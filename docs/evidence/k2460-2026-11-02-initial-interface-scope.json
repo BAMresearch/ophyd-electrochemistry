@@ -1,0 +1,20 @@
+{
+  "accepted_initial_scope": "Basic bounded finite current holds, with raw buffer-relative timestamps and explicitly unknown START/electrical aperture alignment wherever not established. Approximate 10 ms alignment is a desired target, not a demonstrated accuracy bound.",
+  "current_hardware": "Last verified run2026110208 IDLE/OFF/0 A with one archived/matched proof reading retained and default-buffer extents preserved. No new hardware action/discard is authorized by this scope preference.",
+  "hardware_commands_sent": false,
+  "hardware_gates_promoted": [],
+  "implementation_state": "Simulator Flyer and guarded M4 finite current-hold acquisition exist; operational hardware backend/projection and explicit unknown-START contract support remain to be implemented/reviewed. Existing hard gate has not been silently removed.",
+  "next_bench_scope": "Define pass/fail cases before energizing: normal finite acquisition and collection, missing START timeout, programmatic abort, and recovery plus retained-data integrity. Case count is a planning breakdown, not a guarantee of four executions or full hardware-gate acceptance. Coarse timing check should target requested ~10 ms tolerance; no separate aperture precision claim.",
+  "next_software_work": [
+    "Coherently revise timing contracts/model to represent unknown actual START instead of relabelling first-reading zero as START. Preserve raw times and per-field unknown apertures.",
+    "Implement bounded finite-current-hold hardware backend using packaged runtime and single connection owner; no added arbitrary TSP or per-sample LAN control.",
+    "Validate real backend lifecycle/projection with meaningful transport tests before new bench acceptance."
+  ],
+  "recorded_at_utc": "2026-11-02T14:27:33.956221+00:00",
+  "schema": "ophyd-electrochemistry/initial-hardware-interface-scope-v1",
+  "stopping_decision": "No more identical constant-resistor START/BUSY repeats proposed; fine per-field aperture calibration is outside initial usability scope.",
+  "user_reports_verbatim": [
+    "Basic finite holds; timing explicitly uncalibrated",
+    "a rough time calibration will probably do, on the order of 10 ms is fine."
+  ]
+}

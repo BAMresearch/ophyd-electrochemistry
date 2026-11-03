@@ -24,8 +24,10 @@ from ..exceptions import (
 from ..keithley.k2460 import Keithley2460Capabilities, Keithley2460Compiler, Keithley2460Config
 from ..keithley.k2460.compiler import CompiledProgram
 from ..measurement import (
+    ElectricalField,
     FieldOrigin,
     MappingQuality,
+    MeasurementAperture,
     MeasurementRecord,
     MeasurementSchema,
     RecordChunk,
@@ -421,6 +423,7 @@ class SimulatedRuntime:
                 current_origin=FieldOrigin.SYNTHETIC,
                 timing_origin=TimingOrigin.SYNTHETIC,
                 timestamp_reference=TimestampReference.APERTURE_START,
+                timestamp_field=ElectricalField.VOLTAGE,
                 instrument_timestamp_origin="simulator local virtual clock since creation",
                 instrument_timestamp_resolution_s=resolution,
                 instrument_start_timestamp_s=(
@@ -465,12 +468,18 @@ class SimulatedRuntime:
             quality = MappingQuality.SETTLED_SINGLE_DWELL
         else:
             quality = MappingQuality.UNSETTLED_SINGLE_DWELL
+        aperture = MeasurementAperture(
+            start_relative_s=record.aperture_start_tick * resolution,
+            end_relative_s=record.aperture_end_tick * resolution,
+            origin=TimingOrigin.SYNTHETIC,
+            uncertainty_s=0,
+        )
         return MeasurementRecord(
             sample_index=record.sample_index,
             instrument_timestamp_s=(self._start_tick + record.aperture_start_tick) * resolution,
             time_relative_s=record.aperture_start_tick * resolution,
-            aperture_start_relative_s=record.aperture_start_tick * resolution,
-            aperture_end_relative_s=record.aperture_end_tick * resolution,
+            voltage_aperture=aperture,
+            current_aperture=aperture,
             available_relative_s=record.available_tick * resolution,
             voltage_v=record.voltage_v,
             current_a=record.current_a,

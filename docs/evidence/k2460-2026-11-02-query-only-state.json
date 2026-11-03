@@ -1,0 +1,81 @@
+{
+  "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "mutating_hardware_commands_sent": false,
+  "observed_at_utc": "2026-11-02T10:16:41.669602+00:00",
+  "queries": [
+    {
+      "command": "print(smu.source.output)",
+      "response": "smu.OFF"
+    },
+    {
+      "command": "print(trigger.model.state())",
+      "response": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t0"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "response": "0"
+    },
+    {
+      "command": "print(oe_m4_runtime_build)",
+      "response": "nil"
+    },
+    {
+      "command": "print(oe_m4_runtime_abi)",
+      "response": "nil"
+    },
+    {
+      "command": "print(oe_m4_initialize == nil)",
+      "response": "true"
+    },
+    {
+      "command": "print(oe_m4_c4c40686bf2016f5c55c820b == nil)",
+      "response": "true"
+    },
+    {
+      "command": "print(oe_m5_buffer == nil)",
+      "response": "true"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity)",
+      "response": "12867\t100000"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity)",
+      "response": "0\t100000"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "response": "2"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "response": "0"
+    },
+    {
+      "command": "print(localnode.showevents)",
+      "response": "0"
+    },
+    {
+      "command": "print(smu.terminals)",
+      "response": "smu.TERMINALS_FRONT"
+    },
+    {
+      "command": "print(smu.measure.sense)",
+      "response": "smu.SENSE_2WIRE"
+    },
+    {
+      "command": "print(smu.source.offmode)",
+      "response": "smu.OFFMODE_NORMAL"
+    },
+    {
+      "command": "print(digio.line[3].mode)",
+      "response": "digio.MODE_DIGITAL_IN"
+    }
+  ],
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "schema": "ophyd-electrochemistry/k2460-query-only-state-v1"
+}

@@ -50,10 +50,21 @@ def test_offline_quickstart_executes_and_ends_safe(
         and "ec_measurement_status" in row
         for row in rows
     )
+    assert all(
+        row["ec_voltage_aperture_start"] == row["ec_current_aperture_start"]
+        and row["ec_voltage_aperture_end"] == row["ec_current_aperture_end"]
+        and row["ec_voltage_timing_origin"] == row["ec_current_timing_origin"] == "synthetic"
+        and row["ec_voltage_timing_uncertainty"] == row["ec_current_timing_uncertainty"] == 0
+        for row in rows
+    )
     assert namespace["repo_root"] == root
     device = namespace["ec"]
     assert device.state.value == "complete"
     assert device.output_enabled is False
+    configuration = device.read_configuration()
+    assert configuration["ec_measurement_schema"]["value"].endswith("/measurement-v4")
+    assert configuration["ec_timestamp_reference"]["value"] == "aperture_start"
+    assert configuration["ec_timestamp_field"]["value"] == "voltage"
     figure = namespace["figure"]
     assert isinstance(figure, Figure)
     assert len(figure.data) == 3

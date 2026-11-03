@@ -1,0 +1,48 @@
+{
+  "events_consumed": false,
+  "failure": {
+    "message": "",
+    "type": "AssertionError"
+  },
+  "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "observed_at_utc": "2026-11-02T10:31:37.800737+00:00",
+  "phase": "fresh_session_inspection",
+  "proof_run_id": 2026110202,
+  "raw_chunk": {
+    "offset": 0,
+    "records": [
+      {
+        "buffer_relative_time_s": 0.0,
+        "measured_voltage_v": 0.10248732567,
+        "measurement_status": 8,
+        "sample_index": 0,
+        "source_current_a": 0.0010000156472,
+        "source_status": 200
+      }
+    ],
+    "records_sha256": "dff88ad8c3563238d0068f4a259bc7d9650cf26322dcd4bfeac5cce04d036e12",
+    "schema": "ophyd-electrochemistry/k2460-buffer-proof-v1",
+    "total_records": 1
+  },
+  "reading": {
+    "fractional_seconds": 0.92645694,
+    "line_frequency_hz": 50,
+    "nplc": 1.0,
+    "relative_timestamp_s": 0.0,
+    "utc_seconds": 1793619609
+  },
+  "records_discarded": false,
+  "terminal": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_IDLE",
+    "model_substate": "trigger.STATE_IDLE",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": true,
+    "state": "complete",
+    "timer_overrun": false
+  }
+}

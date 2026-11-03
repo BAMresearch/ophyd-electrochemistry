@@ -1,0 +1,42 @@
+{
+  "channel_assignments_from_prior_report": {
+    "1": "READY",
+    "2": "BUSY",
+    "3": "generator output before series resistor",
+    "4": "unassigned"
+  },
+  "hardware_commands_sent": false,
+  "hardware_gates_promoted": [],
+  "probe_compatibility_or_compensation_verified": false,
+  "probe_specifications_verified": false,
+  "recorded_at_utc": "2026-11-02T11:53:10.435932+00:00",
+  "reported_ch3_node": "Generator output before 1 kohm START series resistor",
+  "reported_dut_low_connections": "Only Keithley FORCE LO/SENSE LO; no chassis/earth bond reported",
+  "reported_probe_model": "P060-S",
+  "reported_probe_ratio": "1:10",
+  "reported_scope_model": "Agilent 54831B",
+  "reviewed_sources": [
+    {
+      "section": "3-12",
+      "supports": "54830-series selectable 1 Mohm/50 ohm inputs and AC/DC coupling",
+      "url": "https://www.keysight.com/us/en/assets/9018-04651/quick-start-guides/9018-04651.pdf"
+    },
+    {
+      "section": "4-1 and 5-12",
+      "supports": "FORCE LO/SENSE LO not internally tied to chassis; grounding changes DUT reference",
+      "url": "https://download.tek.com/manual/2460-901-01C_Sept_2019_Ref.pdf"
+    },
+    {
+      "supports": "Kikusui lists P060-S as probe; does not establish its input/compensation specifications",
+      "url": "https://kikusui.co.jp/spec/pcb%E5%90%AB%E6%9C%89%E3%81%AE%E6%9C%89%E7%84%A1%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6/"
+    }
+  ],
+  "schema": "ophyd-electrochemistry/k2460-scope-wiring-clarification-v1",
+  "source": "User report; no new physical measurements by the agent",
+  "timing_evidence_qualification": [
+    "Reported generator-to-BUSY delays cannot be asserted to be physical Keithley START-pin-to-BUSY delays without a measured or bounded transfer from generator output to pin 3.",
+    "Previously saved scope-analysis intervals are arithmetic results conditional on the observed edge representing actual START. No propagation/threshold correction through the series path is established; retain original files and apply this qualification.",
+    "BUSY-high duration derived from rising/falling delays to the same reference is unaffected by a common reference offset, subject to original uncharacterized scope error budget.",
+    "The latest report does not independently prove that older unexported captures used exactly the same observation node."
+  ]
+}

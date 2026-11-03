@@ -1,0 +1,54 @@
+{
+  "expected_records": 10,
+  "export_artifact": {
+    "file_sha256": "daa27da7c7ef82896ecbc23ca4f327c0892be3fdad68282aadcf156c5b6eaa95",
+    "path": "/Users/bpauw/Code/ophyd-electrochemistry/docs/evidence/k2460-2026-11-02-timed-v17-run-04-export.json",
+    "payload_sha256": "52feeb51a35369a63021af9db037c3035d8f77acd73923d65d0334e3660e5587"
+  },
+  "hardware_gates_promoted": [],
+  "instrument_events": {
+    "errors": 0,
+    "information": 3,
+    "warnings": 2
+  },
+  "open_issue": "The deadline/cadence event-consumption design did not complete the requested hold. Reused per-block event observations may be involved; this is a hypothesis, not established firmware behavior. Review before further hardware tests.",
+  "reading": {
+    "buffer_relative_time_s": 0.0,
+    "measured_voltage_v": 0.51247859001,
+    "measurement_status": 8,
+    "sample_index": 0,
+    "source_current_a": 0.004983975552,
+    "source_status": 200
+  },
+  "retained_records": 1,
+  "retention": "One record remains on the instrument; no disposition authorized. Default buffers must remain preserved.",
+  "reviewed_at_utc": "2026-11-02T16:09:09.744168+00:00",
+  "schema": "ophyd-electrochemistry/timed-resistor-review-v1",
+  "scope_report": {
+    "capture_obtained": false,
+    "physical_plateau_voltage_v": null,
+    "physical_pulse_duration_s": null,
+    "source": "User reply after run",
+    "verbatim": "scope did not trigger"
+  },
+  "source_artifact": {
+    "path": "docs/evidence/k2460-2026-11-02-timed-v17-run-04.json",
+    "sha256": "971c556439edc054e9498ee3e67bda757f7401274940f1b59459f9a7d3a87d77"
+  },
+  "terminal_cause": "cadence_overrun",
+  "timing": {
+    "actual_start_known": false,
+    "electrical_apertures_known": false,
+    "instrument_timestamp_resolution_s": null,
+    "physical_duration_verified": false
+  },
+  "verified_checks": [
+    "Export payload SHA-256 and file SHA-256 match recorded values",
+    "Independent fresh raw reading matches projected voltage/current/timestamp/status/index",
+    "Default-buffer counts/extents/capacities unchanged; contents not compared",
+    "Failed outcome and partial record preserved through explicit recovery",
+    "Independent final runtime IDLE/model EMPTY/output OFF/programmed 0 A",
+    "All five authorized events archived; final unread counts zero"
+  ],
+  "waveform_complete": false
+}

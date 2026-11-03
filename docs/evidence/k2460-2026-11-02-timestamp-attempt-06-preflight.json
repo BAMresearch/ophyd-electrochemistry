@@ -1,0 +1,10 @@
+{
+  "connection_succeeded": false,
+  "failure": "TransportConnectionError opening TCPIP0::169.254.113.151::5025::SOCKET; underlying VISA connection timeout -1073807339 before identity/state queries",
+  "hardware_gates_promoted": [],
+  "instrument_state_observed": false,
+  "mutating_hardware_commands_sent": false,
+  "observed_at_utc": "2026-11-02T13:42:26.356459+00:00",
+  "queries": [],
+  "user_reported_ch4": "Wired as instructed: P2220 at 1x, tip HI, ground LO; settings and physical output-OFF/capture confirmation pending"
+}

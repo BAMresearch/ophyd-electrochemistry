@@ -1,0 +1,173 @@
+{
+  "armed": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 5,
+    "model_state": "trigger.STATE_RUNNING",
+    "model_substate": "trigger.STATE_RUNNING",
+    "output_enabled": false,
+    "ready_level": 1,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "waiting_start",
+    "timer_overrun": false
+  },
+  "armed_observed_at_utc": "2026-11-02T10:30:14.429003+00:00",
+  "assessment": "UNREVIEWED; independent scope delay/uncertainty and event markers not yet combined; no timing gate claim.",
+  "authorization": "User explicitly authorized preparation and arming of the one-reading +1 mA / 0.2 V / 1 NPLC external-START proof, with four-wire resistor wiring and START/BUSY scope capture confirmed.",
+  "buffer_after": {
+    "capacity_records": 16,
+    "end_index": 1,
+    "record_count": 1,
+    "start_index": 1
+  },
+  "config": {
+    "buffer": {
+      "capacity_ceiling_records": 16,
+      "transfer_chunk_records": 16
+    },
+    "io": {
+      "abort": 4,
+      "abort_edge": "rising",
+      "busy": 2,
+      "busy_asserted_level": 1,
+      "external_abort_enabled": false,
+      "ready": 1,
+      "ready_asserted_level": 1,
+      "start": 3,
+      "start_edge": "rising"
+    },
+    "safety": {
+      "charge_current_max_a": 0.001,
+      "discharge_current_max_a": 0.001,
+      "power_abs_max_w": 0.001,
+      "source_off_mode": "normal",
+      "voltage_max_v": 0.2,
+      "voltage_min_v": -0.2
+    },
+    "sense": "remote",
+    "source_terminal": "front",
+    "timing": {
+      "command_timeout_s": 10.0,
+      "duration_tolerance_s": 0.0,
+      "external_start_timeout_s": 60.0,
+      "frequency_tolerance_hz": 0.0,
+      "measurement_period_tolerance_s": 0.0,
+      "poll_period_s": 0.01,
+      "required_abort_latency_s": 1.0,
+      "required_cutoff_latency_s": 1.0,
+      "scan_rate_tolerance_v_per_s": 0.0,
+      "shutdown_timeout_s": 2.0,
+      "source_period_tolerance_s": 0.0
+    },
+    "visa_resource": "TCPIP0::169.254.113.151::5025::SOCKET"
+  },
+  "default_buffers_after": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "default_buffers_before": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "event_counts_after": {
+    "errors": 0,
+    "information": 7,
+    "warnings": 1
+  },
+  "event_counts_before": {
+    "errors": 0,
+    "information": 0,
+    "warnings": 0
+  },
+  "events_consumed": false,
+  "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "initial": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 0,
+    "model_state": "trigger.STATE_BUILDING",
+    "model_substate": "trigger.STATE_BUILDING",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "idle",
+    "timer_overrun": false
+  },
+  "output_after": "smu.OFF",
+  "phase": "terminal_output_off_records_retained",
+  "prepared": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 0,
+    "model_state": "trigger.STATE_BUILDING",
+    "model_substate": "trigger.STATE_BUILDING",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "prepared",
+    "timer_overrun": false
+  },
+  "proof_run_id": 2026110202,
+  "raw_chunk": {
+    "offset": 0,
+    "records": [
+      {
+        "buffer_relative_time_s": 0.0,
+        "measured_voltage_v": 0.10248732567,
+        "measurement_status": 8,
+        "sample_index": 0,
+        "source_current_a": 0.0010000156472,
+        "source_status": 200
+      }
+    ],
+    "records_sha256": "dff88ad8c3563238d0068f4a259bc7d9650cf26322dcd4bfeac5cce04d036e12",
+    "schema": "ophyd-electrochemistry/k2460-buffer-proof-v1",
+    "total_records": 1
+  },
+  "reading": {
+    "fractional_seconds": 0.92645694,
+    "line_frequency_hz": 50,
+    "nplc": 1.0,
+    "relative_timestamp_s": 0.0,
+    "utc_seconds": 1793619609
+  },
+  "records_discarded": false,
+  "request": {
+    "current_a": 0.001,
+    "measurement_count": 1,
+    "measurement_profile": "k2460_0p2v_1nplc_v1",
+    "source_range_a": 0.001,
+    "start_mode": "external_trigger",
+    "voltage_limit_v": 0.2
+  },
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "retry_basis": "Previous attempt was confirmed rejected before initiation with START HIGH, followed by inspected force-safe/recovery to IDLE/OFF/0 A. User then drove START low; query confirmed LOW and authorized warning/error diagnostics were archived. Existing scoped arm authorization remains active.",
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v14",
+    "script_name": "oe_m4_c4c40686bf2016f5c55c820b",
+    "sha256": "c4c40686bf2016f5c55c820b5d0bd34f78915dd10e6a77823d0a9cad245c6e82"
+  },
+  "schema": "ophyd-electrochemistry/k2460-timestamp-attempt-v1",
+  "sense_after_prepare": "smu.SENSE_4WIRE",
+  "showevents_mask": 0,
+  "start_input_before_prepare": "digio.STATE_LOW",
+  "started_at_utc": "2026-11-02T10:30:13.984585+00:00",
+  "terminal": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_IDLE",
+    "model_substate": "trigger.STATE_IDLE",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": true,
+    "state": "complete",
+    "timer_overrun": false
+  },
+  "terminal_observed_at_utc": "2026-11-02T10:30:45.413649+00:00"
+}

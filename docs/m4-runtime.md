@@ -216,3 +216,29 @@ event log.
 
 Primary source: [Tektronix Model 2460 Reference Manual Rev. C](https://download.tek.com/manual/2460-901-01C_Sept_2019_Ref.pdf),
 sections 2, 8, 13, 14, and 15.
+
+## Separate timed-hold candidate
+
+The unchanged v14 base artifact remains available for its existing proofs.
+`timed_packaged_runtime()` combines its exact wire bytes with the reviewed
+`tsp/timed_hold.tsp` extension, producing the separately digest-named v17
+artifact. The loader allowlists only these two complete packaged artifacts.
+`TimedHoldRuntimeController` exposes explicit installation and a guarded
+`replace_known_v14_and_install()` path; neither connection nor preparation
+installs it implicitly. Replacement refuses retained records and requires exact
+v14 identity plus stopped IDLE/OFF/0 A. Reinitializing an existing v17 likewise
+requires stopped IDLE/OFF/0 A and an empty proof buffer.
+
+The timed path programs duration and sample spacing separately, single-reading
+measurement blocks, local voltage-cutoff branches and half-slot deadline checks.
+It adds finite timers 2–4 and disables them during initialization, abort, force-safe
+and recovery. Its 2 V / 1 NPLC measurement profile is new and uncommissioned; the
+v14 count-proof API rejects it before any mutation. Standalone Lua syntax checks
+do not establish TSP command support, event-consumption semantics, preemption or
+physical timing/protection latency. This is a resistor-only commissioning
+candidate, not an operational battery runtime. See the
+[guarded procedure and acceptance matrix](timed-hold-commissioning.md).
+
+The installed v17 timed candidate stopped its first energized commissioning hold
+with `cadence_overrun` after one of ten readings. It is not accepted for timed
+holds; see [current state](current-state.md) before further hardware work.
