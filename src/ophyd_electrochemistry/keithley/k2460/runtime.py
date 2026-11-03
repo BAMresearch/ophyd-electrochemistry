@@ -170,6 +170,10 @@ class RuntimeArtifact:
     source: str
     sha256: str
     script_name: str
+    # Globals the installer checks; the M4/timed runtimes use the defaults.
+    abi_variable: str = "oe_m4_runtime_abi"
+    build_variable: str = "oe_m4_runtime_build"
+    initializer: str = "oe_m4_initialize"
 
 
 @dataclass(frozen=True, kw_only=True)

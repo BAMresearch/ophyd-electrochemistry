@@ -25,7 +25,7 @@ ophyd-electrochemistry-k2460-diagnose = "ophyd_electrochemistry.keithley.k2460.c
 ophyd-electrochemistry-new-run = "ophyd_electrochemistry.sequences.notebook:main"
 
 [dependency-groups]
-test = ["pytest>=8,<10"]
+test = ["pytest>=8,<10", "lupa>=2.8,<3"]
 lint = ["ruff>=0.11,<1", "mypy>=1.15,<3"]
 docs = ["mkdocs>=1.6,<2"]
 notebook = ["ipykernel>=6,<8", "nbformat>=5.10,<6", "plotly>=6,<7"]

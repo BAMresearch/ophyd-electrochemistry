@@ -391,26 +391,31 @@ class PyVisaKeithley2460Transport:
         return decoded
 
     def load_runtime(self, source: str, *, abi: str, sha256: str) -> None:
-        """Load only the exact packaged M4 runtime while output is confirmed OFF.
+        """Load only an exact packaged runtime while output is confirmed OFF.
 
         The script name contains a source-digest prefix. A failed or partial
         upload invalidates the session and is never retried automatically.
         """
 
         from .runtime import packaged_runtime
+        from .sequencer_runtime import sequencer_packaged_runtime
         from .timed_runtime import timed_packaged_runtime
 
         artifact = next(
             (
                 candidate
-                for candidate in (packaged_runtime(), timed_packaged_runtime())
+                for candidate in (
+                    packaged_runtime(),
+                    timed_packaged_runtime(),
+                    sequencer_packaged_runtime(),
+                )
                 if (source, abi, sha256) == (candidate.source, candidate.abi, candidate.sha256)
             ),
             None,
         )
         if artifact is None:
             raise UnsupportedCapabilityError(
-                "Only the exact packaged, reviewed M4 runtimes may be loaded"
+                "Only the exact packaged, reviewed runtimes may be loaded"
             )
         with self._lock:
             self._require_resource_locked()
@@ -428,11 +433,11 @@ class PyVisaKeithley2460Transport:
                 )
             if absent == "true":
                 globals_absent = self._query_locked(
-                    "print(oe_m4_runtime_abi == nil and oe_m4_initialize == nil)"
+                    f"print({artifact.abi_variable} == nil and {artifact.initializer} == nil)"
                 )
                 if globals_absent != "true":
                     raise IncompatibleInstrumentError(
-                        "M4 runtime globals already exist without the expected digest-named "
+                        "Runtime globals already exist without the expected digest-named "
                         "script; reboot before installation"
                     )
                 self._write_locked(f"loadscript {artifact.script_name}")
@@ -446,16 +451,16 @@ class PyVisaKeithley2460Transport:
                         "Runtime did not compile into the expected digest-named script"
                     )
                 self._write_locked(f"{artifact.script_name}.run()")
-            loaded_abi = self._query_locked("print(oe_m4_runtime_abi)")
-            loaded_build = self._query_locked("print(oe_m4_runtime_build)")
-            initializer_type = self._query_locked("print(type(oe_m4_initialize))")
+            loaded_abi = self._query_locked(f"print({artifact.abi_variable})")
+            loaded_build = self._query_locked(f"print({artifact.build_variable})")
+            initializer_type = self._query_locked(f"print(type({artifact.initializer}))")
             if loaded_abi != artifact.abi or loaded_build != artifact.build:
                 raise IncompatibleInstrumentError(
                     "Loaded runtime ABI/build does not match the packaged artifact"
                 )
             if initializer_type != "function":
                 raise IncompatibleInstrumentError("Loaded runtime initializer is unavailable")
-            self._write_locked("oe_m4_initialize()")
+            self._write_locked(f"{artifact.initializer}()")
             final_output = self._query_locked("print(smu.source.output)")
             if parse_source_output_enabled(final_output):
                 raise ShutdownUnconfirmed("Runtime initialization did not leave output OFF")
