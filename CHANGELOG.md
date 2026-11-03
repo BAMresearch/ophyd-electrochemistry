@@ -4,6 +4,10 @@
 
 ## Unreleased
 
+- Add a read-only run viewer notebook with a run index, live SWMR follow,
+  full-resolution review, and voltage overlays against time or signed charge.
+  Display sampling preserves bin extrema so short pulses stay visible.
+
 - Add the simulator-first per-run sequence notebook with Excel selection,
   request summaries, simulated previews, live plots and HDF5 result review.
   Add clean notebook generation and the `ophyd-electrochemistry-new-run` CLI

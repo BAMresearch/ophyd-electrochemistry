@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1202 tests pass. Pure models/compiler, independent simulator,
+- **Offline:** 1258 tests pass. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -54,6 +54,11 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   processes read live snapshots while a run is written. After a killed kernel
   `read_run_file` reads all flushed data (outcome `incomplete`); other HDF5
   tools need the `repair_run_file` copy. Write run files to local disk.
+- **Read-only viewer (O11):** `notebooks/k2460_view.ipynb` indexes run files,
+  follows live SWMR data in one output, reviews full-resolution V/I and events,
+  and overlays voltage against time or signed charge. Bin-extrema display
+  sampling preserves short pulses; corrupt files stay visible in the index.
+  Tested offline with completed, cutoff, aborted and incomplete runs.
 - **On the 2460, via scripts (not via Bluesky):** PyVISA transport, identity/TSP
   checks, query-only inspection, packaged runtime install/replace, count-bounded
   current holds (runtime v14) with immediate or external START, buffered
@@ -94,7 +99,7 @@ survive that). `defbuffer1` holds 1,337 continuous-mode readings from today
 
 1. B1 on the next bench day: `bench/plan-b1.md` (rewire first, §0), runner
    `bench/b1_sequencer.py` (R1–R11 resistor, C1–C2 RC dummy; `--dry-run`
-   compiles the matrix offline). Needs the RC dummy's values. O1–O6, O9, O10 are
+   compiles the matrix offline). Needs the RC dummy's values. O1–O7 and O9–O11 are
    implemented offline.
 2. QueueServer flow on hardware after B1 (B2: RC dummy, then a sacrificial cell).
 

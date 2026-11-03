@@ -182,11 +182,17 @@ arrives.
 
 - **Progress:** `qserver status`, `qserver history get`, and terminal 2.
 - **Data:** each run writes `<data_dir>/<measurement_id>_<UTC time>.h5`.
-  - To look at a file while it is written, use a notebook: `from
-    ophyd_electrochemistry.sequences.callbacks import plot_run_file`, then
-    `plot_run_file(path).show()`. Rerun it to refresh.
+  - **Watching runs:** open `notebooks/k2460_view.ipynb` in the repository
+    environment (`experiment` extra). Set `DATA_DIR` to the session's local
+    data directory, then run the overview and Follow cells. Follow updates one
+    plot until the run ends; the notebook stop button leaves it early without
+    affecting acquisition. The notebook also shows a full-resolution run with
+    events and overlays voltage against time or signed charge (`COMPARE`,
+    `X_AXIS`). It only reads files, so it can stay open beside the QueueServer.
   - Each file ends with an outcome: `completed`, `stopped_cutoff` (a cutoff
-    with STOP ended it; normal), `aborted` or `error`.
+    with STOP ended it; normal), `aborted` or `error`. `incomplete` means it is
+    still being written or its writer crashed; stop Follow manually in the
+    latter case. Unreadable files appear in the overview with the error detail.
 - **Finish the current run, then stop:** `qserver queue stop`.
 - **Stop the current run now:**
 
