@@ -59,6 +59,7 @@ markers = ["hardware: explicit bench tests requiring a commissioned 2460 and a d
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+extend-exclude = ["briefs"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]

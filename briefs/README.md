@@ -11,10 +11,10 @@ Rules that apply to every brief (Codex: follow these):
 - No hardware access. Do not modify files outside the brief's "Files" list
   unless a test or lint fix requires it; say so in the report if you do.
 - Validate with `uv run --locked pytest -q`, `uv run --locked ruff check .`,
-  `uv run --locked ruff format --check .` and `uv run --locked mypy` (see
+  `uv run --locked ruff format --check .` and `uv run --locked mypy src scripts` (see
   `docs/development.md`). If you add a dependency, run `uv lock` and commit the
   updated `uv.lock`.
-- Commit on branch `mvp-sprint` with the message given in the brief. Do not push.
+- Commit on branch `mvp-sprint` with the message given in the brief (if your sandbox cannot commit, say so in the report). Do not push.
 - Do not update `CHANGELOG.md`, `docs/current-state.md`, the user guide or the
   quickstart notebook; Claude does that at milestones.
 - Finish with a report of at most 15 lines: files changed, tests added, checks

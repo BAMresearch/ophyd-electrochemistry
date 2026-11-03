@@ -16,11 +16,11 @@ same semantics the instrument sequencer will have, producing records in the
 
 ## Semantics (must match the planned instrument runtime)
 
-- Steps run in `expanded()` order. Each step samples at `fast_interval_s` for
-  the first `fast_window_s`, then at `interval_s`, until `duration_s`.
-  Sample k of a step is taken at the end of its interval (the first sample is at
-  `t_step_start + interval`), so a full step yields exactly `step_records(step)`
-  samples.
+- Steps run in `expanded()` order. Sample times come **only** from
+  `sample_schedule(step)` (in `models.py`): for each `(count, interval)` phase,
+  sample k is taken at the end of its k-th interval. A full step therefore lasts
+  exactly `duration_s` and yields `step_records(step)` samples. Do not
+  re-derive sample times from `Sampling` fields.
 - After each sample: if V is outside `[limits.v_min_abs, limits.v_max_abs]` the
   run stops (outcome `stopped_cutoff`, event `stop`). Else if a step cutoff is
   met (`v_min`/`v_max` for CURRENT/REST, `i_abs_min` for VOLTAGE): event
