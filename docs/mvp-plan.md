@@ -1,6 +1,8 @@
 # MVP sprint plan
 
-Started 2026-11-03. Experiment: two beamline days, date **TBD** (within ~4 weeks).
+Started 2026-11-03. Experiment: two beamline days in the **first week of December 2026**;
+software freeze Mon 30 Nov. Human-facing living plan: Claude Doc
+"K2460 battery-pulse MVP — living plan". Codex task briefs: `briefs/`.
 The beamline does not run Bluesky; we run our own stack next to it.
 
 ## Scope
@@ -26,17 +28,17 @@ readouts. Bench days are normally Thu/Fri/Mon.
 
 **Protocol estimates (user, 2026-11-03, may change):** two-electrode cells;
 capacity and currents TBD. Pulse times 0.1–100 s (Renard series); rest = pulse
-time, minimum 1 s; repeats ~100 at the shortest to ~20 at the longest; SOC set
+time, minimum 1 s; repeats log-interpolated from 100 at 0.1 s to 6 at 100 s; SOC set
 and checked by voltage (CC to a target voltage, then rest).
 Consequences:
 
-- A full R5 series (16 pulse times) with log-interpolated repeats takes about
-  **7.6 h per SOC**; 100 s × 20 alone is 2.2 h. Needs trimming for a two-day
-  beamtime (fewer long-pulse repeats, a coarser series, or an upper cap).
+- A full R5 series (16 pulse times) then takes about **2.9 h per SOC** and
+  ~281k records (largest single run ~26k records).
 - 0.1 s pulses need sub-10 ms sampling (0.1 NPLC ≈ 5 ms/reading on the resistor);
   100 s pulses at that rate would produce ~10⁶ records. Steps therefore get
-  two-phase sampling: a fast interval for an initial window after the edge,
-  then a slow interval.
+  two-phase sampling (agreed): a fast interval for an initial window after the
+  edge, then a slow interval. Proposed defaults 5 ms (0.1 NPLC) for 0.5 s, then
+  100 ms (1 NPLC); confirm on the bench.
 
 **Out (for now):** leader/follower QueueServers, PRBS/multisine/arbitrary
 waveform playback, aperture/timestamp metrology beyond buffer timestamps,
@@ -109,14 +111,14 @@ Off-day (no hardware):
 
 | # | Task | Status |
 |---|---|---|
-| O1 | `Step`/`Sequence` models, validation, protocol builders (cycling, bipolar pulse block, Renard helper) | todo |
-| O2 | Excel run-sheet template + loader | todo |
-| O3 | Simulator backend with cell model | todo |
+| O1 | `Step`/`Sequence` models, validation, protocol builders (cycling, bipolar pulse block, Renard helper) | Codex brief 01 |
+| O2 | Excel run-sheet template + loader | Codex brief 02 |
+| O3 | Simulator backend with cell model | Codex brief 04 (pure engine) |
 | O4 | Flyer integration with live chunk reads; `run_sequence` plan; live plot callback | todo |
 | O5 | Sequencer TSP + host backend, mocked-transport tests, offline Lua syntax check | todo |
 | O6 | Per-run notebook template (simulator first) | todo |
 | O7 | QueueServer startup profile + integration tests against the simulator | deferred |
-| O9 | HDF5 writer (equipment / run settings incl. Excel row / readouts) | todo |
+| O9 | HDF5 writer (equipment / run settings incl. Excel row / readouts) | Codex brief 03 |
 | O8 | Bench runner script that executes a test matrix and writes one evidence file | todo |
 
 Bench days (in order):
