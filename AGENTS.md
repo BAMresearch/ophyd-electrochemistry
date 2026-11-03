@@ -66,7 +66,7 @@ scripted runners, so a bench day is spent executing, not designing.
 ## Development workflow
 
 - Use `uv` with the committed `uv.lock` and the commands in `docs/development.md`
-  (Python 3.12). Run tests, ruff and mypy before reporting work done.
+  (Python 3.14). Run tests, ruff and mypy before reporting work done.
 - Inspect `git status` first; preserve unrelated user changes.
 - Work happens on the `mvp-sprint` branch. Leave pushes, merges and releases to
   the user. Do not bump versions manually; preserve the changelog

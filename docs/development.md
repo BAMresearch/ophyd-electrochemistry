@@ -4,8 +4,8 @@
 
 Install uv using [Astral's installation instructions](https://docs.astral.sh/uv/getting-started/installation/).
 Run `uv python install` and `uv sync --locked` in the repository. The development
-Python pin is 3.12; the compatibility target remains 3.11–3.13. Select `.venv`
-in VS Code. `uv run --locked` runs commands in that environment.
+and beamline Python is 3.14 (`.python-version`); older versions are not a
+target. Select `.venv` in VS Code. `uv run --locked` runs commands in that environment.
 
 `pyproject.toml` defines runtime dependencies and optional `visa` support.
 Dependency groups separate `test`, `lint`, `docs`, `build`, and `release` tools;
@@ -54,15 +54,13 @@ uv sync --locked
 uv run --locked pytest tests/contract
 ```
 
-The dependency range is now `bluesky>=1.15.1,<1.16`. The abort test must still
+The dependency range was then `bluesky>=1.15.1,<1.16`; it is now
+`bluesky>=1.16,<1.17` (full suite passed on 1.16.0, 3 Nov 2026). The abort test must still
 raise `FailedStatus`, emit a failed Stop document and preserve its partial data;
 only the duplicate unretrieved-Future diagnostic disappears. The new regression
 test checks a subprocess through process exit, with asyncio debugging enabled.
 It does not suppress logging or patch RunEngine internals.
 
-For the documented development Python explicitly use `uv sync --locked --python 3.12`.
-Python 3.14 remains outside this project's current 3.11–3.13 CI matrix;
-the dependency fix does not establish full project compatibility with 3.14.
 
 ## Reference implementation and adaptations
 
@@ -139,6 +137,3 @@ Unpack the changed-files archive **in the repository root**. Paths begin with
 repository directory, `.git`, environment, or generated distribution inside it.
 Review `git diff` and new files, run the documented checks, then commit/upload.
 Use Git/VS Code to commit dot-prefixed workflow/configuration files as well.
-The current GitHub baseline also tracks an old `examples/__pycache__` bytecode
-file; `.gitignore` prevents new bytecode, but removing an already tracked cache
-requires `git rm --cached -r examples/__pycache__` in your checkout.

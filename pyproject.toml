@@ -9,7 +9,7 @@ description = "Contract template for Bluesky electrochemistry and a Keithley 246
 readme = "README.md"
 license = "BSD-3-Clause"
 requires-python = ">=3.11"
-dependencies = ["bluesky>=1.15.1,<1.16", "ophyd>=1.11.2,<2", "event-model>=1.23,<2"]
+dependencies = ["bluesky>=1.16,<1.17", "ophyd>=1.11.2,<2", "event-model>=1.23,<2"]
 classifiers = ["Development Status :: 1 - Planning", "Programming Language :: Python :: 3"]
 
 [project.optional-dependencies]
