@@ -3,6 +3,7 @@ theme: readthedocs
 nav:
   - Overview: index.md
   - Current project state: current-state.md
+  - MVP sprint plan: mvp-plan.md
   - User guide and quickstart: user-guide.md
   - Available sequences: available-sequences.md
   - Development and releases: development.md
