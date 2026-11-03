@@ -43,7 +43,12 @@ from .sequencer import (
     _call as runtime_call,
 )
 from .sequencer_runtime import sequencer_packaged_runtime
-from .transport import InstrumentIdentity, parse_source_output_enabled
+from .transport import (
+    InstrumentIdentity,
+    PyVisaKeithley2460Transport,
+    VisaTransportConfig,
+    parse_source_output_enabled,
+)
 
 _T = TypeVar("_T")
 _READ_CHUNK = 250  # oe_seq_read maximum, ~28 KB per reply at 15 digits (T5)
@@ -647,4 +652,42 @@ class Keithley2460SequenceBackend:
             return path
 
 
-__all__ = ["READOUT_FIELDS", "ClockOffset", "Keithley2460SequenceBackend", "guarded"]
+def k2460_sequence_backend(
+    resource: str,
+    *,
+    terminals: Literal["front", "rear"],
+    expected_serial_number: str | None = None,
+    four_wire: bool = True,
+    start_edge: Literal["rising", "falling"] = "rising",
+    visa_backend: str = "@py",
+    open_timeout_ms: int = 5_000,
+    io_timeout_ms: int = 10_000,
+) -> Keithley2460SequenceBackend:
+    """A sequence backend on a PyVISA session; nothing is sent until ``connect``.
+
+    Needs the ``visa`` extra. The open timeout covers a cold link-local link
+    (bench, 3 Nov); the I/O timeout covers a 250-record read (~20 ms) with margin.
+    """
+    config = VisaTransportConfig(
+        resource_name=resource,
+        backend=visa_backend,
+        open_timeout_ms=open_timeout_ms,
+        io_timeout_ms=io_timeout_ms,
+        required_language="TSP",
+    )
+    return Keithley2460SequenceBackend(
+        PyVisaKeithley2460Transport(config),
+        terminals=terminals,
+        four_wire=four_wire,
+        start_edge=start_edge,
+        expected_serial_number=expected_serial_number,
+    )
+
+
+__all__ = [
+    "READOUT_FIELDS",
+    "ClockOffset",
+    "Keithley2460SequenceBackend",
+    "guarded",
+    "k2460_sequence_backend",
+]

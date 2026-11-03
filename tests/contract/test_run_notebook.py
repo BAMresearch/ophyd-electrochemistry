@@ -73,9 +73,11 @@ def test_simulator_notebook_end_to_end(monkeypatch, tmp_path):
     assert live and "completed" in live[-1].layout.title.text
 
 
-def test_hardware_stops_before_file_creation(monkeypatch, tmp_path):
-    with pytest.raises(NotImplementedError, match="hardware backend arrives with O5"):
-        execute(monkeypatch, tmp_path, backend="k2460")
+def test_unconfirmed_hardware_run_stops_before_io_and_file_creation(monkeypatch, tmp_path):
+    namespace = {}
+    with pytest.raises(ValidationError, match="CONFIRM_MEASUREMENT_ID = 'example-rest'"):
+        execute(monkeypatch, tmp_path, backend="k2460", namespace=namespace)
+    assert not namespace["backend"]._transport.connected
     assert not (tmp_path / "data").exists()
 
 

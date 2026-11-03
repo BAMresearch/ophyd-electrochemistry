@@ -624,7 +624,10 @@ def test_consecutive_runs_acknowledge_read_records(backend, instrument, limits):
 # Through the Flyer and the RunEngine
 
 
-def test_run_sequence_end_to_end(backend, instrument, limits):
+def test_run_sequence_end_to_end(backend, instrument, limits, tmp_path):
+    from ophyd_electrochemistry.sequences.callbacks import RunFileWriter
+    from ophyd_electrochemistry.sequences.run_file import read_run_file
+
     request = pulse_request(limits)
     sim, rows = instrument_records(request.sequence, limits)
     instrument.instant = (rows, "end")
@@ -632,7 +635,13 @@ def test_run_sequence_end_to_end(backend, instrument, limits):
     re = RunEngine({}, call_returns_result=True)
     docs = []
     re.subscribe(lambda name, doc: docs.append((name, doc)))
+    writer = RunFileWriter(tmp_path)
+    re.subscribe(writer)
     assert re(run_sequence(flyer, request)).plan_result == "completed"
+    saved = read_run_file(writer.path)
+    assert saved["run"]["outcome"] == "completed"
+    assert saved["equipment"]["clock_method"].startswith("eventlog.post")
+    np.testing.assert_array_equal(saved["readout"]["step_index"], sim.readout["step_index"])
     descriptor = next(d["uid"] for n, d in docs if n == "descriptor" and d["name"] == "readout")
     pages = [d for n, d in docs if n == "event_page" and d["descriptor"] == descriptor]
     np.testing.assert_array_equal(

@@ -217,3 +217,35 @@ def test_cli_requires_explicit_limits(sheet, tmp_path):
     with pytest.raises(SystemExit) as error:
         main([str(sheet), "example-rest", str(tmp_path)])
     assert error.value.code == 2
+
+
+def _device_namespace(backend_name, request):
+    cells = nbformat.read(TEMPLATE, as_version=4).cells
+    settings = next(c for c in cells if "settings" in c.metadata.get("tags", []))
+    device = next(c for c in cells if "k2460_sequence_backend(" in c.source)
+    namespace = {}
+    exec(settings.source, namespace)
+    namespace.update(BACKEND=backend_name, request=request)
+    exec(device.source, namespace)
+    return namespace
+
+
+def test_template_builds_the_2460_backend_without_touching_it(request_spec):
+    from ophyd_electrochemistry.keithley.k2460.sequence_backend import (
+        Keithley2460SequenceBackend,
+    )
+
+    namespace = _device_namespace("k2460", request_spec)
+    backend = namespace["backend"]
+    assert isinstance(backend, Keithley2460SequenceBackend)
+    assert backend.terminals == "front" and backend.four_wire
+    transport = backend._transport
+    assert not transport.connected
+    assert transport.config.resource_name == namespace["VISA_RESOURCE"]
+    assert transport.config.required_language == "TSP"
+    assert namespace["flyer"].name == "k2460"
+
+
+def test_template_rejects_unknown_backend(request_spec):
+    with pytest.raises(ValidationError, match="Unknown BACKEND"):
+        _device_namespace("keithley", request_spec)

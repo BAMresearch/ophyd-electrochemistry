@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1176 tests pass. Pure models/compiler, independent simulator,
+- **Offline:** 1178 tests pass. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -39,8 +39,9 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   yet run on the 2460 (B1).
 - **Per-run notebook (O6):** Excel selection, request summary, synthetic preview,
   live plot and saved-file review; clean copies via `ophyd-electrochemistry-new-run`
-  with explicit session limits. Simulator only; hardware selection fails before
-  creating a run file. Save the executed notebook beside its HDF5 file.
+  with explicit session limits. `BACKEND = "k2460"` selects the sequencer
+  backend (confirmation gate before any I/O; not yet run on hardware). Save the
+  executed notebook beside its HDF5 file.
 - **Run files:** incremental HDF5 writer/reader with separate equipment/run
   metadata, compressed readouts and events; exclusive creation, per-append flush
   and explicit terminal outcomes. SWMR mode (HDF5 1.10 format): other
@@ -62,7 +63,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   the first sample (`cadence_overrun`); superseded by the sequencer design in the
   plan. Do not develop it further.
 - The hardware Bluesky path exists but has not run on the 2460; no
-  voltage-source (CV) step on hardware yet; the notebook cannot select it yet.
+  voltage-source (CV) step on hardware yet.
 - `runtime.tsp` sets `smu.source.offmode = smu.OFFMODE_NORMAL` — unsafe for cells.
   The sequencer must use HIGH-Z.
 - Hard-coded commissioning limits (10 mA, 2 V, 60 s) are too small for cycling.
@@ -86,8 +87,8 @@ survive that). `defbuffer1` holds 1,337 continuous-mode readings from today
 
 ## Next steps
 
-1. O5: notebook `BACKEND = "k2460"` option; then B1 on the resistor and RC
-   dummy cell (`docs/sequencer-design.md` §13). O1–O6, O9, O10 are
+1. O5: B1 on the resistor and RC dummy cell (`docs/sequencer-design.md`
+   §13); test matrix and runner (O8) prepared offline first. O1–O6, O9, O10 are
    implemented offline.
 2. Build the QueueServer profile (O7) using the sequence Flyer and run-sheet loader.
 3. Prepare the bench-day B1 test matrix and runner (O8).
