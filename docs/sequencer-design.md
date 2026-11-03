@@ -67,8 +67,10 @@ Set once per run, output OFF, before building lists:
   sense is set inside every measure entry (it is per measure function).
 - **Fixed ranges, autorange OFF**, chosen once per run so pulses never change
   range: current source range = smallest range ≥ max |I| of current steps;
-  voltage measure range = smallest ≥ max(|v_min_abs|, |v_max_abs|); for voltage
-  steps: voltage source range likewise, current measure range ≥ `i_max_abs`.
+  voltage measure range = smallest ≥ `vlimit` (a smaller measure range clamps
+  the limit, E1); for voltage steps: voltage source range = smallest ≥ max |V|
+  of voltage steps, current measure range ≥ `i_max_abs`. A 0–2.5 V window
+  (vlimit 2.6 V) therefore measures on the 7 V range.
 - Compliance: current steps `vlimit = max(|v_min_abs|, |v_max_abs|) + vlimit_margin_v`
   (default 0.1 V, so the instrument-local cutoff fires before compliance shapes
   the waveform); voltage steps `ilimit = i_max_abs`.
@@ -286,7 +288,9 @@ Remaining, with the full runtime:
 3. Live poll for 5 minutes at 200 Hz through the backend; host CPU and lag.
 4. Abort mid-run; host-kill mid-run (model completes, output OFF).
 5. RC dummy cell: cutoffs, CV taper, marker lag with a capacitive load.
-8. RC dummy: CC to cutoff (NEXT and STOP), CV taper cutoff, HIGH-Z off state at
+6. Reading time on the 7 V measure range (the timing table is from the 2 V
+   range); update `SequencerProfile.reading_s` if it differs.
+7. RC dummy: CC to cutoff (NEXT and STOP), CV taper cutoff, HIGH-Z off state at
    a STOP (voltage after output OFF recorded by a separate DMM or by the next
    run's first reading).
 

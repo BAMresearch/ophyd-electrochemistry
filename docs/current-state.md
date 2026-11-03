@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1029 tests pass. Pure models/compiler, independent simulator,
+- **Offline:** 1151 tests pass. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -26,6 +26,10 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 - **Sequence simulation:** deterministic pure engine with OCV + R0 + R1‖C1,
   scheduled two-phase samples, CC/CV/rest, cutoff next/stop, repeat events and
   run-file-compatible readout chunks. Synthetic cell, not bench validated.
+- **Sequencer compiler/replay (brief 07):** pure config/block/sample compilation,
+  numeric runtime uploads, calibrated delay selection and incremental cutoff /
+  readback replay. Golden S1 layouts and noisy simulator comparisons pass;
+  runtime requires positive CV taper. Hardware backend and B1 validation remain.
 - **Per-run notebook (O6):** Excel selection, request summary, synthetic preview,
   live plot and saved-file review; clean copies via `ophyd-electrochemistry-new-run`
   with explicit session limits. Simulator only; hardware selection fails before
@@ -75,8 +79,9 @@ survive that). `defbuffer1` holds 1,337 continuous-mode readings from today
 
 ## Next steps
 
-1. O5: implement the sequencer per `docs/sequencer-design.md` (design done;
-   three user decisions in its §14). O1–O4, O6, O9, O10 are implemented offline.
+1. O5: finish the hardware backend atop the compiler/replay (brief 07 done)
+   and packaged runtime, per `docs/sequencer-design.md`. O1–O4, O6, O9, O10
+   are implemented offline.
 2. Build the QueueServer profile (O7) using the sequence Flyer and run-sheet loader.
 3. Prepare the bench-day B1 test matrix and runner (O8).
 
