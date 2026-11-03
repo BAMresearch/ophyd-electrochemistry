@@ -38,7 +38,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   Tested against the real runtime under Lua, including a RunEngine run; not
   yet run on the 2460 (B1).
 - **Per-run notebook (O6):** Excel selection, request summary, synthetic preview,
-  live plot and saved-file review; clean copies via `ophyd-electrochemistry-new-run`
+  live plot and saved-file review; clean copies via `oe-new-run`
   with explicit session limits. `BACKEND = "k2460"` selects the sequencer
   backend (confirmation gate before any I/O; not yet run on hardware). Save the
   executed notebook beside its HDF5 file.

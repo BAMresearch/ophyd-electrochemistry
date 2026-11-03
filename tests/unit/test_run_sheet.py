@@ -245,7 +245,7 @@ def test_single_fast_field_uses_default_partner(tmp_path, limits, field, value):
         load_run_sheet(write_sheet(tmp_path, [row]), limits)["rest"].sequence.steps[0].sampling
     )
     assert sampling == (
-        Sampling(1, 0.01, 0.5) if field == "fast_interval_s" else Sampling(1, 0.005, 1)
+        Sampling(1, 0.01, 0.5) if field == "fast_interval_s" else Sampling(1, 0.006, 1)
     )
 
 

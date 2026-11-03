@@ -6,6 +6,9 @@ from ..exceptions import ValidationError
 from ..validation import integer, number, positive
 from .models import CutoffAction, RepeatBlock, Sampling, Sequence, Step, StepMode
 
+# Decided 3 Nov 2026: 6 ms at 0.1 NPLC on the 2460 (5 ms needs 0.05 NPLC).
+DEFAULT_FAST_INTERVAL_S = 0.006
+
 
 def renard_series(t_min: float, t_max: float, series: int = 5) -> list[float]:
     """R5 or R10 preferred times in the closed interval [t_min, t_max]."""
@@ -69,7 +72,7 @@ def log_repeats(
 
 def two_phase_sampling(
     duration_s: float,
-    fast_interval_s: float = 0.005,
+    fast_interval_s: float = DEFAULT_FAST_INTERVAL_S,
     fast_window_s: float = 0.5,
     interval_s: float = 0.1,
 ) -> Sampling:
@@ -125,7 +128,7 @@ def bipolar_pulse_sequence(
     pre_rest_s: float = 10.0,
     v_min: float | None = None,
     v_max: float | None = None,
-    fast_interval_s: float = 0.005,
+    fast_interval_s: float = DEFAULT_FAST_INTERVAL_S,
     fast_window_s: float = 0.5,
     interval_s: float = 0.1,
     name: str = "",

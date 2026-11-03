@@ -34,7 +34,7 @@ make_template("runs.xlsx")  # Refuses to overwrite an existing workbook.
 Create a clean notebook for the selected row using explicit session limits:
 
 ```sh
-uv run --locked ophyd-electrochemistry-new-run runs.xlsx example-rest ~/k2460-data \
+uv run --locked oe-new-run runs.xlsx example-rest ~/k2460-data \
   --v-min 0 --v-max 3 --i-max 0.01 --max-duration-s 200000 --max-records 1000000
 ```
 

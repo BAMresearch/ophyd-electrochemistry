@@ -96,7 +96,7 @@ a test after any other unexpected stop; report the printed message and
 the evidence file. To inspect without changing anything:
 
 ```sh
-uv run --locked --extra visa ophyd-electrochemistry-k2460-diagnose \
+uv run --locked --extra visa oe-diagnose \
   --resource 'TCPIP0::169.254.113.151::5025::SOCKET' --backend '@py' --require-language TSP
 ```
 

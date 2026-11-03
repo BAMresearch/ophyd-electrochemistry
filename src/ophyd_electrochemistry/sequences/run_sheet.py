@@ -14,6 +14,7 @@ from typing import Literal
 
 from ..exceptions import ValidationError
 from .builders import (
+    DEFAULT_FAST_INTERVAL_S,
     bipolar_pulse_sequence,
     cycling_sequence,
     log_repeats,
@@ -69,7 +70,7 @@ _COLUMNS = {
     "max_step_s": "Time limit in s for each constant-current step; the step ends then "
     "even if its voltage was not reached. cycling: blank = 86400. soc_position: required.",
     "fast_interval_s": "Sampling interval in s during the first fast_window_s of every "
-    "step. bipolar_pulse: blank = 0.005. Other protocols: fast sampling only if set.",
+    "step. bipolar_pulse: blank = 0.006. Other protocols: fast sampling only if set.",
     "fast_window_s": "Length in s of the fast-sampling period at each step start. "
     "bipolar_pulse: blank = 0.5.",
     "interval_s": "Sampling interval in s after the fast period. Blank = 0.1 for "
@@ -194,7 +195,7 @@ def _build_sequence(row: Mapping[str, object]) -> Sequence:
             pre_rest_s=value("pre_rest_s", 10),
             v_min=optional("v_low"),
             v_max=optional("v_high"),
-            fast_interval_s=value("fast_interval_s", 0.005),
+            fast_interval_s=value("fast_interval_s", DEFAULT_FAST_INTERVAL_S),
             fast_window_s=value("fast_window_s", 0.5),
             interval_s=value("interval_s", 0.1),
         )
@@ -228,7 +229,7 @@ def _build_sequence(row: Mapping[str, object]) -> Sequence:
                     step,
                     sampling=two_phase_sampling(
                         step.duration_s,
-                        value("fast_interval_s", 0.005),
+                        value("fast_interval_s", DEFAULT_FAST_INTERVAL_S),
                         value("fast_window_s", 0.5),
                         interval,
                     ),
@@ -423,7 +424,7 @@ def make_template(path: str | Path, *, overwrite: bool = False) -> Path:
         (
             "Sampling",
             "For non-pulse protocols, either fast field enables two-phase sampling; "
-            "the other defaults to 0.005 s / 0.5 s. Short steps use only fast sampling.",
+            "the other defaults to 0.006 s / 0.5 s. Short steps use only fast sampling.",
         ),
         *_COLUMNS.items(),
     ]

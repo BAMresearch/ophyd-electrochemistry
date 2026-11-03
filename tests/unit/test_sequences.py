@@ -301,11 +301,11 @@ def test_record_formula_with_partial_fast_and_slow_intervals(duration, sampling,
 def test_two_phase_sampling_short_steps_are_all_fast():
     for duration in (0.1, 0.5):
         sampling = two_phase_sampling(duration)
-        assert sampling == Sampling(0.005)
-        assert (
-            step_records(current_step(duration_s=duration, sampling=sampling)) == duration / 0.005
+        assert sampling == Sampling(0.006)
+        assert step_records(current_step(duration_s=duration, sampling=sampling)) == math.ceil(
+            duration / 0.006
         )
-    assert two_phase_sampling(1) == Sampling(0.1, 0.005, 0.5)
+    assert two_phase_sampling(1) == Sampling(0.1, 0.006, 0.5)
 
 
 def test_r5_series_and_closed_endpoints():
@@ -367,10 +367,11 @@ def test_short_bipolar_protocol_duration_cutoffs_and_record_budget():
     assert sequence.repeat == RepeatBlock(1, 4, 100)
     assert [step.level for step in sequence.steps] == [0, 0.01, 0, -0.01, 0]
     assert [step.duration_s for step in sequence.steps] == [10, 0.1, 1, 0.1, 1]
-    assert sequence.steps[1].sampling == Sampling(0.005)
+    # 0.1 s at 6 ms: 17 samples, the interval shortened to 5.88 ms to fit the step.
+    assert sequence.steps[1].sampling == Sampling(0.006)
     for step in (sequence.steps[1], sequence.steps[3]):
         assert (step.v_min, step.v_max, step.on_cutoff) == (0, 4, CutoffAction.STOP)
-    assert expected_records(sequence) == 25_195
+    assert expected_records(sequence) == 21_379
     validate(sequence, limits())
     assert nominal_duration_s(bipolar_pulse_sequence(0.01, 2, 3)) == 34
     assert nominal_duration_s(bipolar_pulse_sequence(0.01, 2, 3, rest_s=4, pre_rest_s=1)) == 37

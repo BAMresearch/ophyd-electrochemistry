@@ -111,7 +111,7 @@ command requires an explicit VISA resource/backend and sends only `*IDN?`,
 `*LANG?`, and the language-appropriate source-output state query:
 
 ```bash
-uv run --locked --extra visa ophyd-electrochemistry-k2460-diagnose \
+uv run --locked --extra visa oe-diagnose \
   --resource 'TCPIP0::169.254.77.125::5025::SOCKET' \
   --backend '@py'
 ```

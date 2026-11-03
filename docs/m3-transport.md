@@ -18,11 +18,11 @@ Run with an explicit resource and backend. The target unit accepted both of thes
 forms during initial commissioning:
 
 ```bash
-uv run --locked --extra visa ophyd-electrochemistry-k2460-diagnose \
+uv run --locked --extra visa oe-diagnose \
   --resource 'TCPIP0::169.254.77.125::5025::SOCKET' \
   --backend '@py'
 
-uv run --locked --extra visa ophyd-electrochemistry-k2460-diagnose \
+uv run --locked --extra visa oe-diagnose \
   --resource 'TCPIP0::169.254.77.125::inst0::INSTR' \
   --backend '@py'
 ```
