@@ -36,27 +36,46 @@ class RunSpec:
     row: Mapping[str, object]
 
 
-# These descriptions also form the README sheet, keeping the template in sync.
+# These descriptions form the template's description row and README sheet. They
+# say what each value does, so a reader can check their understanding of it.
 _COLUMNS = {
-    "measurement_id": "str; required, unique, non-empty; first column. One row per run.",
-    "protocol": "str; required: bipolar_pulse, cycling, soc_position or rest.",
-    "start_mode": "str; immediate (default) or external.",
-    "current_a": "float (A); required for pulse, cycling, SOC; signed for SOC, positive otherwise.",
-    "pulse_s": "float (s); required for bipolar_pulse; positive pulse duration.",
-    "rest_s": "float (s); pulse default max(pulse_s, 1); cycling default 600; required SOC/rest.",
-    "repeats": "int; pulse default log_repeats(pulse_s), from 100 at 0.1 s to 6 at 100 s.",
-    "pre_rest_s": "float (s); pulse initial rest; default 10.",
-    "v_low": "float (V); required cycling low voltage; optional pulse lower STOP cutoff.",
-    "v_high": "float (V); required cycling high voltage; optional pulse upper STOP cutoff.",
-    "target_v": "float (V); required SOC voltage target; cutoff direction follows current sign.",
-    "cycles": "int; required positive number of cycles for cycling (charge first).",
-    "cv_i_abs_min_a": "float (A); cycling taper cutoff; blank omits CV; default CV maximum 3600 s.",
-    "max_step_s": "float (s); cycling CC maximum default 86400; required SOC CC maximum.",
-    "fast_interval_s": "float (s); pulse default 0.005; other protocols enable fast sampling.",
-    "fast_window_s": "float (s); pulse default 0.5; other protocols enable fast sampling if set.",
-    "interval_s": "float (s); pulse slow default 0.1; other protocols default 1.",
-    "sample_id": "str; optional sample identifier, preserved as metadata.",
-    "notes": "str; optional notes, preserved as metadata.",
+    "measurement_id": "Unique run name (text). Rows whose first cell starts with # are skipped.",
+    "protocol": "What to run: bipolar_pulse, cycling, soc_position or rest.",
+    "start_mode": "immediate: start when the notebook arms the run. external: wait for the "
+    "hardware start trigger. Blank = immediate.",
+    "current_a": "Current in A; positive current raises the cell voltage. bipolar_pulse: "
+    "amplitude, applied as +I then -I. cycling: magnitude for both directions. "
+    "soc_position: signed, the sign sets the direction.",
+    "pulse_s": "bipolar_pulse: duration of each +I and -I pulse in s.",
+    "rest_s": "Zero-current rest in s. bipolar_pulse: after each pulse (blank = larger of "
+    "pulse_s and 1). cycling: after each half-cycle (blank = 600). soc_position: after "
+    "reaching target_v. rest: total duration.",
+    "repeats": "bipolar_pulse: number of +I / rest / -I / rest blocks. Blank = 100 at 0.1 s "
+    "down to 6 at 100 s.",
+    "pre_rest_s": "bipolar_pulse: rest before the first pulse in s. Blank = 10.",
+    "v_low": "Lower voltage threshold in V; the 2460 watches the voltage, it does not hold "
+    "it. cycling: the downward step ends here. bipolar_pulse (optional): the run stops "
+    "if a pulse reaches it. Not the absolute safety limit (set in the notebook).",
+    "v_high": "Upper voltage threshold in V; the 2460 watches the voltage, it does not hold "
+    "it. cycling: the upward step ends here (and the CV hold, if any, holds this "
+    "voltage). bipolar_pulse (optional): the run stops if a pulse reaches it. Not the "
+    "absolute safety limit (set in the notebook).",
+    "target_v": "soc_position: constant current until the cell voltage reaches this value "
+    "in V, then rest_s at zero current.",
+    "cycles": "cycling: number of up/down cycles; each starts with the upward (positive "
+    "current) step.",
+    "cv_i_abs_min_a": "cycling: after the upward step, hold v_high until |current| falls "
+    "to this value in A (at most 3600 s). Blank = no voltage hold.",
+    "max_step_s": "Time limit in s for each constant-current step; the step ends then "
+    "even if its voltage was not reached. cycling: blank = 86400. soc_position: required.",
+    "fast_interval_s": "Sampling interval in s during the first fast_window_s of every "
+    "step. bipolar_pulse: blank = 0.005. Other protocols: fast sampling only if set.",
+    "fast_window_s": "Length in s of the fast-sampling period at each step start. "
+    "bipolar_pulse: blank = 0.5.",
+    "interval_s": "Sampling interval in s after the fast period. Blank = 0.1 for "
+    "bipolar_pulse, 1 otherwise.",
+    "sample_id": "Optional sample name; stored with the data.",
+    "notes": "Optional free text; stored with the data.",
 }
 _PROTOCOLS = {"bipolar_pulse", "cycling", "soc_position", "rest"}
 _REQUIRED = {
@@ -244,7 +263,8 @@ def load_run_sheet(
 ) -> dict[str, RunSpec]:
     """Load and validate every row, reporting all bad rows in one exception.
 
-    Empty rows are skipped, preserving Excel row numbers. IDs must be stored as
+    Empty rows and rows whose ``measurement_id`` starts with ``#`` (such as the
+    template's description row) are skipped, preserving Excel row numbers. IDs must be stored as
     text in Excel (e.g. ``001``); literal strings such as ``NA`` remain strings.
     Unknown columns are preserved. Dates/times become ISO strings in metadata.
     """
@@ -277,10 +297,19 @@ def load_run_sheet(
     if header_errors:
         raise ValidationError("\n".join(f"row 1 (<header>): {e}" for e in header_errors))
 
-    ids = Counter(record[0].strip() for record in records[1:] if isinstance(record[0], str))
+    def comment(record: tuple[object, ...]) -> bool:
+        return isinstance(record[0], str) and record[0].strip().startswith("#")
+
+    ids = Counter(
+        record[0].strip()
+        for record in records[1:]
+        if isinstance(record[0], str) and not comment(record)
+    )
     errors: list[str] = []
     runs: dict[str, RunSpec] = {}
     for row_number, record in enumerate(records[1:], start=2):
+        if comment(record):
+            continue
         row = {}
         row_errors = []
         for column, cell in zip(headers, record, strict=True):
@@ -332,6 +361,7 @@ def make_template(path: str | Path, *, overwrite: bool = False) -> Path:
     be reviewed and validated with the actual session's SafetyLimits.
     """
     import pandas as pd
+    from openpyxl.comments import Comment  # type: ignore[import-untyped]
     from openpyxl.styles import Alignment, Font  # type: ignore[import-untyped]
 
     path = Path(path)
@@ -371,8 +401,15 @@ def make_template(path: str | Path, *, overwrite: bool = False) -> Path:
         )
     for example in examples:
         example["notes"] = "PLACEHOLDER: review current, voltage window and limits before use."
+    descriptions = dict(_COLUMNS)
+    descriptions["measurement_id"] = "# " + descriptions["measurement_id"]
     readme = [
         ("Run sheet", "One row per run. Blank cells use defaults; required blanks are errors."),
+        (
+            "Description row",
+            "Row 2 says what each column does. It starts with # and is skipped; start any "
+            "other row's measurement_id with # to skip that run.",
+        ),
         (
             "Safety",
             "Current 1e-4 A and voltages are placeholders; review before use. "
@@ -392,7 +429,7 @@ def make_template(path: str | Path, *, overwrite: bool = False) -> Path:
     ]
     with path.open("wb" if overwrite else "xb") as stream:
         with pd.ExcelWriter(stream, engine="openpyxl") as writer:
-            pd.DataFrame(examples, columns=list(_COLUMNS)).to_excel(
+            pd.DataFrame([descriptions, *examples], columns=list(_COLUMNS)).to_excel(
                 writer,
                 sheet_name="Runs",
                 index=False,
@@ -403,16 +440,28 @@ def make_template(path: str | Path, *, overwrite: bool = False) -> Path:
                 index=False,
             )
             for sheet in writer.book.worksheets:
-                sheet.freeze_panes = "A2"
                 sheet.auto_filter.ref = sheet.dimensions
                 for cell in sheet[1]:
                     cell.font = Font(bold=True)
-                for column in sheet.columns:
-                    width = min(90, max(len(str(cell.value or "")) for cell in column) + 2)
-                    sheet.column_dimensions[column[0].column_letter].width = width
                 for cells in sheet.iter_rows(min_row=2):
                     for cell in cells:
                         cell.alignment = Alignment(vertical="top", wrap_text=True)
-            for cell in writer.book["Runs"]["A"][1:]:
+            runs_sheet, readme_sheet = writer.book["Runs"], writer.book["README"]
+            # Size Runs columns by header and values; the description row wraps
+            # and scrolls away, so each header also carries it as a hover note.
+            widest_description = 0.0
+            for column in runs_sheet.columns:
+                values = [column[0], *column[2:]]
+                width = min(40, max(24, *(len(str(cell.value or "")) + 2 for cell in values)))
+                runs_sheet.column_dimensions[column[0].column_letter].width = width
+                widest_description = max(widest_description, len(str(column[1].value)) / width)
+                column[1].font = Font(italic=True, color="595959")
+                column[0].comment = Comment(_COLUMNS[column[0].value], "ophyd-electrochemistry")
+            runs_sheet.row_dimensions[2].height = 15 * (math.ceil(widest_description) + 1)
+            runs_sheet.freeze_panes = "B2"
+            for cell in runs_sheet["A"][2:]:
                 cell.number_format = "@"
+            readme_sheet.freeze_panes = "A2"
+            readme_sheet.column_dimensions["A"].width = 18
+            readme_sheet.column_dimensions["B"].width = 100
     return path

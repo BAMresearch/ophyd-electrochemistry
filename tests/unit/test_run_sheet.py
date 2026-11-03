@@ -60,17 +60,34 @@ def test_template_round_trip(tmp_path, limits):
         validate(run.sequence, limits)
         json.dumps(run.row, allow_nan=False)
         assert "PLACEHOLDER" in run.notes
-    assert runs["example-pulse"].row_number == 2
+    assert runs["example-pulse"].row_number == 3  # Row 2 describes the columns.
     assert load_run_sheet(path, limits, sheet_name="Runs") == runs
     workbook = load_workbook(path)
     assert workbook.sheetnames == ["Runs", "README"]
     headers = [cell.value for cell in workbook["Runs"][1]]
     assert headers[0] == "measurement_id"
+    descriptions = dict(zip(headers, (cell.value for cell in workbook["Runs"][2]), strict=True))
+    assert descriptions["measurement_id"].startswith("# ")
+    assert all(descriptions.values())
+    assert "Not the absolute safety limit" in descriptions["v_high"]
     readme = dict(workbook["README"].values)
     assert set(headers) <= readme.keys()
-    assert workbook["Runs"].freeze_panes == "A2"
-    assert workbook["Runs"]["A2"].number_format == "@"
+    notes = {cell.value: cell.comment.text for cell in workbook["Runs"][1]}
+    assert notes == descriptions | {"measurement_id": descriptions["measurement_id"][2:]}
+    assert workbook["Runs"].freeze_panes == "B2"
+    assert workbook["Runs"]["A3"].number_format == "@"
     workbook.close()
+
+
+def test_comment_rows_are_skipped(tmp_path, limits):
+    rows = [
+        dict(measurement_id="# what each column means", current_a="amplitude in A"),
+        pulse(measurement_id="#pulse"),  # A run switched off; not a duplicate of "pulse".
+        pulse(),
+    ]
+    runs = load_run_sheet(write_sheet(tmp_path, rows), limits)
+    assert list(runs) == ["pulse"]
+    assert runs["pulse"].row_number == 4
 
 
 def test_template_refuses_overwrite(tmp_path):
