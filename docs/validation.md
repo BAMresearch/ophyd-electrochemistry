@@ -12,6 +12,40 @@ JSON files** parsed. The software check record is
 (repository-relative path). These checks do not override the failed hardware
 cadence result.
 
+## E1/E2 energized config-list recall on the resistor (3 November 2026)
+
+Tier 1, user-authorized: 100 ohm four-wire resistor (front), |I| <= 5 mA, voltage
+limit 1 V, digital line 2 ("busy") as marker, HIGH-Z for both functions. Output
+on for at most about 2.5 s per model; output confirmed OFF after every run.
+
+- **A source-function change turns the output OFF**, also inside a running
+  trigger model via `BLOCK_CONFIG_RECALL` (source status lost `STAT_OUTPUT`,
+  200 -> 72; direct `smu.source.func` change logs event 5073). A following
+  `BLOCK_SOURCE_OUTPUT ON` restores it: CC 4 mA (0.41 V) -> CV 0.30 V (2.93 mA)
+  with 24 ms extra between readings. CC -> CV steps need that re-enable block
+  and briefly leave the cell at open circuit (HIGH-Z).
+- **Same-function recalls keep the output ON** (CC +4 mA -> 0 A -> -2 mA, status
+  200 throughout, about 1.5 ms extra per recall): pulse and rest steps, all in
+  current mode, can share one config list.
+- Setup order matters: set the source function and its limits before the
+  measure function; a measure range set while measure and source functions are
+  equal is refused and clamps the source limit (events 1128, 5076/5077). E1 hit
+  this (phase 1 ran in compliance at 2.05 mA) and is superseded by E2.
+- At 1 NPLC, 4-wire, the reading spacing was 82.6 ms (default settings,
+  auto-zero presumably on); the sequencer must set auto-zero and measure its
+  real spacing per profile.
+- Command lines of about 3 KB are rejected ("Input buffer overrun", -363); lines
+  up to 900 characters worked. With HIGH-Z and 4-wire, no measurement is
+  possible while the output is OFF (event 5078).
+- After E1, `smu.source.output` read ON (and stayed ON after explicit OFF
+  commands) while a measurement reported the output as off and the front panel
+  showed OFF; a source-function change cleared it. Not reproduced in E2. Open
+  for B1: verify output state independently of that attribute.
+
+Evidence: [`k2460-2026-11-03-function-switch-e1.json`](evidence/k2460-2026-11-03-function-switch-e1.json),
+[`k2460-2026-11-03-function-switch-e2.json`](evidence/k2460-2026-11-03-function-switch-e2.json);
+scripts `bench/function_switch_probe.py`, `bench/function_switch_e2.py`.
+
 ## B0 output-OFF firmware feature probe (3 November 2026)
 
 `bench/feature_probe.py` on serial 04686198, firmware 1.7.16a, with a 100 ohm

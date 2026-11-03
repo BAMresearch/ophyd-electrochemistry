@@ -74,8 +74,9 @@ survive that). `defbuffer1` holds 1,337 continuous-mode readings from today
 2. Build the QueueServer profile (O7) using the sequence Flyer and run-sheet loader.
 3. Prepare the bench-day B1 test matrix and runner (O8).
 
-B0 is done (3 Nov): HIGH-Z per function, mixed-function config lists in one
-model, live buffer reads during a run, 1M-record buffers; see `docs/validation.md`.
+B0 and E1/E2 done (3 Nov): HIGH-Z per function, live buffer reads during a
+run, 1M-record buffers; a function change (I<->V) turns the output off even
+inside a model, same-function recalls keep it on. See `docs/validation.md`.
 
 ## Information still needed from the user
 

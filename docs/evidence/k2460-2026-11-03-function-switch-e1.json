@@ -1,0 +1,285 @@
+{
+  "schema": "ophyd-electrochemistry.bench-probe.v1",
+  "observed_at_utc": "2026-11-03T11:33:48.219098+00:00",
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "load": "100 ohm 1 W resistor, four-wire, front terminals (user-confirmed)",
+  "authorization": "user 2026-11-03: |I| <= 5 mA, busy line 2 as marker",
+  "results": {
+    "pre_terminals": "smu.TERMINALS_FRONT",
+    "pre_events": "0",
+    "setup_1": "OK 1",
+    "setup_2": "OK 1",
+    "setup_3": "OK 1",
+    "setup_4": "OK 1",
+    "setup_5": "OK 1",
+    "setup_6": "OK 1",
+    "offmode_both": "OK smu.OFFMODE_HIGHZ / smu.OFFMODE_HIGHZ",
+    "elapsed_s": "5.16",
+    "model_state": "trigger.STATE_IDLE\ttrigger.STATE_IDLE\t10",
+    "output_after_model": "smu.ON",
+    "busy_after_model": "digio.STATE_LOW",
+    "readout": "OK 0.000000,0.2099991,Volt DC,0.002048648,Amp DC;0.082565,0.209997,Volt DC,0.002048726,Amp DC;0.165124,0.2099976,Volt DC,0.002048726,Amp DC;0.247683,0.2099971,Volt DC,0.002048734,Amp DC;0.330263,0.209999,Volt DC,0.002048746,Amp DC;0.412848,0.209998,Volt DC,0.00204874,Amp DC;0.495408,0.2099979,Volt DC,0.002048737,Amp DC;0.577967,0.2099979,Volt DC,0.002048733,Amp DC;0.660546,0.2099977,Volt DC,0.002048742,Amp DC;0.743127,0.2099984,Volt DC,0.002048744,Amp DC;0.825688,0.2099984,Volt DC,0.002048739,Amp DC;0.908251,0.2099984,Volt DC,0.002048739,Amp DC;0.990835,0.2099983,Volt DC,0.002048747,Amp DC;1.073400,0.2099988,Volt DC,0.002048736,Amp DC;1.155964,0.2099995,Volt DC,0.002048744,Amp DC;1.238525,0.2099983,Volt DC,0.002048741,Amp DC;1.321086,0.2099986,Volt DC,0.002048741,Amp DC;1.403648,0.2099994,Volt DC,0.002048742,Amp DC;1.486231,0.2099985,Volt DC,0.002048746,Amp DC;1.568810,0.2099983,Volt DC,0.002048745,Amp DC;1.699372,-1.313428e-10,Amp DC,-2.569919e-05,Volt DC;1.781950,-1.382492e-10,Amp DC,-2.546917e-05,Volt DC;1.864529,-1.451557e-10,Amp DC,-2.650436e-05,Volt DC;1.947108,-1.42278e-10,Amp DC,-2.569921e-05,Volt DC;2.029689,-1.497598e-10,Amp DC,-2.684933e-05,Volt DC;2.112271,-1.463067e-10,Amp DC,-2.650432e-05,Volt DC;2.194848,-1.388249e-10,Amp DC,-2.638935e-05,Volt DC;2.277426,-1.342205e-10,Amp DC,-2.661929e-05,Volt DC;2.359985,-1.474577e-10,Amp DC,-2.627428e-05,Volt DC;2.442544,-1.43429e-10,Amp DC,-2.696439e-05,Volt DC;2.525106,-1.440045e-10,Amp DC,-2.742439e-05,Volt DC;2.607688,-1.520619e-10,Amp DC,-2.776945e-05,Volt DC;2.690269,-1.4458e-10,Amp DC,-2.684933e-05,Volt DC;2.772850,-1.428534e-10,Amp DC,-2.74244e-05,Volt DC;2.855429,-1.451556e-10,Amp DC,-2.719438e-05,Volt DC;2.938007,-1.474577e-10,Amp DC,-2.627428e-05,Volt DC;3.020584,-1.394004e-10,Amp DC,-2.592931e-05,Volt DC;3.103161,-1.491843e-10,Amp DC,-2.673432e-05,Volt DC;3.185740,-1.394003e-10,Amp DC,-2.661935e-05,Volt DC;3.268297,-1.42278e-10,Amp DC,-2.650434e-05,Volt DC;3.398594,6.289938e-06,Volt DC,2.322932e-08,Amp DC;3.481167,6.634953e-06,Volt DC,2.147376e-08,Amp DC;3.563741,7.555078e-06,Volt DC,2.908113e-08,Amp DC;3.646314,6.74999e-06,Volt DC,2.205896e-08,Amp DC;3.728886,7.325049e-06,Volt DC,2.732559e-08,Amp DC;3.811458,8.360155e-06,Volt DC,3.083668e-08,Amp DC;3.894011,6.980023e-06,Volt DC,2.791077e-08,Amp DC;3.976584,6.749986e-06,Volt DC,2.322932e-08,Amp DC;4.059154,6.980023e-06,Volt DC,2.849595e-08,Amp DC;4.141727,6.174952e-06,Volt DC,2.439969e-08,Amp DC;4.224300,6.86499e-06,Volt DC,3.259222e-08,Amp DC;4.306875,6.059934e-06,Volt DC,2.08886e-08,Amp DC;4.389450,6.289938e-06,Volt DC,2.615523e-08,Amp DC;4.472022,6.289931e-06,Volt DC,2.498486e-08,Amp DC;4.554596,6.404949e-06,Volt DC,2.615523e-08,Amp DC;4.637147,7.7851e-06,Volt DC,2.966631e-08,Amp DC;4.719720,7.325056e-06,Volt DC,2.674041e-08,Amp DC;4.802275,6.749997e-06,Volt DC,2.498486e-08,Amp DC;4.884830,6.404967e-06,Volt DC,2.498487e-08,Amp DC;4.967403,7.555067e-06,Volt DC,2.674041e-08,Amp DC;",
+    "statuses": "OK 264/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 264/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 264/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 ",
+    "output_final": "smu.ON",
+    "final_events": "14",
+    "event_log": "1128\tParameter, measure range, conflicts because measure and source functions are the same\t1\t2\t1793709789\t681400840 | 5076\tSource Limit changed to 0.21 V due to new measure Range\t2\t2\t1793709789\t734508120 | 5077\tCannot change source Limit for measure Range 0.2 V\t1\t2\t1793709789\t775563580 | 1128\tParameter, measure range, conflicts because measure and source functions are the same\t1\t2\t1793709789\t823649520 | 5076\tSource Limit changed to 1.05e-06 A due to new measure Range\t2\t2\t1793709789\t870149180 | 5077\tCannot change source Limit for measure Range 1e-06 A\t1\t2\t1793709789\t871890540 | 1128\tParameter, measure range, conflicts because measure and source functions are the same\t1\t2\t1793709789\t917322000 | 5077\tCannot change source Limit for measure Range 0.2 V\t1\t2\t1793709789\t964826920 | 2731\tTrigger model path #1 has been initiated\t4\t2\t1793709790\t79903620 | 5080\tThe source Output Level is limited because the source Limit is active\t4\t2\t1793709790\t182511260 | 5081\tThe source output level is no longer limited\t4\t2\t1793709791\t797588400 | 2732\tTrigger model path #1 has been idled\t4\t2\t1793709795\t149996820 | 1808\tAttempting to read digital I/O line when configured as an Output\t2\t2\t1793709795\t243427660 | 1808\tAttempting to read digital I/O line when configured as an Output\t2\t2\t1793709795\t659909900"
+  },
+  "transcript": [
+    {
+      "drained_stale_lines": "0"
+    },
+    {
+      "query": "print(smu.source.output == smu.OFF)",
+      "reply": "true"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t4"
+    },
+    {
+      "query": "print(smu.terminals)",
+      "reply": "smu.TERMINALS_FRONT"
+    },
+    {
+      "query": "print(eventlog.getcount(eventlog.SEV_ALL))",
+      "reply": "0"
+    },
+    {
+      "query": "local ok, r = pcall(function() if oe_e1 ~= nil then buffer.delete(oe_e1) oe_e1 = nil end if oe_lists then smu.source.configlist.delete('OE_SRC') smu.measure.configlist.delete('OE_MEAS') oe_lists = nil end smu.source.func = smu.FUNC_DC_CURRENT smu.source.level = 0 trigger.model.load(\"Empty\") return smu.source.output end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK smu.OFF"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.source.func = smu.FUNC_DC_CURRENT smu.source.offmode = smu.OFFMODE_HIGHZ smu.source.func = smu.FUNC_DC_VOLTAGE smu.source.offmode = smu.OFFMODE_HIGHZ digio.line[2].mode = digio.MODE_DIGITAL_OUT digio.line[2].state = 0 smu.source.configlist.create(\"OE_SRC\") smu.measure.configlist.create(\"OE_MEAS\") oe_lists = true return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.sense = smu.SENSE_4WIRE smu.measure.autorange = smu.OFF smu.measure.range = 2 smu.measure.nplc = 1 smu.source.func = smu.FUNC_DC_CURRENT smu.source.autorange = smu.OFF smu.source.range = 0.01 smu.source.vlimit.level = 1 smu.source.readback = smu.ON smu.source.level = 0.004 smu.source.configlist.store(\"OE_SRC\") smu.measure.configlist.store(\"OE_MEAS\") return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.measure.func = smu.FUNC_DC_CURRENT smu.measure.sense = smu.SENSE_4WIRE smu.measure.autorange = smu.OFF smu.measure.range = 0.01 smu.measure.nplc = 1 smu.source.func = smu.FUNC_DC_VOLTAGE smu.source.autorange = smu.OFF smu.source.range = 2 smu.source.ilimit.level = 0.005 smu.source.readback = smu.ON smu.source.level = 0.3 smu.source.configlist.store(\"OE_SRC\") smu.measure.configlist.store(\"OE_MEAS\") return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.sense = smu.SENSE_4WIRE smu.measure.autorange = smu.OFF smu.measure.range = 2 smu.measure.nplc = 1 smu.source.func = smu.FUNC_DC_CURRENT smu.source.autorange = smu.OFF smu.source.range = 0.01 smu.source.vlimit.level = 1 smu.source.readback = smu.ON smu.source.level = 0 smu.source.configlist.store(\"OE_SRC\") smu.measure.configlist.store(\"OE_MEAS\") return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() oe_e1 = buffer.make(70, buffer.STYLE_STANDARD) trigger.model.load(\"Empty\") trigger.model.setblock(1, trigger.BLOCK_DIGITAL_IO, 2, 2) trigger.model.setblock(2, trigger.BLOCK_CONFIG_RECALL, \"OE_SRC\", 1, \"OE_MEAS\", 1) trigger.model.setblock(3, trigger.BLOCK_SOURCE_OUTPUT, smu.ON) trigger.model.setblock(4, trigger.BLOCK_MEASURE_DIGITIZE, oe_e1, 20) trigger.model.setblock(5, trigger.BLOCK_CONFIG_RECALL, \"OE_SRC\", 2, \"OE_MEAS\", 2) return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() trigger.model.setblock(6, trigger.BLOCK_MEASURE_DIGITIZE, oe_e1, 20) trigger.model.setblock(7, trigger.BLOCK_CONFIG_RECALL, \"OE_SRC\", 3, \"OE_MEAS\", 3) trigger.model.setblock(8, trigger.BLOCK_MEASURE_DIGITIZE, oe_e1, 20) trigger.model.setblock(9, trigger.BLOCK_SOURCE_OUTPUT, smu.OFF) trigger.model.setblock(10, trigger.BLOCK_DIGITAL_IO, 0, 2) return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.source.func = smu.FUNC_DC_VOLTAGE local v = smu.source.offmode smu.source.func = smu.FUNC_DC_CURRENT local i = smu.source.offmode return tostring(i) .. ' / ' .. tostring(v) end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK smu.OFFMODE_HIGHZ / smu.OFFMODE_HIGHZ"
+    },
+    {
+      "query": "print(smu.source.output == smu.OFF)",
+      "reply": "true"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_BUILDING\ttrigger.STATE_BUILDING\t4"
+    },
+    {
+      "write": "trigger.model.initiate()"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t4"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t4"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t4"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t4"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t4"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t4"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t4"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t4"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t6"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t6"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t6"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t6"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t6"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t6"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t6"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t6"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t8"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t8"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t8"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t8"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t8"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t8"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t8"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t8"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_IDLE\ttrigger.STATE_IDLE\t10"
+    },
+    {
+      "query": "print(smu.source.output)",
+      "reply": "smu.ON"
+    },
+    {
+      "query": "print(digio.line[2].state)",
+      "reply": "digio.STATE_LOW"
+    },
+    {
+      "query": "local ok, r = pcall(function() local r = '' for i = 1, oe_e1.n do r = r .. string.format('%.6f', oe_e1.relativetimestamps[i]) .. ',' .. string.format('%.7g', oe_e1.readings[i]) .. ',' .. tostring(oe_e1.units[i]) .. ',' .. string.format('%.7g', oe_e1.sourcevalues[i]) .. ',' .. tostring(oe_e1.sourceunits[i]) .. ';' end return r end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 0.000000,0.2099991,Volt DC,0.002048648,Amp DC;0.082565,0.209997,Volt DC,0.002048726,Amp DC;0.165124,0.2099976,Volt DC,0.002048726,Amp DC;0.247683,0.2099971,Volt DC,0.002048734,Amp DC;0.330263,0.209999,Volt DC,0.002048746,Amp DC;0.412848,0.209998,Volt DC,0.00204874,Amp DC;0.495408,0.2099979,Volt DC,0.002048737,Amp DC;0.577967,0.2099979,Volt DC,0.002048733,Amp DC;0.660546,0.2099977,Volt DC,0.002048742,Amp DC;0.743127,0.2099984,Volt DC,0.002048744,Amp DC;0.825688,0.2099984,Volt DC,0.002048739,Amp DC;0.908251,0.2099984,Volt DC,0.002048739,Amp DC;0.990835,0.2099983,Volt DC,0.002048747,Amp DC;1.073400,0.2099988,Volt DC,0.002048736,Amp DC;1.155964,0.2099995,Volt DC,0.002048744,Amp DC;1.238525,0.2099983,Volt DC,0.002048741,Amp DC;1.321086,0.2099986,Volt DC,0.002048741,Amp DC;1.403648,0.2099994,Volt DC,0.002048742,Amp DC;1.486231,0.2099985,Volt DC,0.002048746,Amp DC;1.568810,0.2099983,Volt DC,0.002048745,Amp DC;1.699372,-1.313428e-10,Amp DC,-2.569919e-05,Volt DC;1.781950,-1.382492e-10,Amp DC,-2.546917e-05,Volt DC;1.864529,-1.451557e-10,Amp DC,-2.650436e-05,Volt DC;1.947108,-1.42278e-10,Amp DC,-2.569921e-05,Volt DC;2.029689,-1.497598e-10,Amp DC,-2.684933e-05,Volt DC;2.112271,-1.463067e-10,Amp DC,-2.650432e-05,Volt DC;2.194848,-1.388249e-10,Amp DC,-2.638935e-05,Volt DC;2.277426,-1.342205e-10,Amp DC,-2.661929e-05,Volt DC;2.359985,-1.474577e-10,Amp DC,-2.627428e-05,Volt DC;2.442544,-1.43429e-10,Amp DC,-2.696439e-05,Volt DC;2.525106,-1.440045e-10,Amp DC,-2.742439e-05,Volt DC;2.607688,-1.520619e-10,Amp DC,-2.776945e-05,Volt DC;2.690269,-1.4458e-10,Amp DC,-2.684933e-05,Volt DC;2.772850,-1.428534e-10,Amp DC,-2.74244e-05,Volt DC;2.855429,-1.451556e-10,Amp DC,-2.719438e-05,Volt DC;2.938007,-1.474577e-10,Amp DC,-2.627428e-05,Volt DC;3.020584,-1.394004e-10,Amp DC,-2.592931e-05,Volt DC;3.103161,-1.491843e-10,Amp DC,-2.673432e-05,Volt DC;3.185740,-1.394003e-10,Amp DC,-2.661935e-05,Volt DC;3.268297,-1.42278e-10,Amp DC,-2.650434e-05,Volt DC;3.398594,6.289938e-06,Volt DC,2.322932e-08,Amp DC;3.481167,6.634953e-06,Volt DC,2.147376e-08,Amp DC;3.563741,7.555078e-06,Volt DC,2.908113e-08,Amp DC;3.646314,6.74999e-06,Volt DC,2.205896e-08,Amp DC;3.728886,7.325049e-06,Volt DC,2.732559e-08,Amp DC;3.811458,8.360155e-06,Volt DC,3.083668e-08,Amp DC;3.894011,6.980023e-06,Volt DC,2.791077e-08,Amp DC;3.976584,6.749986e-06,Volt DC,2.322932e-08,Amp DC;4.059154,6.980023e-06,Volt DC,2.849595e-08,Amp DC;4.141727,6.174952e-06,Volt DC,2.439969e-08,Amp DC;4.224300,6.86499e-06,Volt DC,3.259222e-08,Amp DC;4.306875,6.059934e-06,Volt DC,2.08886e-08,Amp DC;4.389450,6.289938e-06,Volt DC,2.615523e-08,Amp DC;4.472022,6.289931e-06,Volt DC,2.498486e-08,Amp DC;4.554596,6.404949e-06,Volt DC,2.615523e-08,Amp DC;4.637147,7.7851e-06,Volt DC,2.966631e-08,Amp DC;4.719720,7.325056e-06,Volt DC,2.674041e-08,Amp DC;4.802275,6.749997e-06,Volt DC,2.498486e-08,Amp DC;4.884830,6.404967e-06,Volt DC,2.498487e-08,Amp DC;4.967403,7.555067e-06,Volt DC,2.674041e-08,Amp DC;"
+    },
+    {
+      "query": "local ok, r = pcall(function() local r = '' for i = 1, oe_e1.n do r = r .. tostring(oe_e1.statuses[i]) .. '/' .. tostring(oe_e1.sourcestatuses[i]) .. ' ' end return r end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 264/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 8/232 264/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 264/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 8/72 "
+    },
+    {
+      "write": "trigger.model.abort()"
+    },
+    {
+      "write": "smu.source.output = smu.OFF"
+    },
+    {
+      "query": "local ok, r = pcall(function() digio.line[2].state = 0 return digio.line[2].state end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK digio.STATE_LOW"
+    },
+    {
+      "query": "print(smu.source.output)",
+      "reply": "smu.ON"
+    },
+    {
+      "query": "local ok, r = pcall(function() if oe_e1 ~= nil then buffer.delete(oe_e1) oe_e1 = nil end if oe_lists then smu.source.configlist.delete('OE_SRC') smu.measure.configlist.delete('OE_MEAS') oe_lists = nil end smu.source.func = smu.FUNC_DC_CURRENT smu.source.level = 0 trigger.model.load(\"Empty\") return smu.source.output end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK smu.ON"
+    },
+    {
+      "query": "print(eventlog.getcount(eventlog.SEV_ALL))",
+      "reply": "14"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "1128\tParameter, measure range, conflicts because measure and source functions are the same\t1\t2\t1793709789\t681400840"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "5076\tSource Limit changed to 0.21 V due to new measure Range\t2\t2\t1793709789\t734508120"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "5077\tCannot change source Limit for measure Range 0.2 V\t1\t2\t1793709789\t775563580"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "1128\tParameter, measure range, conflicts because measure and source functions are the same\t1\t2\t1793709789\t823649520"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "5076\tSource Limit changed to 1.05e-06 A due to new measure Range\t2\t2\t1793709789\t870149180"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "5077\tCannot change source Limit for measure Range 1e-06 A\t1\t2\t1793709789\t871890540"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "1128\tParameter, measure range, conflicts because measure and source functions are the same\t1\t2\t1793709789\t917322000"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "5077\tCannot change source Limit for measure Range 0.2 V\t1\t2\t1793709789\t964826920"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "2731\tTrigger model path #1 has been initiated\t4\t2\t1793709790\t79903620"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "5080\tThe source Output Level is limited because the source Limit is active\t4\t2\t1793709790\t182511260"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "5081\tThe source output level is no longer limited\t4\t2\t1793709791\t797588400"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "2732\tTrigger model path #1 has been idled\t4\t2\t1793709795\t149996820"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "1808\tAttempting to read digital I/O line when configured as an Output\t2\t2\t1793709795\t243427660"
+    },
+    {
+      "query": "print(eventlog.next(eventlog.SEV_ALL))",
+      "reply": "1808\tAttempting to read digital I/O line when configured as an Output\t2\t2\t1793709795\t659909900"
+    }
+  ]
+}

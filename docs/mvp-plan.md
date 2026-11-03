@@ -101,8 +101,15 @@ validated against them before arming.
   while the model runs; 1M-record buffers allocate; off mode is per source
   function (set and verify HIGH-Z for both at prepare; power-on resets it to
   NORMAL); BRANCH_ON_EVENT does not re-fire on a timer event on a later pass.
-  TSP is Lua 5.0.2. Still open (B1, output ON): function switch with output on,
-  step-marker TTL, off-state behaviour at a cutoff.
+  TSP is Lua 5.0.2.
+- **E1/E2 answers (3 Nov, resistor, output ON):** a source-function change
+  (also via config recall in a model) turns the output OFF; CC -> CV needs a
+  `SOURCE_OUTPUT ON` block after the recall (24 ms extra, brief open circuit).
+  Same-function recalls keep the output ON (+1.5 ms): pulses and rests share
+  one current-mode list. Set source settings before the measure function.
+  Keep command lines under ~900 characters. Set auto-zero explicitly (1 NPLC
+  spacing was 82.6 ms with defaults). Still open (B1): step-marker TTL timing,
+  off-state at a cutoff, the stale `smu.source.output` reading seen once.
 
 ### Host side
 
