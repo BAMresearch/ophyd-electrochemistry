@@ -118,7 +118,7 @@ Off-day (no hardware):
 | O5 | Sequencer TSP + host backend, mocked-transport tests, offline Lua syntax check | todo |
 | O6 | Per-run notebook template (simulator first) | todo |
 | O7 | QueueServer startup profile + integration tests against the simulator | deferred |
-| O9 | HDF5 writer (equipment / run settings incl. Excel row / readouts) | Codex brief 03 |
+| O9 | HDF5 writer (equipment / run settings incl. Excel row / readouts) | Done 3 Nov (brief 03, reviewed) |
 | O8 | Bench runner script that executes a test matrix and writes one evidence file | todo |
 
 Bench days (in order):

@@ -66,8 +66,8 @@ def read_run_file(path) -> dict  # {"attrs", "equipment", "run", "sequence",
 ```
 
 Non-scalar or non-JSON-safe equipment values raise `ValidationError`. JSON uses
-`sort_keys=True`. Use h5py SWMR-compatible settings where simple
-(`libver="latest"`) so a notebook can read the file during the run; document it.
+`sort_keys=True`. Use the default HDF5 format (not `libver="latest"`, which
+leaves a killed writer's file locked); live plots read in the writer process.
 
 ## Tests
 

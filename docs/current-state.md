@@ -8,13 +8,17 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 875 tests pass. Pure models/compiler, independent simulator,
+- **Offline:** 916 tests pass. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
 - **Sequences / run sheets:** finite step models, safety validation and battery
   protocol builders; Excel loader with full-row metadata and aggregated errors;
   template generator with four examples and the 16-run R5 pulse series.
+- **Run files:** incremental HDF5 writer/reader with separate equipment/run
+  metadata, compressed readouts and events; exclusive creation, per-append flush
+  and explicit terminal outcomes. A killed kernel leaves all flushed data
+  readable (outcome `incomplete`); no cross-process SWMR.
 - **On the 2460, via scripts (not via Bluesky):** PyVISA transport, identity/TSP
   checks, query-only inspection, packaged runtime install/replace, count-bounded
   current holds (runtime v14) with immediate or external START, buffered
@@ -48,7 +52,8 @@ not confirmed.
 
 ## Next steps
 
-1. Continue O3: sequence simulator. O1 models and O2 Excel loader are implemented.
+1. Continue O3: sequence simulator. O1 models, O2 Excel loader and O9 HDF5 files
+   are implemented.
 2. Check the Rev. C manual items listed under "To verify" in the plan, then O5
    (sequencer TSP + backend).
 3. Prepare the bench-day B1 test matrix and runner (O8).
