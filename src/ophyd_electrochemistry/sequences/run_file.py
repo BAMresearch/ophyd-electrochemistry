@@ -25,6 +25,7 @@ from numpy.typing import ArrayLike, NDArray
 
 from .. import __version__
 from ..exceptions import ValidationError
+from ..validation import number
 from .models import SafetyLimits, Sequence, to_dict
 
 SCHEMA = "ophyd-electrochemistry.run-file.v1"
@@ -237,6 +238,18 @@ class RunFile:
             "detail": [_text(detail, "detail")],
         }
         self._append("events", values)
+
+    def set_time_origin(self, epoch_s: float) -> None:
+        """Set the UTC anchor for relative readout times exactly once."""
+        self._writable()
+        attrs = self._file["run"].attrs
+        if "time_origin_epoch_s" in attrs:
+            raise RuntimeError("time origin is already set")
+        epoch_s = number(epoch_s, "time_origin_epoch_s")
+        utc = datetime.fromtimestamp(epoch_s, UTC).isoformat(timespec="microseconds")
+        attrs["time_origin_epoch_s"] = epoch_s
+        attrs["time_origin_utc"] = utc.replace("+00:00", "Z")
+        self._file.flush()
 
     def finalize(self, outcome: str, detail: str = "") -> None:
         """Record an explicit terminal outcome and prevent further mutations."""

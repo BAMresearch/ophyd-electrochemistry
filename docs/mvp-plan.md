@@ -119,7 +119,7 @@ Off-day (no hardware):
 | O1 | `Step`/`Sequence` models, validation, protocol builders (cycling, bipolar pulse block, Renard helper) | Done 3 Nov (brief 01, reviewed) |
 | O2 | Excel run-sheet template + loader | Done 3 Nov (brief 02, reviewed) |
 | O3 | Simulator backend with cell model | Done 3 Nov (brief 04, reviewed; Flyer integration in O4) |
-| O4 | Flyer integration with live chunk reads; `run_sequence` plan; live plot callback | Brief 05 written 3 Nov |
+| O4 | Flyer integration with live chunk reads; `run_sequence` plan; live plot callback | Done 3 Nov (brief 05; simulator only) |
 | O5 | Sequencer TSP + host backend, mocked-transport tests, offline Lua syntax check | todo |
 | O6 | Per-run notebook template (simulator first) | todo |
 | O7 | QueueServer startup profile + integration tests against the simulator | deferred |

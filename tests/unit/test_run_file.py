@@ -316,3 +316,29 @@ def test_reader_rejects_other_schema(tmp_path):
         file.attrs["schema"] = "different"
     with pytest.raises(ValidationError, match="schema"):
         read_run_file(path)
+
+
+def test_time_origin_is_flushed_and_can_only_be_set_once(tmp_path, settings):
+    path = tmp_path / "origin.h5"
+    with RunFile.create(path, **settings) as writer:
+        writer.set_time_origin(1700000000.125)
+        run = read_run_file(path)["run"]
+        assert run["time_origin_epoch_s"] == 1700000000.125
+        assert run["time_origin_utc"] == "2023-11-14T22:13:20.125000Z"
+        with pytest.raises(RuntimeError, match="already set"):
+            writer.set_time_origin(1700000001)
+        writer.finalize("completed")
+        with pytest.raises(RuntimeError, match="finalized"):
+            writer.set_time_origin(1700000001)
+    with pytest.raises(RuntimeError, match="closed"):
+        writer.set_time_origin(1700000001)
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), True, "123"])
+def test_invalid_time_origin_does_not_set_attrs(tmp_path, settings, value):
+    path = tmp_path / "origin-invalid.h5"
+    with RunFile.create(path, **settings) as writer:
+        with pytest.raises(ValidationError):
+            writer.set_time_origin(value)
+        assert "time_origin_epoch_s" not in read_run_file(path)["run"]
+        writer.set_time_origin(0)

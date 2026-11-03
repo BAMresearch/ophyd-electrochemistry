@@ -1729,6 +1729,7 @@ experiment = [
     { name = "h5py" },
     { name = "openpyxl" },
     { name = "pandas" },
+    { name = "plotly" },
 ]
 visa = [
     { name = "pyvisa" },
@@ -1779,6 +1780,7 @@ requires-dist = [
     { name = "openpyxl", marker = "extra == 'experiment'", specifier = ">=3.1,<4" },
     { name = "ophyd", specifier = ">=1.11.2,<2" },
     { name = "pandas", marker = "extra == 'experiment'", specifier = ">=2.2,<3" },
+    { name = "plotly", marker = "extra == 'experiment'", specifier = ">=6,<7" },
     { name = "pyvisa", marker = "extra == 'visa'", specifier = ">=1.14,<2" },
     { name = "pyvisa-py", marker = "extra == 'visa'", specifier = ">=0.7,<1" },
 ]

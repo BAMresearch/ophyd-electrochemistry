@@ -8,13 +8,21 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 964 tests pass. Pure models/compiler, independent simulator,
+- **Offline:** 1008 tests pass. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
 - **Sequences / run sheets:** finite step models, safety validation and battery
   protocol builders; Excel loader with full-row metadata and aggregated errors;
   template generator with four examples and the 16-run R5 pulse series.
+- **Sequence Flyer:** separate `SequenceFlyer` / `run_sequence` path under a real
+  RunEngine, wall-time simulator release, live readout/event streams, external
+  start, timeout/abort drain and recovery. HDF5 writer and throttled Plotly live
+  callback work offline; full-resolution plotting reads saved files. The file's
+  UTC origin uses acquisition field timestamps: Bluesky 1.15.1 replaces collect
+  event envelope times with host collection times.
+  `RE.halt()` (no cleanup) still ends with output OFF and outcome `aborted`,
+  but records after the last collect stay in the backend (not in the file).
 - **Sequence simulation:** deterministic pure engine with OCV + R0 + R1‖C1,
   scheduled two-phase samples, CC/CV/rest, cutoff next/stop, repeat events and
   run-file-compatible readout chunks. Synthetic cell, not bench validated.
@@ -55,10 +63,9 @@ not confirmed.
 
 ## Next steps
 
-1. O4: integrate sequence execution and live chunk reads with the Flyer/plan.
-   O1 models, O2 Excel loader, O3 pure simulator and O9 HDF5 files are implemented.
-2. Check the Rev. C manual items listed under "To verify" in the plan, then O5
-   (sequencer TSP + backend).
+1. Check the Rev. C manual items listed under "To verify" in the plan, then O5
+   (sequencer TSP + backend). O1–O4 and O9 are implemented offline.
+2. Build the per-run simulator notebook (O6) on the sequence Flyer and callbacks.
 3. Prepare the bench-day B1 test matrix and runner (O8).
 
 Bench test B0 (`bench/feature_probe.py`, output OFF only) is ready to run on

@@ -1,5 +1,11 @@
 """Pure finite step sequences, safety validation and battery protocol builders."""
 
+from .backend import (
+    SequenceBackend,
+    SequencePoll,
+    SequenceRequest,
+    SimulatedSequenceBackend,
+)
 from .builders import (
     bipolar_pulse_sequence,
     cc_step,
@@ -11,6 +17,7 @@ from .builders import (
     soc_position_sequence,
     two_phase_sampling,
 )
+from .flyer import SequenceFlyer
 from .models import (
     CutoffAction,
     RepeatBlock,
@@ -29,9 +36,16 @@ from .models import (
     to_dict,
     validate,
 )
+from .plans import run_sequence
 from .run_sheet import RunSpec, load_run_sheet, make_template
 
 __all__ = [
+    "SequenceBackend",
+    "SequencePoll",
+    "SequenceRequest",
+    "SimulatedSequenceBackend",
+    "SequenceFlyer",
+    "run_sequence",
     "CutoffAction",
     "RepeatBlock",
     "RunSpec",
