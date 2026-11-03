@@ -27,3 +27,4 @@ Rules that apply to every brief (Codex: follow these):
 | `03-hdf5-run-file.md` | Incremental HDF5 run file writer/reader | 01 |
 | `04-sequence-simulator.md` | Pure sequence simulator with a cell model | 01 |
 | `05-sequence-flyer.md` | Sequence Flyer, `run_sequence`, run-file writer, live plot | 01–04 |
+| `06-run-notebook.md` | Per-run notebook template, helpers, new-run CLI | 01–05, SWMR run file |
