@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1178 tests pass. Pure models/compiler, independent simulator,
+- **Offline:** 1185 tests pass. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -87,11 +87,11 @@ survive that). `defbuffer1` holds 1,337 continuous-mode readings from today
 
 ## Next steps
 
-1. O5: B1 on the resistor and RC dummy cell (`docs/sequencer-design.md`
-   §13); test matrix and runner (O8) prepared offline first. O1–O6, O9, O10 are
+1. B1 on the next bench day: `bench/plan-b1.md` (rewire first, §0), runner
+   `bench/b1_sequencer.py` (R1–R11 resistor, C1–C2 RC dummy; `--dry-run`
+   compiles the matrix offline). Needs the RC dummy's values. O1–O6, O9, O10 are
    implemented offline.
 2. Build the QueueServer profile (O7) using the sequence Flyer and run-sheet loader.
-3. Prepare the bench-day B1 test matrix and runner (O8).
 
 B0 and E1/E2 done (3 Nov): HIGH-Z per function, live buffer reads during a
 run, 1M-record buffers; a function change (I<->V) turns the output off even

@@ -13,6 +13,7 @@ import json
 import re
 import threading
 import time
+from collections import deque
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -202,9 +203,10 @@ class Keithley2460SequenceBackend:
 
     ``connect`` installs the exact packaged runtime with output OFF (it is lost
     at power-off) unless a model is still running from another session.
-    Records are acknowledged to the instrument only when the next run is
-    prepared by the same backend that read them all; otherwise preparation
-    refuses until ``archive_retained`` has saved them.
+    A run's records are acknowledged to the instrument when this backend has
+    read them all and the run has concluded, at ``close`` (Flyer unstage) or at
+    the next ``prepare``. Records nobody acknowledged (a crashed host, a
+    ``RE.halt``) make ``prepare`` refuse until ``archive_retained`` saves them.
     """
 
     def __init__(
@@ -265,6 +267,8 @@ class Keithley2460SequenceBackend:
         self._logged: set[str] = set()
         self._errors: list[str] = []
         self._abort_reason: str | None = None
+        # Every other event-log entry seen during the run, for diagnosis (bounded).
+        self.instrument_log: deque[str] = deque(maxlen=500)
         self._outcome: tuple[str, str] | None = None
         self._last = (0.0, 0, 0)  # t_s, step, repeat of the last record
 
@@ -319,6 +323,8 @@ class Keithley2460SequenceBackend:
         with self._lock:
             if self._connected and not self._broken:
                 return
+            # A new session does not know which records an earlier one read.
+            self._reset_run(None)
             self._io(self._transport.connect)
             try:
                 identity = self._verify()
@@ -368,8 +374,14 @@ class Keithley2460SequenceBackend:
         with self._lock:
             if not self._connected:
                 return
-            if not self._broken and self._status().active:
-                raise ElectrochemistryError("Cannot close while the trigger model is active")
+            if not self._broken:
+                status = self._status()
+                if status.active:
+                    raise ElectrochemistryError("Cannot close while the trigger model is active")
+                # Closing (Flyer unstage) follows the RunEngine's last document, so a
+                # concluded, fully read run has been handed to the run file.
+                if self._outcome is not None and status.acked < self._read == status.records:
+                    self._call(f"oe_seq_ack({status.records})")
             self._connected = False
             self._transport.close()
 
@@ -525,7 +537,9 @@ class Keithley2460SequenceBackend:
                 if name == "OE_T0":
                     self._t0 = (entry.seconds, entry.fraction)
                 self._logged.add(_LOGGED[name])
-            elif entry.severity == 1:
+                continue
+            self.instrument_log.append(f"{entry.number}\t{entry.severity}\t{entry.message}")
+            if entry.severity == 1:
                 detail = f"instrument {entry.number}: {entry.message}"
                 self._errors.append(detail)
                 t = 0.0 if self._t0 is None else self._relative(entry.seconds, entry.fraction)

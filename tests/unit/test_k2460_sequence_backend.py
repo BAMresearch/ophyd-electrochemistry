@@ -652,3 +652,39 @@ def test_run_sequence_end_to_end(backend, instrument, limits, tmp_path):
     assert start["equipment"]["marker_line"] == 4
     # Unstaging closed the session with the output OFF.
     assert not instrument.connected and instrument.g.src.output == "smu.OFF"
+
+
+def test_new_session_after_a_closed_run_prepares_without_archive(instrument, clock, limits):
+    # The notebook builds a new backend per run: closing (unstage) acknowledges.
+    request = pulse_request(limits)
+    _, rows = instrument_records(request.sequence, limits)
+    first = make_backend(instrument, clock)
+    first.connect()
+    first.prepare(request)
+    first.kickoff()
+    instrument.start()
+    instrument.add(rows)
+    instrument.finish("end")
+    assert drain(first)[2] == "completed"
+    first.close()
+    assert instrument.g.oe_seq_acked == len(rows)
+    second = make_backend(instrument, clock)
+    second.connect()
+    second.prepare(request)
+    assert second.inspect() == (DeviceState.PREPARED, False)
+
+
+def test_close_does_not_acknowledge_an_unfinished_read(backend, instrument, limits):
+    request = pulse_request(limits)
+    _, rows = instrument_records(request.sequence, limits)
+    backend.prepare(request)
+    backend.kickoff()
+    instrument.start()
+    instrument.add(rows)
+    instrument.finish("end")
+    backend.poll(10)
+    backend.close()
+    assert instrument.g.oe_seq_acked == 0
+    backend.connect()
+    with pytest.raises(RetainedDataError):
+        backend.prepare(request)
