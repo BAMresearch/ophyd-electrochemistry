@@ -301,11 +301,19 @@ def _plain(value: Any) -> Any:
     return value
 
 
+def _whole_records(fields: dict[str, Any]) -> dict[str, Any]:
+    # A live writer extends the fields one after another, so a SWMR snapshot can
+    # catch them at different lengths (seen in a writer/reader race, 3 Nov).
+    size = min(len(value) for value in fields.values())
+    return {name: value[:size] for name, value in fields.items()}
+
+
 def read_run_file(path: _Path) -> dict[str, Any]:
     """Return detached arrays, decoded UTF-8 and parsed JSON metadata.
 
     ``events`` is a dict of parallel arrays (kind/detail arrays contain str).
-    Safe from any process while the writer appends, and after a writer crash.
+    Safe from any process while the writer appends, and after a writer crash;
+    a snapshot taken mid-append returns only the records complete in every field.
     """
     with h5py.File(path, "r", libver=_LIBVER, swmr=True) as file:
         if file.attrs.get("schema") != SCHEMA:
@@ -314,15 +322,17 @@ def read_run_file(path: _Path) -> dict[str, Any]:
             "attrs": {key: _plain(value) for key, value in file.attrs.items()},
             "equipment": {key: _plain(value) for key, value in file["equipment"].attrs.items()},
             "run": {key: _plain(value) for key, value in file["run"].attrs.items()},
-            "readout": {name: file["readout"][name][:] for name in READOUT_FIELDS},
-            "events": {
-                name: (
-                    file["events"][name].asstr()[:]
-                    if name in ("kind", "detail")
-                    else file["events"][name][:]
-                )
-                for name in _EVENT_FIELDS
-            },
+            "readout": _whole_records({name: file["readout"][name][:] for name in READOUT_FIELDS}),
+            "events": _whole_records(
+                {
+                    name: (
+                        file["events"][name].asstr()[:]
+                        if name in ("kind", "detail")
+                        else file["events"][name][:]
+                    )
+                    for name in _EVENT_FIELDS
+                }
+            ),
         }
         for name in ("sequence", "safety_limits", "run_sheet_row", "extra"):
             result[name] = json.loads(file["run"][name].asstr()[()])

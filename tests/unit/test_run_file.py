@@ -156,6 +156,22 @@ def test_read_flushed_snapshot_while_writer_is_open(tmp_path, settings):
     assert len(snapshot["readout"]["t_s"]) == 9
 
 
+def test_snapshot_mid_append_returns_whole_records_only(tmp_path, settings):
+    # A live writer extends the fields one after another; a SWMR reader racing
+    # it saw unequal lengths in 432 of 458 snapshots (3 Nov). Simulate that state.
+    path = tmp_path / "mid-append.h5"
+    with RunFile.create(path, **settings) as writer:
+        writer.append_readout(chunk(0, 3))
+        writer.append_event(0.0, 0, 0, "step_start")
+        writer.finalize("completed")
+    with h5py.File(path, "r+") as file:
+        file["readout"]["voltage_v"].resize((5,))
+        file["events"]["kind"].resize((2,))
+    snapshot = read_run_file(path)
+    assert {len(values) for values in snapshot["readout"].values()} == {3}
+    assert {len(values) for values in snapshot["events"].values()} == {1}
+
+
 def test_killed_writer_leaves_flushed_data_readable(tmp_path):
     # A crashed Jupyter kernel leaves the SWMR file flagged as open for writing.
     path = tmp_path / "killed.h5"
