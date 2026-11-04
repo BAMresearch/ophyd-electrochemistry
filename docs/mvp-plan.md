@@ -153,7 +153,7 @@ Off-day (no hardware):
 | O9 | HDF5 writer (equipment / run settings incl. Excel row / readouts) | Done 3 Nov (brief 03, reviewed) |
 | O11 | Read-only run viewer notebook (overview, follow live, V vs charge overlay); Grafana deferred | Done 3 Nov (brief 08; offline SWMR and notebook tests) |
 | O10 | Run file in SWMR mode: live cross-process reads (notebook plot while a QueueServer worker writes); our reader opens SWMR so crashed files read back; `repair_run_file` for other tools | Done 3 Nov |
-| O8 | Bench runner script that executes a test matrix and writes one evidence file | B1 runner + plan ready 3 Nov (`bench/b1_sequencer.py`, `bench/plan-b1.md`), offline |
+| O8 | Bench runner script that executes a test matrix and writes one evidence file | B1 runner + plan ready 3 Nov (`bench/b1_sequencer.py`, `bench/plan-b1.md`); B2 sheets, sessions, monitor + plan ready 4 Nov (`bench/plan-b2.md`), rehearsed on the simulator |
 
 Bench days (in order):
 
@@ -161,7 +161,7 @@ Bench days (in order):
 |---|---|---|
 | B0 | resistor, output OFF throughout | Done 3 Nov: `bench/feature_probe.py` (HIGH-Z per function, config-list function switch, BRANCH_ON_EVENT latches, 1M buffer, live reads); E1–E4 energized on the resistor |
 | B1 | 100 Ω resistor, then RC dummy cell | Install sequencer; current/rest steps; bipolar pulse block; cutoff `next`/`stop` on the RC dummy; live reads during run; external START and software start; step-marker TTL on scope; HIGH-Z off state; measurement time per profile |
-| B2 | RC dummy, then a sacrificial Na/hard-carbon cell | Notebook flow end to end; QueueServer flow; a multi-hour cycling run; pulse runs at two SOCs |
+| B2 | Resistor, then a HC/Na coin cell (no RC dummy yet; 4 Nov) | QueueServer and notebook flows on hardware incl. abort and crash recovery; 1 h soak; cell first contact, overnight sodiation (the day-before step), pulse runs at two SOCs, weekend reference cycle |
 | B3 | Real cell, beamline-like setup | Full dress rehearsal from the Excel sheet, including trigger wiring |
 
 ## Open questions for the user

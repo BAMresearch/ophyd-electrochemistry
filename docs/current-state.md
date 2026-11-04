@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1258 tests pass. Pure models/compiler, independent simulator,
+- **Offline:** 1267 tests pass. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -97,18 +97,18 @@ survive that). `defbuffer1` holds 1,337 continuous-mode readings from today
 
 ## Next steps
 
-1. B1 on the next bench day: `bench/plan-b1.md` (rewire first, §0), runner
-   `bench/b1_sequencer.py` (R1–R11 resistor, C1–C2 RC dummy; `--dry-run`
-   compiles the matrix offline). Needs the RC dummy's values. O1–O7 and O9–O11 are
-   implemented offline.
-2. QueueServer flow on hardware after B1 (B2: RC dummy, then a sacrificial cell).
+1. Thu 5 Nov bench: rewire (`bench/plan-b1.md` §0), B1 R1–R11 on the resistor
+   (`bench/b1_sequencer.py`), then B2 (`bench/plan-b2.md`): QueueServer and
+   notebook on the resistor (Q1–Q10), then a HC/Na coin cell (K0–K3, K3 =
+   overnight sodiation to 0.2 V, the beamtime's day-before step). B1 C1–C2
+   wait for an RC dummy. Sheets: `bench/b2_sheets.py`; monitor and evidence:
+   `bench/b2_monitor.py`.
+2. Next bench day: K4–K7 (pulses at two SOCs, sodiation to 5 mV); weekend K8
+   (reference cycle, own 100 µA session: the CV hold's current limit is the
+   session maximum).
 
-B0 and E1/E2 done (3 Nov): HIGH-Z per function, live buffer reads during a
-run, 1M-record buffers; a function change (I<->V) turns the output off even
-inside a model, same-function recalls keep it on. E3/E4: auto-zero-off timing
-(4.83 ms at 0.1 NPLC), instrument-local voltage cutoff works, BRANCH_ON_EVENT
-latches. S1/S2 (scope): prototype step layout runs as designed, external START
--> busy 65 us, markers lag the level change by 1.07 ms. See `docs/validation.md`.
+B0, E1–E4, S1/S2 done 3 Nov (findings in `docs/mvp-plan.md` → Design and
+`docs/validation.md`).
 
 ## Information still needed from the user
 
@@ -116,4 +116,5 @@ A preliminary measurement concept arrived on 3 Nov: `docs/beamtime-concept.md`
 (window 5 mV–0.2 V, 15–30 µA reference cycling, 300–600 µA pulses). Its open
 questions (dates, cell count, pulse definition, t_p/t_r/n, I_min, capacity)
 replace the earlier list. Still open from us: beamline trigger signal (level,
-polarity, connector) and the RC dummy cell's values for B1.
+polarity, connector), the RC dummy cell's values for B1, and the B2 coin
+cell's capacity, history and last state.

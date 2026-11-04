@@ -51,11 +51,15 @@ C/20.
 
 | ID | Protocol | Steps (one sequence each) | Window |
 |---|---|---|---|
-| P0 | Overnight sodiation (7–8 Dec) | CC −I → 0.2 V (NEXT), rest | 0–2.7 V |
+| P0 | Sodiation to 0.2 V, the day before (7–8 Dec) | CC −I → 0.2 V (NEXT), rest | 0–2.7 V |
 | P1 | Sodiation without pulse | CC −I → 5 mV (NEXT), rest | 0–0.3 V |
 | P2 | Desodiation with pulses | {+I pulse t_p, rest t_r} × n, the pulse STOPs the run at 0.1–0.2 V | 0–0.3 V |
 | P3 | Combined pulse | CC −I → 0.2 V, rest, {−I t_p, rest t_r, +I t_p, rest t_r} × n | 0–0.3 V |
 | P4 | Reference cycling | {CC −I → 5 mV, CV 5 mV → \|I\| < I_min, rest, CC +I → 0.2 V, rest} × n | 0–0.3 V |
+
+**4 Nov (user):** the sodiation (P0) will probably run separately, a day in
+advance of the measurements. Bench plan B2 rehearses this order on a coin cell
+(`bench/plan-b2.md`: K3 overnight, K4–K7 the next day).
 
 P2 is our reading of "desodiate with pulse until 0.1–0.2 V" (see question 3).
 In every case the absolute window stops the run; 0 V is the proposed hard
@@ -112,6 +116,10 @@ R3). A 5 mV cutoff is well above the 2 V range's resolution and offset.
      compliance (|V| ≤ 0.4 V here) does not stop the voltage from going below
      0 V between samples, so sampling near 5 mV should be ≤ 1 s.
    - The CV hold at 5 mV (P4) itself sits close to plating conditions.
+   - The CV hold's current limit is the session's maximum current, and it
+     follows its CC step even when that step ended on its time limit rather
+     than at 5 mV. Run P4 in a session whose maximum current is near the
+     cycling current, not the pulse current (found 4 Nov, B2 plan).
 5. **What the run sheet can express.** Added 3 Nov: `start_with = discharge`
    (bipolar pulses −I first; cycling starts with the sodiation) and
    `cv_after = discharge` (CV hold at v_low after the sodiation), so P0, P1
