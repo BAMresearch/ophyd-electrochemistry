@@ -7,7 +7,7 @@ output-off mode and hardware approval belong to the notebook/session.
 import argparse
 import math
 from collections import Counter
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, replace
 from datetime import date, datetime, time, timedelta
 from pathlib import Path
@@ -377,14 +377,9 @@ def make_template(path: str | Path, *, overwrite: bool = False) -> Path:
     The workbook is a starting point, not approval to energize a cell. It must
     be reviewed and validated with the actual session's SafetyLimits.
     """
-    import pandas as pd
-    from openpyxl.comments import Comment  # type: ignore[import-untyped]
-    from openpyxl.styles import Alignment, Font  # type: ignore[import-untyped]
-
-    path = Path(path)
-    if path.suffix.lower() != ".xlsx":
+    if Path(path).suffix.lower() != ".xlsx":
         raise ValueError("template path must end in .xlsx")
-    examples = [
+    examples: list[dict[str, object]] = [
         dict(measurement_id="example-pulse", protocol="bipolar_pulse", current_a=1e-4, pulse_s=1),
         dict(
             measurement_id="example-cycling",
@@ -418,6 +413,35 @@ def make_template(path: str | Path, *, overwrite: bool = False) -> Path:
         )
     for example in examples:
         example["notes"] = "PLACEHOLDER: review current, voltage window and limits before use."
+    safety = (
+        "Current 1e-4 A and voltages are placeholders; review before use. "
+        "Pass SafetyLimits from the notebook. Wiring, ranges and HIGH-Z stay in the session."
+    )
+    return write_run_sheet(path, examples, notes=[("Safety", safety)], overwrite=overwrite)
+
+
+def write_run_sheet(
+    path: str | Path,
+    rows: list[dict[str, object]],
+    *,
+    notes: Iterable[tuple[str, str]] = (),
+    overwrite: bool = False,
+) -> Path:
+    """Write rows (dicts keyed by run-sheet column) with the description row and README.
+
+    ``notes`` are (topic, text) lines added to the README sheet. Unknown columns
+    are refused; the sheet is not validated here (use ``load_run_sheet``).
+    """
+    import pandas as pd
+    from openpyxl.comments import Comment  # type: ignore[import-untyped]
+    from openpyxl.styles import Alignment, Font  # type: ignore[import-untyped]
+
+    path = Path(path)
+    if path.suffix.lower() != ".xlsx":
+        raise ValueError("run-sheet path must end in .xlsx")
+    unknown = {column for row in rows for column in row} - _COLUMNS.keys()
+    if unknown:
+        raise ValueError(f"unknown run-sheet columns: {', '.join(sorted(unknown))}")
     descriptions = dict(_COLUMNS)
     descriptions["measurement_id"] = "# " + descriptions["measurement_id"]
     readme = [
@@ -427,11 +451,7 @@ def make_template(path: str | Path, *, overwrite: bool = False) -> Path:
             "Row 2 says what each column does. It starts with # and is skipped; start any "
             "other row's measurement_id with # to skip that run.",
         ),
-        (
-            "Safety",
-            "Current 1e-4 A and voltages are placeholders; review before use. "
-            "Pass SafetyLimits from the notebook. Wiring, ranges and HIGH-Z stay in the session.",
-        ),
+        *notes,
         (
             "Metadata",
             "Extra columns are allowed and retained. Store IDs as text. "
@@ -446,7 +466,7 @@ def make_template(path: str | Path, *, overwrite: bool = False) -> Path:
     ]
     with path.open("wb" if overwrite else "xb") as stream:
         with pd.ExcelWriter(stream, engine="openpyxl") as writer:
-            pd.DataFrame([descriptions, *examples], columns=list(_COLUMNS)).to_excel(
+            pd.DataFrame([descriptions, *rows], columns=list(_COLUMNS)).to_excel(
                 writer,
                 sheet_name="Runs",
                 index=False,
