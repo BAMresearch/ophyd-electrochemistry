@@ -8,6 +8,6 @@ poll_period_s = 1.0
 [limits]
 v_min_abs = 0.0
 v_max_abs = 3.0
-i_max_abs = 0.001
+i_max_abs = 0.03
 max_duration_s = 172800.0
 max_records = 1000000
