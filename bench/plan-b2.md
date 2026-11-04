@@ -25,9 +25,9 @@ left uncommitted for Claude to review.
 | 0 | Rewire the digital I/O (`plan-b1.md` §0): READY 1, BUSY 2, MARKER 4, START 6 | — | — |
 | 1 | B1 resistor matrix R1–R11 (`plan-b1.md` §1), about 10 min | 100 Ω | 1 |
 | 2 | Q1–Q10 below: QueueServer and notebook on hardware | 100 Ω | 1 |
-| 3 | K0–K2 below: first contact with the coin cell | cell | 2 |
+| 3 | K0–K2 below: first contact and a rate check on the coin cell | cell | 2 |
 | 4 | K3 overnight: full sodiation to 5 mV ("a day in advance", as at the beamtime), monitored | cell | 2 |
-| later | K4–K6 on the next bench day (the beamtime day in small); K8 over the weekend | cell | 2 |
+| later | K4–K5 on the next bench day (1 s high-rate pulse trains, both ways); K6 over the weekend | cell | 2 |
 
 Gate for step 2: R1, R2, R5, R7, R10 and R11 pass. Gate for step 3: Q2–Q8 pass.
 If R3 changes `SequencerProfile.reading_s` for the 7 V range, Claude updates the
@@ -115,70 +115,94 @@ edge:
 - `session-cell-wide.toml`: 0–3.0 V;
 - `session-cell.toml` and `session-cell-cycle.toml`: 0–0.5 V.
 
+The current limits are: 30 mA for the wide and pulse sessions (40C = 24 mA);
+100 µA for the cycle session.
+
 Why: the voltage compliance is the window's upper edge plus 0.1 V. A current
 source facing a cell above its compliance would draw current from the cell to
 pull it down, until the first sample (within milliseconds) stops the run on the
 window. *Not verified on the 2460*, so we avoid that situation. First contact
 therefore uses the wide session.
 
-**Protocol (agreed 4 Nov with the material scientists):**
-- the cell holds about 0.6 mAh (1.5 mg × 400 mAh/g): 1C = 600 µA, C/20 = 30 µA;
+**Protocol (4 Nov, from the discussion with the scientists and your notes):**
+- the cell holds about 0.6 mAh nominally (1.5 mg × 400 mAh/g): 1C = 600 µA.
+  It is not new and its state is unknown, so K1 decides where to start;
 - start **fully sodiated**;
-- **unipolar** pulses, with no change of direction between pulses;
-- 1C pulses of 10 s to 1 min;
-- CC at C/20.
+- **unipolar 1 s pulses at a high rate**, with **60 s zero-current rests**
+  (`rest` = a 0 A current step with the output on, measuring the voltage);
+- both directions, desodiation then sodiation;
+- **each run ends at its voltage limit**: `repeats` is only an upper bound
+  (1.5× the capacity);
+- long pulses at modest rates are left to the lab cycler.
 
-`b2_sheets.py` defaults to 0.6 mAh. Pass `--capacity-mah` if this cell differs.
-Negative current = sodiation. Sheets accept `sodiation` and `desodiation`
-wherever `discharge` and `charge` are accepted.
+`b2_sheets.py` defaults to 0.6 mAh and 10C for the pulse day. Negative current
+= sodiation. Sheets accept `sodiation` and `desodiation` wherever `discharge`
+and `charge` are accepted.
+
+**Open design point (decide before K4/K5).** The pulse train tests its voltage
+limit **during the pulse, under load**. At high rate the IR drop dominates. For
+example, 10C = 6 mA through 50 Ω gives 0.3 V. A desodiation pulse from the
+fully sodiated state would then read above 0.2 V on its first pulse and stop
+the run, and a sodiation pulse would read below 0 V and hit the session window.
+K2 measures this IR drop per rate. See `docs/beamtime-concept.md`, "Ending a
+high-rate pulse run".
 
 Confirm once for the section (plus per run, as above):
 
 - [ ] RE Manager restarted with `OE_SESSION=bench/b2/session-cell-wide.toml`
-      (data in `~/k2460-data/b2/cell`)
+      (0–3 V, **30 mA**, data in `~/k2460-data/b2/cell`)
 - [ ] Resistor removed; output OFF; cell in its holder, 4-wire, polarity checked
 
 | Test | Row | Session | Pass when / decides |
 |---|---|---|---|
 | K0 | Handheld DMM on the cell, 2460 output OFF (optional, sources nothing) | — | OCV and its sign before anything is sourced |
-| K1 | `k1-ocv`: 2 min rest at 0 A | wide | OCV between 0.05 and 2.9 V, drift below 1 mV/min. Reversed leads read negative: the 0 V window stops at the first sample |
-| K2 | `k2-pulse-check`: 5 sodiation pulses at 1C, 1 s each with 4 s rests (no plating risk near 2.5 V) | wide | Voltage falls during the pulses: apparent R > 0 (the polarity is as wired) and below 1 kΩ (the cell is alive). Also: the first rest reading ≈ K1's last reading (HIGH-Z off state, B1's C2) |
-| K3 | `k3-sodiate-5mV`: CC −C/10 to 5 mV (whole capacity in about 10 h; at most 14 h), 30 min rest, 1 s sampling; Follow and monitor overnight | wide | `completed`; the cutoff event at 5 mV, no reading below 0 V; rest voltage recorded; monitor flat overnight |
+| K1 | `k1-ocv`: 2 min rest at 0 A | wide | OCV between 0.05 and 2.9 V, drift below 1 mV/min. Reversed leads read negative: the 0 V window stops at the first sample. The OCV places the cell: ≳ 1 V sloping or desodiated; ≲ 0.1 V plateau |
+| K2 | Rate check: rows `k2-<dir>-<n>C`, 3 × 1 s pulses at 1, 5, 10, 20 and 40C (24 mA) with 20 s rests, 6 ms sampling. If **OCV ≥ 1 V: sodiation** (`k2-sod-1C` … `k2-sod-40C`, STOP at 0.05 V). If **OCV < 1 V: desodiation** (`k2-desod-1C` … `k2-desod-40C`, STOP at 2.9 V). Neither direction approaches plating | wide | The first row checks polarity: apparent R > 0 and below 1 kΩ. Each rate gives the IR drop at 2 ms and the voltage at 1 s, and the relaxation shape. **Stop the series at the first `stopped_cutoff`.** The highest rate that completes, and its IR drop, decide `--pulse-c-rate` and the K4/K5 design |
+| K3 | `k3-sodiate-5mV`: CC −C/10 to 5 mV (whole capacity in about 10 h; at most 14 h), 30 min rest, 1 s sampling; Follow and monitor overnight | wide | `completed`; the cutoff event at 5 mV, no reading below 0 V; rest voltage recorded. The charge passed is a lower bound on the remaining capacity |
 
-K3 uses C/10, not C/20: at C/20 a full sodiation takes about 20 h and does not
-fit a night. The same applies to the day-before sodiation at the beamtime (see
-`docs/beamtime-concept.md`).
+The first rest of each K2 row also checks the HIGH-Z off state: its first
+reading ≈ the previous row's last (B1's C2). K3 uses C/10, not C/20: at C/20 a
+full sodiation takes about 20 h.
 
-Branches after K1:
-- **OCV ≥ 0.25 V:** K2, then K3 tonight.
-- **OCV < 0.25 V (partly sodiated):** K2, then K3 (it ends sooner).
-- **OCV < 0.05 V, OCV > 2.9 V, a drift over 1 mV/min, or K2's R > 1 kΩ:** stop
-  the cell section and report.
+Stop the cell section and report if:
+- OCV < 0.05 V or OCV > 2.9 V;
+- the drift is over 1 mV/min;
+- `k2-*-1C` gives R > 1 kΩ or R < 0 (wrong polarity).
 
-### Next bench day: the beamtime day in small (`session-cell.toml`, 0–0.5 V)
+### Next bench day: the pulse day in small (`session-cell.toml`, 0–0.5 V, 30 mA)
+
+Regenerate the sheets with the rate chosen from K2 (new file names,
+`--out ~/k2460-data/b2/day2`):
+
+```sh
+uv run --locked --extra experiment python bench/b2_sheets.py --pulse-c-rate <n> \
+  --out ~/k2460-data/b2/day2
+```
 
 Restart the RE Manager with `OE_SESSION=bench/b2/session-cell.toml` once K3
-has ended and its rest voltage satisfies the K-rule. Each pulse train passes
-1/6 of the capacity (10 min of 1C) in about 1 h. Sampling is 6 ms for the first
-0.5 s of every step, then 0.1 s, which matches 10–100 ms SAXS frames.
+has ended and its rest voltage satisfies the K-rule. The rows use:
+- 6 ms sampling during the 1 s pulse and the first second of each rest, then
+  0.25 s;
+- at most 1.5× the capacity: 540 pulses (9.2 h) at 10C, 135 pulses (2.3 h) at
+  40C;
+- a voltage limit that ends the run.
 
 | Test | Row | Pass when / shows |
 |---|---|---|
-| K4 | `k4-desod-pulse-10s`: 60 desodiation pulses at 1C, 10 s each with 50 s rests; STOP at 0.2 V | `completed`; the voltage response and relaxation per pulse |
-| K5 | `k5-desod-pulse-60s`: 10 desodiation pulses at 1C, 60 s each with 300 s rests (Jonas's 1 min / 5 min); STOP at 0.2 V | `completed`; the same 1/6 of the capacity with longer pulses |
-| K6 | `k6-sod-pulse-10s`: 60 sodiation pulses at 1C, 10 s / 50 s, back toward the fully sodiated state; STOP at 5 mV under load | **Plating risk: decide on the day.** `completed` or `stopped_cutoff`; compare with K4 at the same SOC |
-| K8 | `k8-reference-cycle` (weekend), from `b2-cell-cycle.xlsx` with `OE_SESSION=bench/b2/session-cell-cycle.toml` (0–0.5 V, **100 µA**): CC desodiation C/20 to 0.2 V, rest, CC sodiation C/20 to 5 mV, CV at 5 mV to C/100 (≤ 1 h), rest. At most 20 h per CC step, 42 h in total | `completed`; non-pulsed reference; ends fully sodiated for the next pulse day; monitor flat |
+| K4 | `k4-desod-1s-<n>C`: desodiation, 1 s pulses at nC, 60 s rests, until 0.2 V | `stopped_cutoff` at 0.2 V. Per-pulse response from fully sodiated through the plateau to the slope |
+| K5 | `k5-sod-1s-<n>C`: sodiation, the same pulses back, until 5 mV | `stopped_cutoff` at 5 mV. **Plating risk: decide on the day.** Compare with K4 at the same SOC |
+| K6 | `k6-reference-cycle` (weekend), from `b2-cell-cycle.xlsx` with `OE_SESSION=bench/b2/session-cell-cycle.toml` (0–0.5 V, **100 µA**): CC desodiation C/20 to 0.2 V, rest, CC sodiation C/20 to 5 mV, CV at 5 mV to C/100 (≤ 1 h), rest. At most 20 h per CC step, 42 h in total | `completed`; non-pulsed reference and the actual capacity; ends fully sodiated |
 
-K4–K6 stand in for the beamtime protocol, which is still being refined. The
-STOP thresholds are tested on the voltage **under load**. A desodiation pulse
-reads higher than the relaxed voltage, and a sodiation pulse lower, so both
-trains stop on the safe side.
+With the under-load limits in these rows, K4 and K5 only work if the IR drop at
+the chosen rate is small. Otherwise they end on the first pulse, which is
+harmless but uninformative. Settle the end-condition design first (open design
+point above).
 
-**Why K8 has its own session.** A CV hold's current limit is the session's
+**Why K6 has its own session.** A CV hold's current limit is the session's
 `i_max_abs`. A CC step that ends on its time limit instead of its voltage
 cutoff (for example, because the capacity is larger than assumed) still goes on
 to the CV hold. At 5 mV that hold would sodiate at up to the limit:
-- 1 mA (about 2C) in `session-cell.toml`;
+- 30 mA (50C) in `session-cell.toml`;
 - 100 µA in `session-cell-cycle.toml`.
 
 The 100 µA session also measures C/20 on the 100 µA range.

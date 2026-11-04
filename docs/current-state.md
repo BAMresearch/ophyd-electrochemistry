@@ -104,11 +104,12 @@ survive that). `defbuffer1` holds 1,337 continuous-mode readings from today
    overnight sodiation to 5 mV, the beamtime's day-before step). B1 C1–C2
    wait for an RC dummy. Sheets: `bench/b2_sheets.py`; monitor and evidence:
    `bench/b2_monitor.py`.
-2. Next bench day: K4–K6 (unipolar 1C pulse trains from fully sodiated);
-   weekend K8 (C/20 reference cycle in its own 100 µA session: the CV hold's
-   current limit is the session maximum).
-3. Scientists' answers (`docs/beamtime-concept.md` questions; 1C vs "40C"
-   first), then the beamtime run sheet.
+2. K2 (5 Nov) adds a 1–40C rate check of 1 s pulses. Next bench day: K4/K5,
+   1 s pulse trains at the chosen rate, desodiation then sodiation, each to its
+   voltage limit; weekend K6 (C/20 reference cycle, own 100 µA session).
+3. Decide how a high-rate pulse run ends (`docs/beamtime-concept.md`, "Ending
+   a high-rate pulse run": under-load limits stop at the first pulse; option B
+   tests the relaxed voltage), then the beamtime run sheet.
 
 B0, E1–E4, S1/S2 done 3 Nov (findings in `docs/mvp-plan.md` → Design and
 `docs/validation.md`).
@@ -116,7 +117,8 @@ B0, E1–E4, S1/S2 done 3 Nov (findings in `docs/mvp-plan.md` → Design and
 ## Information still needed from the user
 
 Measurement concept: `docs/beamtime-concept.md` (3 Nov, refined 4 Nov:
-unipolar 1C pulses of 10 s–1 min from fully sodiated, 0.6 mAh cells, C/20
-CC, 5 mV–0.2 V). Its open questions replace the earlier list. Still open from us: beamline trigger signal (level,
+unipolar ~1 s high-rate pulses with 1 min zero-current rests, both directions,
+from fully sodiated, each run to its voltage limit; 0.6 mAh cells). Its open
+questions replace the earlier list. Still open from us: beamline trigger signal (level,
 polarity, connector), the RC dummy cell's values for B1, and the B2 coin
 cell's capacity, history and last state.

@@ -79,12 +79,14 @@ Examples for a 0.6 mAh cell (1C = 600 µA), following
 | measurement_id | protocol | settings |
 |---|---|---|
 | hc01-sodiate | soc_position | current_a −6e-5, target_v 0.005, max_step_s 50400, rest_s 1800, interval_s 1 |
-| hc01-desod-pulse | pulse_train | current_a 6e-4, pulse_s 10, rest_s 50, repeats 360, v_high 0.2, start_mode external |
-| hc01-sod-pulse | pulse_train | current_a −6e-4, pulse_s 10, rest_s 50, repeats 360, v_low 0.005 |
+| hc01-desod-pulse | pulse_train | current_a 6e-3 (10C), pulse_s 1, rest_s 60, repeats 540, fast_window_s 1, interval_s 0.25, v_high 0.2, start_mode external |
+| hc01-sod-pulse | pulse_train | current_a −6e-3, pulse_s 1, rest_s 60, repeats 540, fast_window_s 1, interval_s 0.25, v_low 0.005 |
 | ref01-cycle | cycling | current_a 3e-5, v_low 0.005, v_high 0.2, cycles 1, start_with desodiation, cv_i_abs_min_a 6e-6, cv_after sodiation, rest_s 1800, max_step_s 72000, interval_s 1 |
 
-A pulse train stops the run when a pulse reaches `v_high` or `v_low`. The
-2460 checks this on the voltage under load. Run reference cycling with a CV
+A pulse train stops the run when a pulse reaches `v_high` or `v_low`, so
+`repeats` is only an upper bound. The 2460 checks the limit on the voltage
+under load, which at high rates includes a large IR drop (see
+`docs/beamtime-concept.md`, "Ending a high-rate pulse run"). Run reference cycling with a CV
 hold in a session whose `i_max_abs` is near the cycling current (step 3).
 
 Do not edit the sheet after its runs are queued: a queued run refuses to start
@@ -107,7 +109,7 @@ Edit it:
 Every row is checked against these limits, and the voltage window stops any run
 that leaves it. Use one session file per window and current, for example:
 - 0–3 V for the sodiation from about 2.5 V;
-- 0–0.5 V / 1 mA for pulses;
+- 0–0.5 V / 30 mA for pulses up to 40C;
 - 0–0.5 V / 100 µA for reference cycling. A CV hold's current limit is the
   session's `i_max_abs`.
 

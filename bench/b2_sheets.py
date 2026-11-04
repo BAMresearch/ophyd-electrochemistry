@@ -77,28 +77,41 @@ def resistor_rows() -> list[dict[str, object]]:
     return rows
 
 
-def cell_rows(capacity_mah: float, sample_id: str) -> tuple[list[dict[str, object]], ...]:
-    """(wide-window rows, measurement-window rows, reference-cycle rows).
+RATES_C = (1, 5, 10, 20, 40)  # K2 rate check, stopped at the first cutoff
 
-    Protocol as agreed with the material scientists on 4 Nov: start fully
-    sodiated, unipolar pulses (no change of direction between pulses), 1C
-    pulses of 10 s to 1 min, CC at C/20. Negative current = sodiation.
+
+def cell_rows(
+    capacity_mah: float, sample_id: str, pulse_c_rate: float = 10
+) -> tuple[list[dict[str, object]], ...]:
+    """(wide-window rows, pulse-day rows, reference-cycle rows).
+
+    Protocol (4 Nov): start fully sodiated; unipolar 1 s pulses at a high rate
+    with 60 s zero-current rests, in both directions, each run ending at its
+    voltage limit (``repeats`` is only an upper bound, 1.5x the capacity).
+    Negative current = sodiation.
     """
     c1 = capacity_mah * 1e-3  # A
-    train = dict(protocol="pulse_train", pre_rest_s=60)
+    # 1 s pulses sampled at 6 ms throughout, and the first second of each rest.
+    short = dict(protocol="pulse_train", pulse_s=1, fast_window_s=1)
     wide: list[dict[str, object]] = [
         dict(measurement_id="k1-ocv", protocol="rest", rest_s=120, interval_s=1),
-        # Sodiation pulses near 2.5 V: no plating risk; the voltage must fall (polarity).
-        dict(
-            measurement_id="k2-pulse-check",
-            **{**train, "pre_rest_s": 10},
-            current_a=-c1,
-            pulse_s=1,
-            rest_s=4,
-            repeats=5,
-            v_low=0.05,
-        ),
-        # Fully sodiated by morning: C/10 takes ~10 h for the whole capacity.
+    ]
+    # Rate check: 3 pulses per rate, away from the plating region either way.
+    for direction, sign, limit in (("sod", -1, dict(v_low=0.05)), ("desod", 1, dict(v_high=2.9))):
+        for rate in RATES_C:
+            wide.append(
+                dict(
+                    measurement_id=f"k2-{direction}-{rate}C",
+                    **short,
+                    current_a=sign * rate * c1,
+                    rest_s=20,
+                    repeats=3,
+                    pre_rest_s=10,
+                    **limit,
+                )
+            )
+    # Fully sodiated by morning: C/10 takes ~10 h for the whole capacity.
+    wide.append(
         dict(
             measurement_id="k3-sodiate-5mV",
             protocol="soc_position",
@@ -107,45 +120,22 @@ def cell_rows(capacity_mah: float, sample_id: str) -> tuple[list[dict[str, objec
             max_step_s=50400,
             rest_s=1800,
             interval_s=1,
-        ),
-    ]
-    # Next bench day, from the fully sodiated state: the beamtime day in small.
-    # Each train passes 1/6 of the capacity (10 min of 1C) in about 1 h.
+        )
+    )
+    # Pulse day, from the fully sodiated state: desodiation to the upper limit,
+    # then sodiation back to the lower one. Cutoffs are tested under load.
+    bound = round(1.5 * 3600 / pulse_c_rate)
+    train = dict(**short, rest_s=60, repeats=bound, pre_rest_s=60, interval_s=0.25)
+    tag = f"{pulse_c_rate:g}C"
     measure: list[dict[str, object]] = [
-        dict(
-            measurement_id="k4-desod-pulse-10s",
-            **train,
-            current_a=c1,
-            pulse_s=10,
-            rest_s=50,
-            repeats=60,
-            v_high=0.2,
-        ),
-        dict(
-            measurement_id="k5-desod-pulse-60s",
-            **train,
-            current_a=c1,
-            pulse_s=60,
-            rest_s=300,
-            repeats=10,
-            v_high=0.2,
-        ),
-        # Sodiation pulses back toward 5 mV (stop there under load): plating risk.
-        dict(
-            measurement_id="k6-sod-pulse-10s",
-            **train,
-            current_a=-c1,
-            pulse_s=10,
-            rest_s=50,
-            repeats=60,
-            v_low=0.005,
-        ),
+        dict(measurement_id=f"k4-desod-1s-{tag}", **train, current_a=pulse_c_rate * c1, v_high=0.2),
+        dict(measurement_id=f"k5-sod-1s-{tag}", **train, current_a=-pulse_c_rate * c1, v_low=0.005),
     ]
-    # Weekend: non-pulsed reference, desodiation first (from ~1/6 desodiated),
-    # ending fully sodiated again; the session's 100 uA also bounds the CV hold.
+    # Weekend: non-pulsed reference, desodiation first, ending fully sodiated;
+    # the session's 100 uA also bounds the CV hold.
     cycle: list[dict[str, object]] = [
         dict(
-            measurement_id="k8-reference-cycle",
+            measurement_id="k6-reference-cycle",
             protocol="cycling",
             current_a=c1 / 20,
             v_low=0.005,
@@ -165,11 +155,18 @@ def cell_rows(capacity_mah: float, sample_id: str) -> tuple[list[dict[str, objec
     return wide, measure, cycle
 
 
-def write(out: Path, capacity_mah: float, sample_id: str, *, overwrite: bool = False) -> int:
+def write(
+    out: Path,
+    capacity_mah: float,
+    sample_id: str,
+    pulse_c_rate: float = 10,
+    *,
+    overwrite: bool = False,
+) -> int:
     """Write both sheets and validate every row against its session; 0 if all pass."""
     out.mkdir(parents=True, exist_ok=True)
     note = [("B2", "From bench/b2_sheets.py; run each sheet in its session (bench/plan-b2.md).")]
-    rows = (resistor_rows(), *cell_rows(capacity_mah, sample_id))
+    rows = (resistor_rows(), *cell_rows(capacity_mah, sample_id, pulse_c_rate))
     failed = 0
     for (name, session), sheet_rows in zip(SHEETS.items(), rows, strict=True):
         path = out / name
@@ -185,12 +182,19 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--capacity-mah", type=float, default=0.6, help="coin-cell capacity")
     parser.add_argument("--sample-id", default="HC-coin-01")
+    parser.add_argument(
+        "--pulse-c-rate", type=float, default=10, help="pulse-day rate (from the K2 rate check)"
+    )
     parser.add_argument("--out", type=Path, default=Path.home() / "k2460-data" / "b2")
     parser.add_argument("--overwrite", action="store_true", help="replace existing sheets")
     args = parser.parse_args(argv)
     if not 0.01 <= args.capacity_mah <= 5:
         parser.error("--capacity-mah must be in 0.01..5 (a coin cell)")
-    return write(args.out, args.capacity_mah, args.sample_id, overwrite=args.overwrite)
+    if not 5 <= args.pulse_c_rate <= 40:
+        parser.error("--pulse-c-rate must be in 5..40 (lower rates exceed the record budget)")
+    return write(
+        args.out, args.capacity_mah, args.sample_id, args.pulse_c_rate, overwrite=args.overwrite
+    )
 
 
 if __name__ == "__main__":

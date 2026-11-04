@@ -1,6 +1,6 @@
 # B2 coin cell, measurement window (tier 2): HC on HI (force + sense), Na on LO.
 # Use only when the cell's last rest voltage is below 0.45 V (plan-b2.md, K-rule).
-# 0 V stops any run before plating; the rows' own cutoffs keep 5 mV-0.3 V.
+# 0 V stops any run before plating; 30 mA allows 1 s pulses up to 40C (24 mA).
 # OE_SESSION=bench/b2/session-cell.toml
 backend = "k2460"
 data_dir = "~/k2460-data/b2/cell"
@@ -12,6 +12,6 @@ poll_period_s = 1.0
 [limits]
 v_min_abs = 0.0
 v_max_abs = 0.5
-i_max_abs = 0.001
+i_max_abs = 0.03
 max_duration_s = 172800.0
 max_records = 1000000

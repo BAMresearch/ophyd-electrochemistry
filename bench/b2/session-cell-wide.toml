@@ -1,7 +1,8 @@
 # B2 coin cell, wide window (tier 2): HC on HI (force + sense), Na on LO.
-# For the first contact (k1, k2) and the overnight sodiation (k3): the window
-# contains any plausible OCV, so the 3.1 V compliance never makes the source
-# sink current into the cell. OE_SESSION=bench/b2/session-cell-wide.toml
+# For the first contact (k1), the rate check up to 40C (k2) and the overnight
+# sodiation (k3): the window contains any plausible OCV, so the 3.1 V
+# compliance never makes the source sink current into the cell.
+# OE_SESSION=bench/b2/session-cell-wide.toml
 backend = "k2460"
 data_dir = "~/k2460-data/b2/cell"
 resource = "TCPIP0::169.254.113.151::5025::SOCKET"
@@ -12,6 +13,6 @@ poll_period_s = 1.0
 [limits]
 v_min_abs = 0.0
 v_max_abs = 3.0
-i_max_abs = 0.001
+i_max_abs = 0.03
 max_duration_s = 172800.0
 max_records = 1000000
