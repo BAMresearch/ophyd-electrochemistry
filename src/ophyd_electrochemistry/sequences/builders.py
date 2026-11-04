@@ -175,6 +175,51 @@ def bipolar_pulse_sequence(
     )
 
 
+def pulse_train_sequence(
+    current_a: float,
+    pulse_s: float,
+    repeats: int,
+    *,
+    rest_s: float | None = None,
+    pre_rest_s: float = 10.0,
+    v_min: float | None = None,
+    v_max: float | None = None,
+    fast_interval_s: float = DEFAULT_FAST_INTERVAL_S,
+    fast_window_s: float = 0.5,
+    interval_s: float = 0.1,
+    name: str = "",
+) -> Sequence:
+    """Rest, then {pulse, rest} x repeats, all pulses in one direction.
+
+    The sign of ``current_a`` sets the direction (negative: sodiation for hard
+    carbon against Na). A pulse reaching ``v_min`` or ``v_max`` stops the run.
+    """
+    number(current_a, "current_a")
+    if current_a == 0:
+        raise ValidationError("current_a must be nonzero")
+    positive(pulse_s, "pulse_s")
+    if rest_s is None:
+        rest_s = max(pulse_s, 1.0)
+
+    def sampling(duration: float) -> Sampling:
+        return two_phase_sampling(duration, fast_interval_s, fast_window_s, interval_s)
+
+    pulse = Step(
+        StepMode.CURRENT,
+        current_a,
+        pulse_s,
+        sampling(pulse_s),
+        v_min=v_min,
+        v_max=v_max,
+        on_cutoff=CutoffAction.STOP,
+    )
+    return Sequence(
+        (rest_step(pre_rest_s, sampling(pre_rest_s)), pulse, rest_step(rest_s, sampling(rest_s))),
+        RepeatBlock(1, 2, repeats),
+        name,
+    )
+
+
 def cycling_sequence(
     current_a: float,
     v_low: float,

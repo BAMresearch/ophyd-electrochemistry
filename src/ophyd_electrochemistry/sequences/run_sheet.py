@@ -19,6 +19,7 @@ from .builders import (
     bipolar_pulse_sequence,
     cycling_sequence,
     log_repeats,
+    pulse_train_sequence,
     renard_series,
     rest_step,
     soc_position_sequence,
@@ -42,53 +43,58 @@ class RunSpec:
 # say what each value does, so a reader can check their understanding of it.
 _COLUMNS = {
     "measurement_id": "Unique run name (text). Rows whose first cell starts with # are skipped.",
-    "protocol": "What to run: bipolar_pulse, cycling, soc_position or rest.",
+    "protocol": "What to run: pulse_train, bipolar_pulse, cycling, soc_position or rest.",
     "start_mode": "immediate: start when the notebook arms the run. external: wait for the "
     "hardware start trigger. Blank = immediate.",
-    "current_a": "Current in A; positive current raises the cell voltage. bipolar_pulse: "
-    "amplitude, applied as +I then -I (or -I then +I, see start_with). cycling: magnitude "
-    "for both directions. "
-    "soc_position: signed, the sign sets the direction.",
-    "pulse_s": "bipolar_pulse: duration of each +I and -I pulse in s.",
-    "start_with": "charge (positive current, voltage rises) or discharge (negative current; "
-    "for hard carbon against Na: sodiation). bipolar_pulse: sign of the first pulse in each "
+    "current_a": "Current in A; positive current raises the cell voltage (hard carbon "
+    "against Na: negative = sodiation). pulse_train and soc_position: signed, the sign sets "
+    "the direction. bipolar_pulse: amplitude, applied as +I then -I (or -I then +I, see "
+    "start_with). cycling: magnitude for both directions.",
+    "pulse_s": "pulse_train, bipolar_pulse: duration of each pulse in s.",
+    "start_with": "charge or desodiation (positive current, voltage rises), or discharge or "
+    "sodiation (negative current). bipolar_pulse: sign of the first pulse in each "
     "block. cycling: the first half-cycle. Blank = charge.",
-    "rest_s": "Zero-current rest in s. bipolar_pulse: after each pulse (blank = larger of "
-    "pulse_s and 1). cycling: after each half-cycle (blank = 600). soc_position: after "
-    "reaching target_v. rest: total duration.",
-    "repeats": "bipolar_pulse: number of pulse / rest / opposite pulse / rest blocks. Blank = "
-    "100 at 0.1 s "
-    "down to 6 at 100 s.",
-    "pre_rest_s": "bipolar_pulse: rest before the first pulse in s. Blank = 10.",
+    "rest_s": "Zero-current rest in s. pulse_train, bipolar_pulse: after each pulse (blank = "
+    "larger of pulse_s and 1). cycling: after each half-cycle (blank = 600). soc_position: "
+    "after reaching target_v. rest: total duration.",
+    "repeats": "pulse_train: number of pulse / rest pairs (required). bipolar_pulse: number "
+    "of pulse / rest / opposite pulse / rest blocks. Blank = 100 at 0.1 s down to 6 at 100 s.",
+    "pre_rest_s": "pulse_train, bipolar_pulse: rest before the first pulse in s. Blank = 10.",
     "v_low": "Lower voltage threshold in V; the 2460 watches the voltage, it does not hold "
-    "it. cycling: the downward step ends here. bipolar_pulse (optional): the run stops "
-    "if a pulse reaches it. Not the absolute safety limit (set in the notebook).",
+    "it. cycling: the downward step ends here. pulse_train, bipolar_pulse (optional): the "
+    "run stops if a pulse reaches it. Not the absolute safety limit (set in the session).",
     "v_high": "Upper voltage threshold in V; the 2460 watches the voltage, it does not hold "
     "it. cycling: the upward step ends here (and the CV hold, if any, holds this "
-    "voltage after the charge). bipolar_pulse (optional): the run stops if a pulse reaches "
-    "it. Not the absolute safety limit (set in the notebook).",
+    "voltage after the charge). pulse_train, bipolar_pulse (optional): the run stops if a "
+    "pulse reaches it. Not the absolute safety limit (set in the session).",
     "target_v": "soc_position: constant current until the cell voltage reaches this value "
     "in V, then rest_s at zero current.",
     "cycles": "cycling: number of cycles; each starts with the half set by start_with.",
     "cv_i_abs_min_a": "cycling: after a constant-current step, hold its end voltage until "
     "|current| falls to this value in A (at most 3600 s); which step is set by cv_after. "
     "Blank = no voltage hold.",
-    "cv_after": "cycling with cv_i_abs_min_a: hold after the charge (at v_high) or after the "
-    "discharge (at v_low). Blank = charge.",
+    "cv_after": "cycling with cv_i_abs_min_a: hold after the charge / desodiation (at "
+    "v_high) or after the discharge / sodiation (at v_low). Blank = charge.",
     "max_step_s": "Time limit in s for each constant-current step; the step ends then "
     "even if its voltage was not reached. cycling: blank = 86400. soc_position: required.",
     "fast_interval_s": "Sampling interval in s during the first fast_window_s of every "
-    "step. bipolar_pulse: blank = 0.006. Other protocols: fast sampling only if set.",
+    "step. Pulses: blank = 0.006. Other protocols: fast sampling only if set.",
     "fast_window_s": "Length in s of the fast-sampling period at each step start. "
-    "bipolar_pulse: blank = 0.5.",
+    "Pulses: blank = 0.5.",
     "interval_s": "Sampling interval in s after the fast period. Blank = 0.1 for "
-    "bipolar_pulse, 1 otherwise.",
+    "pulse_train and bipolar_pulse, 1 otherwise.",
     "sample_id": "Optional sample name; stored with the data.",
     "notes": "Optional free text; stored with the data.",
 }
-_PROTOCOLS = {"bipolar_pulse", "cycling", "soc_position", "rest"}
+_PROTOCOLS = {"pulse_train", "bipolar_pulse", "cycling", "soc_position", "rest"}
+# Half-cell terms (hard carbon against Na) for the sign convention's names.
+_DIRECTIONS = {"charge": "charge", "discharge": "discharge"} | {
+    "desodiation": "charge",
+    "sodiation": "discharge",
+}
 _TEXT = ("measurement_id", "protocol", "start_mode", "start_with", "cv_after", "sample_id", "notes")
 _REQUIRED = {
+    "pulse_train": ("current_a", "pulse_s", "repeats"),
     "bipolar_pulse": ("current_a", "pulse_s"),
     "cycling": ("current_a", "v_low", "v_high", "cycles"),
     "soc_position": ("current_a", "target_v", "max_step_s", "rest_s"),
@@ -149,8 +155,11 @@ def _parse_row(row: Mapping[str, object]) -> tuple[dict[str, object], list[str]]
         errors.append("start_mode: must be immediate or external")
     for column in ("start_with", "cv_after"):
         choice = parsed.get(column)
-        if isinstance(choice, str) and choice not in ("charge", "discharge"):
-            errors.append(f"{column}: must be charge or discharge")
+        if isinstance(choice, str):
+            if choice in _DIRECTIONS:
+                parsed[column] = _DIRECTIONS[choice]
+            else:
+                errors.append(f"{column}: must be charge, discharge, desodiation or sodiation")
     for column in _NUMERIC:
         value = row.get(column)
         if _blank(value):
@@ -198,6 +207,19 @@ def _build_sequence(row: Mapping[str, object]) -> Sequence:
         return "charge" if result is None else str(result)
 
     protocol = row["protocol"]
+    if protocol == "pulse_train":
+        return pulse_train_sequence(
+            value("current_a"),
+            value("pulse_s"),
+            count("repeats"),
+            rest_s=optional("rest_s"),
+            pre_rest_s=value("pre_rest_s", 10),
+            v_min=optional("v_low"),
+            v_max=optional("v_high"),
+            fast_interval_s=value("fast_interval_s", DEFAULT_FAST_INTERVAL_S),
+            fast_window_s=value("fast_window_s", 0.5),
+            interval_s=value("interval_s", 0.1),
+        )
     if protocol == "bipolar_pulse":
         pulse_s = value("pulse_s")
         return bipolar_pulse_sequence(
@@ -372,7 +394,7 @@ def load_run_sheet(
 
 
 def make_template(path: str | Path, *, overwrite: bool = False) -> Path:
-    """Write examples and one SOC's R5 pulse series; currents are placeholders.
+    """Write one example per protocol and one SOC's R5 pulse series; currents are placeholders.
 
     The workbook is a starting point, not approval to energize a cell. It must
     be reviewed and validated with the actual session's SafetyLimits.
@@ -381,6 +403,14 @@ def make_template(path: str | Path, *, overwrite: bool = False) -> Path:
         raise ValueError("template path must end in .xlsx")
     examples: list[dict[str, object]] = [
         dict(measurement_id="example-pulse", protocol="bipolar_pulse", current_a=1e-4, pulse_s=1),
+        dict(
+            measurement_id="example-pulse-train",
+            protocol="pulse_train",
+            current_a=1e-4,
+            pulse_s=10,
+            rest_s=50,
+            repeats=5,
+        ),
         dict(
             measurement_id="example-cycling",
             protocol="cycling",

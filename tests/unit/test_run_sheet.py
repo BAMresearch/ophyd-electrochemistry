@@ -18,6 +18,7 @@ from ophyd_electrochemistry.sequences import (
     load_run_sheet,
     log_repeats,
     make_template,
+    pulse_train_sequence,
     renard_series,
     soc_position_sequence,
     validate,
@@ -45,12 +46,13 @@ def pulse(**changes):
 def test_template_round_trip(tmp_path, limits):
     path = make_template(tmp_path / "template.xlsx")
     runs = load_run_sheet(path, limits)
-    assert len(runs) == 20  # Four protocol examples plus the full 16-run R5 series.
+    assert len(runs) == 21  # Five protocol examples plus the full 16-run R5 series.
     series = [run for name, run in runs.items() if name.startswith("soc01-")]
     assert [run.row["pulse_s"] for run in series] == renard_series(0.1, 100)
     assert all(run.row["current_a"] == 1e-4 for run in series)
     assert all(run.sequence.repeat.count == log_repeats(run.row["pulse_s"]) for run in series)
     assert {run.row["protocol"] for run in runs.values()} == {
+        "pulse_train",
         "bipolar_pulse",
         "cycling",
         "soc_position",
@@ -437,8 +439,42 @@ def test_start_with_and_cv_after_columns(tmp_path, limits):
 
 @pytest.mark.parametrize("column", ["start_with", "cv_after"])
 def test_start_with_and_cv_after_values_are_checked(tmp_path, limits, column):
-    with pytest.raises(ValidationError, match=f"{column}: must be charge or discharge"):
-        load_run_sheet(write_sheet(tmp_path, [pulse(**{column: "sodiation"})]), limits)
+    with pytest.raises(ValidationError, match=f"{column}: must be charge, discharge, desod"):
+        load_run_sheet(write_sheet(tmp_path, [pulse(**{column: "oxidation"})]), limits)
+
+
+def test_sodiation_and_desodiation_name_the_directions(tmp_path, limits):
+    rows = [
+        pulse(measurement_id="sod", start_with="sodiation"),
+        pulse(measurement_id="dis", start_with="discharge"),
+        pulse(measurement_id="desod", start_with="desodiation"),
+        pulse(measurement_id="chg"),
+    ]
+    runs = load_run_sheet(write_sheet(tmp_path, rows), limits)
+    assert runs["sod"].sequence == runs["dis"].sequence
+    assert runs["desod"].sequence == runs["chg"].sequence
+    assert runs["sod"].sequence.steps[1].level < 0 < runs["desod"].sequence.steps[1].level
+
+
+def test_pulse_train_rows(tmp_path, limits):
+    rows = [
+        dict(
+            measurement_id="desod",
+            protocol="pulse_train",
+            current_a=6e-4,
+            pulse_s=10,
+            rest_s=50,
+            repeats=60,
+            v_high=0.2,
+        ),
+        dict(measurement_id="sod", protocol="pulse_train", current_a=-6e-4, pulse_s=1, repeats=5),
+    ]
+    runs = load_run_sheet(write_sheet(tmp_path, rows), limits)
+    assert runs["desod"].sequence == pulse_train_sequence(6e-4, 10, 60, rest_s=50, v_max=0.2)
+    assert runs["sod"].sequence == pulse_train_sequence(-6e-4, 1, 5)
+    rows[1].pop("repeats")
+    with pytest.raises(ValidationError, match="repeats: required value is blank"):
+        load_run_sheet(write_sheet(tmp_path, rows), limits)
 
 
 def test_template_documents_the_new_columns(tmp_path):

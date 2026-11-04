@@ -200,7 +200,7 @@ def test_validate_compiles_every_row(tmp_path, sheet, capsys):
 
     assert validate_main([str(sheet), "--session", str(session_file(tmp_path))]) == 0
     out = capsys.readouterr().out.splitlines()
-    assert out[-1].startswith("20 of 20 run(s) valid")
+    assert out[-1].startswith("21 of 21 run(s) valid")
     assert any(
         line.startswith("ok   example-pulse: bipolar_pulse") and "blocks" in line for line in out
     )

@@ -24,6 +24,7 @@ from ophyd_electrochemistry.sequences import (
     limits_from_dict,
     log_repeats,
     nominal_duration_s,
+    pulse_train_sequence,
     renard_series,
     rest_step,
     sample_schedule,
@@ -590,6 +591,22 @@ def test_bipolar_pulses_can_start_with_discharge():
     assert sequence.repeat == RepeatBlock(1, 4, 3)
     with pytest.raises(ValidationError, match="start must be charge or discharge"):
         bipolar_pulse_sequence(0.0005, 1, 3, start="negative")
+
+
+def test_unipolar_pulse_train_in_either_direction():
+    # Desodiation pulses from the fully sodiated state, stopped at 0.2 V under load.
+    sequence = pulse_train_sequence(6e-4, 10, 60, rest_s=50, v_max=0.2)
+    assert [step.level for step in sequence.steps] == [0, 6e-4, 0]
+    assert sequence.repeat == RepeatBlock(1, 2, 60)
+    pulse = sequence.steps[1]
+    assert (pulse.v_max, pulse.on_cutoff) == (0.2, CutoffAction.STOP)
+    assert nominal_duration_s(sequence) == 10 + 60 * 60
+    assert pulse.sampling.fast_interval_s == 0.006
+    sodiation = pulse_train_sequence(-6e-4, 1, 3, v_min=0.005)
+    assert sodiation.steps[1].level == -6e-4 and sodiation.steps[2].duration_s == 1
+    validate(sodiation, SafetyLimits(0.0, 0.5, 0.001, 1e6, 10**7))
+    with pytest.raises(ValidationError, match="nonzero"):
+        pulse_train_sequence(0, 1, 3)
 
 
 @pytest.mark.parametrize("start", ["charge", "discharge"])
