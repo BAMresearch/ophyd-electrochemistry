@@ -1,7 +1,7 @@
 # Operator guide: running the experiment from Excel and the command line
 
 Step by step, from an Excel run sheet to HDF5 files, with the QueueServer
-owning the Keithley 2460. **Status (3 Nov 2026):** the whole flow runs on the
+owning the Keithley 2460. **Status (4 Nov 2026):** the whole flow runs on the
 simulator and against a real RE Manager; the 2460 hardware path still has to
 pass bench validation (B1, B2) before it is used on cells.
 
@@ -63,22 +63,29 @@ for what each column means. One row is one run:
 
 - `measurement_id`: a unique name. It names the data file. Put `#` in front
   to skip a row.
-- `protocol`: `bipolar_pulse`, `cycling`, `soc_position` (CC to a voltage,
-  then rest) or `rest`.
+- `protocol`: `pulse_train` (pulses in one direction, with rests),
+  `bipolar_pulse`, `cycling`, `soc_position` (CC to a voltage, then rest) or
+  `rest`.
 - **Sign:** a positive current raises the cell voltage. For hard carbon against
-  Na, **sodiation is a negative current** (`start_with = discharge`).
+  Na, **sodiation is a negative current**. `pulse_train` and `soc_position`
+  take a signed `current_a`. In `start_with` and `cv_after`, write `sodiation`
+  or `desodiation`; `discharge` and `charge` mean the same.
 - `start_mode`: `immediate`, or `external` to wait for the beamline START
   pulse.
 
-Examples (the values are placeholders until the cell data are known; see
-`docs/beamtime-concept.md`):
+Examples for a 0.6 mAh cell (1C = 600 µA), following
+`docs/beamtime-concept.md`. The values are not final:
 
 | measurement_id | protocol | settings |
 |---|---|---|
-| hc01-sodiate-overnight | soc_position | current_a −2.25e-5, target_v 0.2, max_step_s 50400, rest_s 1800, interval_s 10 |
-| hc01-sodiate-5mV | soc_position | current_a −4.5e-4, target_v 0.005, max_step_s 7200, rest_s 600, interval_s 1 |
-| hc01-pulse | bipolar_pulse | current_a 4.5e-4, pulse_s 1, rest_s 4, repeats 200, v_low 0.005, v_high 0.2, start_with charge, start_mode external |
-| ref01-cycle | cycling | current_a 2.25e-5, v_low 0.005, v_high 0.2, cycles 1, start_with discharge, cv_i_abs_min_a 4.5e-6, cv_after discharge, rest_s 1800, max_step_s 54000, interval_s 1 |
+| hc01-sodiate | soc_position | current_a −6e-5, target_v 0.005, max_step_s 50400, rest_s 1800, interval_s 1 |
+| hc01-desod-pulse | pulse_train | current_a 6e-4, pulse_s 10, rest_s 50, repeats 360, v_high 0.2, start_mode external |
+| hc01-sod-pulse | pulse_train | current_a −6e-4, pulse_s 10, rest_s 50, repeats 360, v_low 0.005 |
+| ref01-cycle | cycling | current_a 3e-5, v_low 0.005, v_high 0.2, cycles 1, start_with desodiation, cv_i_abs_min_a 6e-6, cv_after sodiation, rest_s 1800, max_step_s 72000, interval_s 1 |
+
+A pulse train stops the run when a pulse reaches `v_high` or `v_low`. The
+2460 checks this on the voltage under load. Run reference cycling with a CV
+hold in a session whose `i_max_abs` is near the cycling current (step 3).
 
 Do not edit the sheet after its runs are queued: a queued run refuses to start
 if the file has changed.
@@ -98,8 +105,14 @@ Edit it:
   duration and maximum records.
 
 Every row is checked against these limits, and the voltage window stops any run
-that leaves it. Use one session file per window, for example 0–0.3 V for the
-measurements and 0–2.7 V for the overnight sodiation from about 2.5 V.
+that leaves it. Use one session file per window and current, for example:
+- 0–3 V for the sodiation from about 2.5 V;
+- 0–0.5 V / 1 mA for pulses;
+- 0–0.5 V / 100 µA for reference cycling. A CV hold's current limit is the
+  session's `i_max_abs`.
+
+The cell's rest voltage must be inside the window before a run: the voltage
+limit is the window's upper edge plus 0.1 V.
 
 ## 4. Validate (no instrument needed)
 
@@ -162,7 +175,7 @@ qserver status            # wait for: worker_environment_exists True, manager_st
 ## 7. Queue and run
 
 ```sh
-oe-enqueue runs.xlsx hc01-sodiate-5mV hc01-pulse --session ~/k2460-session.toml
+oe-enqueue runs.xlsx hc01-desod-pulse hc01-sod-pulse --session ~/k2460-session.toml
 ```
 
 For each run it prints the summary. **Check the cell, wiring, voltage window,

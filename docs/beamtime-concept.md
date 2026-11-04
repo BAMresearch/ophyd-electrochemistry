@@ -35,132 +35,166 @@ sheet. Values marked *placeholder* are ours, not theirs.
 > the desired voltage of ca. 0.2 V (shortly before the plateau region starts) for
 > the measurements to start.
 
+## Refinement, 4 Nov 2026 (discussion with Jonas)
+
+Decided:
+- **Unipolar pulses, starting fully sodiated.** Pulsed sodiation risks Na-metal
+  plating. The direction does not change from pulse to pulse, so sodiation and
+  desodiation under pulses can be compared.
+- **Terms:** *sodiation* and *desodiation* instead of discharge and charge,
+  which are ambiguous in half cells. Run sheets accept both.
+- **Cells:** a d = 12 mm electrode with about 1.5 mg of active material:
+  - 400 mAh/g (BAM core-shell), so about **0.6 mAh**;
+  - or 350 mAh/g (commercial Kuranode), so about 0.53 mAh.
+- **Currents:** CC at **30 µA (C/20)**; pulses at **600 µA (1C)**.
+- **Pulses:** 10 s to 1 min. Jonas suggested 1 min pulses with 5 min rests,
+  which makes a 1C half-cycle (1 h of pulse time) last 6 h. The scientists
+  expect no slow structural dynamics after the first seconds of a pulse or
+  rest, so the short timescales matter most.
+- **Purpose:** a proof of principle, to see whether there is anything
+  interesting at all. Longer or shorter pulses and other rests can follow in a
+  later proposal.
+- **SAXS:** 10–100 ms per frame, depending on the flux.
+
+The pulse current came up as both "1C" and "40C". 40C would be 24 mA, which is
+40 times the stated 600 µA; see question 1 below.
+
+The sodiation (P0) will probably run separately, a day in advance (user, 4 Nov).
+
 ## Conventions
 
 Hard carbon (HC) against Na metal, two electrodes. **HC on HI (force and
 sense), Na on LO**, so the measured voltage is the cell voltage (5 mV–2.5 V).
-In the sequence model a positive current raises the voltage: **sodiation
-(discharge) is a negative current, desodiation (charge) a positive one**. With
-the leads swapped every step would run the wrong way, so the wiring check before
-each run must include polarity.
+In the sequence model a positive current raises the voltage: **sodiation is a
+negative current, desodiation a positive one**. With the leads swapped every
+step would run the wrong way, so the wiring check before each run must include
+polarity.
 
-1C = 300–600 µA implies a capacity of about 0.3–0.6 mAh; 15–30 µA is then about
-C/20.
+With 0.6 mAh: 1C = 600 µA, C/20 = 30 µA, and one 1C pulse of 10 s passes
+1/360 of the capacity.
 
 ## The protocols in sequencer terms
 
-| ID | Protocol | Steps (one sequence each) | Window |
-|---|---|---|---|
-| P0 | Sodiation to 0.2 V, the day before (7–8 Dec) | CC −I → 0.2 V (NEXT), rest | 0–2.7 V |
-| P1 | Sodiation without pulse | CC −I → 5 mV (NEXT), rest | 0–0.3 V |
-| P2 | Desodiation with pulses | {+I pulse t_p, rest t_r} × n, the pulse STOPs the run at 0.1–0.2 V | 0–0.3 V |
-| P3 | Combined pulse | CC −I → 0.2 V, rest, {−I t_p, rest t_r, +I t_p, rest t_r} × n | 0–0.3 V |
-| P4 | Reference cycling | {CC −I → 5 mV, CV 5 mV → \|I\| < I_min, rest, CC +I → 0.2 V, rest} × n | 0–0.3 V |
+| ID | Protocol | Run-sheet protocol | Steps | Window |
+|---|---|---|---|---|
+| P0 | Sodiation to fully sodiated, the day before | `soc_position` | CC −I → 5 mV (NEXT), rest | 0–3 V |
+| P2d | Desodiation pulses | `pulse_train`, +I | rest, {+I t_p, rest t_r} × n; a pulse reaching 0.2 V STOPs the run | 0–0.5 V |
+| P2s | Sodiation pulses (plating risk) | `pulse_train`, −I | rest, {−I t_p, rest t_r} × n; a pulse reaching 5 mV STOPs the run | 0–0.5 V |
+| P1 | Non-pulsed comparison | `soc_position` | CC ±I → 0.2 V or 5 mV, rest | 0–0.5 V |
+| P4 | Reference cycling | `cycling` | {CC +I → 0.2 V, rest, CC −I → 5 mV, CV 5 mV → \|I\| < I_min, rest} × n | 0–0.5 V, own session (point 4) |
 
-**4 Nov (user):** the sodiation (P0) will probably run separately, a day in
-advance of the measurements. Bench plan B2 rehearses this order on a coin cell
-(`bench/plan-b2.md`: K3 overnight, K4–K7 the next day).
-
-P2 is our reading of "desodiate with pulse until 0.1–0.2 V" (see question 3).
-In every case the absolute window stops the run; 0 V is the proposed hard
-lower limit (no plating below 0 V vs Na is sought before the planned plating
-test).
+The bipolar pulse (former P3) and the separate sodiation to 5 mV (former P1)
+are no longer planned. `bipolar_pulse` stays available. In every case the
+absolute window stops the run, and 0 V is the hard lower limit.
 
 ## Feasibility on the 2460 sequencer
 
-Compiled with placeholder values (1C = 450 µA, C/20 = 22.5 µA, t_p = 1 s,
-t_r = 4 s, 6 ms fast sampling, 1–10 s otherwise):
+Compiled with 1C = 600 µA, C/20 = 30 µA, 6 ms fast sampling for 0.5 s per
+step, then 0.1 s (pulse trains) or 1 s (CC):
 
-| ID | Blocks (≤ 255) | Records (upper bound) | Duration (upper bound) | Ranges |
-|---|---|---|---|---|
-| P0 | 28 | 5,220 | 14.5 h | 100 µA source, 7 V measure, 1 NPLC |
-| P1 (1C) | 28 | 7,800 | 2.2 h | 1 mA, 2 V |
-| P2 (≤ 2000 pulses) | 55 | 416,119 | 2.8 h | 1 mA, 2 V, 0.1/1 NPLC |
-| P3 (n = 200) | 86 | 87,400 | 1.7 h | 1 mA, 2 V, 0.1/1 NPLC |
-| P4 (n = 1, ≤ 15 h per CC) | 57 | 12,600 | 35 h | 100 µA, 2 V |
+| Case | Blocks (≤ 255) | Records (upper bound) | Duration (upper bound) |
+|---|---|---|---|
+| P0, C/20 to 5 mV (≤ 24 h) | 28 | 88,200 | 24.5 h |
+| P0, C/10 to 5 mV (≤ 14 h) | 28 | 52,200 | 14.5 h |
+| P2d, 60 s / 300 s × 60 (full half-cycle) | 55 | 226,159 | 6.0 h |
+| P2d, 10 s / 50 s × 360 (full half-cycle) | 55 | 273,559 | 6.0 h |
+| P2d, 10 s / 300 s × 60 (1/6 of the capacity) | 55 | 196,159 | 5.2 h |
+| P2s, 10 s / 50 s × 360 | 55 | 273,559 | 6.0 h |
+| P1, CC 1C desodiation to 0.2 V | 28 | 72,000 | 2.0 h |
+| P4, one C/20 cycle (≤ 20 h per CC step) | 57 | 151,200 | 42 h |
 
-All of them fit the sequencer: block budget, buffer (1,000,000 records), current
-and voltage ranges, and timing. The 0–0.3 V window measures on the 2 V range,
-where the reading times were measured; P0 measures on the 7 V range (B1 test
-R3). A 5 mV cutoff is well above the 2 V range's resolution and offset.
+All of them fit: block budget, buffer (1,000,000 records), ranges, and timing.
+The 0–0.5 V window measures on the 2 V range; P0 measures on the 7 V range
+(B1 test R3).
+
+The duration of a pulse run is the pulse time it needs, times
+(1 + t_r / t_p). For a full half-cycle at 1C:
+- 6 h with t_r = 5 t_p;
+- 31 h with 10 s pulses and 5 min rests.
 
 ## Assessment
 
 1. **Time and instruments.** There is one 2460, so one cell at a time.
-   - P4 at C/20 needs on the order of 20–35 h per cycle (two half-cycles in the
-     plateau, plus the CV hold). Two cycles exceed the two beamline days.
-   - P0 for each cell takes a night.
-   - Pulsed and non-pulsed runs on two cells, plus overnight sodiation and
-     reference cycling, do not fit on one instrument in two days. Either the
-     reference and overnight steps run on another cycler, or we need a second
-     sourcemeter, or the plan shrinks.
-2. **Pulse order at 5 mV.** After P1 the cell sits at 5 mV. A pulse train that
-   starts with −I (as in P3) would cross the 5 mV cutoff on the first pulse and
-   stop the run. Starting from 5 mV, pulses must start with +I, or the window
-   must allow lower voltages, which is the plating risk to be avoided at first.
-3. **"Desodiate with pulse".** Symmetric ±I pulses carry no net charge, so on
-   their own they do not desodiate. Options:
-   - unipolar +I pulses with rests (GITT-like, P2 above), ending at 0.1–0.2 V;
-   - a CC desodiation with pulses superimposed;
-   - asymmetric pulses.
+   - A full pulsed half-cycle takes about 6 h.
+   - P0 at C/20 takes about 20 h for the whole capacity, so it does not fit
+     a night: either C/10 (about 10 h) or an earlier start (question 2).
+   - P4 at C/20 takes about 40 h per cycle and does not fit the beamtime. It
+     belongs on another cycler, or before the beamtime.
+   - Two days fit, for example: P2d and P1 on one cell, or P2d and P2s on one
+     cell, plus the overnight P0 for the next cell.
+2. **Where a pulse run ends.** A pulse train STOPs when a pulse reaches the
+   threshold, measured **under load**:
+   - a desodiation pulse reads higher than the relaxed voltage, so 0.2 V is
+     reached before the relaxed voltage gets there;
+   - a sodiation pulse reads lower, so 5 mV under load is a conservative
+     plating guard.
 
-   Each needs a defined end. The cutoff is tested on the measured voltage under
-   load (during a +I pulse the voltage reads higher than the relaxed voltage),
-   so a 0.2 V cutoff during a pulse is reached earlier than a 0.2 V rest voltage.
-4. **Plating margin.**
+   Alternatively, the run can end after a fixed number of pulses (a fraction of
+   the capacity) without reaching a threshold.
+3. **Plating margin.**
    - In a two-electrode cell the Na counter electrode's overpotential makes the
      measured voltage lower than the HC potential during sodiation. A 5 mV
      cutoff on the measured voltage therefore errs on the safe side. This is
      reasoning, not a measurement.
-   - The sequencer tests cutoffs only at samples. In current mode the 2460's
-     compliance (|V| ≤ 0.4 V here) does not stop the voltage from going below
-     0 V between samples, so sampling near 5 mV should be ≤ 1 s.
+   - The sequencer tests cutoffs only at samples. The voltage limit does not
+     stop the voltage from going below 0 V between samples. Pulse trains sample
+     every 0.1 s after the first 0.5 s, and CC runs near 5 mV should sample at
+     1 s or faster.
+4. **CV hold current.**
    - The CV hold at 5 mV (P4) itself sits close to plating conditions.
-   - The CV hold's current limit is the session's maximum current, and it
-     follows its CC step even when that step ended on its time limit rather
-     than at 5 mV. Run P4 in a session whose maximum current is near the
-     cycling current, not the pulse current (found 4 Nov, B2 plan).
-5. **What the run sheet can express.** Added 3 Nov: `start_with = discharge`
-   (bipolar pulses −I first; cycling starts with the sodiation) and
-   `cv_after = discharge` (CV hold at v_low after the sodiation), so P0, P1
-   and P4 can be written as sheet rows today. Still missing, pending the
-   answers to question 3: a "CC approach, then pulses" protocol (P3) and a
-   unipolar pulse train (P2). Both are small builder extensions with no new
-   instrument features.
-6. **Pulse-length series.** Since pulsed vs non-pulsed matters more than t_p,
-   the template's 16-run t_p series can give way to pairs (pulsed, non-pulsed)
-   at one or two t_p values.
-7. **Overnight sodiation (P0).** It needs a current (C/20 at 15–30 µA takes
-   roughly a night from 2.5 V), a time limit, and an end state: rest after the
-   cutoff (the voltage relaxes above 0.2 V), or a CV hold at 0.2 V. Its window
-   (to 2.7 V) differs from the measurement window, so it is a separate session
-   or session file.
+   - Its current limit is the session's maximum current.
+   - It follows its CC step even when that step ended on its time limit rather
+     than at 5 mV.
+
+   Run P4 in a session whose maximum current is near the cycling current
+   (100 µA), not the pulse current (found 4 Nov, B2 plan).
+5. **What the run sheet can express.** Since 4 Nov, every protocol above is a
+   sheet row:
+   - `pulse_train` with a signed current;
+   - `start_with` and `cv_after` accept `sodiation` and `desodiation`.
+
+   A "CC approach, then pulses" in one run is no longer needed: it is a
+   `soc_position` row followed by a `pulse_train` row.
+6. **Sampling against SAXS.** 6 ms for the first 0.5 s of every step, then
+   0.1 s, covers 10–100 ms frames.
+   - Faster sampling after the first 0.5 s (for example 10 ms throughout a
+     10 s pulse) costs records but fits: about 1,000 per pulse.
+   - Step markers on line 4 mark every pulse start for alignment with the
+     frames.
+7. **Bench rehearsal.** B2 (`bench/plan-b2.md`) runs this protocol in small on
+   a coin cell:
+   - K3: overnight sodiation to 5 mV;
+   - K4 and K5: desodiation trains of 10 s / 50 s and 60 s / 300 s;
+   - K6: a sodiation train;
+   - K8: a C/20 reference cycle over a weekend.
 8. **Dates.** 7–8 December 2026 is a Monday–Tuesday, in the second week of
    December. The MVP plan says the first week. Confirm the beamtime days.
 
 ## Questions for the material scientists
 
-1. Beamtime days, and whether the 7–8 Dec overnight sodiation happens on our
-   2460 (one cell at a time) or on your cycler.
-2. How many cells: pulse cell(s), reference cell(s), and which ones must be
-   measured at the beamline.
-3. "Desodiate with pulse until 0.1–0.2 V": unipolar pulses with rests,
-   CC with superimposed pulses, or something else? Does the cutoff apply to the
-   voltage under load or after the rest?
-4. t_p, t_r and n (or the total time per pulse run); the C-rate for the
-   non-pulsed sodiation to 5 mV.
-5. P4: I_min and the maximum CV time; number of cycles that matter at the
-   beamline.
-6. P0: current, time limit, and the end state at 0.2 V (rest or CV hold).
-7. The cells' capacity (mAh), to fix 1C and C/20 exactly.
-8. What the beamline records (technique, frame rate), so we can choose sampling
-   rates and the step-marker use.
+Answered on 4 Nov: unipolar pulses (old question 3), the capacity (old 7),
+pulse lengths in principle (old 4), and SAXS frame times (old 8).
 
-## Next steps (after answers)
+1. **Pulse current:** 1C (600 µA) or 40C (24 mA)? 40C passes 1/90 of the
+   capacity per second and would need the 100 mA range. The cutoffs would
+   probably end such pulses at once; B2's K2 measures the cell resistance that
+   decides this.
+2. **Fully sodiated start:** sodiation at C/20 takes about 20 h. Is C/10
+   overnight acceptable, or does it start earlier or run on your cycler? Is a
+   CV hold at 5 mV wanted at the end?
+3. **Pulse run end:** a fixed number of pulses (which fraction of the
+   capacity), or until 0.2 V under load? The same question for sodiation
+   pulses and 5 mV.
+4. **Sodiation pulses:** wanted at the beamline despite the plating risk
+   (P2s), or only desodiation pulses?
+5. **Non-pulsed comparison:** at the pulse current (1C CC) or at C/20?
+6. **t_p and t_r** for the beamtime: 10 s / 50 s, 1 min / 5 min, or both.
+7. How many cells, and which material (core-shell or Kuranode) in which cell.
+8. Beamtime days (point 8), and what else the beamline records.
 
-- Implement the remaining protocol extensions from point 5 (P2, P3) that the
-  answers confirm.
-- Write the beamtime run sheet. Run `oe-validate` with the beamtime session
-  file, then rehearse it on the RC dummy cell (B2) with the same windows.
-- Add a dummy-cell check of the 5 mV cutoff and HIGH-Z hold at low voltage to
-  B2.
+## Next steps
+
+- B2 on the coin cell (from 5 Nov) with this protocol in small.
+- After the answers: write the beamtime run sheet and its sessions (pulse
+  session 0–0.5 V / 1 mA; reference session 0–0.5 V / 100 µA; sodiation session
+  0–3 V), validate with `oe-validate`, and rehearse on the simulator.

@@ -54,11 +54,14 @@ def test_rows_match_the_plan_and_cell_currents_scale(sheets):
     for row in sheets.resistor_rows() + wide + measure + cycle:
         assert f"`{row['measurement_id']}`" in plan
     currents = {row["measurement_id"]: row.get("current_a") for row in wide + measure}
-    assert currents["k3-sodiate-0p2V"] == pytest.approx(-0.5e-3 / 20)
-    assert currents["k4-pulse-0p2V"] == pytest.approx(0.5e-3)
-    # The measurement-window sheet never cuts below 5 mV.
-    assert all(row.get("v_low", 0.005) >= 0.005 for row in measure + cycle)
-    assert all(row.get("target_v", 0.005) >= 0.005 for row in measure)
+    assert currents["k3-sodiate-5mV"] == pytest.approx(-0.5e-3 / 10)
+    assert currents["k4-desod-pulse-10s"] == pytest.approx(0.5e-3)
+    assert currents["k6-sod-pulse-10s"] == pytest.approx(-0.5e-3)
+    # Pulses are unipolar; nothing cuts below 5 mV; sodiation pulses stop there.
+    assert {row["protocol"] for row in measure} == {"pulse_train"}
+    assert all(row.get("v_low", 0.005) >= 0.005 for row in wide + measure + cycle)
+    assert all(row.get("target_v", 0.005) >= 0.005 for row in wide + measure)
+    assert all(row["v_low"] == 0.005 for row in measure if row["current_a"] < 0)
 
 
 def test_run_checks_and_evidence(monitor, viewer_runs, tmp_path, monkeypatch):

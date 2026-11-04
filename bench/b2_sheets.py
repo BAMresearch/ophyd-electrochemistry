@@ -3,7 +3,7 @@
 Currents scale with the cell capacity (1C = capacity / 1 h). Values are bench
 placeholders, not the beamtime protocol. Plan: ``bench/plan-b2.md``.
 
-    uv run --locked --extra experiment python bench/b2_sheets.py --capacity-mah 0.45 \\
+    uv run --locked --extra experiment python bench/b2_sheets.py --capacity-mah 0.6 \\
         --sample-id HC-coin-01
 """
 
@@ -78,67 +78,71 @@ def resistor_rows() -> list[dict[str, object]]:
 
 
 def cell_rows(capacity_mah: float, sample_id: str) -> tuple[list[dict[str, object]], ...]:
-    """(wide-window rows, measurement-window rows, reference-cycle rows)."""
+    """(wide-window rows, measurement-window rows, reference-cycle rows).
+
+    Protocol as agreed with the material scientists on 4 Nov: start fully
+    sodiated, unipolar pulses (no change of direction between pulses), 1C
+    pulses of 10 s to 1 min, CC at C/20. Negative current = sodiation.
+    """
     c1 = capacity_mah * 1e-3  # A
-    pulse = dict(
-        protocol="bipolar_pulse", current_a=c1, pulse_s=1, rest_s=4, pre_rest_s=10, v_low=0.005
-    )
+    train = dict(protocol="pulse_train", pre_rest_s=60)
     wide: list[dict[str, object]] = [
         dict(measurement_id="k1-ocv", protocol="rest", rest_s=120, interval_s=1),
+        # Sodiation pulses near 2.5 V: no plating risk; the voltage must fall (polarity).
         dict(
             measurement_id="k2-pulse-check",
+            **{**train, "pre_rest_s": 10},
+            current_a=-c1,
+            pulse_s=1,
+            rest_s=4,
             repeats=5,
-            v_high=2.9,
-            start_with="discharge",
-            **{**pulse, "v_low": 0.05},
+            v_low=0.05,
         ),
+        # Fully sodiated by morning: C/10 takes ~10 h for the whole capacity.
         dict(
-            measurement_id="k3-sodiate-0p2V",
+            measurement_id="k3-sodiate-5mV",
             protocol="soc_position",
-            current_a=-c1 / 20,
-            target_v=0.2,
+            current_a=-c1 / 10,
+            target_v=0.005,
             max_step_s=50400,
             rest_s=1800,
-            interval_s=10,
+            interval_s=1,
         ),
     ]
-    # Next bench day: the beamtime day in small.
+    # Next bench day, from the fully sodiated state: the beamtime day in small.
+    # Each train passes 1/6 of the capacity (10 min of 1C) in about 1 h.
     measure: list[dict[str, object]] = [
         dict(
-            measurement_id="k4-pulse-0p2V",
-            repeats=100,
-            v_high=0.45,
-            start_with="discharge",
-            **pulse,
+            measurement_id="k4-desod-pulse-10s",
+            **train,
+            current_a=c1,
+            pulse_s=10,
+            rest_s=50,
+            repeats=60,
+            v_high=0.2,
         ),
         dict(
-            measurement_id="k5-sodiate-50mV",
-            protocol="soc_position",
-            current_a=-c1 / 5,
-            target_v=0.05,
-            max_step_s=14400,
-            rest_s=600,
-            interval_s=1,
+            measurement_id="k5-desod-pulse-60s",
+            **train,
+            current_a=c1,
+            pulse_s=60,
+            rest_s=300,
+            repeats=10,
+            v_high=0.2,
         ),
+        # Sodiation pulses back toward 5 mV (stop there under load): plating risk.
         dict(
-            measurement_id="k6-pulse-plateau",
-            repeats=100,
-            v_high=0.45,
-            start_with="discharge",
-            **pulse,
-        ),
-        dict(
-            measurement_id="k7-sodiate-5mV",
-            protocol="soc_position",
-            current_a=-c1 / 5,
-            target_v=0.005,
-            max_step_s=14400,
-            rest_s=600,
-            interval_s=1,
+            measurement_id="k6-sod-pulse-10s",
+            **train,
+            current_a=-c1,
+            pulse_s=10,
+            rest_s=50,
+            repeats=60,
+            v_low=0.005,
         ),
     ]
-    # Weekend: one reference cycle from 5 mV (P4 order: charge first), in a
-    # session whose current limit also bounds the CV hold.
+    # Weekend: non-pulsed reference, desodiation first (from ~1/6 desodiated),
+    # ending fully sodiated again; the session's 100 uA also bounds the CV hold.
     cycle: list[dict[str, object]] = [
         dict(
             measurement_id="k8-reference-cycle",
@@ -147,11 +151,11 @@ def cell_rows(capacity_mah: float, sample_id: str) -> tuple[list[dict[str, objec
             v_low=0.005,
             v_high=0.2,
             cycles=1,
-            start_with="charge",
+            start_with="desodiation",
             cv_i_abs_min_a=c1 / 100,
-            cv_after="discharge",
+            cv_after="sodiation",
             rest_s=1800,
-            max_step_s=54000,
+            max_step_s=72000,  # C/20 passes the whole capacity in 20 h
             interval_s=1,
         ),
     ]
@@ -179,7 +183,7 @@ def write(out: Path, capacity_mah: float, sample_id: str, *, overwrite: bool = F
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--capacity-mah", type=float, default=0.45, help="coin-cell capacity")
+    parser.add_argument("--capacity-mah", type=float, default=0.6, help="coin-cell capacity")
     parser.add_argument("--sample-id", default="HC-coin-01")
     parser.add_argument("--out", type=Path, default=Path.home() / "k2460-data" / "b2")
     parser.add_argument("--overwrite", action="store_true", help="replace existing sheets")

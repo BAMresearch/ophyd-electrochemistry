@@ -139,7 +139,7 @@ def run_checks(path: Path) -> dict[str, Any]:
         "records": int(len(t)),
         "duration_s": float(t[-1]) if len(t) else 0.0,
         "spacing_s": {
-            f"{dt * 1e3:.3g}ms": _stats(spacing[np.abs(spacing - dt) < dt / 2])
+            f"{dt:g}s": _stats(spacing[np.abs(spacing - dt) < dt / 2])
             for dt in sorted({round(float(x), 4) for x in spacing})
             if np.count_nonzero(np.abs(spacing - dt) < dt / 2) > 10
         },

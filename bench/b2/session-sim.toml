@@ -2,7 +2,7 @@
 # OE_SESSION=bench/b2/session-sim.toml (sim_speed 1.0 = real time)
 backend = "simulator"
 data_dir = "~/k2460-data/b2/sim"
-sim_speed = 20.0
+sim_speed = 50.0
 poll_period_s = 1.0
 
 [limits]

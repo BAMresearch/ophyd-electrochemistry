@@ -8,13 +8,14 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1267 tests pass. Pure models/compiler, independent simulator,
+- **Offline:** 1272 tests pass. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
 - **Sequences / run sheets:** finite step models, safety validation and battery
-  protocol builders; Excel loader with full-row metadata and aggregated errors;
-  template generator with four examples and the 16-run R5 pulse series.
+  protocol builders (unipolar `pulse_train`, bipolar pulses, cycling, SOC
+  positioning, rest); Excel loader with full-row metadata and aggregated
+  errors; `sodiation`/`desodiation` accepted for the directions.
 - **Sequence Flyer:** separate `SequenceFlyer` / `run_sequence` path under a real
   RunEngine, wall-time simulator release, live readout/event streams, external
   start, timeout/abort drain and recovery. HDF5 writer and throttled Plotly live
@@ -100,21 +101,22 @@ survive that). `defbuffer1` holds 1,337 continuous-mode readings from today
 1. Thu 5 Nov bench: rewire (`bench/plan-b1.md` §0), B1 R1–R11 on the resistor
    (`bench/b1_sequencer.py`), then B2 (`bench/plan-b2.md`): QueueServer and
    notebook on the resistor (Q1–Q10), then a HC/Na coin cell (K0–K3, K3 =
-   overnight sodiation to 0.2 V, the beamtime's day-before step). B1 C1–C2
+   overnight sodiation to 5 mV, the beamtime's day-before step). B1 C1–C2
    wait for an RC dummy. Sheets: `bench/b2_sheets.py`; monitor and evidence:
    `bench/b2_monitor.py`.
-2. Next bench day: K4–K7 (pulses at two SOCs, sodiation to 5 mV); weekend K8
-   (reference cycle, own 100 µA session: the CV hold's current limit is the
-   session maximum).
+2. Next bench day: K4–K6 (unipolar 1C pulse trains from fully sodiated);
+   weekend K8 (C/20 reference cycle in its own 100 µA session: the CV hold's
+   current limit is the session maximum).
+3. Scientists' answers (`docs/beamtime-concept.md` questions; 1C vs "40C"
+   first), then the beamtime run sheet.
 
 B0, E1–E4, S1/S2 done 3 Nov (findings in `docs/mvp-plan.md` → Design and
 `docs/validation.md`).
 
 ## Information still needed from the user
 
-A preliminary measurement concept arrived on 3 Nov: `docs/beamtime-concept.md`
-(window 5 mV–0.2 V, 15–30 µA reference cycling, 300–600 µA pulses). Its open
-questions (dates, cell count, pulse definition, t_p/t_r/n, I_min, capacity)
-replace the earlier list. Still open from us: beamline trigger signal (level,
+Measurement concept: `docs/beamtime-concept.md` (3 Nov, refined 4 Nov:
+unipolar 1C pulses of 10 s–1 min from fully sodiated, 0.6 mAh cells, C/20
+CC, 5 mV–0.2 V). Its open questions replace the earlier list. Still open from us: beamline trigger signal (level,
 polarity, connector), the RC dummy cell's values for B1, and the B2 coin
 cell's capacity, history and last state.
