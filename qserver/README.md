@@ -30,9 +30,10 @@ uv run --locked qserver status
 
 `qserver re abort` stops the current run: the Flyer aborts, drains and the
 file keeps outcome `aborted`. Queue `recover_sequencer` before the next run if
-the worker reports an error. Run files go to the session's `data_dir` (SWMR:
-open them read-only from a notebook while they are written). Only
-`run_from_sheet` and `recover_sequencer` are permitted
+the worker reports an error, and `archive_retained` after a host crash (it
+saves the 2460's unread records in `data_dir`). Run files go to the session's
+`data_dir` (SWMR: open them read-only from a notebook while they are written).
+Only `run_from_sheet`, `recover_sequencer` and `archive_retained` are permitted
 (`startup/user_group_permissions.yaml`); no namespace function may be executed.
 
 `qserver/session-simulator.toml` runs the same flow on the synthetic cell;

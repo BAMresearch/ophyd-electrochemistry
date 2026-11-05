@@ -8,10 +8,14 @@ import yaml
 
 pytest.importorskip("bluesky_queueserver_api")
 
-from ophyd_electrochemistry.exceptions import ValidationError  # noqa: E402
+from ophyd_electrochemistry.exceptions import (  # noqa: E402
+    UnsupportedCapabilityError,
+    ValidationError,
+)
 from ophyd_electrochemistry.sequences import SimulatedSequenceBackend  # noqa: E402
 from ophyd_electrochemistry.sequences.queueserver import (  # noqa: E402
     Session,
+    archive_main,
     build_namespace,
     enqueue,
     load_session,
@@ -118,6 +122,57 @@ def test_recover_plan_returns_an_aborted_backend_to_idle(session, sheet):
     assert backend.inspect() == (DeviceState.IDLE, False)
 
 
+class RetainingBackend(SimulatedSequenceBackend):
+    """Records the archive call the 2460 backend would serve."""
+
+    def __init__(self) -> None:
+        super().__init__(speed=1.0)
+        self.archived: list[Path] = []
+        self.connected = False
+
+    def connect(self) -> None:
+        super().connect()
+        self.connected = True
+
+    def close(self) -> None:
+        super().close()
+        self.connected = False
+
+    def archive_retained(self, destination: Path) -> Path:
+        assert self.connected
+        destination.write_bytes(b"")
+        self.archived.append(destination)
+        return destination
+
+
+def test_archive_plan_saves_into_the_data_folder_and_disconnects(session):
+    backend = RetainingBackend()
+    namespace = build_namespace(session, backend=backend)
+    namespace["RE"](namespace["archive_retained"]())
+    [path] = backend.archived
+    assert path.parent == session.data_dir and path.name.startswith("retained-")
+    assert path.suffix == ".npz" and not backend.connected
+
+
+def test_archive_plan_needs_a_backend_that_keeps_records(session):
+    namespace = build_namespace(session, backend=SimulatedSequenceBackend(speed=1.0))
+    with pytest.raises(Exception) as caught:
+        namespace["RE"](namespace["archive_retained"]())
+    assert isinstance(caught.value, UnsupportedCapabilityError) or isinstance(
+        caught.value.__cause__, UnsupportedCapabilityError
+    )
+
+
+def test_archive_command_uses_the_session(tmp_path, session, monkeypatch, capsys):
+    from ophyd_electrochemistry.sequences import queueserver
+
+    backend = RetainingBackend()
+    monkeypatch.setattr(queueserver, "make_backend", lambda _: backend)
+    monkeypatch.setattr(queueserver, "load_session", lambda _: session)
+    assert archive_main(["--session", str(tmp_path / "s.toml")]) == 0
+    assert str(backend.archived[0]) in capsys.readouterr().out
+
+
 def test_simulator_items_need_no_prompt(session, sheet):
     shown = []
     items = queue_items(session, sheet, ["example-rest"], prompt=pytest.fail, show=shown.append)
@@ -174,7 +229,11 @@ def test_enqueue_adds_plans_in_order(session, sheet):
 def test_permissions_allow_only_the_sequencer_plans():
     groups = yaml.safe_load((QSERVER / "startup" / "user_group_permissions.yaml").read_text())
     for group in groups["user_groups"].values():
-        assert group["allowed_plans"] == ["run_from_sheet", "recover_sequencer"]
+        assert group["allowed_plans"] == [
+            "run_from_sheet",
+            "recover_sequencer",
+            "archive_retained",
+        ]
         assert group["allowed_functions"] == []
 
 

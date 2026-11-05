@@ -27,7 +27,7 @@ from ..exceptions import ValidationError
 from ..validation import positive, text
 from .backend import SequenceBackend, SequenceRequest, SimulatedSequenceBackend
 from .callbacks import RunFileWriter
-from .flyer import SequenceFlyer
+from .flyer import SequenceFlyer, archive_retained
 from .models import SafetyLimits
 from .notebook import require_confirmation, run_summary
 from .plans import run_sequence
@@ -144,6 +144,13 @@ def build_namespace(session: Session, *, backend: SequenceBackend | None = None)
         yield from bps.null()
         flyer.recover().wait(timeout=60)
 
+    def archive_retained_records() -> Generator[Msg, Any, str]:
+        """After a host crash: save the 2460's unread records in the session data folder."""
+        yield from bps.null()
+        path = flyer.archive_retained(session.data_dir)
+        print(f"Archived the retained records to {path}")
+        return str(path)
+
     return {
         "RE": engine,
         "session": session,
@@ -151,6 +158,7 @@ def build_namespace(session: Session, *, backend: SequenceBackend | None = None)
         "k2460": flyer,
         PLAN_NAME: run_from_sheet,
         "recover_sequencer": recover_sequencer,
+        "archive_retained": archive_retained_records,
     }
 
 
@@ -273,6 +281,17 @@ def validate_main(argv: list[str] | None = None) -> int:
     failed = sum(problem is not None for _, problem, _ in results)
     print(f"{len(results) - failed} of {len(results)} run(s) valid for session {args.session}")
     return 1 if failed else 0
+
+
+def archive_main(argv: list[str] | None = None) -> int:
+    """Save the 2460's unread records of a crashed run (QueueServer environment closed)."""
+    parser = argparse.ArgumentParser(prog="oe-archive-retained", description=archive_main.__doc__)
+    parser.add_argument("--session", type=Path, required=True, help="the session TOML (OE_SESSION)")
+    args = parser.parse_args(argv)
+    session = load_session(args.session)
+    path = archive_retained(make_backend(session), session.data_dir)
+    print(f"Archived the retained records to {path}")
+    return 0
 
 
 def enqueue_main(argv: list[str] | None = None) -> int:

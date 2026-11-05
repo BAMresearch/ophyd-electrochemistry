@@ -4,6 +4,7 @@ user_groups:
     allowed_plans:
       - "run_from_sheet"
       - "recover_sequencer"
+      - "archive_retained"
     forbidden_plans:
       - ":^_"
     allowed_devices:
@@ -17,6 +18,7 @@ user_groups:
     allowed_plans:
       - "run_from_sheet"
       - "recover_sequencer"
+      - "archive_retained"
     forbidden_plans:
       - null
     allowed_devices:

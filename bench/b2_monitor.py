@@ -124,6 +124,17 @@ def _stats(values: np.ndarray) -> dict[str, float] | None:
     }
 
 
+def _clusters(spacing: np.ndarray, ratio: float = 1.25) -> list[np.ndarray]:
+    """Spacings grouped by nominal interval: a new group starts 25 % above the last."""
+    groups: list[list[float]] = []
+    for x in np.sort(spacing):
+        if groups and x <= groups[-1][0] * ratio:
+            groups[-1].append(float(x))
+        else:
+            groups.append([float(x)])
+    return [np.asarray(g) for g in groups]
+
+
 def run_checks(path: Path) -> dict[str, Any]:
     """Numbers an engineer reads first: spacing, rest voltages, apparent resistance."""
     data = read_run_file(path)
@@ -139,9 +150,8 @@ def run_checks(path: Path) -> dict[str, Any]:
         "records": int(len(t)),
         "duration_s": float(t[-1]) if len(t) else 0.0,
         "spacing_s": {
-            f"{dt:g}s": _stats(spacing[np.abs(spacing - dt) < dt / 2])
-            for dt in sorted({round(float(x), 4) for x in spacing})
-            if np.count_nonzero(np.abs(spacing - dt) < dt / 2) > 10
+            f"{np.median(group):.3g}s": {"n": len(group), **(_stats(group) or {})}
+            for group in _clusters(spacing)
         },
         "spacing_max_s": float(spacing.max()) if len(spacing) else None,
         "rest_v_first_last": [float(v[rest][0]), float(v[rest][-1])] if rest.any() else None,

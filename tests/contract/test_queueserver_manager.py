@@ -138,7 +138,7 @@ def test_enqueued_row_runs_in_the_worker_and_writes_its_file(manager, tmp_path):
     api.wait_for_idle(timeout=120)
     assert api.status()["worker_environment_exists"]
     allowed = api.plans_allowed()["plans_allowed"]
-    assert set(allowed) == {"run_from_sheet", "recover_sequencer"}
+    assert set(allowed) == {"run_from_sheet", "recover_sequencer", "archive_retained"}
     with pytest.raises(Exception, match="count"):
         api.item_add(BPlan("count", ["k2460"]))
     sheet = make_template(tmp_path / "runs.xlsx")

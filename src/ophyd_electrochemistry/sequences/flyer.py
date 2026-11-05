@@ -5,6 +5,8 @@
 import threading
 import time
 from collections.abc import Callable, Iterator
+from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 from event_model.documents import DataKey, PartialEvent
@@ -36,6 +38,24 @@ _ACTIVE = {
     DeviceState.PREPARING,
     DeviceState.ABORTING,
 }
+
+
+def archive_retained(backend: SequenceBackend, directory: Path) -> Path:
+    """Save the unread records of an earlier run to ``directory/retained-<UTC>.npz``.
+
+    For a run whose host died: the instrument kept its records, and the next
+    prepare refuses until they are saved. Connects if needed, closes after.
+    """
+    archive = getattr(backend, "archive_retained", None)
+    if archive is None:
+        raise UnsupportedCapabilityError(f"{type(backend).__name__} keeps no records to archive")
+    directory.mkdir(parents=True, exist_ok=True)
+    backend.connect()
+    try:
+        path: Path = archive(directory / f"retained-{datetime.now(UTC):%Y%m%dT%H%M%SZ}.npz")
+    finally:
+        backend.close()
+    return path
 
 
 class SequenceFlyer(Device):
@@ -318,6 +338,13 @@ class SequenceFlyer(Device):
 
     def resume(self) -> None:
         raise UnsupportedCapabilityError("Prepare a new sequence after interruption")
+
+    def archive_retained(self, directory: Path) -> Path:
+        """Save the instrument's unread records of an earlier run (between runs only)."""
+        with self._operation:
+            if self._is_staged:
+                raise ElectrochemistryError("Archive between runs, not during one")
+            return archive_retained(self._backend, directory)
 
     def recover(self) -> Status:
         def operation() -> None:

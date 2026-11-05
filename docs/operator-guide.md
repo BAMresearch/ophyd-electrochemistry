@@ -258,8 +258,9 @@ Reading the plots:
   qserver queue start          # recover, then the rest of the queue
   ```
 
-- **After an error:** queue `recover_sequencer` at the front, as above,
-  before anything else.
+- **After a failed run:** the QueueServer puts the failed item back at the
+  front of the queue and stops. Remove it (`qserver queue item remove front`),
+  queue `recover_sequencer` at the front as above, then start.
 - **Never retry a run whose state is unclear.** Check that the output is OFF
   (front panel, or `oe-diagnose` once the QueueServer is stopped).
 
@@ -277,15 +278,19 @@ Check that nothing is left running: no Python process from this folder should
 use CPU after `manager stop`.
 
 If the laptop or the RE Manager crashed during a run, the 2460 finishes the run
-on its own and turns the output OFF. The next run then refuses to start until
-the readings left on the instrument are saved. With the QueueServer stopped,
-run:
+on its own and turns the output OFF. The next run then fails with "unread
+records" until the readings left on the instrument are saved. Remove the failed
+item and queue the archive first:
 
 ```sh
-python -c "from ophyd_electrochemistry.keithley.k2460.sequence_backend import k2460_sequence_backend as k
-b = k('TCPIP0::169.254.113.151::5025::SOCKET', terminals='front', expected_serial_number='04686198')
-b.connect(); print(b.archive_retained('$HOME/k2460-data/retained.npz')); b.close()"
+qserver queue item remove front
+qserver queue add plan front '{"name": "archive_retained"}'
+qserver queue start          # saves retained-<UTC time>.npz in the session's data folder
 ```
+
+Terminal 2 prints the file name. Without a running QueueServer (environment
+closed), `oe-archive-retained --session S.toml` does the same. The run's own
+HDF5 file stays `incomplete`; the archive holds every record the 2460 kept.
 
 ## Quick reference
 
@@ -298,6 +303,7 @@ b.connect(); print(b.archive_retained('$HOME/k2460-data/retained.npz')); b.close
 | Queue (with confirmation) | `oe-enqueue runs.xlsx ID … --session S.toml` |
 | Run / stop after current | `qserver queue start` / `qserver queue stop` |
 | Abort now | `qserver re pause immediate`, `qserver re abort`, then remove, recover, start |
+| After a crash | remove the failed item, queue `archive_retained` at the front, start |
 | Status | `qserver status`, `qserver queue get`, `qserver history get` |
 | Watch data | `~/k2460-data/viewer.ipynb` (copy of `notebooks/k2460_view.ipynb`): Overview, Follow, Compare |
 | Shut down | `qserver environment close`, `qserver manager stop`, Ctrl-C redis |
