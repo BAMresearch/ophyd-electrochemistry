@@ -30,7 +30,8 @@ def resistor_rows() -> list[dict[str, object]]:
         protocol="bipolar_pulse",
         current_a=I_RESISTOR,
         pulse_s=1,
-        rest_s=4,
+        rest_s=1,
+        fast_window_s=1,  # one sampling phase per step: 59 trigger blocks (limit 63)
         pre_rest_s=5,
         v_low=-0.2,
         v_high=0.2,
@@ -67,9 +68,10 @@ def resistor_rows() -> list[dict[str, object]]:
             max_step_s=60,
             interval_s=0.1,
         ),
-        dict(measurement_id="b2r-abort", repeats=120, **pulse),
-        dict(measurement_id="b2r-crash", repeats=12, **pulse),
-        dict(measurement_id="b2r-soak", repeats=360, **pulse),
+        dict(measurement_id="b2r-abort", repeats=300, **pulse),  # 20 min
+        dict(measurement_id="b2r-crash", repeats=30, **pulse),  # 2 min
+        # 30 min at 6 ms, ~300k records: the buffer size of the K4/K5 cell runs.
+        dict(measurement_id="b2r-soak", repeats=450, **pulse),
     ]
     for row in rows:
         row["sample_id"] = "R100"

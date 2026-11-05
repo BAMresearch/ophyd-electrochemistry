@@ -23,8 +23,10 @@ Decided 3 Nov; S1/S2 used other lines.
 | 6 | input | START | generator + 1 kΩ series resistor move here from line 3 |
 | 3, 5 | — | unused | |
 
-Check the DB-9 pin for each line, and the ground pin, against the Reference
-Manual's digital I/O port table before connecting (not verified in this repo).
+DB-9 pins (2460 Reference Manual): lines 1–4 on pins 1–4, line 5 on pin 6,
+**line 6 on pin 8**, ground pin 9, +5 V supply on pin 7 (never connect a
+signal there), Vext pin 5. The lines are open-drain with pull-ups, so an idle
+input reads about 5 V.
 
 ## 1. Resistor matrix (`--load resistor`)
 

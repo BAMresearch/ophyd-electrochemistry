@@ -124,10 +124,14 @@ Around the steps:
   stop path only if some branch targets it, and never places blocks after an
   unconditional branch unless something branches there.
 
-Budget: the bipolar pulse sequence (rest + 4 repeated two-phase steps) needs
-about 90 blocks, CC-CV cycling about 110. The compiler rejects a program over
-255 blocks with "split the run" (the model allows 30 steps, so this check, not
-the step count, is the real limit).
+Budget: the 2460 (firmware 1.7.16a) accepts block numbers 1–63 only (event
+1130 on 5 Nov; the 255 assumed earlier was never tested). A single-phase step
+costs about 7 blocks, a two-phase step about 14 (rest and pulse longer than the
+fast window). The bipolar pulse sequence with 1 s pulses and 4 s rests at a
+0.5 s fast window needs 83 blocks and is rejected; a 1 s fast window with 1 s
+rests needs 59. The `pulse_train` with 60 s rests needs 49, CC-CV cycling 57.
+The compiler still allows 255 (**to fix**: the profile, the defaults and the
+template rows); until then an oversized program fails at prepare, output OFF.
 
 ## 6. Timing
 

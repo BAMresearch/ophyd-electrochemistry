@@ -22,7 +22,7 @@ left uncommitted for Claude to review.
 
 | # | What | Load | Tier |
 |---|---|---|---|
-| 0 | Rewire the digital I/O (`plan-b1.md` §0): READY 1, BUSY 2, MARKER 4, START 6 | — | — |
+| 0 | Rewire the digital I/O (`plan-b1.md` §0): READY line 1 (pin 1), BUSY 2 (pin 2), MARKER 4 (pin 4), START line 6 = **pin 8**, ground pin 9 | — | — |
 | 1 | B1 resistor matrix R1–R11 (`plan-b1.md` §1), about 10 min | 100 Ω | 1 |
 | 2 | Q1–Q10 below: QueueServer and notebook on hardware | 100 Ω | 1 |
 | 3 | K0–K2 below: first contact and a rate check on the coin cell | cell | 2 |
@@ -83,13 +83,13 @@ its ID in `oe-enqueue`.
 |---|---|---|
 | Q1 | Guide §5–6 with `OE_SESSION=bench/b2/session-resistor.toml`: `oe-diagnose` first, then `oe-validate b2-resistor.xlsx`, then `environment open` | Worker connects: serial, runtime installed, output OFF; manager idle |
 | Q2 | `b2r-rest` | `completed`, about 100 records, V ≈ 0, \|I\| < 1 µA |
-| Q3 | `b2r-pulse` (20 × ±450 µA, 1 s, 6 ms fast window); viewer Follow open | `completed`; V = ±45 mV (R = 100 Ω ± 1 %); 6 ms spacing; Follow redraws live and ends on its own |
+| Q3 | `b2r-pulse` (20 × ±450 µA, 1 s pulses and rests, all at 6 ms); viewer Follow open | `completed`; V = ±45 mV (R = 100 Ω ± 1 %); 6 ms spacing; Follow redraws live and ends on its own |
 | Q4 | `b2r-soc` (CC −450 µA to −30 mV) | Cutoff event at the first sample, then the rest; `completed` |
 | Q5 | `b2r-cycle` (CC → CV → CC with in-model I↔V switches) | Every cutoff and the CV taper fire at once; `completed` within a minute. If it is still running after 2 min: abort (§9) and note it |
 | Q6 | `b2r-pulse-ext` (external START) | READY high (scope, line 1) until the generator's edge, then BUSY; `completed` |
 | Q7 | `b2r-abort` (20 min); about 1 min in, follow guide §9 to the letter | File `aborted`; output OFF; after `recover_sequencer` the queue continues (enqueue `b2r-rest` behind it) |
 | Q8 | `b2r-crash` (2 min); about 30 s in, press **Ctrl-\\** in terminal 2 (kills the whole RE Manager group) | No `start-re-manager` process left (`pgrep -fl start-re-manager`). The 2460 ends the run on its own with output OFF (BUSY low, ≤ 2 min; before that a prepare refuses with "idle model and output OFF"). Then restart, and `b2r-rest` **fails** with unread records. Guide §10 `archive_retained` saves them. `b2r-rest` then completes |
-| Q9 | `b2r-soak` (1 h of pulses at 6 ms, about 150k records); viewer Follow open; monitor running | `completed` with all records; worker RSS flat (growth < 50 MB); CPU stays below one core; viewer refresh time recorded |
+| Q9 | `b2r-soak` (30 min of pulses at 6 ms, about 300k records, the K4/K5 buffer size); viewer Follow open; monitor running | `completed` with all records; worker RSS flat (growth < 50 MB); CPU stays below one core; viewer refresh time recorded |
 | Q10 | With the QueueServer stopped: `oe-new-run ~/k2460-data/b2/b2-resistor.xlsx b2r-pulse ~/k2460-data/b2/nb --v-min -0.8 --v-max 0.8 --i-max 0.005 --max-duration-s 7200 --max-records 1000000`, set `BACKEND = "k2460"`, run all | `completed`; live plot; HDF5 beside the saved notebook |
 
 Q8 can leave the file `incomplete`, because its writer was killed. That is
