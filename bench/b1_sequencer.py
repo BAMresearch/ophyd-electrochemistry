@@ -289,6 +289,9 @@ def run_backend(
     result["wall_s"] = time.monotonic() - started
     result["cpu_s"] = time.process_time() - cpu
     readout = {k: np.concatenate([r[k] for r in readouts]) for k in READOUT_FIELDS}
+    tag = f"-{ctx.args.tag}" if ctx.args.tag else ""
+    ctx.args.data_dir.mkdir(parents=True, exist_ok=True)
+    np.savez(ctx.args.data_dir / f"{request.measurement_id}{tag}.npz", **readout)
     result["records"] = len(readout["t_s"])
     result["polls"] = len(sizes)
     if lags:

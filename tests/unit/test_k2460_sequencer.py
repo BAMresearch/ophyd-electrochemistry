@@ -598,12 +598,22 @@ def test_readback_errors_are_aggregated_per_execution_across_chunks(limits):
         source_status=[0, 32, 32, 0, 0],
     )
     errors = [e for e in events if e[3] == "error"]
+    # Each execution's first sample is not checked (settling).
     assert [(e[2], e[4]) for e in errors] == [
-        (1, "readback mismatch, 2 samples"),
+        (1, "readback mismatch, 1 samples"),
         (2, "readback mismatch, 2 samples"),
     ]
     assert replay.finish("end")[0] == "error"
     assert "readback mismatch" in replay.finish("end")[1]
+
+
+def test_first_readback_of_a_step_may_settle(limits):
+    """B1, 5 Nov: the first 0 A readback after output ON was -71 uA."""
+    p = compile_program(Sequence((rest_step(0.3, Sampling(0.1)),)), limits)
+    replay = Replayer(p)
+    _, events = feed(replay, [1, 1, 1], [-7.1e-5, 0, 0], times=[0.1, 0.2, 0.3])
+    assert [e[3] for e in events] == ["step_start"]
+    assert replay.finish("end") == ("completed", "")
 
 
 def test_status_copy_and_in_limit_readback(limits):

@@ -231,10 +231,21 @@ local function oe_seq_measure_settings(func, range, nplc)
     if oe_seq_cfg.four_wire == 1 then
         smu.measure.sense = smu.SENSE_4WIRE
     end
-    smu.measure.autorange = smu.OFF
+    -- Setting the range also ends autorange (5 Nov probe).
     smu.measure.range = range
+    smu.measure.autorange = smu.OFF
     smu.measure.nplc = nplc
     smu.measure.autozero.enable = smu.OFF
+end
+
+-- A fixed measure range forces the source limit into a window around it and
+-- logs event 5076, which fails the upload check (5 Nov probe: 105 uA raised
+-- to 1.06 mA on the 10 mA range; 21 V lowered to 2.1 V on 2 V). With the
+-- measure function autoranging the limit is free, so set it there first.
+local function oe_seq_limit_first(func, set_limit)
+    smu.measure.func = func
+    smu.measure.autorange = smu.ON
+    set_limit()
 end
 
 -- mode: 1 current source (limit = vlimit), 2 voltage source (limit = ilimit).
@@ -256,6 +267,7 @@ function oe_seq_source(i, mode, level, range, limit)
             error("current range below level")
         end
         smu.source.func = smu.FUNC_DC_CURRENT
+        oe_seq_limit_first(smu.FUNC_DC_VOLTAGE, function() smu.source.vlimit.level = limit end)
         oe_seq_measure_settings(smu.FUNC_DC_VOLTAGE, limit, 1)
         smu.source.autorange = smu.OFF
         smu.source.range = range
@@ -271,6 +283,7 @@ function oe_seq_source(i, mode, level, range, limit)
             error("voltage range below level")
         end
         smu.source.func = smu.FUNC_DC_VOLTAGE
+        oe_seq_limit_first(smu.FUNC_DC_CURRENT, function() smu.source.ilimit.level = limit end)
         oe_seq_measure_settings(smu.FUNC_DC_CURRENT, limit, 1)
         smu.source.autorange = smu.OFF
         smu.source.range = range

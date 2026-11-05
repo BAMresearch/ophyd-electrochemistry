@@ -1,0 +1,1083 @@
+[
+ {
+  "stale_events": [
+   "4917\tReading buffer defbuffer1 is 0% filled\t4\t2\t1793875379\t787266180",
+   "4917\tReading buffer defbuffer2 is 0% filled\t4\t2\t1793875379\t792510980"
+  ]
+ },
+ {
+  "power_on_state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "1e-06",
+   "smu.measure.autorange": "smu.ON",
+   "smu.source.ilimit.level": "0.000105",
+   "smu.source.vlimit.level": "nil"
+  }
+ },
+ {
+  "statement": "smu.terminals = smu.TERMINALS_FRONT",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "1e-06",
+   "smu.measure.autorange": "smu.ON",
+   "smu.source.ilimit.level": "0.000105",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875516\t538314980"
+  ]
+ },
+ {
+  "statement": "smu.source.func = smu.FUNC_DC_VOLTAGE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "1e-06",
+   "smu.measure.autorange": "smu.ON",
+   "smu.source.ilimit.level": "0.000105",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875516\t746462160"
+  ]
+ },
+ {
+  "statement": "smu.source.offmode = smu.OFFMODE_HIGHZ",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "1e-06",
+   "smu.measure.autorange": "smu.ON",
+   "smu.source.ilimit.level": "0.000105",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875516\t947721560"
+  ]
+ },
+ {
+  "statement": "smu.source.func = smu.FUNC_DC_CURRENT",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "1e-06",
+   "smu.measure.autorange": "smu.ON",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "7.35"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875517\t147202700"
+  ]
+ },
+ {
+  "statement": "smu.source.offmode = smu.OFFMODE_HIGHZ",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "1e-06",
+   "smu.measure.autorange": "smu.ON",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "7.35"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875517\t346781100"
+  ]
+ },
+ {
+  "statement": "smu.source.level = 0",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "1e-06",
+   "smu.measure.autorange": "smu.ON",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "7.35"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875517\t549660520"
+  ]
+ },
+ {
+  "statement": "smu.source.func = smu.FUNC_DC_CURRENT",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "1e-06",
+   "smu.measure.autorange": "smu.ON",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "7.35"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875517\t755086460"
+  ]
+ },
+ {
+  "statement": "if smu.source.vlimit.level > 0.9 then smu.source.vlimit.level = 0.9 end",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "1e-06",
+   "smu.measure.autorange": "smu.ON",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875517\t956281560"
+  ]
+ },
+ {
+  "statement": "smu.measure.func = smu.FUNC_DC_VOLTAGE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.ON",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875518\t155950620"
+  ]
+ },
+ {
+  "statement": "smu.measure.sense = smu.SENSE_4WIRE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.ON",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875518\t358631200"
+  ]
+ },
+ {
+  "statement": "smu.measure.range = 0.9",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875518\t568551860"
+  ]
+ },
+ {
+  "statement": "smu.measure.autorange = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875518\t775059280"
+  ]
+ },
+ {
+  "statement": "smu.measure.nplc = 1",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875518\t977908420"
+  ]
+ },
+ {
+  "statement": "smu.measure.autozero.enable = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875519\t187008840"
+  ]
+ },
+ {
+  "statement": "smu.source.autorange = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875519\t396828660"
+  ]
+ },
+ {
+  "statement": "smu.source.range = 0.01",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875519\t597099720"
+  ]
+ },
+ {
+  "statement": "smu.source.vlimit.level = 0.9",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875519\t806784940"
+  ]
+ },
+ {
+  "statement": "smu.source.readback = smu.ON",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875520\t15755920"
+  ]
+ },
+ {
+  "statement": "smu.source.level = 0.0",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875520\t216142740"
+  ]
+ },
+ {
+  "statement": "smu.source.func = smu.FUNC_DC_VOLTAGE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "0.2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.000105",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875520\t416549840"
+  ]
+ },
+ {
+  "statement": "if smu.source.ilimit.level > 0.005 then smu.source.ilimit.level = 0.005 end",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "0.2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.000105",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875520\t621183300"
+  ]
+ },
+ {
+  "statement": "smu.measure.func = smu.FUNC_DC_CURRENT",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.0001",
+   "smu.measure.autorange": "smu.ON",
+   "smu.source.ilimit.level": "0.000105",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875520\t833048660"
+  ]
+ },
+ {
+  "statement": "smu.measure.sense = smu.SENSE_4WIRE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.0001",
+   "smu.measure.autorange": "smu.ON",
+   "smu.source.ilimit.level": "0.000105",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875521\t39402060"
+  ]
+ },
+ {
+  "statement": "smu.measure.range = 0.005",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.00106",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875521\t247149820",
+   "5076\tSource Limit changed to 0.00106 A due to new measure Range\t2\t2\t1793875521\t290563320"
+  ]
+ },
+ {
+  "statement": "smu.measure.autorange = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.00106",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875521\t449665680"
+  ]
+ },
+ {
+  "statement": "smu.measure.nplc = 1",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.00106",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875521\t659290740"
+  ]
+ },
+ {
+  "statement": "smu.measure.autozero.enable = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.00106",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875521\t867557280"
+  ]
+ },
+ {
+  "statement": "smu.source.autorange = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.00106",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875522\t68081500"
+  ]
+ },
+ {
+  "statement": "smu.source.range = 2",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.00106",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875522\t277631640"
+  ]
+ },
+ {
+  "statement": "smu.source.ilimit.level = 0.005",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875522\t478729760"
+  ]
+ },
+ {
+  "statement": "smu.source.readback = smu.ON",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875522\t689606700"
+  ]
+ },
+ {
+  "statement": "smu.source.level = 0.3",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875522\t900483840"
+  ]
+ },
+ {
+  "statement": "smu.source.func = smu.FUNC_DC_VOLTAGE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875523\t108642140"
+  ]
+ },
+ {
+  "statement": "if smu.source.ilimit.level > 0.005 then smu.source.ilimit.level = 0.005 end",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875523\t317760060"
+  ]
+ },
+ {
+  "statement": "smu.measure.func = smu.FUNC_DC_CURRENT",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875523\t517063240"
+  ]
+ },
+ {
+  "statement": "smu.measure.sense = smu.SENSE_4WIRE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875523\t719283780"
+  ]
+ },
+ {
+  "statement": "smu.measure.range = 0.005",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875523\t930257840"
+  ]
+ },
+ {
+  "statement": "smu.measure.autorange = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875524\t138332400"
+  ]
+ },
+ {
+  "statement": "smu.measure.nplc = 1",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875524\t348433040"
+  ]
+ },
+ {
+  "statement": "smu.measure.autozero.enable = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875524\t561641800"
+  ]
+ },
+ {
+  "statement": "smu.source.autorange = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875524\t770911480"
+  ]
+ },
+ {
+  "statement": "smu.source.range = 2",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875524\t981309600"
+  ]
+ },
+ {
+  "statement": "smu.source.ilimit.level = 0.005",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875525\t186077560"
+  ]
+ },
+ {
+  "statement": "smu.source.readback = smu.ON",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875525\t389248320"
+  ]
+ },
+ {
+  "statement": "smu.source.level = 0.2",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875525\t599205220"
+  ]
+ },
+ {
+  "statement": "smu.source.func = smu.FUNC_DC_CURRENT",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875525\t809030800"
+  ]
+ },
+ {
+  "statement": "if smu.source.vlimit.level > 0.9 then smu.source.vlimit.level = 0.9 end",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875526\t17761100"
+  ]
+ },
+ {
+  "statement": "smu.measure.func = smu.FUNC_DC_VOLTAGE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875526\t241090840"
+  ]
+ },
+ {
+  "statement": "smu.measure.sense = smu.SENSE_4WIRE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875526\t452113560"
+  ]
+ },
+ {
+  "statement": "smu.measure.range = 0.9",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875526\t657202280"
+  ]
+ },
+ {
+  "statement": "smu.measure.autorange = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875526\t857289700"
+  ]
+ },
+ {
+  "statement": "smu.measure.nplc = 1",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875527\t66629900"
+  ]
+ },
+ {
+  "statement": "smu.measure.autozero.enable = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875527\t265241080"
+  ]
+ },
+ {
+  "statement": "smu.source.autorange = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875527\t466465520"
+  ]
+ },
+ {
+  "statement": "smu.source.range = 0.01",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875527\t669445160"
+  ]
+ },
+ {
+  "statement": "smu.source.vlimit.level = 0.9",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875527\t883436460"
+  ]
+ },
+ {
+  "statement": "smu.source.readback = smu.ON",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875528\t86163880"
+  ]
+ },
+ {
+  "statement": "smu.source.level = -0.0049",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875528\t296922420"
+  ]
+ },
+ {
+  "statement": "smu.source.func = smu.FUNC_DC_CURRENT",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875528\t496770400"
+  ]
+ },
+ {
+  "statement": "smu.measure.func = smu.FUNC_DC_VOLTAGE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875528\t697270100"
+  ]
+ },
+ {
+  "statement": "smu.measure.sense = smu.SENSE_4WIRE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875528\t895600360"
+  ]
+ },
+ {
+  "statement": "smu.measure.range = 2",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875529\t98942720"
+  ]
+ },
+ {
+  "statement": "smu.measure.autorange = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875529\t308105620"
+  ]
+ },
+ {
+  "statement": "smu.measure.nplc = 1",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875529\t517835620"
+  ]
+ },
+ {
+  "statement": "smu.measure.autozero.enable = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875529\t727222980"
+  ]
+ },
+ {
+  "statement": "smu.source.func = smu.FUNC_DC_VOLTAGE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875529\t936945000"
+  ]
+ },
+ {
+  "statement": "smu.measure.func = smu.FUNC_DC_CURRENT",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875530\t137964980"
+  ]
+ },
+ {
+  "statement": "smu.measure.sense = smu.SENSE_4WIRE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875530\t338325500"
+  ]
+ },
+ {
+  "statement": "smu.measure.range = 0.01",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875530\t540055720"
+  ]
+ },
+ {
+  "statement": "smu.measure.autorange = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875530\t750065940"
+  ]
+ },
+ {
+  "statement": "smu.measure.nplc = 1",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875530\t957445500"
+  ]
+ },
+ {
+  "statement": "smu.measure.autozero.enable = smu.OFF",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875531\t156465460"
+  ]
+ },
+ {
+  "statement": "smu.source.func = smu.FUNC_DC_VOLTAGE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "0.005",
+   "smu.source.vlimit.level": "nil"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875531\t359313200"
+  ]
+ },
+ {
+  "statement": "smu.source.func = smu.FUNC_DC_CURRENT",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe vlimit level setting only applies when the source Function is current\t1\t2\t1793875531\t566658320"
+  ]
+ },
+ {
+  "statement": "smu.source.level = 0",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.range": "0.01",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875531\t766333780"
+  ]
+ },
+ {
+  "statement": "smu.measure.func = smu.FUNC_DC_VOLTAGE",
+  "state": {
+   "smu.source.func": "smu.FUNC_DC_CURRENT",
+   "smu.measure.func": "smu.FUNC_DC_VOLTAGE",
+   "smu.measure.range": "2",
+   "smu.measure.autorange": "smu.OFF",
+   "smu.source.ilimit.level": "nil",
+   "smu.source.vlimit.level": "0.9"
+  },
+  "events": [
+   "5083\tThe ilimit level setting only applies when the source Function is voltage\t1\t2\t1793875531\t965435220"
+  ]
+ }
+]

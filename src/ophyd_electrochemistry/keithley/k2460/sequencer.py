@@ -610,8 +610,13 @@ class Replayer:
             voltage, current = (source, value) if plan.mode == StepMode.VOLTAGE else (value, source)
             result["voltage_v"][i], result["current_a"][i] = voltage, current
             entry = self.program.sources[plan.source_entry - 1]
-            if not int(source_statuses[i]) & 32 and abs(source - plan.level) > (
-                0.002 * entry.range + 0.002 * abs(plan.level)
+            # A step's first readback can still be settling (B1, 5 Nov: -71 uA on
+            # a 0 A rest right after output ON, -0.06 uA from the second sample).
+            settled = self._phase > 0 or self._sample > 0
+            if (
+                settled
+                and not int(source_statuses[i]) & 32
+                and abs(source - plan.level) > (0.002 * entry.range + 0.002 * abs(plan.level))
             ):
                 self._mismatches += 1
                 if "readback mismatch" not in self._errors:
