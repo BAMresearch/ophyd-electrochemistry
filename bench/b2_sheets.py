@@ -22,6 +22,7 @@ SHEETS = {
     "b2-cell-wide.xlsx": "session-cell-wide.toml",
     "b2-cell.xlsx": "session-cell.toml",
     "b2-cell-cycle.xlsx": "session-cell-cycle.toml",
+    "b2-cell-pulse.xlsx": "session-cell-wide.toml",
 }
 
 
@@ -157,6 +158,27 @@ def cell_rows(
     return wide, measure, cycle
 
 
+def pulse_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
+    """K7 (6 Nov): 1C pulse trains on the high-impedance coin cell after K3.
+
+    The desodiation train ends after its 60 pulses (the 2.9 V limit only guards
+    the window); the sodiation train keeps the 5 mV limit under load and is
+    expected to stop on an early pulse: the under-load end-condition problem.
+    """
+    c1 = capacity_mah * 1e-3
+    train = dict(protocol="pulse_train", pulse_s=1, fast_window_s=1, rest_s=10, repeats=60)
+    train.update(pre_rest_s=10, interval_s=0.25)
+    rows: list[dict[str, object]] = [
+        dict(measurement_id="k7-ocv", protocol="rest", rest_s=120, interval_s=1),
+        dict(measurement_id="k7-desod-1C", **train, current_a=c1, v_high=2.9),
+        dict(measurement_id="k7-sod-1C", **train, current_a=-c1, v_low=0.005),
+    ]
+    for row in rows:
+        row["sample_id"] = sample_id
+        row["notes"] = f"B2 K7 coin cell, capacity {capacity_mah:g} mAh assumed (1C = {c1:.3g} A)"
+    return rows
+
+
 def write(
     out: Path,
     capacity_mah: float,
@@ -164,13 +186,20 @@ def write(
     pulse_c_rate: float = 10,
     *,
     overwrite: bool = False,
+    only: tuple[str, ...] = (),
 ) -> int:
     """Write both sheets and validate every row against its session; 0 if all pass."""
     out.mkdir(parents=True, exist_ok=True)
     note = [("B2", "From bench/b2_sheets.py; run each sheet in its session (bench/plan-b2.md).")]
-    rows = (resistor_rows(), *cell_rows(capacity_mah, sample_id, pulse_c_rate))
+    rows = (
+        resistor_rows(),
+        *cell_rows(capacity_mah, sample_id, pulse_c_rate),
+        pulse_rows(capacity_mah, sample_id),
+    )
     failed = 0
     for (name, session), sheet_rows in zip(SHEETS.items(), rows, strict=True):
+        if only and name not in only:
+            continue
         path = out / name
         write_run_sheet(path, sheet_rows, notes=note, overwrite=overwrite)
         print(f"{path}  (OE_SESSION=bench/b2/{session})")
@@ -189,13 +218,21 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--out", type=Path, default=Path.home() / "k2460-data" / "b2")
     parser.add_argument("--overwrite", action="store_true", help="replace existing sheets")
+    parser.add_argument(
+        "--only", nargs="+", default=(), choices=list(SHEETS), help="sheets to write"
+    )
     args = parser.parse_args(argv)
     if not 0.01 <= args.capacity_mah <= 5:
         parser.error("--capacity-mah must be in 0.01..5 (a coin cell)")
     if not 5 <= args.pulse_c_rate <= 40:
         parser.error("--pulse-c-rate must be in 5..40 (lower rates exceed the record budget)")
     return write(
-        args.out, args.capacity_mah, args.sample_id, args.pulse_c_rate, overwrite=args.overwrite
+        args.out,
+        args.capacity_mah,
+        args.sample_id,
+        args.pulse_c_rate,
+        overwrite=args.overwrite,
+        only=tuple(args.only),
     )
 
 
