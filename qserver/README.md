@@ -17,11 +17,14 @@ OE_SESSION=~/k2460-session.toml uv run --locked start-re-manager \
   --user-group-permissions qserver/startup/user_group_permissions.yaml
 ```
 
+`qserver/start-k2460-re-manager.sh ~/k2460-session.toml` does the redis and
+RE Manager steps in one command (after `uv sync` and the session copy).
+
 In another terminal:
 
 ```sh
 uv run --locked oe-validate runs.xlsx --session ~/k2460-session.toml   # every row; no I/O
-uv run --locked qserver environment open        # connects nothing yet
+uv run --locked qserver environment open        # sets HIGH-Z; connect cells after this
 uv run --locked oe-enqueue runs.xlsx R5-001 R5-002 \
   --session ~/k2460-session.toml                 # summary + typed confirmation per run
 uv run --locked qserver queue start

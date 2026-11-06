@@ -105,9 +105,10 @@ expected. `archive_retained` holds the records the 2460 kept.
 - the current limit;
 - the output-off mode: **HIGH-Z**.
 
-`oe-diagnose` shows HIGH-Z only after the worker has prepared once. The runtime
-sets HIGH-Z for both functions and reads it back on every prepare. The output
-stays OFF until the run arms.
+`oe-diagnose` does not read the off mode. The runtime sets HIGH-Z for both
+functions on `environment open` and on every prepare, reads it back and refuses
+otherwise. The output stays OFF until the run arms. After a power cycle the
+mode is NORMAL until the environment opens, so connect a cell after that.
 
 **Window rule (K-rule).** Before any cell run, the cell's last measured rest
 voltage must be above 0 V and at least 0.05 V below the session window's upper

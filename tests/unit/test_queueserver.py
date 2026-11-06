@@ -9,6 +9,7 @@ import yaml
 pytest.importorskip("bluesky_queueserver_api")
 
 from ophyd_electrochemistry.exceptions import (  # noqa: E402
+    ElectrochemistryError,
     UnsupportedCapabilityError,
     ValidationError,
 )
@@ -120,6 +121,31 @@ def test_recover_plan_returns_an_aborted_backend_to_idle(session, sheet):
     assert backend.inspect() == (DeviceState.ABORTED, False)
     namespace["RE"](namespace["recover_sequencer"]())
     assert backend.inspect() == (DeviceState.IDLE, False)
+
+
+class SecuringBackend(SimulatedSequenceBackend):
+    """Records the off-mode call the 2460 backend serves when the environment opens."""
+
+    def __init__(self, error=None):
+        super().__init__()
+        self.secured = []
+        self.error = error
+
+    def secure_off_mode(self, limits):
+        if self.error is not None:
+            raise self.error
+        self.secured.append(limits)
+
+
+def test_opening_the_environment_secures_the_off_mode(session):
+    backend = SecuringBackend()
+    build_namespace(session, backend=backend)
+    assert backend.secured == [session.limits]
+
+
+def test_environment_does_not_open_without_a_confirmed_off_mode(session):
+    with pytest.raises(ElectrochemistryError, match="not confirmed"):
+        build_namespace(session, backend=SecuringBackend(ElectrochemistryError("not confirmed")))
 
 
 class RetainingBackend(SimulatedSequenceBackend):

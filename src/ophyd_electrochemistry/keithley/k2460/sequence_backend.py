@@ -32,6 +32,7 @@ from ...exceptions import (
     ValidationError,
 )
 from ...sequences.backend import READOUT_FIELDS, SequenceEvent, SequencePoll, SequenceRequest
+from ...sequences.models import SafetyLimits
 from ...state import DeviceState
 from ...validation import integer, text
 from .sequencer import (
@@ -435,9 +436,45 @@ class Keithley2460SequenceBackend:
                 result.update(self._program.settings())
             return result
 
-    def _vlimit(self, request: SequenceRequest) -> float:
-        limits = request.limits
-        return max(abs(limits.v_min_abs), abs(limits.v_max_abs)) + self.profile.vlimit_margin_v
+    def _configure(self, limits: SafetyLimits) -> None:
+        p = self.profile
+        vlimit = max(abs(limits.v_min_abs), abs(limits.v_max_abs)) + p.vlimit_margin_v
+        self._call(
+            runtime_call(
+                "configure",
+                limits.v_min_abs,
+                limits.v_max_abs,
+                limits.i_max_abs,
+                vlimit,
+                p.ready_line,
+                p.busy_line,
+                p.marker_line,
+                p.start_line,
+                int(self.four_wire),
+                int(self.terminals == "front"),
+                1 if self.start_edge == "rising" else 2,
+            )
+        )
+
+    def secure_off_mode(self, limits: SafetyLimits) -> None:
+        """Connect, set HIGH-Z with read-back, disconnect: the 2460 powers on in NORMAL.
+
+        An active model or unread records mean a prepare has already set HIGH-Z
+        since power-on, so both are left untouched.
+        """
+        with self._lock:
+            self.connect()
+            try:
+                status = self._status()
+                if not status.active and status.records == status.acked:
+                    self._configure(limits)
+            finally:
+                # Not close(): it refuses while a model from an earlier session runs.
+                self._connected = False
+                try:
+                    self._transport.close()
+                except TransportError:
+                    pass
 
     def prepare(self, request: SequenceRequest) -> None:
         with self._lock:
@@ -465,23 +502,7 @@ class Keithley2460SequenceBackend:
             self._reset_run(None)
             earlier = [e for e in self._drain_events() if e.severity <= 2]
             self._pre_run_events = " | ".join(f"{e.number} {e.message}" for e in earlier[-10:])
-            p, limits = self.profile, request.limits
-            self._call(
-                runtime_call(
-                    "configure",
-                    limits.v_min_abs,
-                    limits.v_max_abs,
-                    limits.i_max_abs,
-                    self._vlimit(request),
-                    p.ready_line,
-                    p.busy_line,
-                    p.marker_line,
-                    p.start_line,
-                    int(self.four_wire),
-                    int(self.terminals == "front"),
-                    1 if self.start_edge == "rising" else 2,
-                )
-            )
+            self._configure(request.limits)
             reply = ""
             for call in program.runtime_calls():
                 reply = self._call(call)

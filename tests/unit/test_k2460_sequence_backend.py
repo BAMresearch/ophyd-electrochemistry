@@ -654,6 +654,64 @@ def test_run_sequence_end_to_end(backend, instrument, limits, tmp_path):
     assert not instrument.connected and instrument.g.src.output == "smu.OFF"
 
 
+def configured(instrument):
+    return [c for c in instrument.sent if "oe_seq_configure" in c]
+
+
+def test_secure_off_mode_sets_high_z_and_disconnects(instrument, clock, limits):
+    assert instrument.g.offmodes["smu.FUNC_DC_VOLTAGE"] == "smu.OFFMODE_NORMAL"
+    make_backend(instrument, clock).secure_off_mode(limits)
+    g = instrument.g
+    assert g.offmodes["smu.FUNC_DC_CURRENT"] == "smu.OFFMODE_HIGHZ"
+    assert g.offmodes["smu.FUNC_DC_VOLTAGE"] == "smu.OFFMODE_HIGHZ"
+    assert not instrument.connected
+
+
+def test_secure_off_mode_fails_with_the_output_on(instrument, clock, limits):
+    first = make_backend(instrument, clock)
+    first.connect()
+    first.close()
+    instrument.g.src.output = "smu.ON"
+    with pytest.raises(ElectrochemistryError, match="output is not OFF"):
+        make_backend(instrument, clock, install_runtime=False).secure_off_mode(limits)
+    assert not instrument.connected
+
+
+def test_secure_off_mode_leaves_a_running_model_alone(instrument, clock, limits):
+    first = make_backend(instrument, clock)
+    first.connect()
+    request = pulse_request(limits)
+    _, rows = instrument_records(request.sequence, limits)
+    first.prepare(request)
+    first.kickoff()
+    instrument.start()
+    instrument.add(rows[:5])
+    instrument.sent.clear()
+    # A new host process opens the environment while the 2460 still runs.
+    make_backend(instrument, clock).secure_off_mode(limits)
+    assert not configured(instrument)
+    assert instrument.g.src.output == "smu.ON"
+
+
+def test_secure_off_mode_leaves_unread_records_alone(instrument, clock, limits, tmp_path):
+    first = make_backend(instrument, clock)
+    first.connect()
+    request = pulse_request(limits)
+    _, rows = instrument_records(request.sequence, limits)
+    first.prepare(request)
+    first.kickoff()
+    instrument.start()
+    instrument.add(rows)
+    instrument.finish("end")
+    instrument.sent.clear()
+    make_backend(instrument, clock).secure_off_mode(limits)
+    assert not configured(instrument)
+    second = make_backend(instrument, clock)
+    second.connect()
+    with np.load(second.archive_retained(tmp_path / "retained.npz")) as saved:
+        assert len(saved["reading"]) == len(rows)
+
+
 def test_new_session_after_a_closed_run_prepares_without_archive(instrument, clock, limits):
     # The notebook builds a new backend per run: closing (unstage) acknowledges.
     request = pulse_request(limits)

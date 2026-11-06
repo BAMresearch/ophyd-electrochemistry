@@ -115,12 +115,21 @@ def make_backend(session: Session) -> SequenceBackend:
 
 
 def build_namespace(session: Session, *, backend: SequenceBackend | None = None) -> dict[str, Any]:
-    """RunEngine, run-file writer, Flyer and the queueable plans for a startup file."""
+    """RunEngine, run-file writer, Flyer and the queueable plans for a startup file.
+
+    Opening the environment sets the 2460's output-off mode to HIGH-Z, and fails
+    if that cannot be confirmed: operators connect cells only after this.
+    """
     engine = RunEngine({})
     writer = RunFileWriter(session.data_dir)
     engine.subscribe(writer)
+    if backend is None:
+        backend = make_backend(session)
+    secure_off_mode = getattr(backend, "secure_off_mode", None)
+    if secure_off_mode is not None:
+        secure_off_mode(session.limits)
     flyer = SequenceFlyer(
-        make_backend(session) if backend is None else backend,
+        backend,
         name="k2460",
         poll_period_s=session.poll_period_s,
         start_timeout_s=session.start_timeout_s,

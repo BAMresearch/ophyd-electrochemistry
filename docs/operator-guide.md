@@ -127,12 +127,13 @@ Fix every `FAIL` line before going on. Name rows to check only those.
 
 ## 5. At the instrument (each day)
 
+<span style="color:red">**Open the environment (`qserver environment open`, section 6) before connecting a cell: until then, the 2460's output-off mode after power-on is NORMAL, which pulls a connected cell towards 0 V.**</span>
+
+So disconnect a cell before switching the 2460 off.
+
 1. The 2460 may have been off overnight; that is fine. Its runtime is
    installed again automatically, with the output OFF.
-2. **Cell wiring:** front terminals, 4-wire. **Hard carbon on HI (force and
-   sense), Na on LO.** Check the polarity: reversed leads make every step run
-   the wrong way.
-3. **Digital I/O:**
+2. **Digital I/O:**
 
    | Line | Signal | Direction |
    |---|---|---|
@@ -141,7 +142,7 @@ Fix every `FAIL` line before going on. Name rows to check only those.
    | 4 | step MARKER | out |
    | 6 | START | in, from the beamline |
 
-4. Check the connection. This only reads from the instrument:
+3. Check the connection. This only reads from the instrument:
 
    ```sh
    oe-diagnose --resource 'TCPIP0::169.254.113.151::5025::SOCKET' --backend '@py' --require-language TSP
@@ -152,6 +153,11 @@ Fix every `FAIL` line before going on. Name rows to check only those.
 Only one program may talk to the 2460: close any notebook that uses it.
 
 ## 6. Start the QueueServer (three terminals)
+
+Short form: `qserver/start-k2460-re-manager.sh ~/k2460-session.toml` from the
+repository starts redis if it is not running, then the RE Manager in that
+terminal, and prints the session's limits. Then continue with terminal 3. The
+long form:
 
 Terminal 1, redis:
 
@@ -173,6 +179,14 @@ Terminal 3, control (all further commands):
 qserver environment open
 qserver status            # wait for: worker_environment_exists True, manager_state idle
 ```
+
+Opening the environment connects to the 2460, sets HIGH-Z for both source
+functions, reads it back and disconnects. If it fails, terminal 2 shows why:
+do not connect a cell.
+
+**Now connect the cell:** front terminals, 4-wire. **Hard carbon on HI (force
+and sense), Na on LO.** Check the polarity: reversed leads make every step run
+the wrong way.
 
 ## 7. Queue and run
 
