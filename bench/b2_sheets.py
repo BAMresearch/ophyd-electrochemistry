@@ -27,6 +27,7 @@ SHEETS = {
     "b2-cell-relax.xlsx": "session-cell-neg.toml",
     "b2-cell-restore.xlsx": "session-cell-explore.toml",
     "b2-cell-restore-c3.xlsx": "session-cell-explore.toml",
+    "b2-cell-cv.xlsx": "session-cell-cv.toml",
 }
 
 
@@ -283,6 +284,25 @@ def restore_c3_rows(capacity_mah: float, sample_id: str) -> list[dict[str, objec
     return [row]
 
 
+def cv_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
+    """K12 (6 Nov): desodiation at a 3 V hold; the hold's current limit is 1C (the session)."""
+    c1 = capacity_mah * 1e-3
+    row: dict[str, object] = dict(
+        measurement_id="k12-cv-3V",
+        protocol="soc_position",
+        current_a=c1 / 3,
+        target_v=3.0,
+        max_step_s=300,
+        cv_i_abs_min_a=5e-6,
+        cv_max_s=1800,
+        rest_s=300,
+        interval_s=1,
+        sample_id=sample_id,
+        notes=f"B2 K12 coin cell, capacity {capacity_mah:g} mAh assumed (1C = {c1:.3g} A)",
+    )
+    return [row]
+
+
 def write(
     out: Path,
     capacity_mah: float,
@@ -303,6 +323,7 @@ def write(
         relax_rows(capacity_mah, sample_id),
         restore_rows(capacity_mah, sample_id),
         restore_c3_rows(capacity_mah, sample_id),
+        cv_rows(capacity_mah, sample_id),
     )
     failed = 0
     for (name, session), sheet_rows in zip(SHEETS.items(), rows, strict=True):

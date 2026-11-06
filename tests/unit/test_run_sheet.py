@@ -493,3 +493,24 @@ def test_template_command_writes_once(tmp_path, capsys):
     with pytest.raises(SystemExit):
         template_main([str(path)])
     assert path.read_bytes() == before
+
+
+def test_soc_position_with_a_voltage_hold(tmp_path):
+    limits = SafetyLimits(0, 3.1, 0.001, 10000, 100000)
+    row = dict(
+        measurement_id="hold",
+        protocol="soc_position",
+        current_a=1e-4,
+        target_v=3.0,
+        max_step_s=300,
+        cv_i_abs_min_a=5e-6,
+        cv_max_s=1200,
+        rest_s=60,
+    )
+    from ophyd_electrochemistry.sequences.run_sheet import write_run_sheet
+
+    path = tmp_path / "hold.xlsx"
+    write_run_sheet(path, [row])
+    steps = load_run_sheet(path, limits)["hold"].sequence.steps
+    assert [step.mode.value for step in steps] == ["current", "voltage", "rest"]
+    assert (steps[1].level, steps[1].i_abs_min, steps[1].duration_s) == (3.0, 5e-6, 1200)

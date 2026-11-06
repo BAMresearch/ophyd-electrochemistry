@@ -272,6 +272,13 @@ def soc_position_sequence(
     max_s: float,
     rest_s: float,
     interval_s: float = 1.0,
+    cv_i_abs_min: float | None = None,
+    cv_max_s: float = 3600.0,
 ) -> Sequence:
+    """CC toward target_v, then rest; with ``cv_i_abs_min`` a CV hold comes between."""
+    positive(cv_max_s, "cv_max_s")
     sampling = Sampling(interval_s)
-    return Sequence((cc_step(current_a, target_v, max_s, sampling), rest_step(rest_s, sampling)))
+    steps = [cc_step(current_a, target_v, max_s, sampling)]
+    if cv_i_abs_min is not None:
+        steps.append(cv_step(target_v, cv_i_abs_min, cv_max_s, sampling))
+    return Sequence((*steps, rest_step(rest_s, sampling)))

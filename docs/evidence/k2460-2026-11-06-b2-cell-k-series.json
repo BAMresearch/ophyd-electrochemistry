@@ -1,7 +1,7 @@
 {
   "test_matrix": "bench/plan-b2.md",
   "load": "cell",
-  "written_utc": "2026-11-06T13:07:23+00:00",
+  "written_utc": "2026-11-06T14:23:21+00:00",
   "data_dirs": [
     "/Users/bpauw/k2460-data/b2/cell",
     "/Users/bpauw/k2460-data/b2/explore"
@@ -736,6 +736,150 @@
         "i_min_max": [
           -4.36557456851006e-11,
           -2.18278728425503e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/k12-cv-3V_20261106T134648Z.h5",
+      "measurement_id": "k12-cv-3V",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "soc_position",
+      "start_utc": "2026-11-06T13:46:48.555630Z",
+      "duration_s": 2164.2887557,
+      "records": 2164,
+      "outcome": "completed",
+      "cutoffs": 1,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k12-cv-3V",
+        "outcome": "completed",
+        "records": 2164,
+        "duration_s": 2164.2887557,
+        "spacing_s": {
+          "1s": {
+            "n": 2161,
+            "median": 1.0000921799999105,
+            "p99": 1.0001431880000098,
+            "max": 1.0138598400001229
+          }
+        },
+        "spacing_max_s": 1.0138598400001229,
+        "rest_v_first_last": [
+          2.94480895996094,
+          1.78898620605469
+        ],
+        "v_min_max": [
+          1.2520637512207,
+          3.00652313232422
+        ],
+        "i_min_max": [
+          -5.23868948221207e-09,
+          0.000160004594363272
+        ],
+        "events": [
+          "0.000 step_start ",
+          "64.027 cutoff v_max",
+          "64.027 step_start ",
+          "1864.235 step_start "
+        ],
+        "apparent_r_ohm": 884.1360845966173,
+        "median_v_over_i_ohm": 146245.24797024217
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/k11-desod-c3_20261106T132527Z.h5",
+      "measurement_id": "k11-desod-c3",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "soc_position",
+      "start_utc": "2026-11-06T13:25:27.906784Z",
+      "duration_s": 1066.12414002,
+      "records": 1066,
+      "outcome": "completed",
+      "cutoffs": 1,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k11-desod-c3",
+        "outcome": "completed",
+        "records": 1066,
+        "duration_s": 1066.12414002,
+        "spacing_s": {
+          "1s": {
+            "n": 1064,
+            "median": 1.0000936499999966,
+            "p99": 1.0001260237999918,
+            "max": 1.0009661800000345
+          }
+        },
+        "spacing_max_s": 1.0009661800000345,
+        "rest_v_first_last": [
+          2.55696105957031,
+          0.982868194580078
+        ],
+        "v_min_max": [
+          0.751010894775391,
+          2.90317916870117
+        ],
+        "i_min_max": [
+          -5.58793544769287e-09,
+          0.000160002731718123
+        ],
+        "events": [
+          "0.000 step_start ",
+          "766.095 cutoff v_max",
+          "766.095 step_start "
+        ],
+        "apparent_r_ohm": 2929.8037658688972,
+        "median_v_over_i_ohm": 9618.392052023533
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/k11-ocv_20261106T132232Z.h5",
+      "measurement_id": "k11-ocv",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "rest",
+      "start_utc": "2026-11-06T13:22:32.627442Z",
+      "duration_s": 120.03830284,
+      "records": 120,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k11-ocv",
+        "outcome": "completed",
+        "records": 120,
+        "duration_s": 120.03830284,
+        "spacing_s": {
+          "1s": {
+            "n": 119,
+            "median": 1.000083140000001,
+            "p99": 1.0001612952000016,
+            "max": 1.0001867399999997
+          }
+        },
+        "spacing_max_s": 1.0001867399999997,
+        "rest_v_first_last": [
+          0.454570770263672,
+          0.459781646728516
+        ],
+        "v_min_max": [
+          0.454570770263672,
+          0.459781646728516
+        ],
+        "i_min_max": [
+          1.09139364212751e-11,
+          3.63797880709171e-11
         ],
         "events": [
           "0.000 step_start "
