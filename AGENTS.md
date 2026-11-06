@@ -39,7 +39,14 @@ Tier 1 — **resistor / passive dummy load** (resistor, RC dummy cell):
 
 Tier 2 — **batteries / electrochemical cells**:
 - Every energized run needs explicit user confirmation of the cell, wiring,
-  voltage window, current limit and output-off mode for that run (or run sheet).
+  voltage window, current limit and output-off mode for that run, run sheet or
+  exploration series.
+- An exploration series is confirmed once, at its start: a page in `bench/`
+  (e.g. `bench/plan-b2-explore.md`) holds the limits, stop rules and time limit,
+  and the user confirms them with the runner's `authorize`. The setup then stays
+  physically untouched, and the agent may run anything inside those limits. The
+  runner refuses the rest. A changed limit needs a new confirmation. On a stop
+  rule or an unexpected state, stop and report: no retry, reset or power cycle.
 - Output-off mode must be HIGH-Z for cells; never NORMAL/ZERO (they force the
   terminals toward 0 V and discharge or sodiate the cell).
 - Voltage cutoffs must be instrument-local. Never source into an unknown DUT.
