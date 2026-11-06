@@ -194,6 +194,22 @@ Options:
 | B | Relaxed voltage: only in the last second of each 60 s rest | the session window, which must then allow the under-load excursion | Recommended. A small builder change: the rest splits into 59 s plus 1 s with the cutoff. Desodiation needs a wider upper window (no plating question). Sodiation needs a lower window below 0 V *under load*, which is the scientists' plating call |
 | C | During the pulse, limits shifted by I·R | the shifted limits | Fragile: R changes with SOC and rate |
 
+**Decided 6 Nov (sodiation):** option B, with a 5 min relaxation. A sodiation
+pulse run stops when the voltage at the end of a 5 min rest is at or below
+5 mV. Under load the voltage may go down to −3 V (Jonas): bulk plating that
+reintegrates during the rest is of interest. These runs come after the
+desodiation pulses on the same cell, because desodiation after plating cannot
+be trusted to look normal. Not built yet: `pulse_train` still tests its limits
+during the pulse.
+
+The 5 min rests may shorten to 1 min if tests show the limit can be inferred
+from the recorded data; otherwise long rests only near the end of a run, if
+that is easy to build. A cutoff cannot leave a repeat block, so "near the end"
+means two sheet rows: 1 min rests until an earlier relaxed threshold, then
+5 min rests to 5 mV. First data, on the high-resistance coin cell after K3: the
+voltage rose 75 mV between 1 and 5 min of rest, and a log-time fit to 5–60 s
+predicted 38 mV too low at 5 min.
+
 Bench B2's K2 rate check measures the IR drop at 1–40C on the coin cell,
 staying away from the plating region. Those numbers decide the rate, the windows
 and the option.
@@ -266,9 +282,9 @@ Answered on 4 Nov: unipolar pulses, the capacity, SAXS frame times, rests of
 1 min at zero current, the run end at the voltage limit, both directions, and
 short high-rate pulses for the beamtime.
 
-1. **End condition and windows at high rate:** option B (relaxed voltage)?
-   How far may the voltage go during a 1 s sodiation pulse, measured under
-   load in a half-cell, below 0 V? This is the plating limit.
+1. **End condition at high rate:** sodiation is decided (see "Ending a
+   high-rate pulse run"). Do desodiation runs end the same way, at the relaxed
+   upper limit after the rest?
 2. **Rate:** the highest rate worth trying (40C?), after the B2 rate check.
 3. **Fully sodiated start:** C/10 overnight acceptable, or start earlier or use
    your cycler? A CV hold at 5 mV at the end?

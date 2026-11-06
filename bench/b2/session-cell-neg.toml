@@ -1,0 +1,18 @@
+# B2 coin cell, sodiation pulses below 0 V under load (tier 2): HC on HI (force
+# + sense), Na on LO. Window from Jonas, 6 Nov: down to -3 V. Run only after the
+# desodiation pulses on the same cell. This window no longer stops reversed
+# leads at the first sample: read a positive OCV from k8-ocv first.
+# OE_SESSION=bench/b2/session-cell-neg.toml
+backend = "k2460"
+data_dir = "~/k2460-data/b2/cell"
+resource = "TCPIP0::169.254.113.151::5025::SOCKET"
+serial = "04686198"
+terminals = "front"
+poll_period_s = 1.0
+
+[limits]
+v_min_abs = -3.0
+v_max_abs = 3.0
+i_max_abs = 0.03
+max_duration_s = 172800.0
+max_records = 1000000

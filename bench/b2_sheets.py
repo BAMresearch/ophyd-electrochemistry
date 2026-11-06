@@ -23,6 +23,7 @@ SHEETS = {
     "b2-cell.xlsx": "session-cell.toml",
     "b2-cell-cycle.xlsx": "session-cell-cycle.toml",
     "b2-cell-pulse.xlsx": "session-cell-wide.toml",
+    "b2-cell-neg.xlsx": "session-cell-neg.toml",
 }
 
 
@@ -179,6 +180,34 @@ def pulse_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
     return rows
 
 
+def neg_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
+    """K8 (6 Nov): 1C sodiation train with only the session window below it.
+
+    No v_low: the pulses may read below 0 V under load and the train ends after
+    its 60 pulses. k8-ocv comes first because this window does not catch
+    reversed leads. Run after the K7 desodiation train on the same cell.
+    """
+    c1 = capacity_mah * 1e-3
+    rows: list[dict[str, object]] = [
+        dict(measurement_id="k8-ocv", protocol="rest", rest_s=120, interval_s=1),
+        dict(
+            measurement_id="k8-sod-1C",
+            protocol="pulse_train",
+            current_a=-c1,
+            pulse_s=1,
+            fast_window_s=1,
+            rest_s=10,
+            repeats=60,
+            pre_rest_s=10,
+            interval_s=0.25,
+        ),
+    ]
+    for row in rows:
+        row["sample_id"] = sample_id
+        row["notes"] = f"B2 K8 coin cell, capacity {capacity_mah:g} mAh assumed (1C = {c1:.3g} A)"
+    return rows
+
+
 def write(
     out: Path,
     capacity_mah: float,
@@ -195,6 +224,7 @@ def write(
         resistor_rows(),
         *cell_rows(capacity_mah, sample_id, pulse_c_rate),
         pulse_rows(capacity_mah, sample_id),
+        neg_rows(capacity_mah, sample_id),
     )
     failed = 0
     for (name, session), sheet_rows in zip(SHEETS.items(), rows, strict=True):
