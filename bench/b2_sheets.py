@@ -24,6 +24,9 @@ SHEETS = {
     "b2-cell-cycle.xlsx": "session-cell-cycle.toml",
     "b2-cell-pulse.xlsx": "session-cell-wide.toml",
     "b2-cell-neg.xlsx": "session-cell-neg.toml",
+    "b2-cell-relax.xlsx": "session-cell-neg.toml",
+    "b2-cell-restore.xlsx": "session-cell-explore.toml",
+    "b2-cell-restore-c3.xlsx": "session-cell-explore.toml",
 }
 
 
@@ -208,6 +211,78 @@ def neg_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
     return rows
 
 
+def relax_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
+    """K9 and K10 (6 Nov): relaxation after single pulses, then a short rate ladder.
+
+    k9 compares the voltage after 1 and 5 min of rest. Each k10 pair runs
+    desodiation first; at about 1.4 kOhm the 5C pulses reach the window.
+    """
+    c1 = capacity_mah * 1e-3
+    pulse = dict(protocol="pulse_train", pulse_s=1, fast_window_s=1, pre_rest_s=10)
+    rows: list[dict[str, object]] = [
+        dict(
+            measurement_id="k9-relax-1C",
+            **pulse,
+            current_a=-c1,
+            rest_s=300,
+            repeats=5,
+            interval_s=1,
+        )
+    ]
+    for rate in (3, 5):
+        ladder = dict(**pulse, rest_s=20, repeats=3, interval_s=0.25)
+        rows.append(
+            dict(measurement_id=f"k10-desod-{rate}C", **ladder, current_a=rate * c1, v_high=2.9)
+        )
+        rows.append(dict(measurement_id=f"k10-sod-{rate}C", **ladder, current_a=-rate * c1))
+    for row in rows:
+        row["sample_id"] = sample_id
+        row["notes"] = f"B2 coin cell, capacity {capacity_mah:g} mAh assumed (1C = {c1:.3g} A)"
+    return rows
+
+
+def restore_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
+    """K11 (6 Nov): OCV, then C/4 desodiation back towards the storage voltage.
+
+    At most 45 min, about 90 uAh at 0.48 mAh; 2.9 V under load relaxes to about
+    the voltage the cell had when it arrived.
+    """
+    c1 = capacity_mah * 1e-3
+    rows: list[dict[str, object]] = [
+        dict(measurement_id="k11-ocv", protocol="rest", rest_s=120, interval_s=1),
+        dict(
+            measurement_id="k11-desod-45min",
+            protocol="soc_position",
+            current_a=c1 / 4,
+            target_v=2.9,
+            max_step_s=2700,
+            rest_s=300,
+            interval_s=1,
+        ),
+    ]
+    for row in rows:
+        row["sample_id"] = sample_id
+        row["notes"] = f"B2 K11 coin cell, capacity {capacity_mah:g} mAh assumed (1C = {c1:.3g} A)"
+    return rows
+
+
+def restore_c3_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
+    """K11 at C/3 instead: the same 90 uAh at 0.48 mAh, in 33 min 45 s."""
+    c1 = capacity_mah * 1e-3
+    row: dict[str, object] = dict(
+        measurement_id="k11-desod-c3",
+        protocol="soc_position",
+        current_a=c1 / 3,
+        target_v=2.9,
+        max_step_s=2025,
+        rest_s=300,
+        interval_s=1,
+        sample_id=sample_id,
+        notes=f"B2 K11 coin cell, capacity {capacity_mah:g} mAh assumed (1C = {c1:.3g} A)",
+    )
+    return [row]
+
+
 def write(
     out: Path,
     capacity_mah: float,
@@ -225,6 +300,9 @@ def write(
         *cell_rows(capacity_mah, sample_id, pulse_c_rate),
         pulse_rows(capacity_mah, sample_id),
         neg_rows(capacity_mah, sample_id),
+        relax_rows(capacity_mah, sample_id),
+        restore_rows(capacity_mah, sample_id),
+        restore_c3_rows(capacity_mah, sample_id),
     )
     failed = 0
     for (name, session), sheet_rows in zip(SHEETS.items(), rows, strict=True):

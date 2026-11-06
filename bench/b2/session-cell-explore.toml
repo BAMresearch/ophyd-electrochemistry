@@ -1,0 +1,17 @@
+# Coin-cell exploration series (tier 2, bench/plan-b2-explore.md): HC on HI (force
+# + sense), Na on LO. Window as session-cell-neg.toml; current capped at 40C of
+# the assumed 0.48 mAh. Run only through bench/explore.py.
+# OE_SESSION=bench/b2/session-cell-explore.toml
+backend = "k2460"
+data_dir = "~/k2460-data/b2/explore"
+resource = "TCPIP0::169.254.113.151::5025::SOCKET"
+serial = "04686198"
+terminals = "front"
+poll_period_s = 1.0
+
+[limits]
+v_min_abs = -3.0
+v_max_abs = 3.0
+i_max_abs = 0.0192
+max_duration_s = 7200.0
+max_records = 1000000

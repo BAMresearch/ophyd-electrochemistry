@@ -4,6 +4,7 @@ import importlib.util
 import json
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 pytest.importorskip("openpyxl")
@@ -102,3 +103,83 @@ def test_run_checks_and_evidence(monitor, viewer_runs, tmp_path, monkeypatch):
 
 def test_processes_finds_only_re_manager_trees(monitor):
     assert all("start-re-manager" not in p["command"] or p["pid"] for p in monitor.processes())
+
+
+@pytest.fixture(scope="module")
+def explore():
+    return load("explore")
+
+
+TRAIN = dict(
+    measurement_id="x",
+    protocol="pulse_train",
+    current_a=0.00048,
+    pulse_s=1,
+    rest_s=10,
+    repeats=60,
+)
+
+
+@pytest.mark.parametrize(
+    ("change", "net", "elapsed", "message"),
+    [
+        ({"current_a": 0.0193}, 0, 0, "above"),
+        ({"current_a": -0.0193}, 0, 0, "above"),
+        ({"pulse_s": 0.01}, 0, 0, "outside"),
+        ({"pulse_s": 61}, 0, 0, "outside"),
+        ({"rest_s": 601}, 0, 0, "outside"),
+        ({"pre_rest_s": 0.5}, 0, 0, "outside"),
+        ({"protocol": "cycling"}, 0, 0, "protocol"),
+        ({"start_mode": "external"}, 0, 0, "immediate"),
+        ({"sample_id": "other"}, 0, 0, "sample"),
+        ({"current_a": 0.0048, "pulse_s": 60}, 0, 0, "one run"),
+        ({"repeats": 60}, 33, 0, "net charge"),
+        ({"current_a": -0.00048}, -33, 0, "net charge"),
+        ({}, 0, 7000, "series limit"),
+    ],
+)
+def test_explore_refuses_rows_outside_the_authorization(explore, change, net, elapsed, message):
+    with pytest.raises(explore.Refused, match=message):
+        explore.check_row({**TRAIN, **change}, net, elapsed, 670)
+
+
+def test_explore_accepts_the_edges_of_the_authorization(explore):
+    edge = {**TRAIN, "current_a": -0.0048, "pulse_s": 1, "rest_s": 600, "repeats": 29}
+    explore.check_row(edge, 0, 0, 3600)
+    explore.check_row({**TRAIN, "protocol": "bipolar_pulse"}, 30, 0, 670)
+    assert explore.run_charge_uah(TRAIN) == pytest.approx((8, 8))
+    assert explore.run_charge_uah({**TRAIN, "protocol": "bipolar_pulse"}) == pytest.approx((16, 0))
+
+
+def test_explore_stop_rules(explore):
+    t = np.arange(0, 3, 0.1)
+    i = np.where((t > 1) & (t < 2), 1e-3, 0.0)
+    v = np.where(i > 0, 1.0, 0.5)
+    data = {
+        "run": {"outcome": "completed"},
+        "attrs": {"measurement_id": "ref-02"},
+        "readout": {"t_s": t, "voltage_v": v, "current_a": i},
+    }
+    assert explore.assess(data, 500) == []
+    assert "reference" in explore.assess(data, 1500)[0]
+    shorted = {**data, "readout": {**data["readout"], "voltage_v": np.where(i > 0, 0.51, 0.5)}}
+    assert "short" in explore.assess(shorted, None)[0]
+    assert "outcome" in explore.assess({**data, "run": {"outcome": "error"}}, None)[0]
+    negative = {**data, "readout": {**data["readout"], "voltage_v": v - 0.6}}
+    assert "negative" in explore.assess(negative, None)[0]
+
+
+def test_explore_pulses_survive_a_first_sample_and_a_cutoff(explore):
+    t = np.arange(0, 3, 0.1)
+    i = np.where(t > 2, 1e-3, 0.0)  # the run ends inside the pulse
+    i[0] = 5e-6  # output-on reading at 0 A
+    v = np.where(i > 1e-4, 1.5, 0.5)
+    data = {
+        "run": {"outcome": "stopped_cutoff"},
+        "attrs": {"measurement_id": "x"},
+        "readout": {"t_s": t, "voltage_v": v, "current_a": i},
+    }
+    (pulse,) = explore.pulses(data)
+    assert pulse["i_a"] == pytest.approx(1e-3)
+    assert pulse["r_end_ohm"] == pytest.approx(1000)
+    assert explore.assess(data, None) == []
