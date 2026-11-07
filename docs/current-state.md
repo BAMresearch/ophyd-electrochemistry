@@ -1,6 +1,6 @@
 # Current project state
 
-Updated: 2026-11-03. Branch: `mvp-sprint`. Plan: [MVP sprint plan](mvp-plan.md).
+Updated: 2026-11-07. Branch: `mvp-sprint`. Plan: [MVP sprint plan](mvp-plan.md).
 
 Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 (October–2 November bench narrative) is preserved in commit `e04ebc6`, in
@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1272 tests pass. Pure models/compiler, independent simulator,
+- **Offline:** 1298 tests pass, including 57 contract tests against a real RE Manager. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -36,19 +36,19 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   `ERR` lines), maps the clock by `eventlog.post` pings, polls status, event log
   and records through the replay, aborts with OFF confirmation and refuses to
   prepare over unread records of another session until `archive_retained`.
-  Tested against the real runtime under Lua, including a RunEngine run; not
-  yet run on the 2460 (B1).
+  Ran on the 2460 in B1 and B2 (resistor), and on a coin cell.
 - **Per-run notebook (O6):** Excel selection, request summary, synthetic preview,
   live plot and saved-file review; clean copies via `oe-new-run`
   with explicit session limits. `BACKEND = "k2460"` selects the sequencer
-  backend (confirmation gate before any I/O; not yet run on hardware). Save the
+  backend (confirmation gate before any I/O; ran on the 2460 in Q10). Save the
   executed notebook beside its HDF5 file.
 - **QueueServer (O7):** `qserver/startup` + session TOML (`OE_SESSION`): RE
   Manager worker owns the instrument; queue items are run-sheet rows with the
   sheet's SHA-256 (refused if the sheet changed); `oe-enqueue` asks for a
-  typed confirmation per hardware run (`oe-validate` checks a sheet first); only `run_from_sheet` and
-  `recover_sequencer` permitted. Tested against a real RE Manager + redis with
-  the simulator (`qserver/README.md`); operator steps in `docs/operator-guide.md`.
+  typed confirmation per hardware run (`oe-validate` checks a sheet first); only
+  `run_from_sheet`, `recover_sequencer` and `archive_retained` permitted.
+  `qserver/start-k2460-re-manager.sh` starts it; `environment open` sets HIGH-Z.
+  Ran on the 2460 in B2, including host-crash recovery and a 300k-record soak.
 - **Run files:** incremental HDF5 writer/reader with separate equipment/run
   metadata, compressed readouts and events; exclusive creation, per-append flush
   and explicit terminal outcomes. SWMR mode (HDF5 1.10 format): other
@@ -60,65 +60,45 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   and overlays voltage against time or signed charge. Bin-extrema display
   sampling preserves short pulses; corrupt files stay visible in the index.
   Tested offline with completed, cutoff, aborted and incomplete runs.
-- **On the 2460, via scripts (not via Bluesky):** PyVISA transport, identity/TSP
-  checks, query-only inspection, packaged runtime install/replace, count-bounded
-  current holds (runtime v14) with immediate or external START, buffered
-  acquisition to 10,000 records at 1/0.1/0.01 NPLC (~24/207/821 Hz on the
-  resistor), chunked retrieval, archive, abort, recovery.
-- **Timing observed (resistor, 1 NPLC, v14):** START → buffered timestamp about
-  45–52 ms, dominated by a 10 ms START polling loop and the measurement. Scoped
-  observation, not a calibrated bound.
+- **Exploration runner:** `bench/explore.py` checks each row against the limits
+  in a `bench/` page, runs it and applies stop rules (59 runs on 6 Nov).
 
 ## What is broken or missing
 
-- Timed-hold runtime v17 (`timed_hold.tsp`, `Keithley2460Backend`) fails after
-  the first sample (`cadence_overrun`); superseded by the sequencer design in the
-  plan. Do not develop it further.
-- The hardware Bluesky path exists but has not run on the 2460; no
-  voltage-source (CV) step on hardware yet.
-- `runtime.tsp` sets `smu.source.offmode = smu.OFFMODE_NORMAL` — unsafe for cells.
-  The sequencer must use HIGH-Z.
-- Hard-coded commissioning limits (10 mA, 2 V, 60 s) are too small for cycling.
+- The compiler allows 255 trigger blocks; the firmware takes 63. `bench/explore.py`
+  guards this; a `bipolar_pulse` with long rests needs 71–83 blocks.
+- `pulse_train` tests limits during the pulse. The agreed end, at or below 5 mV
+  after a 5 min rest (`docs/beamtime-concept.md`), is not built.
+- Each step runs about 1 % long (R9); cause open. The voltage dip at output ON
+  (−10 to −323 mV on the cell) is unexplained.
+- Follow does not refresh a run waiting for external START.
+- The explore reference stop rule compares across voltages.
+- Timed-hold runtime v17 is superseded; do not develop it. `runtime.tsp` uses
+  OFFMODE_NORMAL and must not touch a cell.
 
-## Before the next bench session
+## Next resistor session
 
-Rewire the digital I/O (decided 3 Nov): READY out line 1, BUSY out line 2,
-step MARKER out line 4 (scope probe moves from line 1), START in line 6 (the
-generator and its 1 kohm resistor move from line 3). Confirm the DB-9 pins.
+Rerun R4–R7 (not rerun since the replay fix). Power-cycle, `environment open`,
+read back HIGH-Z (first real test of NORMAL to HIGH-Z). Test a stop on a rest
+step before relying on the relaxed-voltage end. RC dummy C1–C2 if available.
 
 ## Last known hardware state (reconfirm before use)
 
-As of 2026-11-03 ~12:40 CET, after B0: K2460 serial `04686198`, firmware 1.7.16a
-(TSP, Lua 5.0.2), `169.254.113.151:5025`. Output OFF, source current 0 A,
-off mode HIGH-Z for current and voltage, trigger model EMPTY, no runtime loaded
-(the instrument is powered off overnight; runtime, buffers and off mode do not
-survive that). `defbuffer1` holds 1,337 continuous-mode readings from today
-(`trigger.continuous` is `CONT_AUTO`); event log read and empty. Front terminals,
-4-wire, 100 Ω / 1 W resistor; trigger generator and scope off.
+6 Nov, about 14:30 UTC: K2460 serial `04686198`, firmware 1.7.16a, TSP,
+`169.254.113.151:5025`, powered off, so runtime, buffers and HIGH-Z are gone and
+off mode is NORMAL until `environment open`. Wiring: READY line 1, BUSY 2, MARKER 4,
+START 6 (DB-9 pin 8). Coin cell `Richard-HC400-rev` disconnected, about 48 µAh still
+sodiated, 1.79 V and falling when last read.
 
 ## Next steps
 
-1. Thu 5 Nov bench: rewire (`bench/plan-b1.md` §0), B1 R1–R11 on the resistor
-   (`bench/b1_sequencer.py`), then B2 (`bench/plan-b2.md`): QueueServer and
-   notebook on the resistor (Q1–Q10), then a HC/Na coin cell (K0–K3, K3 =
-   overnight sodiation to 5 mV, the beamtime's day-before step). B1 C1–C2
-   wait for an RC dummy. Sheets: `bench/b2_sheets.py`; monitor and evidence:
-   `bench/b2_monitor.py`.
-2. K2 (5 Nov) adds a 1–40C rate check of 1 s pulses. Next bench day: K4/K5,
-   1 s pulse trains at the chosen rate, desodiation then sodiation, each to its
-   voltage limit; weekend K6 (C/20 reference cycle, own 100 µA session).
-3. Decide how a high-rate pulse run ends (`docs/beamtime-concept.md`, "Ending
-   a high-rate pulse run": under-load limits stop at the first pulse; option B
-   tests the relaxed voltage), then the beamtime run sheet.
-
-B0, E1–E4, S1/S2 done 3 Nov (findings in `docs/mvp-plan.md` → Design and
-`docs/validation.md`).
+1. Offline: compiler 63-block limit; relaxed-voltage end for pulse runs; the
+   two-row design for long rests near the end; output-ON and step-stretch analysis.
+2. Next resistor session (above), then K4/K5-style trains on a healthy cell.
+3. Beamtime run sheet once the open questions are answered.
 
 ## Information still needed from the user
 
-Measurement concept: `docs/beamtime-concept.md` (3 Nov, refined 4 Nov:
-unipolar ~1 s high-rate pulses with 1 min zero-current rests, both directions,
-from fully sodiated, each run to its voltage limit; 0.6 mAh cells). Its open
-questions replace the earlier list. Still open from us: beamline trigger signal (level,
-polarity, connector), the RC dummy cell's values for B1, and the B2 coin
-cell's capacity, history and last state.
+`docs/beamtime-concept.md`: whether desodiation runs also end at the relaxed
+limit, the rate, cell count. Beamline trigger signal (level, polarity, connector).
+RC dummy values. A healthy cell: this one tests the method only.

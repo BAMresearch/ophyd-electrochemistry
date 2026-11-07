@@ -1,6 +1,6 @@
 # Template validation record
 
-Updated: 2026-11-03. Scope: contracts, transport/runtime commissioning, bounded
+Updated: 2026-11-07. Scope: contracts, transport/runtime commissioning, bounded
 nominal-100-ohm tests, a narrow target-buffer proof, and the first operational
 simulator-backed M6 Flyer; not operational hardware sourcing or acquisition.
 
@@ -11,6 +11,81 @@ JSON files** parsed. The software check record is
 `evidence/k2460-2026-11-02-timed-v17-software-validation.json`
 (repository-relative path). These checks do not override the failed hardware
 cadence result.
+
+## B2 coin cell and exploration series (5–6 November 2026)
+
+Cell `Richard-HC400-rev`: old coin cell, HC against Na, 1.2 mg at a stated
+400 mAh/g, so 0.48 mAh assumed. Tier 2; HC on HI, Na on LO, HIGH-Z. High
+resistance, probably dried electrolyte. One damaged cell: these results test the
+stack and describe this cell, and are not beamtime conclusions.
+
+- K1/K2: OCV 2.36 to 2.43 V and still drifting (above the 1 mV/min criterion;
+  proceeded). 1C sodiation pulses: 0.95–1.4 kΩ at 6 ms and 2.2–3 kΩ at 1 s, past
+  the 1 kΩ stop criterion, so the K2 series stopped at 1C.
+- K3 (CC −48 µA to 5 mV): the RE Manager was killed at 4385 s; the 2460 finished
+  by itself with output OFF. `archive_retained` on 6 Nov saved 7,918 records,
+  identical to the file's 4,385. 5 mV at 6118 s, 81.6 µAh (17 % of nominal). The
+  stop was set by resistance: +215 mV in 1 s (about 4.5 kΩ), 0.453 V after 30 min.
+  Voltage bursts of up to 45 mV under load, 0.01 mV at rest: cell or contacts.
+- K7/K8/K9: 1C trains of 60 pulses. First readings below 0 V on a cell (−0.34 V,
+  session window −3 V), all as commanded. Charge balance +8.06 / −8.05 µAh.
+- Exploration series (`bench/plan-b2-explore.md`): 59 runs in 1 h 54 min under one
+  authorization, up to 19.2 mA (40C), no instrument errors. Three expected stops
+  at 2.9 V. Ended by the factor-2 reference stop rule on a reading not comparable
+  with the rest (0.17 V). Resistance falls under pulsing and recovers over
+  10–20 min at rest. Overpotential is roughly linear in log current. 1 s pulses at
+  40C took the rest voltage from 0.51 to 0.10 V, −0.05 V at 0.1 s; a two-electrode
+  cell cannot say whether that was plating.
+- K11/K12: first CC-to-CV hold on a cell: C/3 to 2.9 V moved 34 µAh, then 3 V for
+  30 min moved 16.8 µAh, tapering 145 to 11 µA. 50.8 of about 99 µAh returned.
+- Runner fault in the series: the first sample of the 50 ms runs read −150 µA, so
+  pulses paired wrongly, values were NaN and the short and compliance rules did
+  not act. Fixed mid-series; every file rechecked and passed.
+
+Unexplained: the voltage dip at output ON varied from −10 to −323 mV, with a
+−150 µA first-sample current seen in the 50 ms runs. The HIGH-Z step in
+`environment open` ran without error on the 2460, but only after HIGH-Z was
+already set; NORMAL to HIGH-Z after power-on is not yet shown on hardware.
+
+Evidence: [`k2460-2026-11-06-b2-cell-k-series.json`](evidence/k2460-2026-11-06-b2-cell-k-series.json).
+
+## B2 QueueServer and notebook on the resistor (5 November 2026)
+
+Q1–Q10 passed, tier 1, 102.5 Ω. Pulses read 102.51 Ω; Follow redrew live.
+Q4 cutoff, Q5 I→V→I, Q6 external START and Q7 abort (10,370 records in the file)
+behaved as planned. Q8: the RE Manager was killed mid-run, the 2460 ended alone,
+and the archive held 20,247 records. Q9 soak: 300,807/300,807 records in 1,828 s,
+worker RSS 164.7 to 172.5 MB, CPU median 1.8 %, maximum 12.9 %, slowest viewer
+refresh 0.16 s. Q10: the notebook ran on the 2460.
+
+Found: firmware 1.7.16a accepts trigger blocks 1–63 only (events 1130, 2717).
+Follow does not refresh a run that waits for external START.
+
+Evidence: [`k2460-2026-11-05-b2-resistor.json`](evidence/k2460-2026-11-05-b2-resistor.json).
+
+## B1 sequencer through the production backend (5 November 2026)
+
+R1–R11 on the resistor, in five evidence files (first run, then reruns).
+
+- R1 failed twice, then passed. A fixed measure range forces the source limit into
+  a window around it and logs event 5076; the runtime now sets the limit under
+  autorange (`bench/limit_clamp_probe.py`,
+  [`k2460-2026-11-05-limit-clamp-probe.json`](evidence/k2460-2026-11-05-limit-clamp-probe.json)).
+- R2: 208/208 records, 13 markers. Its "R within 1 %" check fails only because it
+  compares with 100 Ω; the resistor is 102.5 Ω.
+- R3: 7 V range timing within 0.05 ms of 2 V; `reading_s` stays.
+- R4–R7: **outcome `error` in the evidence, not rerun since.** On the instrument
+  all was right: cutoffs fired, abs_window and CV taper worked, logged end matched
+  the prediction. The host flagged the first sample after output ON (−71 µA) as a
+  readback mismatch. Commit `4f24b56` exempts it. B2 and the cell runs exercised
+  the same paths afterwards, but not NEXT inside a repeat block. Rerun R4–R7.
+- R8: passed after START moved to line 6 (DB-9 pin 8); it was on pin 6, line 5.
+- R9: 49,786/49,786 records, live lag under 2 s, but 303.15 s for 300 s nominal:
+  one sample interval per step stretches to about 15–19 ms (1 %). Cause open.
+- R10: abort at 5.05 s, 516 records, ABORTED, OFF, recovered to IDLE.
+- R11: host killed; the 2460 ended OFF, prepare refused, 3,026 records archived.
+
+C1–C2 (RC dummy) not run. Evidence: `k2460-2026-11-05-b1-resistor{,-rerun1,-rerun2,-rerun3,-rerun3b}.json`.
 
 ## S1/S2 sequencer-shaped model with scope (3 November 2026)
 

@@ -1,0 +1,433 @@
+{
+  "tests": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R7",
+    "R8",
+    "R9",
+    "R10",
+    "R11"
+  ],
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "equipment": {
+    "backend": "k2460-sequencer",
+    "runtime_build": "seq-v1",
+    "runtime_sha256": "f998740decd088cd27547de013d12a43dd0a3eac8e2ab8f27ed07803308791a0",
+    "terminals": "front",
+    "four_wire": true,
+    "start_edge": "rising",
+    "line_frequency_hz": 50,
+    "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "serial_number": "04686198",
+    "firmware": "1.7.16a"
+  },
+  "status_at_start": [
+    "idle",
+    false
+  ],
+  "R1": {
+    "b1-s1-immediate": {
+      "clock_offset_s": 4171.477927684784,
+      "clock_uncertainty_s": 0.0005649328231811523,
+      "clock_method": "eventlog.post bracket, best of 5",
+      "block_count": 53,
+      "block_overhead_s": 0.00014
+    },
+    "checks": {
+      "b1-s1-immediate PREPARED, OFF": "ok",
+      "b1-long-300s PREPARED, OFF": "ok",
+      "b1-cv-switch PREPARED, OFF": "ok"
+    },
+    "b1-long-300s": {
+      "clock_offset_s": 4171.477970123291,
+      "clock_uncertainty_s": 0.0005065202713012695,
+      "clock_method": "eventlog.post bracket, best of 5",
+      "block_count": 59,
+      "block_overhead_s": 0.00014
+    },
+    "b1-cv-switch": {
+      "clock_offset_s": 4171.477956056595,
+      "clock_uncertainty_s": 0.0004955530166625977,
+      "clock_method": "eventlog.post bracket, best of 5",
+      "block_count": 54,
+      "block_overhead_s": 0.00014
+    },
+    "status_line": "ready\ttrigger.STATE_BUILDING\t0\tsmu.OFF\t0\t0",
+    "seconds": 1.3749670829856768
+  },
+  "R2": {
+    "measurement_id": "b1-s1-immediate",
+    "blocks": 53,
+    "expected_records": 208,
+    "nominal_s": 1.3000000000000003,
+    "clock_offset_s": 4171.477972745895,
+    "clock_uncertainty_s": 0.00048291683197021484,
+    "outcome": "completed",
+    "detail": "",
+    "wall_s": 1.4946278750430793,
+    "cpu_s": 0.017299999999999982,
+    "records": 208,
+    "polls": 8,
+    "lag_s_median": 0.011573076248168945,
+    "lag_s_max": 0.16860485076904297,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [],
+    "step_starts": 13,
+    "instrument_log": [
+      "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "checks": {
+      "completed": "ok",
+      "all records": "ok",
+      "13 step starts": "ok",
+      "R within 1 %": "FAIL 102.49708967346285",
+      "output OFF after run": "ok"
+    },
+    "timing": {
+      "executions": 13,
+      "deviation_ms_median": 0.2782399999999574,
+      "deviation_ms_min": -0.07226000000007393,
+      "deviation_ms_max": 18.299299999999878,
+      "run_s_actual": 1.32658962,
+      "run_s_nominal": 1.3000000000000003
+    },
+    "resistance": {
+      "r_ohm_median": 102.49708967346285,
+      "r_ohm_spread": 0.04411600950020045
+    },
+    "seconds": 1.70395583397476
+  },
+  "R3": {
+    "range_2v": {
+      "measurement_id": "b1-range_2v",
+      "blocks": 19,
+      "expected_records": 500,
+      "nominal_s": 3.0,
+      "clock_offset_s": 4171.477986097336,
+      "clock_uncertainty_s": 0.0004794597625732422,
+      "outcome": "completed",
+      "detail": "",
+      "wall_s": 3.1887081669992767,
+      "cpu_s": 0.028832999999999998,
+      "records": 500,
+      "polls": 16,
+      "lag_s_median": 0.009051322937011719,
+      "lag_s_max": 0.1419825553894043,
+      "state_final": [
+        "complete",
+        "False"
+      ],
+      "events": [],
+      "step_starts": 1,
+      "instrument_log": [
+        "2731\t4\tTrigger model path #1 has been initiated",
+        "2732\t4\tTrigger model path #1 has been idled"
+      ],
+      "spacing": {
+        "spacing_ms_median": 5.998720000000013,
+        "spacing_ms_p1": 5.976113999999915,
+        "spacing_ms_p99": 7.909741600000023
+      }
+    },
+    "checks": {
+      "range_2v completed": "ok",
+      "range_7v completed": "ok",
+      "7 V within 0.05 ms of 2 V": "ok",
+      "output OFF after run": "ok"
+    },
+    "range_7v": {
+      "measurement_id": "b1-range_7v",
+      "blocks": 19,
+      "expected_records": 500,
+      "nominal_s": 3.0,
+      "clock_offset_s": 4171.47799539566,
+      "clock_uncertainty_s": 0.0005450248718261719,
+      "outcome": "completed",
+      "detail": "",
+      "wall_s": 3.1915167499682866,
+      "cpu_s": 0.03407399999999994,
+      "records": 500,
+      "polls": 16,
+      "lag_s_median": 0.009109735488891602,
+      "lag_s_max": 0.14255690574645996,
+      "state_final": [
+        "complete",
+        "False"
+      ],
+      "events": [],
+      "step_starts": 1,
+      "instrument_log": [
+        "2731\t4\tTrigger model path #1 has been initiated",
+        "2732\t4\tTrigger model path #1 has been idled"
+      ],
+      "spacing": {
+        "spacing_ms_median": 6.0050399999999895,
+        "spacing_ms_p1": 5.990099999999998,
+        "spacing_ms_p99": 7.703578799999994
+      }
+    },
+    "7v_minus_2v_ms": 0.006319999999976567,
+    "seconds": 7.044771749991924
+  },
+  "R4": {
+    "measurement_id": "b1-next-repeat",
+    "blocks": 46,
+    "expected_records": 250,
+    "nominal_s": 2.5,
+    "clock_offset_s": 4171.478019952774,
+    "clock_uncertainty_s": 0.00047707557678222656,
+    "outcome": "error",
+    "detail": "predicted completed, logged end; readback mismatch",
+    "wall_s": 1.0614518339862116,
+    "cpu_s": 0.007252999999999954,
+    "records": 103,
+    "polls": 6,
+    "lag_s_median": 0.011455059051513672,
+    "lag_s_max": 0.012407064437866211,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [
+      [
+        0.21622355999999998,
+        0,
+        0,
+        "error",
+        "readback mismatch, 1 samples"
+      ],
+      [
+        0.2279301199999999,
+        1,
+        1,
+        "cutoff",
+        "v_max"
+      ],
+      [
+        0.43900268,
+        1,
+        2,
+        "cutoff",
+        "v_max"
+      ],
+      [
+        0.6518093999999999,
+        1,
+        3,
+        "cutoff",
+        "v_max"
+      ]
+    ],
+    "step_starts": 8,
+    "instrument_log": [
+      "2753\t4\tTrigger model is not optimized for speed due to greater than 4 branch counters",
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "checks": {
+      "completed (replay = logged END)": "FAIL predicted completed, logged end; readback mismatch",
+      "3 v_max cutoffs": "ok",
+      "one cc sample per repeat": "ok",
+      "output OFF after run": "ok"
+    },
+    "cc_samples_per_repeat": [
+      1,
+      1,
+      1
+    ],
+    "seconds": 1.4113024999969639
+  },
+  "R5": {
+    "measurement_id": "b1-stop",
+    "blocks": 35,
+    "expected_records": 90,
+    "nominal_s": 0.9,
+    "clock_offset_s": 4171.4780349731445,
+    "clock_uncertainty_s": 0.00044846534729003906,
+    "outcome": "error",
+    "detail": "predicted stop, logged stop; readback mismatch",
+    "wall_s": 0.4263409589766525,
+    "cpu_s": 0.002471000000000001,
+    "records": 21,
+    "polls": 3,
+    "lag_s_median": 0.10359203815460205,
+    "lag_s_max": 0.19968509674072266,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [
+      [
+        0.21622273999999997,
+        0,
+        0,
+        "error",
+        "readback mismatch, 1 samples"
+      ],
+      [
+        0.22739791999999992,
+        1,
+        0,
+        "cutoff",
+        "v_max"
+      ],
+      [
+        0.22739791999999992,
+        1,
+        0,
+        "stop",
+        "v_max"
+      ]
+    ],
+    "step_starts": 2,
+    "instrument_log": [
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "checks": {
+      "stopped_cutoff": "FAIL predicted stop, logged stop; readback mismatch",
+      "no records after the stop": "ok",
+      "output OFF after run": "ok"
+    },
+    "seconds": 0.5965998749597929
+  },
+  "R6": {
+    "measurement_id": "b1-abs-window",
+    "blocks": 35,
+    "expected_records": 90,
+    "nominal_s": 0.9,
+    "clock_offset_s": 4171.478051185608,
+    "clock_uncertainty_s": 0.0005959272384643555,
+    "outcome": "error",
+    "detail": "predicted stop, logged stop; readback mismatch",
+    "wall_s": 0.4291124169831164,
+    "cpu_s": 0.005111999999999894,
+    "records": 21,
+    "polls": 3,
+    "lag_s_median": 0.10708796977996826,
+    "lag_s_max": 0.2013230323791504,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [
+      [
+        0.21621767999999997,
+        0,
+        0,
+        "error",
+        "readback mismatch, 1 samples"
+      ],
+      [
+        0.22863310000000003,
+        1,
+        0,
+        "cutoff",
+        "abs_window"
+      ],
+      [
+        0.22863310000000003,
+        1,
+        0,
+        "stop",
+        "abs_window"
+      ]
+    ],
+    "step_starts": 2,
+    "instrument_log": [
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "checks": {
+      "stopped_cutoff": "FAIL predicted stop, logged stop; readback mismatch",
+      "abs_window": "ok",
+      "output OFF after run": "ok"
+    },
+    "seconds": 0.6210223750094883
+  },
+  "R7": {
+    "measurement_id": "b1-cv-switch",
+    "blocks": 54,
+    "expected_records": 290,
+    "nominal_s": 2.9,
+    "clock_offset_s": 4171.477964401245,
+    "clock_uncertainty_s": 0.0005539655685424805,
+    "outcome": "error",
+    "detail": "predicted completed, logged end; readback mismatch",
+    "wall_s": 2.115057374991011,
+    "cpu_s": 0.015987000000000084,
+    "records": 191,
+    "polls": 11,
+    "lag_s_median": 0.010588884353637695,
+    "lag_s_max": 0.1463756561279297,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [
+      [
+        0.21627645999999995,
+        0,
+        0,
+        "error",
+        "readback mismatch, 1 samples"
+      ],
+      [
+        1.24892194,
+        2,
+        0,
+        "cutoff",
+        "i_abs_min"
+      ],
+      [
+        1.76959676,
+        3,
+        0,
+        "error",
+        "readback mismatch, 1 samples"
+      ]
+    ],
+    "step_starts": 5,
+    "instrument_log": [
+      "2753\t4\tTrigger model is not optimized for speed due to greater than 4 branch counters",
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "checks": {
+      "completed": "FAIL predicted completed, logged end; readback mismatch",
+      "taper fires on step 2 only": "ok",
+      "CV 0.3 V readback": "ok",
+      "CV 3 mA": "ok",
+      "output OFF after run": "ok"
+    },
+    "cv_v_median": 0.300007820129395,
+    "cv_i_median": 0.002927287947386505,
+    "resistance": {
+      "r_ohm_median": 102.48819208279237,
+      "r_ohm_spread": 2.384458577065331
+    },
+    "timing": {
+      "executions": 4,
+      "deviation_ms_median": 18.47563999999996,
+      "deviation_ms_min": -0.1530400000001042,
+      "deviation_ms_max": 21.514779999999956,
+      "run_s_actual": 1.96944372,
+      "run_s_nominal": 2.9
+    },
+    "seconds": 2.5155982499709353
+  },
+  "R8": {
+    "exception": "TimeoutError('b1-s1-external: no outcome after 240 s')",
+    "traceback": "Traceback (most recent call last):\n  File \"/Users/bpauw/Code/ophyd-electrochemistry/bench/b1_sequencer.py\", line 745, in main\n    ctx.results[name] = test(ctx)\n                        ~~~~^^^^^\n  File \"/Users/bpauw/Code/ophyd-electrochemistry/bench/b1_sequencer.py\", line 435, in r8_external\n    result, readout, events = run_backend(\n                              ~~~~~~~~~~~^\n        ctx, s1_pulse(\"external\"), on_kickoff=waiting, timeout_s=120\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/Users/bpauw/Code/ophyd-electrochemistry/bench/b1_sequencer.py\", line 286, in run_backend\n    raise TimeoutError(f\"{request.measurement_id}: no outcome after {elapsed:.0f} s\")\nTimeoutError: b1-s1-external: no outcome after 240 s\n",
+    "off_after_exception": "OFF"
+  }
+}
