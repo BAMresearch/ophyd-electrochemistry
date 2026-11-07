@@ -46,10 +46,12 @@ def pulse(**changes):
 def test_template_round_trip(tmp_path, limits):
     path = make_template(tmp_path / "template.xlsx")
     runs = load_run_sheet(path, limits)
-    assert len(runs) == 21  # Five protocol examples plus the full 16-run R5 series.
+    assert len(runs) == 37  # Five protocol examples plus the R5 series in both directions.
     series = [run for name, run in runs.items() if name.startswith("soc01-")]
-    assert [run.row["pulse_s"] for run in series] == renard_series(0.1, 100)
-    assert all(run.row["current_a"] == 1e-4 for run in series)
+    assert [run.row["pulse_s"] for run in series[::2]] == renard_series(0.1, 100)
+    assert [run.row["pulse_s"] for run in series[1::2]] == renard_series(0.1, 100)
+    assert [run.row["current_a"] for run in series[:2]] == [1e-4, -1e-4]  # desodiation first
+    assert all(run.row["protocol"] == "pulse_train" for run in series)
     assert all(run.sequence.repeat.count == log_repeats(run.row["pulse_s"]) for run in series)
     assert {run.row["protocol"] for run in runs.values()} == {
         "pulse_train",

@@ -43,7 +43,9 @@ class RunSpec:
 # say what each value does, so a reader can check their understanding of it.
 _COLUMNS = {
     "measurement_id": "Unique run name (text). Rows whose first cell starts with # are skipped.",
-    "protocol": "What to run: pulse_train, bipolar_pulse, cycling, soc_position or rest.",
+    "protocol": "What to run: pulse_train, bipolar_pulse, cycling, soc_position or rest. "
+    "bipolar_pulse fits the 2460 (63 trigger blocks) only when fast_window_s is at least "
+    "pulse_s and rest_s; otherwise use one pulse_train row per direction.",
     "start_mode": "immediate: start when the notebook arms the run. external: wait for the "
     "hardware start trigger. Blank = immediate.",
     "current_a": "Current in A; positive current raises the cell voltage (hard carbon "
@@ -400,13 +402,23 @@ def load_run_sheet(
 def make_template(path: str | Path, *, overwrite: bool = False) -> Path:
     """Write one example per protocol and one SOC's R5 pulse series; currents are placeholders.
 
+    The series is a desodiation then a sodiation ``pulse_train`` row per pulse
+    time: a ``bipolar_pulse`` row fits the 2460's 63 trigger blocks only when
+    ``fast_window_s`` covers both pulse and rest.
+
     The workbook is a starting point, not approval to energize a cell. It must
     be reviewed and validated with the actual session's SafetyLimits.
     """
     if Path(path).suffix.lower() != ".xlsx":
         raise ValueError("template path must end in .xlsx")
     examples: list[dict[str, object]] = [
-        dict(measurement_id="example-pulse", protocol="bipolar_pulse", current_a=1e-4, pulse_s=1),
+        dict(
+            measurement_id="example-pulse",
+            protocol="bipolar_pulse",
+            current_a=1e-4,
+            pulse_s=1,
+            fast_window_s=1,
+        ),
         dict(
             measurement_id="example-pulse-train",
             protocol="pulse_train",
@@ -436,15 +448,17 @@ def make_template(path: str | Path, *, overwrite: bool = False) -> Path:
         dict(measurement_id="example-rest", protocol="rest", rest_s=10),
     ]
     for pulse_s in renard_series(0.1, 100):
-        examples.append(
-            dict(
-                measurement_id=f"soc01-pulse-{pulse_s:g}s",
-                protocol="bipolar_pulse",
-                current_a=1e-4,
-                pulse_s=pulse_s,
-                sample_id="SOC01-placeholder",
+        for direction, current in (("desod", 1e-4), ("sod", -1e-4)):
+            examples.append(
+                dict(
+                    measurement_id=f"soc01-{direction}-{pulse_s:g}s",
+                    protocol="pulse_train",
+                    current_a=current,
+                    pulse_s=pulse_s,
+                    repeats=log_repeats(pulse_s),
+                    sample_id="SOC01-placeholder",
+                )
             )
-        )
     for example in examples:
         example["notes"] = "PLACEHOLDER: review current, voltage window and limits before use."
     safety = (

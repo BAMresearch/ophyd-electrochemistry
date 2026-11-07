@@ -245,7 +245,8 @@ def backend(instrument, clock):
 
 
 def pulse_request(limits, **kwargs):
-    return SequenceRequest("pulse 001", bipolar_pulse_sequence(0.001, 0.1, 2), limits, **kwargs)
+    sequence = bipolar_pulse_sequence(0.001, 0.1, 2, fast_window_s=1.0)  # 59 of 63 blocks
+    return SequenceRequest("pulse 001", sequence, limits, **kwargs)
 
 
 def drain(backend, max_records=100):

@@ -22,6 +22,7 @@ from ophyd_electrochemistry.sequences.builders import (
     cc_step,
     cv_step,
     cycling_sequence,
+    pulse_train_sequence,
     rest_step,
 )
 from ophyd_electrochemistry.sequences.models import (
@@ -173,7 +174,11 @@ def test_two_phase_golden_layout(limits):
         v_min=-1,
         v_max=2,
     )
-    p = compile_program(sequence, limits)
+    # 83 blocks: firmware 1.7.16a refuses this (event 1130, max 63), so the
+    # layout is checked under the packaged runtime's own 255-block ceiling.
+    with pytest.raises(ValidationError, match="83 trigger blocks exceed 63"):
+        compile_program(sequence, limits)
+    p = compile_program(sequence, limits, SequencerProfile(max_blocks=255))
     first = [
         K.RESET_COUNTER,
         K.RECALL,
@@ -320,7 +325,7 @@ def test_delays(limits, interval, nplc):
 
 
 def test_short_pulse_and_rest_choose_different_nplc(limits):
-    p = compile_program(bipolar_pulse_sequence(0.001, 0.1, 2, fast_interval_s=0.006), limits)
+    p = compile_program(pulse_train_sequence(0.001, 0.1, 2, fast_interval_s=0.006), limits)
     assert p.steps[1].phases[0].nplc == 0.1
     assert [ph.nplc for ph in p.steps[2].phases] == [0.1, 1]
 
@@ -479,7 +484,7 @@ def replay_simulation(sequence, limits, cell, seed):
 def test_replay_equals_independent_noisy_simulator(limits, case, seed):
     cell = CellModel(ocv_soc=(0.0, 1.0), ocv_v=(1.0, 1.0), noise_v=1e-6)
     if case == "pulse":
-        sequence = bipolar_pulse_sequence(
+        sequence = pulse_train_sequence(
             0.001,
             0.1,
             4,

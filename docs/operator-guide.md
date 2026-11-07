@@ -65,7 +65,9 @@ for what each column means. One row is one run:
   to skip a row.
 - `protocol`: `pulse_train` (pulses in one direction, with rests),
   `bipolar_pulse`, `cycling`, `soc_position` (CC to a voltage, then rest) or
-  `rest`.
+  `rest`. A `bipolar_pulse` row only fits the 2460 when `fast_window_s` is at
+  least `pulse_s` and `rest_s`; `oe-validate` refuses the others (more than 63
+  trigger blocks). Use one `pulse_train` row per direction instead.
 - **Sign:** a positive current raises the cell voltage. For hard carbon against
   Na, **sodiation is a negative current**. `pulse_train` and `soc_position`
   take a signed `current_a`. In `start_with` and `cv_after`, write `sodiation`

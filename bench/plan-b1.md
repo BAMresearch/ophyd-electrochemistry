@@ -85,7 +85,7 @@ uv run --locked --extra visa --extra experiment python bench/b1_sequencer.py \
 
 | Test | What | Decides / checks |
 |---|---|---|
-| C1 | CC to v_high (NEXT), CV taper at I/5 (NEXT), 5 s rest, CC to v_low (STOP) | All three cutoff kinds on a real voltage ramp; stopped_cutoff, OFF |
+| C1 | CC to v_high (NEXT), CV taper at I/5 (NEXT), 5 s rest, CC to v_low (STOP); 50 ms sampling, no fast window (63-block limit) | All three cutoff kinds on a real voltage ramp; stopped_cutoff, OFF |
 | C2 | 2 s rest right after C1 | HIGH-Z off state: first reading ≈ C1's last (within 50 mV, minus any leakage through a parallel R) |
 
 ## If something goes wrong

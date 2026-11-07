@@ -92,8 +92,10 @@ n/3600 of the capacity, so a half-cycle takes 3600/n pulses.
 | P4 | Reference cycling (lab cycler, or before the beamtime) | `cycling` | {CC +I → 0.2 V, rest, CC −I → 5 mV, CV 5 mV → \|I\| < I_min, rest} × n | 0–0.5 V, 100 µA session |
 
 The bipolar pulse and the long pulses (10 s–1 min at 1C) are no longer planned
-for the beamtime. Both stay available. In every case the absolute window stops
-the run.
+for the beamtime. Long pulses stay available as `pulse_train` rows. A
+`bipolar_pulse` row fits the 2460's 63 trigger blocks only when `fast_window_s`
+covers both pulse and rest (59 blocks); otherwise use one `pulse_train` row per
+direction. In every case the absolute window stops the run.
 
 ## Feasibility on the 2460 sequencer
 
@@ -101,7 +103,7 @@ the run.
 then 0.25 s. The repeat bound is 1.5× the capacity (the voltage limit normally
 ends the run sooner):
 
-| Case | Blocks (≤ 255) | Records (bound) | Duration (bound) | Nominal half-cycle |
+| Case | Blocks (≤ 63) | Records (bound) | Duration (bound) | Nominal half-cycle |
 |---|---|---|---|---|
 | P2d/P2s at 40C (24 mA) | 49 | 77,353 | 2.3 h | 1.5 h |
 | P2d/P2s at 20C | 49 | 154,303 | 4.6 h | 3.1 h |

@@ -48,7 +48,7 @@ class SequencerProfile:
     block_overhead_s: float = 0.00014
     step_entry_s: float = 0.00132
     margin_s: float = 0.0003
-    max_blocks: int = 255
+    max_blocks: int = 63
     max_call_chars: int = 900
     voltage_ranges_v: tuple[float, ...] = (0.2, 2, 7, 10, 20, 100)
     current_ranges_a: tuple[float, ...] = (1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 0.1, 1, 4, 5, 7)

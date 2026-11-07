@@ -144,12 +144,14 @@ def long_pulse(seconds: float = 300.0) -> SequenceRequest:
 
 
 def rc_cycle(current: float, v_low: float, v_high: float) -> SequenceRequest:
+    # Single-phase sampling: with a fast window on the three source steps the
+    # program needs 81 trigger blocks; the 2460 takes 63 (event 1130).
     steps = (
         rest_step(1.0, Sampling(0.01)),
-        cc_step(current, v_high, 120, Sampling(0.05, FAST, 0.5), CutoffAction.NEXT),
-        cv_step(v_high, current / 5, 60, Sampling(0.05, FAST, 0.5)),
+        cc_step(current, v_high, 120, Sampling(0.05), CutoffAction.NEXT),
+        cv_step(v_high, current / 5, 60, Sampling(0.05)),
         rest_step(5.0, Sampling(0.05)),
-        cc_step(-current, v_low, 120, Sampling(0.05, FAST, 0.5), CutoffAction.STOP),
+        cc_step(-current, v_low, 120, Sampling(0.05), CutoffAction.STOP),
         rest_step(1.0, Sampling(0.05)),  # not reached: the run stops at v_low
     )
     limits = SafetyLimits(min(0.0, v_low - 0.3), v_high + 0.3, max(0.005, 2 * current), 3600, 10**6)

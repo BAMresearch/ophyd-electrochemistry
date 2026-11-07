@@ -14,7 +14,8 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   pulse train). Quickstart notebook runs on the simulator.
 - **Sequences / run sheets:** finite step models, safety validation and battery
   protocol builders (unipolar `pulse_train`, bipolar pulses, cycling, SOC
-  positioning, rest); Excel loader with full-row metadata and aggregated
+  positioning, rest); compiles to at most 63 trigger blocks (firmware limit),
+  so `bipolar_pulse` fits only with `fast_window_s` covering pulse and rest; Excel loader with full-row metadata and aggregated
   errors; `sodiation`/`desodiation` accepted for the directions.
 - **Sequence Flyer:** separate `SequenceFlyer` / `run_sequence` path under a real
   RunEngine, wall-time simulator release, live readout/event streams, external
@@ -65,8 +66,6 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What is broken or missing
 
-- The compiler allows 255 trigger blocks; the firmware takes 63. `bench/explore.py`
-  guards this; a `bipolar_pulse` with long rests needs 71–83 blocks.
 - `pulse_train` tests limits during the pulse. The agreed end, at or below 5 mV
   after a 5 min rest (`docs/beamtime-concept.md`), is not built.
 - Each step runs about 1 % long (R9); cause open. The voltage dip at output ON
@@ -92,7 +91,7 @@ sodiated, 1.79 V and falling when last read.
 
 ## Next steps
 
-1. Offline: compiler 63-block limit; relaxed-voltage end for pulse runs; the
+1. Offline: relaxed-voltage end for pulse runs; the
    two-row design for long rests near the end; output-ON and step-stretch analysis.
 2. Next resistor session (above), then K4/K5-style trains on a healthy cell.
 3. Beamtime run sheet once the open questions are answered.
