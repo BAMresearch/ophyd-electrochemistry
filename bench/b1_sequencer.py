@@ -56,7 +56,7 @@ from ophyd_electrochemistry.state import DeviceState
 RESOURCE = "TCPIP0::169.254.113.151::5025::SOCKET"
 EXPECTED_SERIAL = "04686198"
 EVIDENCE = Path("docs/evidence")
-R_OHM = 100.0
+R_OHM = 102.5  # nominal 100 ohm; measured since B0
 I_PULSE = 0.0049  # ±0.49 V on 100 ohm, as S1
 FAST = 0.006  # decided fast interval (6 ms at 0.1 NPLC)
 RESISTOR = SafetyLimits(-0.8, 0.8, 0.005, 3600, 1_000_000)
