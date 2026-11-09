@@ -57,7 +57,19 @@ def manager(tmp_path, request):
     speed = getattr(request, "param", "inf")  # simulator speed; 1.0 = real time
     redis_port, control, info = free_port(), free_port(), free_port()
     redis = subprocess.Popen(
-        [REDIS, "--port", str(redis_port), "--save", "", "--appendonly", "no"],
+        # Own --dir: redis loads dump.rdb from its working directory, and the
+        # bench start script keeps one (the live queue) in the repository root.
+        [
+            REDIS,
+            "--port",
+            str(redis_port),
+            "--save",
+            "",
+            "--appendonly",
+            "no",
+            "--dir",
+            str(tmp_path),
+        ],
         stdout=subprocess.DEVNULL,
     )
     session_file = tmp_path / "session.toml"

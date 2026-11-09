@@ -733,3 +733,23 @@ def test_hard_carbon_reference_cycle_compiles():
     on = [b for b in program.blocks if b.kind == K.OUTPUT and b.args == (1,)]
     assert len(on) == 3
     assert_reachable(program)
+
+
+def test_start_on_lowest_range_gives_the_leading_rest_its_own_entry(limits):
+    sequence = pulse_train_sequence(0.004, 0.1, 3, rest_s=0.5, pre_rest_s=1)
+    plain = compile_program(sequence, limits)
+    settled = compile_program(sequence, limits, SequencerProfile(start_on_lowest_range=True))
+    assert [s.range for s in plain.sources] == [0.01, 0.01]
+    assert [(s.level, s.range) for s in settled.sources] == [(0, 1e-6), (0.004, 0.01), (0, 0.01)]
+    assert [p.source_entry for p in settled.steps] == [1, 2, 3]
+    assert len(settled.blocks) == len(plain.blocks)
+    assert settled.settings()["start_on_lowest_range"] is True
+    # Not when the run starts inside the repeat block or with a current step.
+    for other in (
+        Sequence(sequence.steps, RepeatBlock(0, 2, 3)),
+        Sequence((sequence.steps[1], sequence.steps[2])),
+    ):
+        program = compile_program(other, limits, SequencerProfile(start_on_lowest_range=True))
+        assert {s.range for s in program.sources} == {0.01}
+    with pytest.raises(ValidationError, match="start_on_lowest_range must be bool"):
+        SequencerProfile(start_on_lowest_range=1)

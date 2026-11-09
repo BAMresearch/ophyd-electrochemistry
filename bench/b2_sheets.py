@@ -28,6 +28,7 @@ SHEETS = {
     "b2-cell-restore.xlsx": "session-cell-explore.toml",
     "b2-cell-restore-c3.xlsx": "session-cell-explore.toml",
     "b2-cell-cv.xlsx": "session-cell-cv.toml",
+    "b2-cell-rehearsal.xlsx": "session-cell-neg.toml",
 }
 
 
@@ -303,6 +304,78 @@ def cv_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
     return [row]
 
 
+REHEARSAL_V: tuple[float, float, float] | None = None  # set from r1-ocv (see main)
+
+
+def rehearsal_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
+    """R-rows (9 Nov): beamtime rehearsal on the old cell; OCV first.
+
+    The OCV row samples the first second at 6 ms to record the output-ON dip.
+    With REHEARSAL_V = (sod_1min, sod_5min, desod) the relaxed-end rows follow:
+    1C 1 s sodiation pulses with 1 min rests, then 5 min rests (the two-row
+    end), 1C desodiation pulses with 20 s rests, and C/3 back towards 2.9 V.
+    """
+    c1 = capacity_mah * 1e-3
+    pulse = dict(
+        protocol="pulse_train",
+        pulse_s=1,
+        pre_rest_s=10,
+        fast_window_s=1,
+        interval_s=0.25,
+    )
+    rows: list[dict[str, object]] = [
+        dict(
+            measurement_id="r1-ocv",
+            protocol="rest",
+            rest_s=600,
+            fast_interval_s=0.006,
+            fast_window_s=1,
+            interval_s=1,
+        ),
+    ]
+    if REHEARSAL_V is not None:
+        sod_1min, sod_5min, desod = REHEARSAL_V
+        rows += [
+            dict(
+                pulse,
+                measurement_id="r2-sod-1min",
+                current_a=-c1,
+                rest_s=60,
+                repeats=90,
+                rest_end_v=sod_1min,
+            ),
+            dict(
+                pulse,
+                measurement_id="r3-sod-5min",
+                current_a=-c1,
+                rest_s=300,
+                repeats=24,
+                rest_end_v=sod_5min,
+            ),
+            dict(
+                pulse,
+                measurement_id="r4-desod-20s",
+                current_a=c1,
+                rest_s=20,
+                repeats=120,
+                rest_end_v=desod,
+            ),
+            dict(
+                measurement_id="r5-restore-c3",
+                protocol="soc_position",
+                current_a=c1 / 3,
+                target_v=2.9,
+                max_step_s=1800,
+                rest_s=300,
+                interval_s=1,
+            ),
+        ]
+    for row in rows:
+        row["sample_id"] = sample_id
+        row["notes"] = f"Rehearsal 9 Nov, capacity {capacity_mah:g} mAh assumed (1C = {c1:.3g} A)"
+    return rows
+
+
 def write(
     out: Path,
     capacity_mah: float,
@@ -324,6 +397,7 @@ def write(
         restore_rows(capacity_mah, sample_id),
         restore_c3_rows(capacity_mah, sample_id),
         cv_rows(capacity_mah, sample_id),
+        rehearsal_rows(capacity_mah, sample_id),
     )
     failed = 0
     for (name, session), sheet_rows in zip(SHEETS.items(), rows, strict=True):
@@ -345,6 +419,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--pulse-c-rate", type=float, default=10, help="pulse-day rate (from the K2 rate check)"
     )
+    parser.add_argument(
+        "--rehearsal-v",
+        type=float,
+        nargs=3,
+        metavar=("SOD_1MIN", "SOD_5MIN", "DESOD"),
+        help="rest_end_v of rows r2, r3 and r4 of the rehearsal sheet",
+    )
     parser.add_argument("--out", type=Path, default=Path.home() / "k2460-data" / "b2")
     parser.add_argument("--overwrite", action="store_true", help="replace existing sheets")
     parser.add_argument(
@@ -353,6 +434,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if not 0.01 <= args.capacity_mah <= 5:
         parser.error("--capacity-mah must be in 0.01..5 (a coin cell)")
+    if args.rehearsal_v is not None:
+        global REHEARSAL_V
+        REHEARSAL_V = tuple(args.rehearsal_v)
     if not 5 <= args.pulse_c_rate <= 40:
         parser.error("--pulse-c-rate must be in 5..40 (lower rates exceed the record budget)")
     return write(

@@ -57,6 +57,11 @@ class SequencerProfile:
     max_call_chars: int = 900
     voltage_ranges_v: tuple[float, ...] = (0.2, 2, 7, 10, 20, 100)
     current_ranges_a: tuple[float, ...] = (1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 0.1, 1, 4, 5, 7)
+    # Under test (9 Nov): the source sinks about 1.5 % of its range for ~30 ms at
+    # output ON. With this set, a leading 0 A rest outside the repeat block gets
+    # its own entry on the lowest current range; the range then changes, output
+    # ON, at the next step.
+    start_on_lowest_range: bool = False
 
     def __post_init__(self) -> None:
         lines = (self.ready_line, self.busy_line, self.marker_line, self.start_line)
@@ -70,6 +75,8 @@ class SequencerProfile:
             positive(getattr(self, name), name, zero=True)
         integer(self.max_blocks, "max_blocks")
         integer(self.max_call_chars, "max_call_chars")
+        if not isinstance(self.start_on_lowest_range, bool):
+            raise ValidationError("start_on_lowest_range must be bool")
         if self.max_blocks > 255 or self.max_call_chars > 900:
             raise ValidationError("profile exceeds compiler block/call limits (255/900)")
         if not self.reading_s:
@@ -215,6 +222,7 @@ class SequencerProgram:
             "margin_s",
             "max_blocks",
             "max_call_chars",
+            "start_on_lowest_range",
         ):
             result[name] = getattr(self.profile, name)
         for name in ("v_min_abs", "v_max_abs", "i_max_abs"):
@@ -325,13 +333,21 @@ def compile_program(
         if any(s.mode == StepMode.VOLTAGE for s in sequence.steps)
         else 0.0
     )
+    repeat = sequence.repeat
+    settle_first = (
+        profile.start_on_lowest_range
+        and sequence.steps[0].mode == StepMode.REST
+        and (repeat is None or repeat.first > 0)
+    )
     for index, step in enumerate(sequence.steps):
         mode = _source_mode(step.mode)
         is_current = mode == "current"
         source = SourceEntry(
             mode,
             step.level,
-            current_range if is_current else voltage_range,
+            profile.current_ranges_a[0]
+            if index == 0 and settle_first
+            else (current_range if is_current else voltage_range),
             vlimit if is_current else limits.i_max_abs,
         )
         if source not in sources:

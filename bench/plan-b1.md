@@ -67,6 +67,9 @@ go to `~/k2460-data/b1/`.
 | R12 | `rest_end_v` −0.05 V: −1 mA 0.5 s pulses (−0.10 V under load), 3 s rests (0 V) × 3 | Completes: a voltage beyond the threshold under load does not stop the run |
 | R13 | `rest_end_v` +0.005 V, same pulses | `stopped_cutoff` on `v_min` in the first 1 s rest check, no records after it, OFF |
 | R14 | As R12 with 2 s pulses: exactly 63 trigger blocks | The firmware accepts 63 (64 failed with event 1130); completes |
+| D1 | Output-ON dip, 1 mA range (0.5 mA, 50 ms pulse): 2 s rest, 2 s rest, pulse, 2 s rest at 6 ms; runs a, b, a, b | (a) present start vs (b) first rest on 1 µA (`start_on_lowest_range`): first-sample dip at output ON and at the range change; output stays ON through the range change |
+| D2 | As D1 on the 10 mA range (4.9 mA pulse) | as D1 |
+| D3 | As D1 on the 100 mA range (11 mA, 1.13 V pulse; limits ±1.5 V, 15 mA) | as D1; **outside the ±0.8 V / 5 mA resistor limits: confirm separately** |
 
 ## 2. RC dummy cell (`--load rc`), after R1–R11
 

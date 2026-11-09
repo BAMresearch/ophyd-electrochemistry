@@ -800,3 +800,22 @@ def test_an_older_runtime_build_on_the_instrument_is_refused(instrument, clock):
     instrument.g.model_state = "trigger.STATE_RUNNING"  # observed, never reinstalled under
     with pytest.raises(IncompatibleInstrumentError, match="'seq-v1' is not 'seq-v2'"):
         make_backend(instrument, clock).connect()
+
+
+def test_a_run_starting_on_the_lowest_range_uploads_and_completes(instrument, clock, limits):
+    from ophyd_electrochemistry.keithley.k2460.sequencer import SequencerProfile
+
+    backend = make_backend(instrument, clock, profile=SequencerProfile(start_on_lowest_range=True))
+    backend.connect()
+    request = pulse_request(limits)
+    sim, rows = instrument_records(request.sequence, limits)
+    backend.prepare(request)
+    equipment = backend.equipment()
+    assert (equipment["source_1_range"], equipment["source_2_range"]) == (1e-6, 0.001)
+    backend.kickoff()
+    instrument.start()
+    instrument.add(rows)
+    instrument.finish("end")
+    readout, _, outcome, detail = drain(backend)
+    assert (outcome, detail) == ("completed", "")
+    assert len(readout["t_s"]) == len(sim.readout["t_s"])

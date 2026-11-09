@@ -143,6 +143,31 @@ def relaxed_end(rest_end_v: float, name: str, pulse_s: float = 0.5) -> SequenceR
     return SequenceRequest(name, sequence, RESISTOR)
 
 
+# 9 Nov: the source sinks ~1.5 % of its range for ~30 ms at output ON. The D
+# tests compare the present start (a) with a 1 uA-range start (b).
+STAT_OUTPUT = 128
+DIP_RANGES = {"1mA": 0.0005, "10mA": I_PULSE, "100mA": 0.011}
+RESISTOR_100MA = SafetyLimits(-1.5, 1.5, 0.015, 3600, 1_000_000)
+
+
+def output_on_dip(range_name: str) -> SequenceRequest:
+    """2 s rest, 2 s rest, 50 ms pulse, 2 s rest; each step 6 ms for 1 s, then 50 ms.
+
+    The pulse level sets the shared current range. With start_on_lowest_range
+    the first rest is on 1 uA and the range changes, output ON, at step 1.
+    """
+    level = DIP_RANGES[range_name]
+    fast = Sampling(0.05, FAST, 1.0)
+    steps = (
+        rest_step(2.0, fast),
+        rest_step(2.0, fast),
+        Step(StepMode.CURRENT, level, 0.05, Sampling(FAST)),
+        rest_step(2.0, fast),
+    )
+    limits = RESISTOR_100MA if range_name == "100mA" else RESISTOR
+    return SequenceRequest(f"b1-dip-{range_name}", Sequence(steps), limits)
+
+
 def long_pulse(seconds: float = 300.0) -> SequenceRequest:
     """Bipolar 2 s pulses sampled at 6 ms throughout (~167 records/s)."""
     repeats = max(1, round((seconds - 4) / 8))
@@ -645,6 +670,64 @@ def r14_63_blocks(ctx: Context) -> Result:
     return result
 
 
+def dip_test(ctx: Context, range_name: str) -> Result:
+    """Present start (a) and 1 uA-range start (b), alternating a, b, a, b."""
+    result: Result = {}
+    backend = ctx.backend
+    default = backend.profile
+    for k, variant in enumerate("abab", 1):
+        request = output_on_dip(range_name)
+        request = replace(request, measurement_id=f"{request.measurement_id}-{variant}{k}")
+        # Bench only: swap the compile profile of the one connected backend.
+        backend.profile = replace(default, start_on_lowest_range=variant == "b")
+        try:
+            run, readout, _ = run_backend(ctx, request)
+        finally:
+            backend.profile = default
+        t, v, s = readout["t_s"], readout["voltage_v"], readout["step_index"]
+        status = readout["source_status"].astype(int)
+        summary: Result = {"outcome": run["outcome"], "detail": run.get("detail")}
+        for step in (0, 1):
+            m = s == step
+            settled = float(np.median(v[m & (t >= t[m][-1] - 0.5)]))
+            summary[f"step{step}_first_t_s"] = float(t[m][0])
+            summary[f"step{step}_first_dv_mv"] = (float(v[m][0]) - settled) * 1e3
+            summary[f"step{step}_first5_ua"] = [float(x) / R_OHM * 1e6 for x in v[m][:5]]
+        early = s <= 1
+        summary["output_on_steps_0_1"] = bool(np.all(status[early] & STAT_OUTPUT))
+        summary["source_status_values"] = sorted({int(x) for x in status[early]})
+        summary["instrument_log"] = run["instrument_log"]
+        result[f"{variant}{k}"] = summary
+        say(
+            f"    {variant}{k}: {run['outcome']}, step 0 first "
+            f"{summary['step0_first_dv_mv']:+.2f} mV at {summary['step0_first_t_s'] * 1e3:.0f} ms,"
+            f" step 1 first {summary['step1_first_dv_mv']:+.2f} mV,"
+            f" output ON {summary['output_on_steps_0_1']}"
+        )
+        check(result, f"{variant}{k} completed", run["outcome"] == "completed", run.get("detail"))
+        check(
+            result,
+            f"{variant}{k} output ON through steps 0-1",
+            summary["output_on_steps_0_1"],
+            summary["source_status_values"],
+        )
+    confirm_off(ctx, result)
+    return result
+
+
+def d1_dip_1ma(ctx: Context) -> Result:
+    return dip_test(ctx, "1mA")
+
+
+def d2_dip_10ma(ctx: Context) -> Result:
+    return dip_test(ctx, "10mA")
+
+
+def d3_dip_100ma(ctx: Context) -> Result:
+    """Needs limits beyond the resistor matrix: +-1.5 V, 15 mA (11 mA, 1.13 V, 50 ms)."""
+    return dip_test(ctx, "100mA")
+
+
 # Tests (RC dummy cell)
 
 
@@ -704,6 +787,9 @@ TESTS: dict[str, tuple[str, Callable[[Context], Result]]] = {
     "R12": ("resistor", r12_relaxed_continue),
     "R13": ("resistor", r13_relaxed_stop),
     "R14": ("resistor", r14_63_blocks),
+    "D1": ("resistor", d1_dip_1ma),
+    "D2": ("resistor", d2_dip_10ma),
+    "D3": ("resistor", d3_dip_100ma),
     "C1": ("rc", c1_rc_cycle),
     "C2": ("rc", c2_rc_hold),
 }
@@ -725,6 +811,9 @@ def all_requests(args: argparse.Namespace) -> list[SequenceRequest]:
         relaxed_end(-0.05, "b1-relaxed-continue"),
         relaxed_end(0.005, "b1-relaxed-stop"),
         relaxed_end(-0.05, "b1-63-blocks", pulse_s=2.0),
+        output_on_dip("1mA"),
+        output_on_dip("10mA"),
+        output_on_dip("100mA"),
         rc_cycle(args.rc_current, args.rc_v_low, args.rc_v_high),
         rc_hold(args.rc_v_low, args.rc_v_high, args.rc_current),
     ]
