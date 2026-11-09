@@ -37,6 +37,7 @@ from ophyd_electrochemistry.sequences.builders import (
     bipolar_pulse_sequence,
     cc_step,
     cv_step,
+    pulse_train_sequence,
     rest_step,
 )
 from ophyd_electrochemistry.sequences.models import (
@@ -123,6 +124,23 @@ def function_switch() -> SequenceRequest:
         rest_step(0.2, Sampling(0.01)),
     )
     return SequenceRequest("b1-cv-switch", Sequence(steps), RESISTOR)
+
+
+def relaxed_end(rest_end_v: float, name: str, pulse_s: float = 0.5) -> SequenceRequest:
+    """-1 mA pulses: about -0.10 V under load, 0 V at rest; the last 1 s of each
+    3 s rest stops the run below rest_end_v (strict)."""
+    sequence = pulse_train_sequence(
+        -0.001,
+        pulse_s,
+        3,
+        rest_s=3.0,
+        pre_rest_s=2.0,
+        fast_interval_s=FAST,
+        fast_window_s=1.0,
+        interval_s=0.1,
+        rest_end_v=rest_end_v,
+    )
+    return SequenceRequest(name, sequence, RESISTOR)
 
 
 def long_pulse(seconds: float = 300.0) -> SequenceRequest:
@@ -587,6 +605,46 @@ def r11_host_kill(ctx: Context) -> Result:
     return result
 
 
+def r12_relaxed_continue(ctx: Context) -> Result:
+    """rest_end_v -0.05 V: pulses read about -0.10 V under load, rests 0 V; must complete."""
+    result, readout, events = run_backend(ctx, relaxed_end(-0.05, "b1-relaxed-continue"))
+    check(result, "completed", result["outcome"] == "completed", result.get("detail"))
+    pulses = readout["voltage_v"][readout["step_index"] == 1]
+    result["pulse_min_v"] = float(pulses.min())
+    check(result, "pulses below rest_end_v under load", pulses.min() < -0.05, pulses.min())
+    checks = readout["step_index"] == 3
+    result["check_records_per_repeat"] = [
+        int(np.sum(checks & (readout["repeat_index"] == k))) for k in (1, 2, 3)
+    ]
+    check(result, "no cutoff", not [e for e in events if e[3] == "cutoff"])
+    confirm_off(ctx, result)
+    return result
+
+
+def r13_relaxed_stop(ctx: Context) -> Result:
+    """rest_end_v +0.005 V: the first relaxed check (0 V) stops the run."""
+    result, readout, events = run_backend(ctx, relaxed_end(0.005, "b1-relaxed-stop"))
+    check(result, "stopped_cutoff", result["outcome"] == "stopped_cutoff", result.get("detail"))
+    cutoffs = [(e[1], e[2], e[4]) for e in events if e[3] == "cutoff"]
+    check(result, "v_min cutoff in the first check", cutoffs == [(3, 1, "v_min")], cutoffs)
+    last = (int(readout["step_index"][-1]), int(readout["repeat_index"][-1]))
+    check(result, "no records after the stop", last == (3, 1), last)
+    confirm_off(ctx, result)
+    return result
+
+
+def r14_63_blocks(ctx: Context) -> Result:
+    """A program of exactly 63 trigger blocks uploads and runs (64 fails, event 1130)."""
+    request = relaxed_end(-0.05, "b1-63-blocks", pulse_s=2.0)
+    blocks = len(compile_program(request.sequence, request.limits).blocks)
+    result, _, _ = run_backend(ctx, request)
+    result["blocks"] = blocks
+    check(result, "63 blocks", blocks == 63, blocks)
+    check(result, "completed", result["outcome"] == "completed", result.get("detail"))
+    confirm_off(ctx, result)
+    return result
+
+
 # Tests (RC dummy cell)
 
 
@@ -643,6 +701,9 @@ TESTS: dict[str, tuple[str, Callable[[Context], Result]]] = {
     "R9": ("resistor", r9_long_flyer),
     "R10": ("resistor", r10_abort),
     "R11": ("resistor", r11_host_kill),
+    "R12": ("resistor", r12_relaxed_continue),
+    "R13": ("resistor", r13_relaxed_stop),
+    "R14": ("resistor", r14_63_blocks),
     "C1": ("rc", c1_rc_cycle),
     "C2": ("rc", c2_rc_hold),
 }
@@ -661,6 +722,9 @@ def all_requests(args: argparse.Namespace) -> list[SequenceRequest]:
         long_pulse(args.long_s),
         long_pulse(60),
         long_pulse(20),
+        relaxed_end(-0.05, "b1-relaxed-continue"),
+        relaxed_end(0.005, "b1-relaxed-stop"),
+        relaxed_end(-0.05, "b1-63-blocks", pulse_s=2.0),
         rc_cycle(args.rc_current, args.rc_v_low, args.rc_v_high),
         rc_hold(args.rc_v_low, args.rc_v_high, args.rc_current),
     ]

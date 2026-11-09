@@ -64,6 +64,9 @@ go to `~/k2460-data/b1/`.
 | R9 | 5 min of 2 s bipolar pulses at 6 ms via Flyer + RunEngine + HDF5 | All ~49,800 records in the file; run length vs nominal; live lag; host CPU |
 | R10 | Abort 5 s into a 60 s run | ABORTED with OFF, records drained, abort event, recover to IDLE |
 | R11 | Host process killed 0 s into a 20 s run | Model ends OFF by itself; next prepare refuses; `archive_retained`; prepare after |
+| R12 | `rest_end_v` −0.05 V: −1 mA 0.5 s pulses (−0.10 V under load), 3 s rests (0 V) × 3 | Completes: a voltage beyond the threshold under load does not stop the run |
+| R13 | `rest_end_v` +0.005 V, same pulses | `stopped_cutoff` on `v_min` in the first 1 s rest check, no records after it, OFF |
+| R14 | As R12 with 2 s pulses: exactly 63 trigger blocks | The firmware accepts 63 (64 failed with event 1130); completes |
 
 ## 2. RC dummy cell (`--load rc`), after R1–R11
 

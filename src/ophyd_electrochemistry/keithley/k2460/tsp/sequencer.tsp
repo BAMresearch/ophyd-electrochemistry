@@ -7,7 +7,7 @@
 -- instrument-locally and ends with the output OFF. Lua 5.0: no '#', no '%'.
 
 oe_seq_runtime_abi = "oe-k2460-seq-v1"
-oe_seq_runtime_build = "seq-v1"
+oe_seq_runtime_build = "seq-v2"
 
 oe_seq_state = "idle"
 oe_seq_cfg = nil

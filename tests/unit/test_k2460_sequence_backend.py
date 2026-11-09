@@ -304,7 +304,7 @@ def test_parsers_reject_malformed_replies():
 def test_connect_installs_runtime_and_verifies_identity(instrument, clock):
     backend = make_backend(instrument, clock)
     backend.connect()
-    assert instrument.g.oe_seq_runtime_build == "seq-v1"
+    assert instrument.g.oe_seq_runtime_build == "seq-v2"
     assert backend.inspect() == (DeviceState.IDLE, False)
     assert backend.equipment()["firmware"] == "1.7.16a"
 
@@ -774,3 +774,29 @@ def test_backend_refuses_programs_above_the_firmware_block_limit(instrument, clo
     request = SequenceRequest("too big", bipolar_pulse_sequence(0.001, 1, 2), limits)
     with pytest.raises(ValidationError, match="83 trigger blocks exceed 63"):
         b.prepare(request)
+
+
+def test_prepare_rechecks_the_block_count_before_upload(backend, instrument, limits, monkeypatch):
+    from ophyd_electrochemistry.keithley.k2460 import sequence_backend
+    from ophyd_electrochemistry.keithley.k2460.sequencer import SequencerProfile
+
+    def oversize(sequence, limits, profile, **kwargs):
+        return compile_program(sequence, limits, SequencerProfile(max_blocks=255), **kwargs)
+
+    monkeypatch.setattr(sequence_backend, "compile_program", oversize)
+    sent = len(instrument.sent)
+    request = SequenceRequest("too big", bipolar_pulse_sequence(0.001, 1, 2), limits)
+    with pytest.raises(ValidationError, match="83 trigger blocks exceed 63"):
+        backend.prepare(request)
+    assert not any("oe_seq_begin" in c for c in instrument.sent[sent:])
+    assert backend.inspect() == (DeviceState.IDLE, False)
+
+
+def test_an_older_runtime_build_on_the_instrument_is_refused(instrument, clock):
+    instrument.lua.execute(sequencer_packaged_runtime().source)
+    instrument.g.oe_seq_runtime_build = "seq-v1"  # what a runtime from before 264c63c reports
+    with pytest.raises(IncompatibleInstrumentError, match="'seq-v1' is not 'seq-v2'"):
+        make_backend(instrument, clock, install_runtime=False).connect()
+    instrument.g.model_state = "trigger.STATE_RUNNING"  # observed, never reinstalled under
+    with pytest.raises(IncompatibleInstrumentError, match="'seq-v1' is not 'seq-v2'"):
+        make_backend(instrument, clock).connect()

@@ -13,7 +13,7 @@ from importlib.resources import files
 from .runtime import RuntimeArtifact
 
 SEQUENCER_ABI = "oe-k2460-seq-v1"
-SEQUENCER_BUILD = "seq-v1"
+SEQUENCER_BUILD = "seq-v2"  # bump with every change to tsp/sequencer.tsp
 SEQUENCER_RESOURCE = "tsp/sequencer.tsp"
 MAX_LINE_CHARS = 900
 _SCRIPT_DIGEST_PREFIX_LENGTH = 24

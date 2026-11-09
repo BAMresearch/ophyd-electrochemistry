@@ -176,6 +176,19 @@ def minimal_program(lua):
 # Packaging and lint
 
 
+# The build string is what the backend checks on an instrument that already
+# holds a runtime, so every change to sequencer.tsp needs a new build.
+BUILD_DIGESTS = {"seq-v2": "2f7010bc22895e881cac03355bbe1918745ecc835a488107d65a3112e393d6ae"}
+
+
+def test_runtime_changes_come_with_a_new_build():
+    artifact = sequencer_packaged_runtime()
+    assert BUILD_DIGESTS.get(artifact.build) == artifact.sha256, (
+        "sequencer.tsp changed: bump SEQUENCER_BUILD and oe_seq_runtime_build, "
+        "then record the new digest here"
+    )
+
+
 def test_artifact_identity_and_wire_form():
     artifact = sequencer_packaged_runtime()
     assert (artifact.abi, artifact.build) == (SEQUENCER_ABI, SEQUENCER_BUILD)
@@ -506,6 +519,14 @@ def test_ping_posts_a_timestamped_event(lua):
 
 
 def test_begin_refuses_more_blocks_than_the_firmware_takes(lua):
-    build(lua, n_blocks=63)
+    g = minimal_program(lua)  # a committed program the refusal must leave alone
+    g.oe_seq_buf.n = 5  # unread records of that run
+    lua.execute("before_buf = oe_seq_buf")
+    before = (g.oe_seq_state, g.oe_seq_expect.blocks, g.oe_seq_buf.n, g.oe_seq_acked)
     with pytest.raises(lupa.LuaError, match=r"n_blocks must be an integer in 1\.\.63"):
-        build(lua, n_blocks=64)
+        g.oe_seq_begin(1, 1, 64, 10)
+    assert (g.oe_seq_state, g.oe_seq_expect.blocks, g.oe_seq_buf.n, g.oe_seq_acked) == before
+    assert lua.eval("before_buf == oe_seq_buf")  # the same buffer, not a new one
+    assert g.src.output == "smu.OFF"
+    g.oe_seq_buf.n = 0  # records read; 63 blocks is accepted
+    build(lua, n_blocks=63)
