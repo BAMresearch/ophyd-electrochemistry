@@ -29,3 +29,4 @@ Rules that apply to every brief (Codex: follow these):
 | `05-sequence-flyer.md` | Sequence Flyer, `run_sequence`, run-file writer, live plot | 01–04 |
 | `06-run-notebook.md` | Per-run notebook template, helpers, new-run CLI | 01–05, SWMR run file |
 | `07-sequencer-compiler.md` | Sequencer compiler (block table, runtime calls) and replay | 01–05, sequencer design |
+| `09-review-blocks-and-relaxed-end.md` | Review only: 63-block limit, repeat table, `rest_end_v` (commits 1979525, 026c55a, c8f160f) | — |
