@@ -82,13 +82,23 @@ Examples for a 0.6 mAh cell (1C = 600 µA), following
 |---|---|---|
 | hc01-sodiate | soc_position | current_a −6e-5, target_v 0.005, max_step_s 50400, rest_s 1800, interval_s 1 |
 | hc01-desod-pulse | pulse_train | current_a 6e-3 (10C), pulse_s 1, rest_s 60, repeats 540, fast_window_s 1, interval_s 0.25, v_high 0.2, start_mode external |
-| hc01-sod-pulse | pulse_train | current_a −6e-3, pulse_s 1, rest_s 60, repeats 540, fast_window_s 1, interval_s 0.25, v_low 0.005 |
+| hc01-sod-pulse | pulse_train | current_a −6e-3, pulse_s 1, rest_s 300, repeats 540, fast_window_s 1, interval_s 0.25, rest_end_v 0.005 |
 | ref01-cycle | cycling | current_a 3e-5, v_low 0.005, v_high 0.2, cycles 1, start_with desodiation, cv_i_abs_min_a 6e-6, cv_after sodiation, rest_s 1800, max_step_s 72000, interval_s 1 |
 
 A pulse train stops the run when a pulse reaches `v_high` or `v_low`, so
-`repeats` is only an upper bound. The 2460 checks the limit on the voltage
+`repeats` is only an upper bound. The 2460 checks that limit on the voltage
 under load, which at high rates includes a large IR drop (see
-`docs/beamtime-concept.md`, "Ending a high-rate pulse run"). Run reference cycling with a CV
+`docs/beamtime-concept.md`, "Ending a high-rate pulse run").
+
+`rest_end_v` ends the run on the relaxed voltage instead. The last second of
+each rest becomes a separate step, and the run stops when the voltage there is
+at or below `rest_end_v` (sodiation) or at or above it (desodiation). Under
+load only `v_low` / `v_high`, if set, and the session window apply, so the
+session window must allow the excursion (−3 V for sodiation, per Jonas). This
+is the agreed sodiation end: at or below 5 mV after a 5 min rest
+(`hc01-sod-pulse`). For long rests only near the end, use two rows: one with
+1 min rests and an earlier `rest_end_v`, then one with 5 min rests and
+`rest_end_v` 0.005. The queue goes on to the next row after a cutoff. Run reference cycling with a CV
 hold in a session whose `i_max_abs` is near the cycling current (step 3).
 
 **How many repeats fit in one run.** A run can hold at most 1,000,000

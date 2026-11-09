@@ -69,6 +69,10 @@ _COLUMNS = {
     "it. cycling: the upward step ends here (and the CV hold, if any, holds this "
     "voltage after the charge). pulse_train, bipolar_pulse (optional): the run stops if a "
     "pulse reaches it. Not the absolute safety limit (set in the session).",
+    "rest_end_v": "pulse_train only (optional): stop the run when the voltage in the last "
+    "second of a rest has relaxed only to this value in V: at or below it for sodiation, at "
+    "or above it for desodiation. Tested at rest, so the voltage under load is bounded only by "
+    "v_low / v_high and the session window. Needs rest_s above 2 and interval_s at most 1.",
     "target_v": "soc_position: constant current until the cell voltage reaches this value "
     "in V, then rest_s at zero current.",
     "cycles": "cycling: number of cycles; each starts with the half set by start_with.",
@@ -152,6 +156,8 @@ def _parse_row(row: Mapping[str, object]) -> tuple[dict[str, object], list[str]]
             for column in _REQUIRED[protocol]:
                 if _blank(row.get(column)):
                     errors.append(f"{column}: required value is blank")
+            if protocol != "pulse_train" and not _blank(row.get("rest_end_v")):
+                errors.append("rest_end_v: only for pulse_train")
     start = parsed.get("start_mode")
     if start is None:
         parsed["start_mode"] = "immediate"
@@ -179,7 +185,7 @@ def _parse_row(row: Mapping[str, object]) -> tuple[dict[str, object], list[str]]
                 parsed[column] = int(value)
         else:
             parsed[column] = float(value)
-            if column not in ("current_a", "v_low", "v_high", "target_v"):
+            if column not in ("current_a", "v_low", "v_high", "rest_end_v", "target_v"):
                 if value < 0 or (column != "cv_i_abs_min_a" and value == 0):
                     sign = "nonnegative" if column == "cv_i_abs_min_a" else "positive"
                     errors.append(f"{column}: must be {sign}")
@@ -223,6 +229,7 @@ def _build_sequence(row: Mapping[str, object]) -> Sequence:
             fast_interval_s=value("fast_interval_s", DEFAULT_FAST_INTERVAL_S),
             fast_window_s=value("fast_window_s", 0.5),
             interval_s=value("interval_s", 0.1),
+            rest_end_v=optional("rest_end_v"),
         )
     if protocol == "bipolar_pulse":
         pulse_s = value("pulse_s")

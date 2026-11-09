@@ -22,6 +22,7 @@ from ophyd_electrochemistry.sequences import (
     expanded,
     expected_records,
     nominal_duration_s,
+    pulse_train_sequence,
     rest_step,
     sample_schedule,
 )
@@ -329,3 +330,22 @@ def test_representative_protocol_runs_in_under_two_seconds(sequence, limits):
     assert {event[1] for event in result.events if event[3] == "step_start"} == set(
         range(len(sequence.steps))
     )
+
+
+def test_relaxed_end_ignores_the_voltage_under_load(limits):
+    # 2.8 % SOC per 1 mA, 1 s pulse; the OCV falls 0.5 mV per % SOC. Every pulse
+    # dips below the end voltage under load, but only the relaxed voltage stops the run.
+    cell = CellModel(capacity_ah=1e-5, noise_v=0)
+    sequence = pulse_train_sequence(-1e-3, 1, 20, rest_s=60, pre_rest_s=2, rest_end_v=0.095)
+    result = simulate_sequence(sequence, limits, cell)
+    r = result.readout
+    assert result.outcome == "stopped_cutoff"
+    assert result.events[-1][1:] == (3, result.events[-1][2], "stop", "v_min")
+    stopped_in = result.events[-1][2]
+    assert 0 < stopped_in < 19
+    pulses = r["step_index"] == 1
+    assert (r["voltage_v"][pulses] < 0.095).any()
+    checks = r["step_index"] == 3
+    earlier = checks & (r["repeat_index"] < stopped_in)
+    assert (r["voltage_v"][earlier] > 0.095).all()
+    assert r["voltage_v"][-1] <= 0.095

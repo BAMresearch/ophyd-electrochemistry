@@ -202,8 +202,10 @@ pulse run stops when the voltage at the end of a 5 min rest is at or below
 5 mV. Under load the voltage may go down to −3 V (Jonas): bulk plating that
 reintegrates during the rest is of interest. These runs come after the
 desodiation pulses on the same cell, because desodiation after plating cannot
-be trusted to look normal. Not built yet: `pulse_train` still tests its limits
-during the pulse.
+be trusted to look normal. Built 9 Nov as the run-sheet column `rest_end_v`
+(`pulse_train`): the last 1 s of each rest is a separate step that stops the
+run, 57 trigger blocks for 1 s pulses. Simulated and replayed offline; not yet
+run on the instrument.
 
 The 5 min rests may shorten to 1 min if tests show the limit can be inferred
 from the recorded data; otherwise long rests only near the end of a run, if

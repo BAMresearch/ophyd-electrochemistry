@@ -480,7 +480,7 @@ def replay_simulation(sequence, limits, cell, seed):
 
 
 @pytest.mark.parametrize("seed", [0, 3, 17])
-@pytest.mark.parametrize("case", ["pulse", "cc_next", "cc_stop", "cc_cv"])
+@pytest.mark.parametrize("case", ["pulse", "relaxed", "cc_next", "cc_stop", "cc_cv"])
 def test_replay_equals_independent_noisy_simulator(limits, case, seed):
     cell = CellModel(ocv_soc=(0.0, 1.0), ocv_v=(1.0, 1.0), noise_v=1e-6)
     if case == "pulse":
@@ -492,6 +492,9 @@ def test_replay_equals_independent_noisy_simulator(limits, case, seed):
             pre_rest_s=0.6,
             fast_interval_s=0.006,
         )
+    elif case == "relaxed":
+        cell = CellModel(capacity_ah=1e-5, noise_v=1e-6)
+        sequence = pulse_train_sequence(-1e-3, 1, 20, rest_s=60, pre_rest_s=2, rest_end_v=0.095)
     elif case == "cc_cv":
         sequence = cycling_sequence(
             0.001,
@@ -515,6 +518,8 @@ def test_replay_equals_independent_noisy_simulator(limits, case, seed):
             RepeatBlock(0, 2, 3),
         )
     sim = replay_simulation(sequence, limits, cell, seed)
+    if case == "relaxed":
+        assert sim.events[-1][1] == 3 and sim.outcome == "stopped_cutoff"
     if case != "pulse":
         assert any(e[3] == "cutoff" for e in sim.events)
     if case == "cc_cv":

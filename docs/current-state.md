@@ -66,8 +66,8 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What is broken or missing
 
-- `pulse_train` tests limits during the pulse. The agreed end, at or below 5 mV
-  after a 5 min rest (`docs/beamtime-concept.md`), is not built.
+- The relaxed-voltage end (`rest_end_v`, at or below 5 mV after a 5 min rest)
+  is built and simulated but has not run on the instrument.
 - Each step runs about 1 % long (R9); cause open. The voltage dip at output ON
   (−10 to −323 mV on the cell) is unexplained.
 - Follow does not refresh a run waiting for external START.
@@ -78,8 +78,10 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 ## Next resistor session
 
 Rerun R4–R7 (not rerun since the replay fix). Power-cycle, `environment open`,
-read back HIGH-Z (first real test of NORMAL to HIGH-Z). Test a stop on a rest
-step before relying on the relaxed-voltage end. RC dummy C1–C2 if available.
+read back HIGH-Z (first real test of NORMAL to HIGH-Z). `rest_end_v` on the
+resistor: −1 mA pulses (−0.1 V under load, 0 V at rest) with `rest_end_v`
+−0.05 must complete; with +0.005 it must stop at the first check. RC dummy
+C1–C2 if available.
 
 ## Last known hardware state (reconfirm before use)
 
@@ -91,8 +93,8 @@ sodiated, 1.79 V and falling when last read.
 
 ## Next steps
 
-1. Offline: relaxed-voltage end for pulse runs; the
-   two-row design for long rests near the end; output-ON and step-stretch analysis.
+1. Offline: output-ON and step-stretch analysis; Follow on external START;
+   explore reference stop rule.
 2. Next resistor session (above), then K4/K5-style trains on a healthy cell.
 3. Beamtime run sheet once the open questions are answered.
 

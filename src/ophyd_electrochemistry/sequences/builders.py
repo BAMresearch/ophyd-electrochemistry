@@ -8,6 +8,8 @@ from .models import CutoffAction, RepeatBlock, Sampling, Sequence, Step, StepMod
 
 # Decided 3 Nov 2026: 6 ms at 0.1 NPLC on the 2460 (5 ms needs 0.05 NPLC).
 DEFAULT_FAST_INTERVAL_S = 0.006
+# Final part of each rest in which pulse_train(rest_end_v=...) tests the relaxed voltage.
+REST_CHECK_S = 1.0
 
 
 def renard_series(t_min: float, t_max: float, series: int = 5) -> list[float]:
@@ -187,12 +189,19 @@ def pulse_train_sequence(
     fast_interval_s: float = DEFAULT_FAST_INTERVAL_S,
     fast_window_s: float = 0.5,
     interval_s: float = 0.1,
+    rest_end_v: float | None = None,
     name: str = "",
 ) -> Sequence:
     """Rest, then {pulse, rest} x repeats, all pulses in one direction.
 
     The sign of ``current_a`` sets the direction (negative: sodiation for hard
     carbon against Na). A pulse reaching ``v_min`` or ``v_max`` stops the run.
+
+    ``rest_end_v`` ends the run on the relaxed voltage instead: the last
+    ``REST_CHECK_S`` of every rest become a separate step that stops the run
+    when the voltage is at or below ``rest_end_v`` (sodiation) or at or above
+    it (desodiation). Earlier in the rest the voltage is still relaxing and is
+    not tested.
     """
     number(current_a, "current_a")
     if current_a == 0:
@@ -200,6 +209,13 @@ def pulse_train_sequence(
     positive(pulse_s, "pulse_s")
     if rest_s is None:
         rest_s = max(pulse_s, 1.0)
+    if rest_end_v is not None:
+        number(rest_end_v, "rest_end_v")
+        positive(rest_s, "rest_s")
+        if rest_s <= 2 * REST_CHECK_S:
+            raise ValidationError(f"rest_s must exceed {2 * REST_CHECK_S:g} s with rest_end_v")
+        if interval_s > REST_CHECK_S:
+            raise ValidationError(f"interval_s must be at most {REST_CHECK_S:g} s with rest_end_v")
 
     def sampling(duration: float) -> Sampling:
         return two_phase_sampling(duration, fast_interval_s, fast_window_s, interval_s)
@@ -213,11 +229,23 @@ def pulse_train_sequence(
         v_max=v_max,
         on_cutoff=CutoffAction.STOP,
     )
-    return Sequence(
-        (rest_step(pre_rest_s, sampling(pre_rest_s)), pulse, rest_step(rest_s, sampling(rest_s))),
-        RepeatBlock(1, 2, repeats),
-        name,
+    pre_rest = rest_step(pre_rest_s, sampling(pre_rest_s))
+    if rest_end_v is None:
+        return Sequence(
+            (pre_rest, pulse, rest_step(rest_s, sampling(rest_s))), RepeatBlock(1, 2, repeats), name
+        )
+    relaxing = rest_step(rest_s - REST_CHECK_S, sampling(rest_s - REST_CHECK_S))
+    check = Step(
+        StepMode.REST,
+        0.0,
+        REST_CHECK_S,
+        Sampling(interval_s),
+        v_min=rest_end_v if current_a < 0 else None,
+        v_max=rest_end_v if current_a > 0 else None,
+        on_cutoff=CutoffAction.STOP,
+        label="relaxed check",
     )
+    return Sequence((pre_rest, pulse, relaxing, check), RepeatBlock(1, 3, repeats), name)
 
 
 def cycling_sequence(

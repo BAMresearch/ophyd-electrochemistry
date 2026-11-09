@@ -609,6 +609,25 @@ def test_unipolar_pulse_train_in_either_direction():
         pulse_train_sequence(0, 1, 3)
 
 
+def test_pulse_train_ends_on_the_relaxed_voltage():
+    sodiation = pulse_train_sequence(-6e-3, 1, 500, rest_s=300, rest_end_v=0.005)
+    assert [step.duration_s for step in sodiation.steps] == [10, 1, 299, 1]
+    assert sodiation.repeat == RepeatBlock(1, 3, 500)
+    pulse, relaxing, check = sodiation.steps[1:]
+    assert (pulse.v_min, pulse.v_max) == (None, None)  # under load: session window only
+    assert (relaxing.v_min, relaxing.v_max) == (None, None)
+    assert (check.mode, check.v_min, check.v_max) == (StepMode.REST, 0.005, None)
+    assert check.on_cutoff == CutoffAction.STOP
+    assert nominal_duration_s(sodiation) == 10 + 500 * 301
+    desodiation = pulse_train_sequence(6e-3, 1, 5, rest_s=60, rest_end_v=0.2, v_max=1.5)
+    assert (desodiation.steps[3].v_min, desodiation.steps[3].v_max) == (None, 0.2)
+    assert desodiation.steps[1].v_max == 1.5
+    with pytest.raises(ValidationError, match="rest_s must exceed 2 s"):
+        pulse_train_sequence(-6e-3, 1, 5, rest_s=2, rest_end_v=0.005)
+    with pytest.raises(ValidationError, match="interval_s must be at most 1 s"):
+        pulse_train_sequence(-6e-3, 1, 5, rest_s=60, interval_s=2, rest_end_v=0.005)
+
+
 @pytest.mark.parametrize("start", ["charge", "discharge"])
 def test_cv_hold_after_the_discharge(start):
     # Hard carbon reference cycle: sodiate to 5 mV, hold there, rest, desodiate to 0.2 V, rest.

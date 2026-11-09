@@ -516,3 +516,42 @@ def test_soc_position_with_a_voltage_hold(tmp_path):
     steps = load_run_sheet(path, limits)["hold"].sequence.steps
     assert [step.mode.value for step in steps] == ["current", "voltage", "rest"]
     assert (steps[1].level, steps[1].i_abs_min, steps[1].duration_s) == (3.0, 5e-6, 1200)
+
+
+def test_pulse_train_row_with_a_relaxed_end(tmp_path):
+    from ophyd_electrochemistry.sequences.run_sheet import write_run_sheet
+
+    limits = SafetyLimits(-3, 3, 0.03, 1e6, 10**6)
+    row = dict(
+        protocol="pulse_train",
+        current_a=-6e-3,
+        pulse_s=1,
+        rest_s=300,
+        repeats=500,
+        fast_window_s=1,
+        interval_s=0.25,
+        rest_end_v=0.005,
+    )
+    path = tmp_path / "relaxed.xlsx"
+    write_run_sheet(
+        path,
+        [
+            dict(row, measurement_id="sod"),
+            dict(
+                measurement_id="bad",
+                protocol="soc_position",
+                current_a=-1e-4,
+                target_v=0.1,
+                max_step_s=60,
+                rest_s=60,
+                rest_end_v=0.005,
+            ),
+        ],
+    )
+    with pytest.raises(ValidationError, match="rest_end_v: only for pulse_train"):
+        load_run_sheet(path, limits)
+    write_run_sheet(path, [dict(row, measurement_id="sod")], overwrite=True)
+    run = load_run_sheet(path, limits)["sod"]
+    check = run.sequence.steps[-1]
+    assert (check.v_min, check.v_max, check.duration_s) == (0.005, None, 1)
+    assert run.sequence.steps[2].duration_s == 299
