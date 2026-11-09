@@ -1,0 +1,146 @@
+{
+  "tests": [
+    "R12",
+    "R13",
+    "R14"
+  ],
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "equipment": {
+    "backend": "k2460-sequencer",
+    "runtime_build": "seq-v2",
+    "runtime_sha256": "2f7010bc22895e881cac03355bbe1918745ecc835a488107d65a3112e393d6ae",
+    "terminals": "front",
+    "four_wire": true,
+    "start_edge": "rising",
+    "line_frequency_hz": 50,
+    "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "serial_number": "04686198",
+    "firmware": "1.7.16a"
+  },
+  "status_at_start": [
+    "idle",
+    false
+  ],
+  "R12": {
+    "measurement_id": "b1-relaxed-continue",
+    "blocks": 57,
+    "expected_records": 990,
+    "nominal_s": 12.5,
+    "clock_offset_s": 4179.3877825737,
+    "clock_uncertainty_s": 0.0006365776062011719,
+    "outcome": "completed",
+    "detail": "",
+    "wall_s": 12.921047541021835,
+    "cpu_s": 0.14644699999999994,
+    "records": 990,
+    "polls": 62,
+    "lag_s_median": 0.01789999008178711,
+    "lag_s_max": 0.18138957023620605,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [],
+    "step_starts": 10,
+    "instrument_log": [
+      "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "checks": {
+      "completed": "ok",
+      "pulses below rest_end_v under load": "ok",
+      "no cutoff": "ok",
+      "output OFF after run": "ok"
+    },
+    "pulse_min_v": -0.102509737014771,
+    "check_records_per_repeat": [
+      10,
+      10,
+      10
+    ],
+    "seconds": 13.340221792052034
+  },
+  "R13": {
+    "measurement_id": "b1-relaxed-stop",
+    "blocks": 57,
+    "expected_records": 990,
+    "nominal_s": 12.5,
+    "clock_offset_s": 4179.3878490924835,
+    "clock_uncertainty_s": 0.0005445480346679688,
+    "outcome": "stopped_cutoff",
+    "detail": "",
+    "wall_s": 4.848944708995987,
+    "cpu_s": 0.03987300000000005,
+    "records": 439,
+    "polls": 24,
+    "lag_s_median": 0.012080669403076172,
+    "lag_s_max": 0.12436366081237793,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [
+      [
+        4.7253622,
+        3,
+        1,
+        "cutoff",
+        "v_min"
+      ],
+      [
+        4.7253622,
+        3,
+        1,
+        "stop",
+        "v_min"
+      ]
+    ],
+    "step_starts": 4,
+    "instrument_log": [
+      "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "checks": {
+      "stopped_cutoff": "ok",
+      "v_min cutoff in the first check": "ok",
+      "no records after the stop": "ok",
+      "output OFF after run": "ok"
+    },
+    "seconds": 5.227965667028911
+  },
+  "R14": {
+    "measurement_id": "b1-63-blocks",
+    "blocks": 63,
+    "expected_records": 1269,
+    "nominal_s": 17.0,
+    "clock_offset_s": 4179.387841463089,
+    "clock_uncertainty_s": 0.00046896934509277344,
+    "outcome": "completed",
+    "detail": "",
+    "wall_s": 17.548039124987554,
+    "cpu_s": 0.18298800000000004,
+    "records": 1269,
+    "polls": 84,
+    "lag_s_median": 0.022688627243041992,
+    "lag_s_max": 0.16945862770080566,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [],
+    "step_starts": 10,
+    "instrument_log": [
+      "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "checks": {
+      "63 blocks": "ok",
+      "completed": "ok",
+      "output OFF after run": "ok"
+    },
+    "seconds": 17.93194866704289
+  }
+}

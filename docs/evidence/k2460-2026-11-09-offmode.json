@@ -1,0 +1,9 @@
+{
+  "matrix": "bench/plan-2026-11-09.md, steps H1-H3",
+  "instrument": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "load": "102.5 ohm resistor, front, 4-wire",
+  "script": "bench/offmode_probe.py (query only)",
+  "H1": {"utc": "2026-11-09T10:19:32.834014+00:00", "label": "power-on", "source_func": "smu.FUNC_DC_VOLTAGE", "offmode": "smu.OFFMODE_NORMAL", "output": "smu.OFF", "model_state": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t0"},
+  "H2": {"utc": "2026-11-09T10:20:26+00:00", "action": "qserver/start-k2460-re-manager.sh bench/b2/session-resistor.toml; qserver environment open", "result": "success; worker started 10:20:34 local log, no error; environment closed and manager stopped before H3"},
+  "H3": {"utc": "2026-11-09T10:20:56.762994+00:00", "label": "after-open", "source_func": "smu.FUNC_DC_CURRENT", "offmode": "smu.OFFMODE_HIGHZ", "output": "smu.OFF", "model_state": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t0.00000000000000e+00"}
+}

@@ -1,6 +1,6 @@
 # Current project state
 
-Updated: 2026-11-07. Branch: `mvp-sprint`. Plan: [MVP sprint plan](mvp-plan.md).
+Updated: 2026-11-09. Branch: `mvp-sprint`. Plan: [MVP sprint plan](mvp-plan.md).
 
 Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 (October–2 November bench narrative) is preserved in commit `e04ebc6`, in
@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1298 tests pass, including 57 contract tests against a real RE Manager. Pure models/compiler, independent simulator,
+- **Offline:** 1313 tests pass, including 58 contract tests against a real RE Manager. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -66,11 +66,8 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What is broken or missing
 
-- The relaxed-voltage end (`rest_end_v`, below 5 mV after a 5 min rest) is
-  built, simulated and queue-tested but has not run on the instrument. Step
-  limits are strict (equal does not cut off); 2460 equality is unverified.
-- The packaged runtime now refuses more than 63 blocks (`oe_seq_begin`); this
-  changed TSP needs installing at the next bench session.
+- Step limits are strict (a reading equal to the limit does not cut off);
+  2460 equality is unverified and cannot be provoked on purpose.
 - Each step runs about 1 % long (R9); cause open. The voltage dip at output ON
   (−10 to −323 mV on the cell) is unexplained.
 - Follow does not refresh a run waiting for external START.
@@ -80,25 +77,22 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## Next resistor session
 
-Rerun R4–R7 (not rerun since the replay fix). Power-cycle, `environment open`,
-read back HIGH-Z (first real test of NORMAL to HIGH-Z). `rest_end_v` on the
-resistor: −1 mA pulses (−0.1 V under load, 0 V at rest) with `rest_end_v`
-−0.05 must complete; with +0.005 it must stop at the first check. RC dummy
-C1–C2 if available.
+RC dummy C1–C2 (needs its values). R8 external START with the generator if the
+trigger wiring changes. Nothing else is pending on the resistor (9 Nov).
 
 ## Last known hardware state (reconfirm before use)
 
-6 Nov, about 14:30 UTC: K2460 serial `04686198`, firmware 1.7.16a, TSP,
-`169.254.113.151:5025`, powered off, so runtime, buffers and HIGH-Z are gone and
-off mode is NORMAL until `environment open`. Wiring: READY line 1, BUSY 2, MARKER 4,
-START 6 (DB-9 pin 8). Coin cell `Richard-HC400-rev` disconnected, about 48 µAh still
-sodiated, 1.79 V and falling when last read.
+9 Nov, about 10:25 UTC: K2460 serial `04686198`, firmware 1.7.16a, TSP,
+`169.254.113.151:5025`, runtime `seq-v2` installed, HIGH-Z, output OFF, 102.5 Ω
+resistor on the front terminals. Wiring: READY line 1, BUSY 2, MARKER 4, START 6
+(DB-9 pin 8). Coin cell `Richard-HC400-rev` not connected since 6 Nov (about
+48 µAh still sodiated, 1.79 V and falling when last read).
 
 ## Next steps
 
 1. Offline: output-ON and step-stretch analysis; Follow on external START;
    explore reference stop rule.
-2. Next resistor session (above), then K4/K5-style trains on a healthy cell.
+2. K4/K5-style trains with `rest_end_v` on a healthy cell (tier 2, run sheet).
 3. Beamtime run sheet once the open questions are answered.
 
 ## Information still needed from the user

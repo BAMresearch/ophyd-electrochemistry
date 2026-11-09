@@ -1,6 +1,6 @@
 # Template validation record
 
-Updated: 2026-11-07. Scope: contracts, transport/runtime commissioning, bounded
+Updated: 2026-11-09. Scope: contracts, transport/runtime commissioning, bounded
 nominal-100-ohm tests, a narrow target-buffer proof, and the first operational
 simulator-backed M6 Flyer; not operational hardware sourcing or acquisition.
 
@@ -11,6 +11,27 @@ JSON files** parsed. The software check record is
 `evidence/k2460-2026-11-02-timed-v17-software-validation.json`
 (repository-relative path). These checks do not override the failed hardware
 cadence result.
+
+## Resistor session: HIGH-Z after power-on, R4–R7, `rest_end_v`, 63 blocks (9 November 2026)
+
+Tier 1, 102.5 Ω, `bench/plan-2026-11-09.md`, runtime `seq-v2` (`de9aedd`). All
+checks passed.
+
+- H1–H3: at power-on the 2460 reported `OFFMODE_NORMAL` (voltage function).
+  After `qserver environment open` with the resistor session, a query-only probe
+  read `OFFMODE_HIGHZ` (current function), output OFF, model empty.
+- R1 installed `seq-v2` and prepared three programs. R4–R7, `error` on 5 Nov,
+  now pass: three NEXT cutoffs inside the repeat block with one CC sample each,
+  STOP, abs_window, CV 0.3 V / 3 mA with the taper on step 2 only.
+- R12: `rest_end_v` −0.05 V completed (990/990 records) although the pulses read
+  −0.1025 V under load. R13: `rest_end_v` +0.005 V stopped on `v_min` in the
+  first rest check at 4.725 s (nominal 4.6 s), no records after it, OFF.
+- R14: a 63-block program uploaded and completed (1,269/1,269 records), so the
+  firmware takes block 63; 64 failed with event 1130 on 5 Nov.
+
+Evidence: [`k2460-2026-11-09-offmode.json`](evidence/k2460-2026-11-09-offmode.json),
+[`k2460-2026-11-09-b1-resistor.json`](evidence/k2460-2026-11-09-b1-resistor.json),
+[`k2460-2026-11-09-b1-resistor-relaxed.json`](evidence/k2460-2026-11-09-b1-resistor-relaxed.json).
 
 ## B2 coin cell and exploration series (5–6 November 2026)
 
