@@ -70,8 +70,8 @@ _COLUMNS = {
     "voltage after the charge). pulse_train, bipolar_pulse (optional): the run stops if a "
     "pulse reaches it. Not the absolute safety limit (set in the session).",
     "rest_end_v": "pulse_train only (optional): stop the run when the voltage in the last "
-    "second of a rest has relaxed only to this value in V: at or below it for sodiation, at "
-    "or above it for desodiation. Tested at rest, so the voltage under load is bounded only by "
+    "second of a rest has relaxed only to this value in V: below it for sodiation, above "
+    "it for desodiation. Tested at rest, so the voltage under load is bounded only by "
     "v_low / v_high and the session window. Needs rest_s above 2 and interval_s at most 1.",
     "target_v": "soc_position: constant current until the cell voltage reaches this value "
     "in V, then rest_s at zero current.",

@@ -36,6 +36,7 @@ from ...sequences.models import SafetyLimits
 from ...state import DeviceState
 from ...validation import integer, text
 from .sequencer import (
+    FIRMWARE_MAX_BLOCKS,
     Replayer,
     SequencerProfile,
     SequencerProgram,
@@ -238,6 +239,11 @@ class Keithley2460SequenceBackend:
         self.profile = SequencerProfile() if profile is None else profile
         if not isinstance(self.profile, SequencerProfile):
             raise ValidationError("profile must be SequencerProfile")
+        if self.profile.max_blocks > FIRMWARE_MAX_BLOCKS:
+            raise ValidationError(
+                f"profile max_blocks {self.profile.max_blocks} exceeds the 2460's "
+                f"{FIRMWARE_MAX_BLOCKS} trigger blocks"
+            )
         self._transport = transport
         self.terminals, self.four_wire, self.start_edge = terminals, four_wire, start_edge
         self._serial = (
@@ -499,6 +505,11 @@ class Keithley2460SequenceBackend:
                 self.profile,
                 external_start=request.start_mode == "external",
             )
+            if len(program.blocks) > FIRMWARE_MAX_BLOCKS:
+                blocks = len(program.blocks)
+                raise ValidationError(
+                    f"{blocks} trigger blocks exceed {FIRMWARE_MAX_BLOCKS}; split the run"
+                )
             self._reset_run(None)
             earlier = [e for e in self._drain_events() if e.severity <= 2]
             self._pre_run_events = " | ".join(f"{e.number} {e.message}" for e in earlier[-10:])

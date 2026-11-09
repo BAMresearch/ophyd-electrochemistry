@@ -92,10 +92,11 @@ under load, which at high rates includes a large IR drop (see
 
 `rest_end_v` ends the run on the relaxed voltage instead. The last second of
 each rest becomes a separate step, and the run stops when the voltage there is
-at or below `rest_end_v` (sodiation) or at or above it (desodiation). Under
+below `rest_end_v` (sodiation) or above it (desodiation); a reading equal
+to it does not stop the run. Under
 load only `v_low` / `v_high`, if set, and the session window apply, so the
 session window must allow the excursion (−3 V for sodiation, per Jonas). This
-is the agreed sodiation end: at or below 5 mV after a 5 min rest
+is the agreed sodiation end: 5 mV after a 5 min rest
 (`hc01-sod-pulse`). For long rests only near the end, use two rows: one with
 1 min rests and an earlier `rest_end_v`, then one with 5 min rests and
 `rest_end_v` 0.005. The queue goes on to the next row after a cutoff. Run reference cycling with a CV
@@ -105,7 +106,8 @@ hold in a session whose `i_max_abs` is near the cycling current (step 3).
 records. Repeats do not use more trigger blocks, because the 2460 counts them
 itself. A `bipolar_pulse` row that fits samples every step at
 `fast_interval_s`, so one block (pulse, rest, opposite pulse, rest) uses
-2 × (`pulse_s` + `rest_s`) / `fast_interval_s` records. The largest `repeats`
+2 × (⌈`pulse_s` / `fast_interval_s`⌉ + ⌈`rest_s` / `fast_interval_s`⌉) records
+(368 for 0.1 s / 1 s at 6 ms). The largest `repeats`
 the compiler accepts (with `fast_window_s` covering pulse and rest and a 1 s
 `pre_rest_s`):
 

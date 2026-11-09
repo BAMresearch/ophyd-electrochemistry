@@ -84,9 +84,11 @@ def _cutoff(step: Step, voltage: float, current: float) -> str:
         if step.i_abs_min is not None and abs(current) <= step.i_abs_min:
             return "i_abs_min"
     else:
-        if step.v_min is not None and voltage <= step.v_min:
+        # Strict, as the compiled LIMIT_OUTSIDE blocks are replayed: a reading
+        # equal to the limit does not cut off (2460 equality unverified).
+        if step.v_min is not None and voltage < step.v_min:
             return "v_min"
-        if step.v_max is not None and voltage >= step.v_max:
+        if step.v_max is not None and voltage > step.v_max:
             return "v_max"
     return ""
 

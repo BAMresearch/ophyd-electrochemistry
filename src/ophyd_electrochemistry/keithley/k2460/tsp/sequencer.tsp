@@ -196,7 +196,8 @@ function oe_seq_begin(n_src, n_meas, n_blocks, capacity)
     end
     oe_seq_integer(n_src, "n_src", 1, 100)
     oe_seq_integer(n_meas, "n_meas", 1, 100)
-    oe_seq_integer(n_blocks, "n_blocks", 1, 255)
+    -- Firmware 1.7.16a accepts trigger blocks 1..63 only (event 1130).
+    oe_seq_integer(n_blocks, "n_blocks", 1, 63)
     oe_seq_integer(capacity, "capacity", 1, 1000000)
     if oe_seq_buf ~= nil and oe_seq_buf.n > oe_seq_acked then
         error("previous run buffer has unread records; read or discard them first")

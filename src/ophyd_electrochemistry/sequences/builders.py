@@ -199,9 +199,9 @@ def pulse_train_sequence(
 
     ``rest_end_v`` ends the run on the relaxed voltage instead: the last
     ``REST_CHECK_S`` of every rest become a separate step that stops the run
-    when the voltage is at or below ``rest_end_v`` (sodiation) or at or above
-    it (desodiation). Earlier in the rest the voltage is still relaxing and is
-    not tested.
+    when the voltage is below ``rest_end_v`` (sodiation) or above it
+    (desodiation); a reading equal to it does not stop the run. Earlier in
+    the rest the voltage is still relaxing and is not tested.
     """
     number(current_a, "current_a")
     if current_a == 0:

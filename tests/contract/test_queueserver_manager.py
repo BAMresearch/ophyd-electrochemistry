@@ -21,7 +21,10 @@ from ophyd_electrochemistry.sequences.queueserver import (  # noqa: E402
     queue_items,
 )
 from ophyd_electrochemistry.sequences.run_file import read_run_file  # noqa: E402
-from ophyd_electrochemistry.sequences.run_sheet import make_template  # noqa: E402
+from ophyd_electrochemistry.sequences.run_sheet import (  # noqa: E402
+    make_template,
+    write_run_sheet,
+)
 
 QSERVER = Path(__file__).parents[2] / "qserver"
 REDIS = shutil.which("redis-server")
@@ -152,6 +155,34 @@ def test_enqueued_row_runs_in_the_worker_and_writes_its_file(manager, tmp_path):
     saved = read_run_file(files[0])
     assert saved["run"]["outcome"] == "completed"
     assert saved["run_sheet_row"]["measurement_id"] == "example-rest"
+
+
+def test_a_relaxed_cutoff_lets_the_queue_run_the_next_row(manager, tmp_path):
+    """Two-row sodiation end: the first row stops on rest_end_v, the second still runs."""
+    api, session, address = manager
+    api.environment_open()
+    api.wait_for_idle(timeout=120)
+    # Simulator cell: relaxed at about 0.1 V, so 0.2 V stops at the first check.
+    row = dict(protocol="pulse_train", current_a=-1e-3, pulse_s=0.1, rest_s=3, pre_rest_s=1)
+    sheet = write_run_sheet(
+        tmp_path / "runs.xlsx",
+        [
+            dict(row, measurement_id="sod-early", repeats=5, rest_end_v=0.2),
+            dict(row, measurement_id="sod-late", repeats=2, rest_end_v=0.05),
+        ],
+    )
+    items = queue_items(session, sheet, ["sod-early", "sod-late"], show=lambda _: None)
+    enqueue(items, address, api=api)
+    api.queue_start()
+    api.wait_for_idle(timeout=120)
+    history = api.history_get()["items"]
+    assert [h["result"]["exit_status"] for h in history[-2:]] == ["completed", "completed"]
+    assert api.queue_get()["items"] == []
+    outcomes = {}
+    for path in (tmp_path / "data").rglob("*.h5"):
+        saved = read_run_file(path)
+        outcomes[saved["run_sheet_row"]["measurement_id"]] = saved["run"]["outcome"]
+    assert outcomes == {"sod-early": "stopped_cutoff", "sod-late": "completed"}
 
 
 @pytest.mark.parametrize("manager", ["1.0"], indirect=True)

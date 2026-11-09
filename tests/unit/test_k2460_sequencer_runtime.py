@@ -503,3 +503,9 @@ def test_off_handles_the_stale_output_attribute(lua):
 def test_ping_posts_a_timestamped_event(lua):
     lua.globals().oe_seq_ping()
     assert list(lua.globals().log[len(lua.globals().log)].values()) == ["post", "OE_PING", "INFO"]
+
+
+def test_begin_refuses_more_blocks_than_the_firmware_takes(lua):
+    build(lua, n_blocks=63)
+    with pytest.raises(lupa.LuaError, match=r"n_blocks must be an integer in 1\.\.63"):
+        build(lua, n_blocks=64)

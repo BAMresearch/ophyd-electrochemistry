@@ -27,6 +27,11 @@ from ...sequences.models import (
 )
 from ...validation import integer, positive
 
+# Firmware 1.7.16a accepts trigger blocks 1..63 only (event 1130, 6 Nov 2026).
+# The backend and the packaged runtime refuse larger programs whatever the
+# profile; a larger profile is for offline compiler checks only.
+FIRMWARE_MAX_BLOCKS = 63
+
 
 @dataclass(frozen=True)
 class SequencerProfile:
@@ -48,7 +53,7 @@ class SequencerProfile:
     block_overhead_s: float = 0.00014
     step_entry_s: float = 0.00132
     margin_s: float = 0.0003
-    max_blocks: int = 63
+    max_blocks: int = FIRMWARE_MAX_BLOCKS
     max_call_chars: int = 900
     voltage_ranges_v: tuple[float, ...] = (0.2, 2, 7, 10, 20, 100)
     current_ranges_a: tuple[float, ...] = (1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 0.1, 1, 4, 5, 7)
@@ -66,7 +71,7 @@ class SequencerProfile:
         integer(self.max_blocks, "max_blocks")
         integer(self.max_call_chars, "max_call_chars")
         if self.max_blocks > 255 or self.max_call_chars > 900:
-            raise ValidationError("profile exceeds runtime block/call limits (255/900)")
+            raise ValidationError("profile exceeds compiler block/call limits (255/900)")
         if not self.reading_s:
             raise ValidationError("reading_s must contain commissioned timings")
         for nplc, seconds in self.reading_s.items():

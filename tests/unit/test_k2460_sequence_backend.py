@@ -762,3 +762,15 @@ def test_recover_reconnects_after_the_flyer_closed_the_session(backend, instrume
     assert not instrument.connected
     backend.recover()
     assert backend.inspect() == (DeviceState.IDLE, False)
+
+
+def test_backend_refuses_programs_above_the_firmware_block_limit(instrument, clock, limits):
+    from ophyd_electrochemistry.keithley.k2460.sequencer import SequencerProfile
+
+    with pytest.raises(ValidationError, match="exceeds the 2460's 63 trigger blocks"):
+        make_backend(instrument, clock, profile=SequencerProfile(max_blocks=255))
+    b = make_backend(instrument, clock)
+    b.connect()
+    request = SequenceRequest("too big", bipolar_pulse_sequence(0.001, 1, 2), limits)
+    with pytest.raises(ValidationError, match="83 trigger blocks exceed 63"):
+        b.prepare(request)

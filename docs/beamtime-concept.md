@@ -204,8 +204,9 @@ reintegrates during the rest is of interest. These runs come after the
 desodiation pulses on the same cell, because desodiation after plating cannot
 be trusted to look normal. Built 9 Nov as the run-sheet column `rest_end_v`
 (`pulse_train`): the last 1 s of each rest is a separate step that stops the
-run, 57 trigger blocks for 1 s pulses. Simulated and replayed offline; not yet
-run on the instrument.
+run when the reading is below the threshold (equal does not stop; 2460
+equality unverified), 57 trigger blocks for 1 s pulses. Simulated and replayed
+offline; not yet run on the instrument.
 
 The 5 min rests may shorten to 1 min if tests show the limit can be inferred
 from the recorded data; otherwise long rests only near the end of a run, if

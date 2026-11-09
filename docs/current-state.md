@@ -66,8 +66,11 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What is broken or missing
 
-- The relaxed-voltage end (`rest_end_v`, at or below 5 mV after a 5 min rest)
-  is built and simulated but has not run on the instrument.
+- The relaxed-voltage end (`rest_end_v`, below 5 mV after a 5 min rest) is
+  built, simulated and queue-tested but has not run on the instrument. Step
+  limits are strict (equal does not cut off); 2460 equality is unverified.
+- The packaged runtime now refuses more than 63 blocks (`oe_seq_begin`); this
+  changed TSP needs installing at the next bench session.
 - Each step runs about 1 % long (R9); cause open. The voltage dip at output ON
   (−10 to −323 mV on the cell) is unexplained.
 - Follow does not refresh a run waiting for external START.

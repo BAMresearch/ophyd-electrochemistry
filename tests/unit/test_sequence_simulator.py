@@ -128,15 +128,19 @@ def test_absolute_window_takes_priority_over_step_next(direction, limits, cell):
     ]
 
 
-def test_absolute_window_is_inclusive_but_step_cutoffs_include_equality(limits, cell):
+def test_absolute_window_and_step_cutoffs_exclude_equality(limits, cell):
+    # A reading equal to a limit continues, as the compiled LIMIT_OUTSIDE blocks replay.
     rest = rest_step(1, Sampling(0.1))
     limits = replace(limits, v_min_abs=1, v_max_abs=2)
     assert simulate_sequence(Sequence((rest,)), limits, cell).outcome == "completed"
     limits = replace(limits, v_min_abs=0, v_max_abs=1)
     assert simulate_sequence(Sequence((rest,)), limits, cell).outcome == "completed"
-    for field in ("v_min", "v_max"):
+    limits = replace(limits, v_min_abs=0, v_max_abs=2)
+    for field, beyond in (("v_min", 1.001), ("v_max", 0.999)):
         result = simulate_sequence(Sequence((replace(rest, **{field: 1}),)), limits, cell)
         assert result.outcome == "completed"
+        assert len(result.readout["t_s"]) == 10
+        result = simulate_sequence(Sequence((replace(rest, **{field: beyond}),)), limits, cell)
         assert result.events[-1] == (0.1, 0, 0, "cutoff", field)
         assert len(result.readout["t_s"]) == 1
 
