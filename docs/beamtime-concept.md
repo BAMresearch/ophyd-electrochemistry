@@ -94,7 +94,8 @@ n/3600 of the capacity, so a half-cycle takes 3600/n pulses.
 The bipolar pulse and the long pulses (10 s–1 min at 1C) are no longer planned
 for the beamtime. Long pulses stay available as `pulse_train` rows. A
 `bipolar_pulse` row fits the 2460's 63 trigger blocks only when `fast_window_s`
-covers both pulse and rest (59 blocks); otherwise use one `pulse_train` row per
+covers both pulse and rest (59 blocks), so every step is sampled at one rate;
+accepted for this beamtime (9 Nov). Otherwise use one `pulse_train` row per
 direction. In every case the absolute window stops the run.
 
 ## Feasibility on the 2460 sequencer

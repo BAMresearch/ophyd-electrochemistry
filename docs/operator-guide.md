@@ -91,6 +91,32 @@ under load, which at high rates includes a large IR drop (see
 `docs/beamtime-concept.md`, "Ending a high-rate pulse run"). Run reference cycling with a CV
 hold in a session whose `i_max_abs` is near the cycling current (step 3).
 
+**How many repeats fit in one run.** A run can hold at most 1,000,000
+records. Repeats do not use more trigger blocks, because the 2460 counts them
+itself. A `bipolar_pulse` row that fits samples every step at
+`fast_interval_s`, so one block (pulse, rest, opposite pulse, rest) uses
+2 × (`pulse_s` + `rest_s`) / `fast_interval_s` records. The largest `repeats`
+the compiler accepts (with `fast_window_s` covering pulse and rest and a 1 s
+`pre_rest_s`):
+
+| pulse_s / rest_s | fast_interval_s 0.006 | fast_interval_s 0.05 |
+|---|---|---|
+| 0.1 s / 1 s | 2,716 | 22,726 |
+| 1 s / 1 s | 1,496 | 12,499 |
+| 1 s / 10 s | 272 | 2,272 |
+| 1 s / 60 s | 49 | 409 |
+| 10 s / 60 s | 42 | 357 |
+| 60 s / 60 s | 24 | 208 |
+| 100 s / 100 s | 14 | 124 |
+
+At 6 ms the buffer is full after about 1.7 h of running, at 50 ms after about
+14 h. `fast_interval_s` must be below `interval_s`; for 0.1 s or coarser, also
+raise `interval_s` (for example to 0.25). The run must also fit the session's
+`max_duration_s` and `max_records`. A `pulse_train` row samples each pulse and
+rest fast only for its first `fast_window_s`, so it reaches far more repeats:
+`hc01-desod-pulse` above uses about 570 records per repeat. `oe-validate`
+reports a row that does not fit.
+
 Do not edit the sheet after its runs are queued: a queued run refuses to start
 if the file has changed.
 
