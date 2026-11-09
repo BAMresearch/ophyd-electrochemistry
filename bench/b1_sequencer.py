@@ -148,22 +148,27 @@ def relaxed_end(rest_end_v: float, name: str, pulse_s: float = 0.5) -> SequenceR
 STAT_OUTPUT = 128
 DIP_RANGES = {"1mA": 0.0005, "10mA": I_PULSE, "100mA": 0.011}
 RESISTOR_100MA = SafetyLimits(-1.5, 1.5, 0.015, 3600, 1_000_000)
+# Tier 2, coin cell (session-cell-neg window): one 6 ms sodiation sample per run.
+CELL_DIP_LEVELS = {"1mA": -0.0005, "10mA": -0.0011, "100mA": -0.0101}
+CELL = SafetyLimits(-3.0, 3.0, 0.03, 3600, 1_000_000)
 
 
-def output_on_dip(range_name: str) -> SequenceRequest:
+def output_on_dip(range_name: str, cell: bool = False) -> SequenceRequest:
     """2 s rest, 2 s rest, 50 ms pulse, 2 s rest; each step 6 ms for 1 s, then 50 ms.
 
     The pulse level sets the shared current range. With start_on_lowest_range
     the first rest is on 1 uA and the range changes, output ON, at step 1.
     """
-    level = DIP_RANGES[range_name]
+    level = (CELL_DIP_LEVELS if cell else DIP_RANGES)[range_name]
     fast = Sampling(0.05, FAST, 1.0)
     steps = (
         rest_step(2.0, fast),
         rest_step(2.0, fast),
-        Step(StepMode.CURRENT, level, 0.05, Sampling(FAST)),
+        Step(StepMode.CURRENT, level, FAST if cell else 0.05, Sampling(FAST)),
         rest_step(2.0, fast),
     )
+    if cell:
+        return SequenceRequest(f"cell-dip-{range_name}", Sequence(steps), CELL)
     limits = RESISTOR_100MA if range_name == "100mA" else RESISTOR
     return SequenceRequest(f"b1-dip-{range_name}", Sequence(steps), limits)
 
@@ -670,13 +675,13 @@ def r14_63_blocks(ctx: Context) -> Result:
     return result
 
 
-def dip_test(ctx: Context, range_name: str) -> Result:
+def dip_test(ctx: Context, range_name: str, cell: bool = False) -> Result:
     """Present start (a) and 1 uA-range start (b), alternating a, b, a, b."""
     result: Result = {}
     backend = ctx.backend
     default = backend.profile
     for k, variant in enumerate("abab", 1):
-        request = output_on_dip(range_name)
+        request = output_on_dip(range_name, cell)
         request = replace(request, measurement_id=f"{request.measurement_id}-{variant}{k}")
         # Bench only: swap the compile profile of the one connected backend.
         backend.profile = replace(default, start_on_lowest_range=variant == "b")
@@ -692,7 +697,12 @@ def dip_test(ctx: Context, range_name: str) -> Result:
             settled = float(np.median(v[m & (t >= t[m][-1] - 0.5)]))
             summary[f"step{step}_first_t_s"] = float(t[m][0])
             summary[f"step{step}_first_dv_mv"] = (float(v[m][0]) - settled) * 1e3
-            summary[f"step{step}_first5_ua"] = [float(x) / R_OHM * 1e6 for x in v[m][:5]]
+            summary[f"step{step}_first5_dv_mv"] = [(float(x) - settled) * 1e3 for x in v[m][:5]]
+            summary[f"step{step}_first5_readback_ua"] = [
+                float(x) * 1e6 for x in readout["current_a"][m][:5]
+            ]
+            if not cell:
+                summary[f"step{step}_first5_ua"] = [float(x) / R_OHM * 1e6 for x in v[m][:5]]
         early = s <= 1
         summary["output_on_steps_0_1"] = bool(np.all(status[early] & STAT_OUTPUT))
         summary["source_status_values"] = sorted({int(x) for x in status[early]})
@@ -704,6 +714,8 @@ def dip_test(ctx: Context, range_name: str) -> Result:
             f" step 1 first {summary['step1_first_dv_mv']:+.2f} mV,"
             f" output ON {summary['output_on_steps_0_1']}"
         )
+        if cell:
+            check(result, f"{variant}{k} positive cell voltage", float(v[0]) > 0, float(v[0]))
         check(result, f"{variant}{k} completed", run["outcome"] == "completed", run.get("detail"))
         check(
             result,
@@ -726,6 +738,21 @@ def d2_dip_10ma(ctx: Context) -> Result:
 def d3_dip_100ma(ctx: Context) -> Result:
     """Needs limits beyond the resistor matrix: +-1.5 V, 15 mA (11 mA, 1.13 V, 50 ms)."""
     return dip_test(ctx, "100mA")
+
+
+def dc1_cell_dip_1ma(ctx: Context) -> Result:
+    """Coin cell (tier 2): D1 with one 6 ms -0.5 mA sample."""
+    return dip_test(ctx, "1mA", cell=True)
+
+
+def dc2_cell_dip_10ma(ctx: Context) -> Result:
+    """Coin cell (tier 2): D2 with one 6 ms -1.1 mA sample."""
+    return dip_test(ctx, "10mA", cell=True)
+
+
+def dc3_cell_dip_100ma(ctx: Context) -> Result:
+    """Coin cell (tier 2): D3 with one 6 ms -10.1 mA sample."""
+    return dip_test(ctx, "100mA", cell=True)
 
 
 # Tests (RC dummy cell)
@@ -790,6 +817,9 @@ TESTS: dict[str, tuple[str, Callable[[Context], Result]]] = {
     "D1": ("resistor", d1_dip_1ma),
     "D2": ("resistor", d2_dip_10ma),
     "D3": ("resistor", d3_dip_100ma),
+    "DC1": ("cell", dc1_cell_dip_1ma),
+    "DC2": ("cell", dc2_cell_dip_10ma),
+    "DC3": ("cell", dc3_cell_dip_100ma),
     "C1": ("rc", c1_rc_cycle),
     "C2": ("rc", c2_rc_hold),
 }
@@ -814,6 +844,9 @@ def all_requests(args: argparse.Namespace) -> list[SequenceRequest]:
         output_on_dip("1mA"),
         output_on_dip("10mA"),
         output_on_dip("100mA"),
+        output_on_dip("1mA", cell=True),
+        output_on_dip("10mA", cell=True),
+        output_on_dip("100mA", cell=True),
         rc_cycle(args.rc_current, args.rc_v_low, args.rc_v_high),
         rc_hold(args.rc_v_low, args.rc_v_high, args.rc_current),
     ]
@@ -846,10 +879,15 @@ def make_backend(args: argparse.Namespace):  # type: ignore[no-untyped-def]
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--resource", default=RESOURCE)
-    parser.add_argument("--load", choices=("resistor", "rc"))
+    parser.add_argument("--load", choices=("resistor", "rc", "cell"))
     parser.add_argument("--only", help="comma-separated test names, e.g. R2,R4")
     parser.add_argument("--i-confirm-resistor", action="store_true")
     parser.add_argument("--i-confirm-rc", action="store_true")
+    parser.add_argument(
+        "--i-confirm-cell",
+        action="store_true",
+        help="tier 2: cell, wiring, -3..3 V window, 30 mA limit and HIGH-Z confirmed",
+    )
     parser.add_argument("--rc-current", type=float, default=0.002)
     parser.add_argument("--rc-v-low", type=float, default=0.2)
     parser.add_argument("--rc-v-high", type=float, default=1.0)
@@ -871,7 +909,11 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     if args.load is None:
         parser.error("--load is required")
-    confirmed = args.i_confirm_resistor if args.load == "resistor" else args.i_confirm_rc
+    confirmed = {
+        "resistor": args.i_confirm_resistor,
+        "rc": args.i_confirm_rc,
+        "cell": args.i_confirm_cell,
+    }[args.load]
     if not confirmed:
         parser.error(f"confirm the {args.load} load, wiring and limits (bench/plan-b1.md)")
     names = [n for n, (load, _) in TESTS.items() if load == args.load]

@@ -70,6 +70,9 @@ go to `~/k2460-data/b1/`.
 | D1 | Output-ON dip, 1 mA range (0.5 mA, 50 ms pulse): 2 s rest, 2 s rest, pulse, 2 s rest at 6 ms; runs a, b, a, b | (a) present start vs (b) first rest on 1 µA (`start_on_lowest_range`): first-sample dip at output ON and at the range change; output stays ON through the range change |
 | D2 | As D1 on the 10 mA range (4.9 mA pulse) | as D1 |
 | D3 | As D1 on the 100 mA range (11 mA, 1.13 V pulse; limits ±1.5 V, 15 mA) | as D1; **outside the ±0.8 V / 5 mA resistor limits: confirm separately** |
+| DC1 | **Coin cell, tier 2** (`--load cell --i-confirm-cell`, window −3…3 V, 30 mA, HIGH-Z): D1 with one 6 ms −0.5 mA sample | The dip needs a load that holds a voltage before output ON (the resistor sits at 0 V); same comparison of (a) and (b) |
+| DC2 | As DC1 on the 10 mA range (one 6 ms −1.1 mA sample) | as DC1 |
+| DC3 | As DC1 on the 100 mA range (one 6 ms −10.1 mA sample, about 0.02 µAh) | as DC1 |
 
 ## 2. RC dummy cell (`--load rc`), after R1–R11
 
