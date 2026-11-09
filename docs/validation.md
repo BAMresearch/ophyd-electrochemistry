@@ -12,6 +12,43 @@ JSON files** parsed. The software check record is
 (repository-relative path). These checks do not override the failed hardware
 cadence result.
 
+## Cell rehearsal and the output-ON dip (9 November 2026)
+
+Tier 2, coin cell `Richard-HC400-rev` (damaged, about 2 kΩ), session
+`session-cell-neg.toml` (−3…3 V, 30 mA, HIGH-Z), confirmed by the user per
+sheet and per test. After the resistor session the same day.
+
+- **Rehearsal through the QueueServer** (`oe-enqueue`, typed confirmation):
+  - OCV 1.0925 V, flat; no output-ON dip (rest-only program, 1 µA range).
+  - `r2-sod-1min`: 1C, 1 s pulses, 1 min rests, `rest_end_v` 0.75 V. Stopped on
+    `v_min` in the check after pulse 31 (0.7484 V), −4.16 µAh. Pulses read below
+    0 V under load from pulse 12 (to −0.074 V) without stopping the run. The
+    queue went on to the next row by itself.
+  - `r3-sod-5min`: 5 min rests, `rest_end_v` 0.70 V, completed all 24 pulses
+    (−3.20 µAh): the 5 min value rose from 0.795 to 0.838 V, then 0.829 V
+    (recovery from `r2`), see `docs/beamtime-concept.md`.
+  - `r4-desod-20s`: first hardware stop on `v_max` in a rest check (0.9617 V >
+    0.90 V) after one pulse. `r5-restore-c3`: 2.9 V after 50 s (+2.2 µAh),
+    relaxed to 1.134 V. Second OCV at the end: 0.972 V, rising.
+- **Output-ON dip.** All cell runs since 5 Nov: none on 1 µA-range programs;
+  −9 to −321 mV on 1–100 mA-range programs; first-sample current up to
+  −1.6 mA on the 100 mA range. D1–D3 on the 102.5 Ω resistor (0 V before output
+  ON): no dip in either start, within 0.1 µA. DC1–DC3 on the cell, each four
+  runs alternating (a) the present start and (b) `start_on_lowest_range`
+  (leading rest on 1 µA): first sample against 0.1 s later −33, −138 to −145
+  and −143 to −172 mV (a) versus −0.1 to −2.5 mV (b) on the 1, 10 and 100 mA
+  ranges; first-sample
+  current −0.7 and −6 to −8 µA (a) versus 0 (b). The range change to the
+  pulse range at 0 A, output ON, kept the output ON (status bit 128) in all 24
+  runs with no jump beyond the cell's drift (≤ 0.43 mV). Cost: the first
+  sample comes at 81 ms instead of 31 ms.
+- Side finding on the resistor: a 0 A rest sources −0.9 µA on the 100 mA range,
+  −0.08 µA on 10 mA, −0.03 µA on 1 µA (specification not checked).
+
+Evidence: [`k2460-2026-11-09-cell-rehearsal.json`](evidence/k2460-2026-11-09-cell-rehearsal.json),
+[`k2460-2026-11-09-b1-resistor-dip.json`](evidence/k2460-2026-11-09-b1-resistor-dip.json),
+[`k2460-2026-11-09-b1-cell-dip.json`](evidence/k2460-2026-11-09-b1-cell-dip.json).
+
 ## Resistor session: HIGH-Z after power-on, R4–R7, `rest_end_v`, 63 blocks (9 November 2026)
 
 Tier 1, 102.5 Ω, `bench/plan-2026-11-09.md`, runtime `seq-v2` (`de9aedd`). All

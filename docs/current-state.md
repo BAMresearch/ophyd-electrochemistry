@@ -1,6 +1,6 @@
 # Current project state
 
-Updated: 2026-11-09. Branch: `mvp-sprint`. Plan: [MVP sprint plan](mvp-plan.md).
+Updated: 2026-11-09 (evening). Branch: `mvp-sprint`. Plan: [MVP sprint plan](mvp-plan.md).
 
 Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 (October–2 November bench narrative) is preserved in commit `e04ebc6`, in
@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1313 tests pass, including 58 contract tests against a real RE Manager. Pure models/compiler, independent simulator,
+- **Offline:** 1315 tests pass, including 58 contract tests against a real RE Manager. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -68,8 +68,11 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 - Step limits are strict (a reading equal to the limit does not cut off);
   2460 equality is unverified and cannot be provoked on purpose.
-- Each step runs about 1 % long (R9); cause open. The voltage dip at output ON
-  (−10 to −323 mV on the cell) is unexplained.
+- Each step runs about 1 % long (R9); cause open.
+- Output-ON dip (up to −220 mV on the cell): explained 9 Nov. Closing the
+  output relay onto a cell while the source sits on a large current range
+  draws a brief current; starting on the 1 µA range removes it.
+  `SequencerProfile.start_on_lowest_range` does that but is **off by default**.
 - Follow does not refresh a run waiting for external START.
 - The explore reference stop rule compares across voltages.
 - Timed-hold runtime v17 is superseded; do not develop it. `runtime.tsp` uses
@@ -82,21 +85,22 @@ trigger wiring changes. Nothing else is pending on the resistor (9 Nov).
 
 ## Last known hardware state (reconfirm before use)
 
-9 Nov, about 10:25 UTC: K2460 serial `04686198`, firmware 1.7.16a, TSP,
-`169.254.113.151:5025`, runtime `seq-v2` installed, HIGH-Z, output OFF, 102.5 Ω
-resistor on the front terminals. Wiring: READY line 1, BUSY 2, MARKER 4, START 6
-(DB-9 pin 8). Coin cell `Richard-HC400-rev` not connected since 6 Nov (about
-48 µAh still sodiated, 1.79 V and falling when last read).
+9 Nov, 15:06 UTC: K2460 serial `04686198`, firmware 1.7.16a, TSP,
+`169.254.113.151:5025`, runtime `seq-v2` installed, HIGH-Z, output OFF, model
+idle, RE Manager stopped. Wiring: READY line 1, BUSY 2, MARKER 4, START 6 (DB-9
+pin 8). Coin cell `Richard-HC400-rev` on the front terminals, 0.976 V and rising
+(net −5 µAh today on top of about 48 µAh still sodiated since 6 Nov).
 
 ## Next steps
 
-1. Offline: output-ON and step-stretch analysis; Follow on external START;
-   explore reference stop rule.
+1. Offline: make `start_on_lowest_range` the default (Codex review first);
+   step-stretch analysis; Follow on external START; explore reference stop rule.
 2. K4/K5-style trains with `rest_end_v` on a healthy cell (tier 2, run sheet).
 3. Beamtime run sheet once the open questions are answered.
 
 ## Information still needed from the user
 
 `docs/beamtime-concept.md`: whether desodiation runs also end at the relaxed
-limit, the rate, cell count. Beamline trigger signal (level, polarity, connector).
+limit, and how the relaxed end treats the rest history (9 Nov rehearsal); the
+rate, cell count. Beamline trigger signal (level, polarity, connector).
 RC dummy values. A healthy cell: this one tests the method only.

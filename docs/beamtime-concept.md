@@ -216,6 +216,18 @@ means two sheet rows: 1 min rests until an earlier relaxed threshold, then
 voltage rose 75 mV between 1 and 5 min of rest, and a log-time fit to 5–60 s
 predicted 38 mV too low at 5 min.
 
+Rehearsal on the same cell (9 Nov, `docs/validation.md`): 1C, 1 s sodiation
+pulses with 1 min rests stopped at 0.748 V (threshold 0.75 V) after 31 pulses.
+The following row with 5 min rests then read 0.795 V after its first rest,
+rose to 0.838 V over 11 pulses and was still at 0.829 V after 24; it never
+approached 0.70 V. A 1 min check read 45–90 mV below the 5 min value, and the
+cell kept recovering from the 1 min series for more than an hour. So the
+relaxed voltage after 5 min depends on the rests before it, and the second row
+of the two-row design can run much longer than planned. **For Jonas:** define
+the end against a rest history (for example 5 min rests from the start of the
+last part of the run), or accept the 1 min reading with an offset measured on
+the real cells. One damaged high-resistance cell: the size will differ.
+
 Bench B2's K2 rate check measures the IR drop at 1–40C on the coin cell,
 staying away from the plating region. Those numbers decide the rate, the windows
 and the option.
