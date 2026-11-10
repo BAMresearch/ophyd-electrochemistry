@@ -37,14 +37,15 @@ confirmation for every run in it.
 Procedure:
 
 1. Power on the 2460; `oe-diagnose` (serial 04686198, TSP, output OFF).
-2. Start the RE Manager detached, so it survives the editor or terminal
-   closing:
+2. Start the RE Manager detached, in its own process group, so it survives
+   the editor or terminal closing and can be killed as a whole (step 6):
 
    ```sh
-   nohup qserver/start-k2460-re-manager.sh bench/b3/session-b3-p0.toml \
-     > ~/k2460-data/b3/re-manager.log 2>&1 &
+   qserver/start-k2460-re-manager.sh --detach bench/b3/session-b3-p0.toml
    qserver environment open      # sets HIGH-Z; then connect the cell
    ```
+
+   It logs to `~/k2460-data/re-manager.log`.
 
 3. Connect the cell: front terminals, four-wire, **HC on HI, Na on LO**.
 4. Queue and start:
@@ -59,12 +60,16 @@ Procedure:
    `hc-p0`.
 6. **Detach before taking the laptop away** (the 2460 runs `hc-p0` alone).
    Once `hc-p0` is running and the viewer shows the current and a falling
-   voltage, kill the RE Manager and its worker without cleanup, as in B2 Q8:
+   voltage, kill the RE Manager's whole process group (manager, API server,
+   worker) without cleanup, as in B2 Q8:
 
    ```sh
-   pkill -KILL -f bin/start-re-manager
-   pgrep -fl start-re-manager          # must print nothing
+   qserver/kill-re-manager.sh          # must end with "nothing left"
    ```
+
+   If it prints STILL RUNNING, do not disconnect; look first. (A plain
+   `pkill -f bin/start-re-manager` misses the spawned worker on macOS: Codex,
+   brief 12. The script was tested on the simulator session, 10 Nov.)
 
    No abort reaches the 2460, which keeps running with the output ON (front
    panel). The run file stays `incomplete` with the readings so far. Then

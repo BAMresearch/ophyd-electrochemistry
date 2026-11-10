@@ -52,6 +52,13 @@ def test_pulse_rows_end_on_the_relaxed_voltage(sheets):
     assert rows[1]["current_a"] == pytest.approx(6e-3) and rows[2]["current_a"] < 0
 
 
+def test_currents_beyond_a_session_are_refused_before_writing(sheets, tmp_path, capsys):
+    with pytest.raises(SystemExit):
+        sheets.main(["--capacity-mah", "1", "--rate-c", "40", "--out", str(tmp_path)])
+    assert "40 mA exceeds its session's 30 mA" in capsys.readouterr().err
+    assert not list(tmp_path.glob("*.xlsx"))
+
+
 def test_existing_sheets_are_not_overwritten(sheets, tmp_path):
     assert sheets.main(["--out", str(tmp_path)]) == 0
     with pytest.raises(Exception, match="exists"):

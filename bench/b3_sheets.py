@@ -176,6 +176,15 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--capacity-mah must be in 0.05..1 (the sessions' 100 uA and 30 mA)")
     if not 5 <= args.rate_c <= 40:
         parser.error("--rate-c must be in 5..40 (lower rates exceed the record budget)")
+    # Checked before writing either sheet (Codex brief 12): currents within each session.
+    c1 = args.capacity_mah * 1e-3
+    for name, current in (("b3-p0.xlsx", c1 / P0_C_RATE), ("b3-pulse.xlsx", args.rate_c * c1)):
+        i_max = load_session(HERE / SHEETS[name]).limits.i_max_abs
+        if current > i_max:
+            parser.error(
+                f"{name}: {current * 1e3:.3g} mA exceeds its session's {i_max * 1e3:g} mA "
+                "(lower --rate-c or --capacity-mah)"
+            )
     return write(args.out, args)
 
 
