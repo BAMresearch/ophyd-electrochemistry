@@ -40,7 +40,11 @@ qserver/start-k2460-re-manager.sh ~/sessions/hc01-sod.toml
 It starts redis if needed, prints the session's limits and runs the RE Manager
 in this terminal. Leave it open: it shows each run's progress. To keep it
 running when the terminal or editor closes, start it detached instead:
-`nohup qserver/start-k2460-re-manager.sh … > ~/k2460-data/re-manager.log 2>&1 &`.
+`qserver/start-k2460-re-manager.sh --detach S.toml` (log in
+`~/k2460-data/re-manager.log`). Stop it normally with `qserver manager stop`;
+`qserver/kill-re-manager.sh` instead kills it and its worker without cleanup,
+leaving a running sequence to finish on the 2460 alone (then archive in the
+morning, step 6).
 
 Terminal 2, for everything else:
 

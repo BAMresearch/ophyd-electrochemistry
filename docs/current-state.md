@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1311 tests pass, including 58 contract tests against a real RE Manager. Pure models/compiler, independent simulator,
+- **Offline:** 1320 tests pass, including 58 contract tests against a real RE Manager. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -76,7 +76,8 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 - Step limits are strict (a reading equal to the limit does not cut off);
   2460 equality is unverified and cannot be provoked on purpose.
 - Each step runs about 1 % long (R9); cause open.
-- Follow does not refresh a run waiting for external START.
+- Follow during an external-START wait: fixed offline 10 Nov (status line until
+  the first readings, then the plot); confirm on the next bench day.
 - The explore reference stop rule compares across voltages.
 - Timed-hold runtime v17 is superseded; do not develop it. `runtime.tsp` uses
   OFFMODE_NORMAL and must not touch a cell.
@@ -96,10 +97,13 @@ pin 8). Coin cell `Richard-HC400-rev` on the front terminals, 0.976 V and rising
 
 ## Next steps
 
-1. Offline: Codex review of the 1 µA start default and the confirmation change;
-   step-stretch analysis; Follow on external START; explore reference stop rule.
-2. K4/K5-style trains with `rest_end_v` on a healthy cell (tier 2, run sheet).
-3. Beamtime run sheet once the open questions are answered.
+1. Healthy cell: P0 overnight sodiation, then the draft beamtime pulses
+   (`bench/plan-b3.md`, sheets from `bench/b3_sheets.py`; tier 2, session files
+   in `bench/b3/` need the cell ID).
+2. Offline: Codex review of the day's code (brief 12); step-stretch analysis;
+   B3 dress-rehearsal matrix with the beamline trigger once its signal is known;
+   explore reference stop rule.
+3. Beamtime run sheet: regenerate `b3-pulse.xlsx` with Jonas's answers.
 
 ## Information still needed from the user
 

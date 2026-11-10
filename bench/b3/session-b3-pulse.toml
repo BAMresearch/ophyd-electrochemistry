@@ -1,0 +1,21 @@
+# B3 pulses: the beamtime protocol in small on a healthy HC/Na coin cell (tier 2).
+# Cell: ____________ (fill in before loading). Front terminals, four-wire,
+# HC on HI (force + sense), Na on LO. Window -3..3 V (Jonas, 6 Nov): sodiation
+# pulses may read below 0 V under load; the relaxed limit (rest_end_v) ends the
+# runs. A negative window does not catch reversed leads: read a positive OCV
+# (p-ocv) first. 30 mA covers 1 s pulses up to 40C on 0.6 mAh. Loading this
+# session confirms set-up and limits.
+# qserver/start-k2460-re-manager.sh bench/b3/session-b3-pulse.toml
+backend = "k2460"
+data_dir = "~/k2460-data/b3"
+resource = "TCPIP0::169.254.113.151::5025::SOCKET"
+serial = "04686198"
+terminals = "front"
+poll_period_s = 1.0
+
+[limits]
+v_min_abs = -3.0
+v_max_abs = 3.0
+i_max_abs = 0.03
+max_duration_s = 172800.0
+max_records = 1000000
