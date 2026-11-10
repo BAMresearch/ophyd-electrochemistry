@@ -164,6 +164,17 @@ Bench days (in order):
 | B2 | Resistor, then a HC/Na coin cell (no RC dummy yet; 4 Nov) | QueueServer and notebook flows on hardware incl. abort and crash recovery; 1 h soak; cell first contact, overnight sodiation (the day-before step), pulse runs at two SOCs, weekend reference cycle |
 | B3 | Real cell, beamline-like setup | Full dress rehearsal from the Excel sheet, including trigger wiring |
 
+## After the beamtime (proposed, not in this sprint)
+
+- **Units on input (Pint):** let run-sheet cells carry units ("−60 µA",
+  "5 mV", "1 min", perhaps "C/10" with a capacity) and convert them to SI floats
+  when the sheet is loaded. The models, compiler and runtime keep plain SI
+  floats; the run file already stores units per field. Removes the most likely
+  operator error, a value off by 10³.
+- **MOUSE integration** (on hold until the other users' needs are known): the
+  MOUSE QueueServer as leader drives the k2460 RE Manager over
+  `bluesky-queueserver-api`, with timing by the external START.
+
 ## Open questions for the user
 
 See `docs/current-state.md` → "Information needed".
