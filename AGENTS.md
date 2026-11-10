@@ -75,10 +75,34 @@ scripted runners, so a bench day is spent executing, not designing.
   a short entry in `docs/validation.md`.
 - Update user docs, quickstart notebook and changelog at milestones, not per edit.
 
+## Design contract
+
+- Before changing a component, read its row in the division-of-tasks table in
+  `docs/technical/index.md` and keep to it: timing and protection in the TSP
+  runtime, a pure compiler, a Flyer that knows nothing of Excel or the
+  QueueServer, settings in the run sheet (per run), the session file (per
+  environment) or `SequencerProfile` (per instrument, from bench evidence).
+- The runtime code and its focused tests are the executable contract. If they
+  disagree with the prose, reconcile them; do not add a third behaviour.
+- Reuse what exists (builders, `validate_rows` / `compile_for_2460`, the
+  simulator, the Lua mock of the 2460) instead of writing parallel code. Do not
+  take the archived revision-0.2 modules (`docs/archive/`) as the pattern for
+  new work.
+- When the intent of a request is unclear or seems to conflict with these
+  rules, ask instead of guessing.
+
 ## Development workflow
 
 - Use `uv` with the committed `uv.lock` and the commands in `docs/technical/development.md`
-  (Python 3.14). Run tests, ruff and mypy before reporting work done.
+  (Python 3.14). While iterating, run the focused tests for the touched
+  behaviour; before reporting work done or committing, run the full suite
+  (about a minute), ruff and mypy.
+- In-depth code changes get a Codex review at least once per coding day: a
+  review-only brief in `briefs/` covering that day's code commits; Claude
+  applies the findings. Changes to `tsp/sequencer.tsp` are reviewed before they
+  run on the instrument.
+- Keep progress updates and command output short: print counts, IDs, outcomes
+  and errors, not whole objects or files.
 - Inspect `git status` first; preserve unrelated user changes.
 - Work happens on the `mvp-sprint` branch. Leave pushes, merges and releases to
   the user. Do not bump versions manually; preserve the changelog

@@ -32,3 +32,4 @@ Rules that apply to every brief (Codex: follow these):
 | `09-review-blocks-and-relaxed-end.md` | Review only: 63-block limit, repeat table, `rest_end_v` (commits 1979525, 026c55a, c8f160f) | — |
 | `10-review-runtime-block-bound.md` | Review only: runtime `oe_seq_begin` 63-block bound (264c63c), before bench install | 09 |
 | `11-review-default-start-and-session-confirmation.md` | Review only: 1 µA start default and per-session confirmation (0b35831); docs accuracy | 10 |
+| `12-review-follow-enqueue-b3.md` | Review only: enqueue compile (0cc63c3), Follow status (7ca66c0), B3 sheets and overnight plan (92e4881) | 11 |
