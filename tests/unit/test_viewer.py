@@ -238,6 +238,48 @@ def test_follow_writer_thread_appends_and_finalizes(viewer_writer):
     assert "6 records" in bundles[-1]["layout"]["title"]["text"]
 
 
+def test_follow_shows_a_status_until_the_first_readings(tmp_path, monkeypatch):
+    # B2 Q6 (5 Nov): a plot first drawn empty never redrew in VS Code.
+    from ophyd_electrochemistry.sequences import SafetyLimits, Sampling, Sequence, rest_step
+    from ophyd_electrochemistry.sequences.run_file import READOUT_FIELDS, RunFile
+
+    clock = [0.0]
+    monkeypatch.setattr("ophyd_electrochemistry.sequences.viewer.time.monotonic", lambda: clock[0])
+    path = tmp_path / "ext.h5"
+    with RunFile.create(
+        path,
+        measurement_id="ext",
+        equipment={},
+        sequence=Sequence((rest_step(10, Sampling(0.1)),)),
+        limits=SafetyLimits(0, 4, 0.01, 10000, 100000),
+        start_mode="external",
+    ) as writer:
+        chunk = {key: np.zeros(2) for key in READOUT_FIELDS}
+        steps = iter([lambda: None, lambda: writer.append_readout(chunk), lambda: None])
+
+        def sleep(period):
+            clock[0] += period
+            next(steps)()
+            if clock[0] >= 6:
+                writer.finalize("completed")
+
+        display = Display()
+        assert follow(path, display=display, sleep=sleep, timeout_s=60) == "completed"
+    kinds = [(call[0], next(iter(call[1]))) for call in display.calls]
+    assert kinds == [
+        ("display", "text/plain"),
+        ("update", "text/plain"),
+        ("update", "text/plain"),
+        ("display", "application/vnd.plotly.v1+json"),
+        ("update", "application/vnd.plotly.v1+json"),
+    ]
+    assert display.calls[0][1]["text/plain"] == "ext: waiting for the external START (0 s)"
+    assert display.calls[1][1]["text/plain"] == "ext: waiting for the external START (2 s)"
+    assert display.calls[2][1]["text/plain"] == ""
+    final = display.calls[-1][1]["application/vnd.plotly.v1+json"]["layout"]["title"]["text"]
+    assert final == "ext — completed — 2 records"
+
+
 def test_follow_timeout_returns_incomplete(viewer_writer, monkeypatch):
     path, _, _ = viewer_writer
     clock = [0.0]

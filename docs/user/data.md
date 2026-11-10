@@ -61,7 +61,7 @@ measurement. Run it on the laptop that writes the data.
 | Section | What it shows | Settings |
 |---|---|---|
 | **Overview** | One row per run file, newest first: ID, sample, protocol, start (UTC), duration, readings, outcome, and counts of cutoffs, stops, aborts and errors. Rerun to refresh | `DATA_DIR` |
-| **Follow a run** | Voltage and current against time for the run being written, redrawn every 2 s until it ends. Stop it with the notebook's stop button (■); the measurement continues | `FOLLOW` = a file name, or `None` for the newest |
+| **Follow a run** | Voltage and current against time for the run being written, redrawn every 2 s until it ends; before the first readings (e.g. waiting for START) a status line instead. Stop it with the notebook's stop button (■); the measurement continues | `FOLLOW` = a file name, or `None` for the newest |
 | **One run at full view** | The run reading by reading, with cutoff, stop and abort markers and the events table | `X_AXIS` = `"time"` or `"charge"` |
 | **Compare runs** | Voltage of several runs overlaid, each starting at zero | `COMPARE` = file names (default: the two newest finished runs); `X_AXIS` |
 

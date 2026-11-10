@@ -201,6 +201,11 @@ def follow(
 
     A timeout or KeyboardInterrupt returns the last observed file outcome.
     An incomplete file can be live or left behind by a crashed writer.
+
+    While a run has no readings yet (waiting for an external START, or just
+    started), a one-line status is shown instead of a plot; the plot is created
+    with the first readings. On 5 Nov (B2 Q6) a plot first drawn empty never
+    redrew in VS Code although the loop kept reading.
     """
     period_s = positive(period_s, "period_s")
     integer(max_points, "max_points", minimum=2)
@@ -212,19 +217,37 @@ def follow(
         display = ipython_display
     render: Callable[..., Any] = display
 
-    deadline = None if timeout_s is None else time.monotonic() + timeout_s
-    handle = None
+    started = time.monotonic()
+    deadline = None if timeout_s is None else started + timeout_s
+    handle = status = None
     outcome = "incomplete"
     try:
         while True:
             data = read_run_file(path)
             outcome = str(data["run"]["outcome"])
-            fig = _run_figure(data, "time", max_points)
-            bundle = fig._repr_mimebundle_()
-            if handle is None:
-                handle = render(bundle, raw=True, display_id=True)
+            if outcome == "incomplete" and not len(data["readout"]["t_s"]):
+                waiting = (
+                    "the external START"
+                    if data["run"]["start_mode"] == "external"
+                    else "the first readings"
+                )
+                text = {
+                    "text/plain": f"{data['attrs']['measurement_id']}: waiting for {waiting} "
+                    f"({time.monotonic() - started:.0f} s)"
+                }
+                if status is None:
+                    status = render(text, raw=True, display_id=True)
+                else:
+                    status.update(text, raw=True)
             else:
-                handle.update(bundle, raw=True)
+                if status is not None:
+                    status.update({"text/plain": ""}, raw=True)
+                    status = None
+                bundle = _run_figure(data, "time", max_points)._repr_mimebundle_()
+                if handle is None:
+                    handle = render(bundle, raw=True, display_id=True)
+                else:
+                    handle.update(bundle, raw=True)
             if outcome != "incomplete":
                 return outcome
             remaining = period_s if deadline is None else deadline - time.monotonic()
