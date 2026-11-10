@@ -138,7 +138,8 @@ def test_quickstart_derives_runtime_bounds_for_longer_program(
 
 
 def test_guide_documents_separate_status_words() -> None:
-    guide = (Path(__file__).parents[2] / "docs" / "user-guide.md").read_text(encoding="utf-8")
+    guide_path = Path(__file__).parents[2] / "docs" / "archive" / "m6-user-guide.md"
+    guide = guide_path.read_text(encoding="utf-8")
     assert "ec_source_status" in guide
     assert "ec_measurement_status" in guide
     assert "ec_status_bits" not in guide

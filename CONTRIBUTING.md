@@ -36,11 +36,11 @@ tests must verify safety, timing, and data behavior rather than just repeat
 the implementation. Hardware tests are excluded by default and cannot pass by
 being skipped. No real DUT is used for initial commissioning.
 
-Review `docs/user-guide.md` and
-`notebooks/ophyd_electrochemistry_quickstart.ipynb` whenever a public request,
-measurement/status schema, device lifecycle, backend configuration, retained
-data rule or commissioned capability changes. The quickstart is executed by a
-contract test; update its explanation and visualization as well as its code.
+Review the user guide (`docs/user/`) and the notebooks `notebooks/k2460_run.ipynb`
+and `k2460_view.ipynb` whenever a run-sheet column, session setting, command,
+run-file field or operating procedure changes; both notebooks are executed by
+contract tests. The technical overview (`docs/technical/index.md`) describes
+the division of tasks between the components; update it when that changes.
 
 ## Transport and TSP changes
 
@@ -59,4 +59,4 @@ PyPI Trusted Publishing is configured but runs only after the repository variabl
 `PUBLISH_PYPI` is explicitly enabled and its environment/publisher is configured.
 Public distributions use the BSD 3-Clause license in `LICENSE.md`. Document
 uncommissioned capabilities rather than claiming hardware acceptance from CI.
-See [development and releases](docs/development.md) for setup and recovery details.
+See [development and releases](docs/technical/development.md) for setup and recovery details.

@@ -92,7 +92,7 @@ counts. The mean host-observed half-period was 0.49994 s, output remained OFF/0 
 and the steady-state monitor added no warning or error. Changing line 3 from
 trigger mode to digital mode added the expected trigger-setting-reset warning.
 This qualifies the generator's logical levels, not trigger capture or electrical
-timing. See the [generator-input evidence](evidence/k2460-2026-10-09-generator-digital-input.json).
+timing. See the [generator-input evidence](../evidence/k2460-2026-10-09-generator-digital-input.json).
 
 A subsequent rising-only trigger test held the same generator LOW before arm,
 then raised its front-panel DC setting after READY. The edge started and
@@ -104,7 +104,7 @@ line-3 voltage is unknown, but the possible exposure exceeds the Keithley's
 +5.25 V input limit despite the 1 kohm series resistor. The generator was
 physically disconnected. The run is invalid as trigger-acceptance evidence and
 line 3 required a conservative functional retest before further triggering. See the
-[rising-edge evidence](evidence/k2460-2026-10-09-m5-rising-generator-v12-evidence.json).
+[rising-edge evidence](../evidence/k2460-2026-10-09-m5-rising-generator-v12-evidence.json).
 
 The follow-up used a scope-verified 0.10 Hz square wave of approximately
 0.01–4.60 V through the same 1 kohm path. With the SMU output off, line 3
@@ -116,5 +116,5 @@ afterward let the input float HIGH and set the otherwise historical overrun flag
 but this occurred after the clean terminal snapshot. This is a functional
 post-incident check and a clean single-run observation, not proof against latent
 damage, READY-boundary races, stale/repeated START, or electrical timing. See the
-[clean rising-edge evidence](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-evidence.json)
-and [archive](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-archive.json).
+[clean rising-edge evidence](../evidence/k2460-2026-10-09-m5-rising-square-clean-v12-evidence.json)
+and [archive](../evidence/k2460-2026-10-09-m5-rising-square-clean-v12-archive.json).

@@ -1,4 +1,16 @@
-# Development, uv and semantic releases
+# Development and releases
+
+Day-to-day rules for this repository (see also `AGENTS.md`):
+
+- Work on the `mvp-sprint` branch; pushes, merges and releases are left to the
+  maintainer. Inspect `git status` first and keep unrelated changes.
+- Run the tests, ruff and mypy before reporting work as done
+  ([Testing](testing.md)).
+- Any change to `tsp/sequencer.tsp` bumps `SEQUENCER_BUILD` and needs a review
+  before it runs on the instrument.
+- Bench results go into one evidence file per test matrix in `docs/evidence/`
+  and a short entry in `docs/validation.md`; `docs/current-state.md` stays a
+  short checkpoint.
 
 ## Reproducible environments
 
@@ -38,30 +50,6 @@ preserve that selection. Changes to the dynamic package version also require
 
 The changelog's `<!-- version list -->` marker is required by the configured
 semantic-release update template. Preserve it so new release sections are inserted.
-
-## RunEngine abort-test teardown message
-
-Bluesky 1.14.6 can report `Future exception was never retrieved` after the
-abort/retention test passes. The expected `AcquisitionAborted` is propagated as
-`FailedStatus`, but a second internal Future carrying that exception was not
-retrieved. This was reproduced locally on Python 3.12, so Python 3.14 is not the
-cause. The [upstream fix](https://github.com/bluesky/bluesky/pull/1972) shipped
-in Bluesky 1.15.0 and is present in the project's new locked version, 1.15.1.
-
-After unpacking the dependency-fix overlay, run:
-
-```bash
-uv sync --locked
-uv run --locked pytest tests/contract
-```
-
-The dependency range was then `bluesky>=1.15.1,<1.16`; it is now
-`bluesky>=1.16,<1.17` (full suite passed on 1.16.0, 3 Nov 2026). The abort test must still
-raise `FailedStatus`, emit a failed Stop document and preserve its partial data;
-only the duplicate unretrieved-Future diagnostic disappears. The new regression
-test checks a subprocess through process exit, with asyncio debugging enabled.
-It does not suppress logging or patch RunEngine internals.
-
 
 ## Reference implementation and adaptations
 
@@ -130,11 +118,3 @@ owner `BAMresearch`, repository
 `ophyd-electrochemistry`, workflow `ci.yml`, environment `pypi`. Then set repository
 variable `PUBLISH_PYPI=true`. No long-lived PyPI credential is required. Until
 then tests, docs, build, release preparation and GitHub versioning can run.
-
-## Applying chat updates
-
-Unpack the changed-files archive **in the repository root**. Paths begin with
-`README.md`, `pyproject.toml`, `docs/`, and `.github/`; there is no enclosing
-repository directory, `.git`, environment, or generated distribution inside it.
-Review `git diff` and new files, run the documented checks, then commit/upload.
-Use Git/VS Code to commit dot-prefixed workflow/configuration files as well.

@@ -509,4 +509,4 @@ and reviewed hardware evidence.
 
 The installed v17 timed candidate stopped its first energized commissioning hold
 with `cadence_overrun` after one of ten readings. It is not accepted for timed
-holds; see [current state](current-state.md) before further hardware work.
+holds; see [current state](../current-state.md) before further hardware work.

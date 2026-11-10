@@ -1,8 +1,10 @@
-# Sequencer runtime design (O5)
+# Sequencer runtime
 
-Status: design, 3 Nov 2026. Based on bench evidence B0, E1–E4 and the
-preliminary B1 checks T1–T5 of 3 Nov (`docs/validation.md`). Items still marked
-**[B1]** need the scope, the signal generator or the RC dummy cell.
+How a `Sequence` becomes a trigger model on the 2460. Written as the design on
+3 Nov 2026 (bench evidence B0, E1–E4, T1–T5) and kept current since: the
+runtime ran on the 100 Ω resistor (B1, 5 and 9 Nov) and on a coin cell (B2,
+5–9 Nov). Bench details are in [the validation record](../validation.md);
+open points are listed in §13.
 
 ## 1. Goal and constraints
 
@@ -125,13 +127,24 @@ Around the steps:
   unconditional branch unless something branches there.
 
 Budget: the 2460 (firmware 1.7.16a) accepts block numbers 1–63 only (event
-1130 on 5 Nov; the 255 assumed earlier was never tested). A single-phase step
+1130 on 5 Nov; a 63-block program ran on 9 Nov, R14). A single-phase step
 costs about 7 blocks, a two-phase step about 14 (rest and pulse longer than the
 fast window). The bipolar pulse sequence with 1 s pulses and 4 s rests at a
 0.5 s fast window needs 83 blocks and is rejected; a 1 s fast window with 1 s
-rests needs 59. The `pulse_train` with 60 s rests needs 49, CC-CV cycling 57.
-The compiler still allows 255 (**to fix**: the profile, the defaults and the
-template rows); until then an oversized program fails at prepare, output OFF.
+rests needs 59. The `pulse_train` with 60 s rests needs 49 (57 with
+`rest_end_v`), CC-CV cycling 57. The limit is enforced three times:
+`SequencerProfile.max_blocks` (63) in the compiler, a recheck in the backend
+before upload, and `oe_seq_begin` in the runtime (`n_blocks` in 1..63).
+
+**First step on the lowest range** (`SequencerProfile.start_on_lowest_range`,
+default since 10 Nov). Switching the output ON closes the relay onto the cell;
+on a large current range the source then draws a brief current, seen as a dip
+of up to −220 mV in the first sample on a cell (9 Nov, DC1–DC3). When the
+sequence starts with a 0 A rest outside the repeat block, that rest gets its
+own source entry on the 1 µA range; the range changes to the shared range at
+the next step, with the output staying ON. This removed the dip (−0.1 to
+−2.5 mV) at the cost of about 50 ms on the first sample, and costs no extra
+block.
 
 ## 6. Timing
 
@@ -207,7 +220,7 @@ takes `DELAY d → MEASURE → limit/counter blocks` per sample:
   run, never cleared while it holds unacknowledged records.
 - `oe_seq_read(first, count)` prints one line via `printbuffer` with, per
   record: seconds, fractional seconds, reading, source value, status, source
-  status; at most 500 records (~36 KB) per call. `format.asciiprecision` is set
+  status; the backend reads at most 250 records (~28 KB) per call. `format.asciiprecision` is set
   to 15 so the host sees the values the limit blocks compared.
 - `poll(max_records)` loops `oe_seq_read` up to `max_records`, and also reads
   `trigger.model.state()` and new event-log entries (instrument errors become
@@ -243,7 +256,7 @@ takes `DELAY d → MEASURE → limit/counter blocks` per sample:
 - Every line the host sends is a call to a packaged runtime function with
   numeric/whitelisted arguments, < 900 characters. No user TSP.
 
-## 11. Runtime API (`tsp/sequencer.tsp`, ABI `oe-k2460-seq-v1`)
+## 11. Runtime API (`tsp/sequencer.tsp`, ABI `oe-k2460-seq-v1`, build `seq-v2`)
 
 | Function | Does |
 |---|---|
@@ -275,32 +288,23 @@ check, allow-listed in `transport.load_runtime`.
   implementing `SequenceBackend`; tests against a fake transport that models
   the runtime's replies, including a stale-ON output reading and a timed-out
   query.
-- Notebook: `BACKEND = "k2460"` selects it; `require_confirmation` already gates
-  cell runs.
+- Notebook and QueueServer: `BACKEND = "k2460"` / `backend = "k2460"` select it.
 
-## 13. B1 verification (resistor, then RC dummy cell)
+## 13. Bench status
 
-Done on 3 Nov (T1–T5, S1, S2): reset block and counter re-entry, ON-while-on,
-timing table and loop overhead, `eventlog.post` and log-event timestamps, live
-polling at 200 Hz, stale-ON reproduction, a 53-block prototype of the step
-layout with markers and busy on the scope, external START from the generator.
-Remaining, with the full runtime:
+Verified on the 2460 (resistor and coin cell, 3–9 Nov): reset block and counter
+re-entry, timing table and loop overhead, `eventlog.post` clock mapping, live
+polling, stale-ON handling, markers and BUSY on the scope, external START from
+a generator, cutoffs NEXT and STOP, abort mid-run and host kill (model
+completes, output OFF, records archived), the 63-block limit, `rest_end_v`, and
+the lowest-range start. Open:
 
-1. A counter left part-way by a cutoff inside the repeat block (reset block).
-2. Nominal vs actual step durations over a 5-minute pulse run (with the
-   `t_entry / n` delay correction).
-3. Live poll for 5 minutes at 200 Hz through the backend; host CPU and lag.
-4. Abort mid-run; host-kill mid-run (model completes, output OFF).
-5. RC dummy cell: cutoffs, CV taper, marker lag with a capacitive load.
-6. Reading time on the 7 V measure range (the timing table is from the 2 V
-   range); update `SequencerProfile.reading_s` if it differs.
-7. Backend assumptions: upload logs no warnings (prepare fails on any error or
-   warning event); `trigger.model.state()` reports block 2 while waiting for
-   START (else waiting shows as RUNNING); log-event text `TM path #1 block #N
-   logged: OE_T0`; `oe_seq_status` numbers parse.
-8. RC dummy: CC to cutoff (NEXT and STOP), CV taper cutoff, HIGH-Z off state at
-   a STOP (voltage after output OFF recorded by a separate DMM or by the next
-   run's first reading).
+1. Each step runs about 1 % long (R9: 303.15 s for 300 s nominal); cause not
+   yet analysed.
+2. Whether the 2460 cuts off on a reading exactly equal to a limit; the
+   software assumes not (strict limits in compiler, replay and simulator).
+3. RC dummy cell (C1–C2), not run: cutoffs, CV taper and marker lag with a
+   known capacitive load.
 
 ## 14. Decisions (user, 3 Nov)
 

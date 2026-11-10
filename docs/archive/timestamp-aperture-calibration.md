@@ -83,8 +83,8 @@ The user identifies the scope as **Agilent 54831B** and the available 1:10
 voltage probe as **P060-S**. Channels are CH1 READY, CH2 BUSY, CH3 generator
 output **before** the 1 kohm START resistor, with CH4 unassigned. DUT LO is
 connected only to Keithley FORCE LO/SENSE LO, with no chassis/earth bond reported.
-The [original equipment report](evidence/k2460-2026-11-02-scope-equipment-report.json)
-and [wiring clarification](evidence/k2460-2026-11-02-scope-wiring-clarification.json)
+The [original equipment report](../evidence/k2460-2026-11-02-scope-equipment-report.json)
+and [wiring clarification](../evidence/k2460-2026-11-02-scope-wiring-clarification.json)
 are preserved separately.
 
 This changes the interpretation of the previously reported START delays:

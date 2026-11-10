@@ -169,7 +169,7 @@ nominal 100 ohm front-terminal four-wire load, a +1 mA, 0.2 V-limit, 250 ms hold
 reported WAITING_START/OFF/READY at block 5, RUNNING/ON/BUSY at block 9,
 RUNNING/OFF/BUSY at block 10, and COMPLETE/OFF with both flags low at block 12.
 Warning/error counts remained 2/2. Recovery confirmed IDLE/OFF/0 A. See the
-[v10 external-START evidence](evidence/k2460-2026-10-09-m4-external-start-v10.json).
+[v10 external-START evidence](../evidence/k2460-2026-10-09-m4-external-start-v10.json).
 
 This proves one manually applied external-edge state path and the single-shot
 successful-path exit. It does not measure electrical current, voltage, duration,
@@ -185,7 +185,7 @@ content/checksum and an independent session confirmed IDLE/OFF/0 A. The raw
 timestamps are relative to the first record rather than actual START, so the
 proof does not yet satisfy the shared M5 timestamp contract or promote G03/G04.
 The [M5 guide](m5-data.md) and
-[evidence](evidence/k2460-2026-10-09-m5-buffer-proof.json) record the exact
+[evidence](../evidence/k2460-2026-10-09-m5-buffer-proof.json) record the exact
 boundary.
 
 Runtime build v6 removes only v5's artificial eight-reading and 16-record
@@ -241,4 +241,4 @@ candidate, not an operational battery runtime. See the
 
 The installed v17 timed candidate stopped its first energized commissioning hold
 with `cadence_overrun` after one of ten readings. It is not accepted for timed
-holds; see [current state](current-state.md) before further hardware work.
+holds; see [current state](../current-state.md) before further hardware work.

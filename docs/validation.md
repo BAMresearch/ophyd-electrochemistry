@@ -395,7 +395,7 @@ The proposed first energized case is +5 mA / 1 V compliance / 1 s / 0.1 s spacin
 0.5 V and 2.5 mW, not measured accuracy. The user selected specified duration/sample
 spacing, requested a stronger CH4 signal and confirmed 100 ohm / 1 W; a separate
 scoped run/setup question is pending. All later gates remain subject to the
-[timed-hold acceptance matrix](timed-hold-commissioning.md).
+[timed-hold acceptance matrix](archive/timed-hold-commissioning.md).
 
 ## Scope observation-node clarification
 
@@ -573,7 +573,7 @@ simulator example completed 635 synthetic records with schema v3 and
 `hardware_ready=False`. Packaged runtime SHA-256 stayed
 `c4c40686bf2016f5c55c820b5d0bd34f78915dd10e6a77823d0a9cad245c6e82`.
 
-The [calibration design](timestamp-aperture-calibration.md) specifies independent
+The [calibration design](archive/timestamp-aperture-calibration.md) specifies independent
 electrical phase scans, per-field analysis and evidence rejection criteria.
 The existing constant-resistor setup cannot identify either aperture from
 START/BUSY alone. Exact scope/channel/probe details, safe electrical coupling
@@ -1475,7 +1475,7 @@ The official datasheet, official 2460 pulse example, Tektronix's maintained
 command API, Bluesky hardware protocols, ophyd architecture, QueueServer
 introduction, and PyVISA resource documentation were reviewed. The full 2460
 reference PDF was unavailable to the tools used; exact runtime/manual checks
-remain a hardware implementation prerequisite. See [assumptions](assumptions.md).
+remain a hardware implementation prerequisite. See [assumptions](archive/assumptions.md).
 
 ## Local validation environment
 

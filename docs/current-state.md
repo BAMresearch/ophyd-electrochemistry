@@ -1,6 +1,6 @@
 # Current project state
 
-Updated: 2026-11-09 (evening). Branch: `mvp-sprint`. Plan: [MVP sprint plan](mvp-plan.md).
+Updated: 2026-11-10. Branch: `mvp-sprint`. Plan: [MVP sprint plan](mvp-plan.md).
 
 Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 (October–2 November bench narrative) is preserved in commit `e04ebc6`, in
@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1315 tests pass, including 58 contract tests against a real RE Manager. Pure models/compiler, independent simulator,
+- **Offline:** 1311 tests pass, including 58 contract tests against a real RE Manager. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -31,7 +31,9 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 - **Sequencer compiler/replay (brief 07):** pure config/block/sample compilation,
   numeric runtime uploads, calibrated delay selection and incremental cutoff /
   readback replay. Golden S1 layouts and noisy simulator comparisons pass;
-  runtime requires positive CV taper.
+  runtime requires positive CV taper. A leading 0 A rest starts on the 1 µA
+  range (`start_on_lowest_range`, default since 10 Nov): removes the output-ON
+  dip seen on cells (up to −220 mV, 9 Nov DC1–DC3).
 - **Sequencer hardware backend (O5, offline):** `Keithley2460SequenceBackend`
   installs the runtime, uploads under `pcall` (runtime errors come back as
   `ERR` lines), maps the clock by `eventlog.post` pings, polls status, event log
@@ -41,12 +43,13 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 - **Per-run notebook (O6):** Excel selection, request summary, synthetic preview,
   live plot and saved-file review; clean copies via `oe-new-run`
   with explicit session limits. `BACKEND = "k2460"` selects the sequencer
-  backend (confirmation gate before any I/O; ran on the 2460 in Q10). Save the
+  backend (ran on the 2460 in Q10); its settings cell is the run's environment. Save the
   executed notebook beside its HDF5 file.
 - **QueueServer (O7):** `qserver/startup` + session TOML (`OE_SESSION`): RE
   Manager worker owns the instrument; queue items are run-sheet rows with the
-  sheet's SHA-256 (refused if the sheet changed); `oe-enqueue` asks for a
-  typed confirmation per hardware run (`oe-validate` checks a sheet first); only
+  sheet's SHA-256 (refused if the sheet changed); `oe-enqueue` validates and
+  queues without a per-run confirmation: loading the session is the
+  confirmation (10 Nov; `oe-validate` checks a sheet first); only
   `run_from_sheet`, `recover_sequencer` and `archive_retained` permitted.
   `qserver/start-k2460-re-manager.sh` starts it; `environment open` sets HIGH-Z.
   Ran on the 2460 in B2, including host-crash recovery and a 300k-record soak.
@@ -61,6 +64,10 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   and overlays voltage against time or signed charge. Bin-extrema display
   sampling preserves short pulses; corrupt files stay visible in the index.
   Tested offline with completed, cutoff, aborted and incomplete runs.
+- **Documentation (10 Nov):** README introduction; `docs/user/` (quickstart,
+  run sheets, sessions, beamtime procedure, data, reference) and
+  `docs/technical/` (overview and division of tasks, sequencer, simulator,
+  testing, development); pre-sprint design in `docs/archive/`.
 - **Exploration runner:** `bench/explore.py` checks each row against the limits
   in a `bench/` page, runs it and applies stop rules (59 runs on 6 Nov).
 
@@ -69,10 +76,6 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 - Step limits are strict (a reading equal to the limit does not cut off);
   2460 equality is unverified and cannot be provoked on purpose.
 - Each step runs about 1 % long (R9); cause open.
-- Output-ON dip (up to −220 mV on the cell): explained 9 Nov. Closing the
-  output relay onto a cell while the source sits on a large current range
-  draws a brief current; starting on the 1 µA range removes it.
-  `SequencerProfile.start_on_lowest_range` does that but is **off by default**.
 - Follow does not refresh a run waiting for external START.
 - The explore reference stop rule compares across voltages.
 - Timed-hold runtime v17 is superseded; do not develop it. `runtime.tsp` uses
@@ -93,7 +96,7 @@ pin 8). Coin cell `Richard-HC400-rev` on the front terminals, 0.976 V and rising
 
 ## Next steps
 
-1. Offline: make `start_on_lowest_range` the default (Codex review first);
+1. Offline: Codex review of the 1 µA start default and the confirmation change;
    step-stretch analysis; Follow on external START; explore reference stop rule.
 2. K4/K5-style trains with `rest_end_v` on a healthy cell (tier 2, run sheet).
 3. Beamtime run sheet once the open questions are answered.

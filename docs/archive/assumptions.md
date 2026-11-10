@@ -46,7 +46,7 @@ characterization, measured electrical abort latency, or electrical OFF property
 has yet been accepted.
 
 The initial local API check used Bluesky 1.14.6 and ophyd 1.11.2. The later
-[RunEngine teardown fix](development.md#runengine-abort-test-teardown-message)
+[RunEngine teardown fix](../technical/development.md)
 updates the runtime dependency/lock to Bluesky 1.15.1 and revalidates the contract
 tests. No claim is made that the conference's complete leader/follower workflow
 was reproduced.
@@ -63,7 +63,7 @@ was reproduced.
 - **S8:** [2460 reference manual landing page](https://www.tek.com/en/keithley-source-measure-units/keithley-smu-2400-graphical-series-sourcemeter-manual-8).
 - **S9:** [Tektronix tm_devices upstream](https://github.com/tektronix/tm_devices), maintained command documentation.
 - **S10:** [Tektronix function-generation technical brief](https://www.tek.com/en/documents/technical-brief/equipping-source-measure-units-with-function-generation-using-tsp-technology), current/voltage configuration-list waveforms and arbitrary-waveform app for the 2460. Reviewed 2026-10-02; used as architecture evidence, not timing, capacity or safe-abort acceptance.
-- **S11:** [Tektronix Model 2460 Reference Manual Rev. C](https://download.tek.com/manual/2460-901-01C_Sept_2019_Ref.pdf), sections 2 and 15; target-unit results are retained in [connectivity evidence](evidence/k2460-2026-10-05-connectivity.json).
+- **S11:** [Tektronix Model 2460 Reference Manual Rev. C](https://download.tek.com/manual/2460-901-01C_Sept_2019_Ref.pdf), sections 2 and 15; target-unit results are retained in [connectivity evidence](../evidence/k2460-2026-10-05-connectivity.json).
 
 Keep these sources linked, not copied into the repository. Source review date
 is distinct from hardware commissioning date.

@@ -62,7 +62,7 @@ explicit PyVISA resources using pyvisa-py:
 
 Both returned serial `04686198`, firmware `1.7.16a`, command language `SCPI`, and
 source-output state `0` (OFF).
-The exact JSON is retained in [the connectivity evidence](evidence/k2460-2026-10-05-connectivity.json),
+The exact JSON is retained in [the connectivity evidence](../evidence/k2460-2026-10-05-connectivity.json),
 and the procedure is described in the [M3 guide](m3-transport.md) and repository
 notebook `notebooks/keithley_2460_connectivity.ipynb`.
 
@@ -89,7 +89,7 @@ one reading at 1 NPLC, and disabled filtering/relative offset. It did not send
 The output was switched off after each point. Cleanup programmed 0 A and
 confirmed output OFF; a new, query-only session independently returned output
 state `0`, front terminals, current-source mode, and programmed current `0`.
-The exact result is retained in [the resistor smoke evidence](evidence/k2460-2026-10-05-resistor-smoke.json),
+The exact result is retained in [the resistor smoke evidence](../evidence/k2460-2026-10-05-resistor-smoke.json),
 and the guarded reproduction procedure is in
 `notebooks/keithley_2460_resistor_smoke.ipynb`.
 
@@ -112,7 +112,7 @@ gave a slope of 102.502310 ohm, an intercept of −33.020 µV,
 R-squared of 0.999999999914, and a maximum absolute residual of 1.252 µV. An
 independent session again confirmed output `0` and programmed current `0`.
 Full per-reading data are retained in
-[the bipolar sweep evidence](evidence/k2460-2026-10-05-resistor-bipolar-sweep.json).
+[the bipolar sweep evidence](../evidence/k2460-2026-10-05-resistor-bipolar-sweep.json).
 The guarded reproduction is
 `notebooks/keithley_2460_resistor_bipolar_sweep.ipynb`.
 These results strengthen polarity, pairing, linearity, and repeatability
@@ -140,7 +140,7 @@ retrieval, deliberate host-side exception, cleanup, and temporary-buffer
 deletion. A new session independently confirmed output OFF, front terminals,
 programmed current 0 A, and the unchanged error count.
 
-The complete record is [the buffer/cleanup evidence](evidence/k2460-2026-10-05-buffer-cleanup.json).
+The complete record is [the buffer/cleanup evidence](../evidence/k2460-2026-10-05-buffer-cleanup.json).
 This is useful G03/G05 and ordinary exception-cleanup evidence, but it does not
 test process death, Ethernet loss, retrieval interruption, abort starvation, or
 instrument-local watchdog behavior. No hardware gate is promoted to PASS.
@@ -160,7 +160,7 @@ Warnings and errors did not increase. Recovery and a new session independently
 confirmed IDLE, output `smu.OFF`, programmed current 0 A, and retained extent
 1–3. After the evidence was archived, explicit discard emptied the buffer and
 again confirmed IDLE/OFF/0 A. See the
-[complete M5 proof](evidence/k2460-2026-10-09-m5-buffer-proof.json).
+[complete M5 proof](../evidence/k2460-2026-10-09-m5-buffer-proof.json).
 
 The load is uncalibrated and buffer timestamps are relative to the first reading,
 not an observed actual START. Capacity/no-wrap limits, calibrated accuracy,
@@ -174,8 +174,8 @@ checksum after reload, and exclusive-create output prevents silent replacement
 of an earlier archive. Mean V/I was 102.5092 ohm; warning/error counts did not
 change. An independent session confirmed all eight records retained with
 IDLE/OFF/0 A before reason-bearing discard emptied the buffer. The
-[run evidence](evidence/k2460-2026-10-09-m5-max8-evidence.json) links the
-[verifiable archive](evidence/k2460-2026-10-09-m5-max8-archive.json). This reaches
+[run evidence](../evidence/k2460-2026-10-09-m5-max8-evidence.json) links the
+[verifiable archive](../evidence/k2460-2026-10-09-m5-max8-archive.json). This reaches
 the deliberately configured eight-reading runtime limit, not the 16-record
 buffer capacity, and does not test wrap behavior.
 
@@ -185,7 +185,7 @@ records while the two 100,000-record default buffers and 16-record proof buffer
 remained allocated. The empty temporary buffer was immediately deleted and
 garbage-collected; warning/error counts and all pre-existing buffers were
 unchanged, and the source remained IDLE/OFF/0 A. The
-[capacity record](evidence/k2460-2026-10-09-buffer-capacity-probe.json) proves
+[capacity record](../evidence/k2460-2026-10-09-buffer-capacity-probe.json) proves
 allocation under this configuration, not filling, no-wrap behavior, sustained
 acquisition, or multi-megabyte transfer.
 
@@ -196,8 +196,8 @@ identical content and checksum. The canonical archive reloaded successfully;
 an independent session then confirmed all records retained at IDLE/OFF/0 A
 before explicit discard left an empty 17-record buffer. Mean V/I was 102.5087
 ohm and warning/error counts stayed at 5/6. See the
-[v6 evidence](evidence/k2460-2026-10-09-m5-v6-exact-buffer-evidence.json) and
-[verifiable archive](evidence/k2460-2026-10-09-m5-v6-exact-buffer-archive.json).
+[v6 evidence](../evidence/k2460-2026-10-09-m5-v6-exact-buffer-evidence.json) and
+[verifiable archive](../evidence/k2460-2026-10-09-m5-v6-exact-buffer-archive.json).
 This adds exact-allocation, small fill-once and bounded-transfer evidence; it
 does not promote G03/G04 or validate the configured 250,000-record host ceiling.
 
@@ -215,8 +215,8 @@ records retained. Explicit discard after archive verification left the buffer
 empty and the source safe. The two extra pre-existing errors came from the
 immediately preceding v11 attempt, whose exact-capacity check did not account
 for the 2460's 16-record minimum; it retained no readings and ended output-off.
-See the [v12 run evidence](evidence/k2460-2026-10-09-m5-external-start-v12-evidence.json)
-and [raw archive](evidence/k2460-2026-10-09-m5-external-start-v12-archive.json).
+See the [v12 run evidence](../evidence/k2460-2026-10-09-m5-external-start-v12-evidence.json)
+and [raw archive](../evidence/k2460-2026-10-09-m5-external-start-v12-archive.json).
 No independent edge-to-aperture or electrical timing trace was captured, so
 G01/G03/G04/G06 remain **NOT RUN**.
 
@@ -226,8 +226,8 @@ retrying the second chunk returned identical content. Timestamps increased
 strictly across 10.4123 s with a 40.8326 ms mean interval. Recovery and a fresh
 session retained the complete buffer at IDLE/OFF/0 A, and verified archival was
 followed by explicit discard. No warning or error was added. See the
-[scale evidence](evidence/k2460-2026-10-09-m5-external-start-256-v12-evidence.json)
-and [archive](evidence/k2460-2026-10-09-m5-external-start-256-v12-archive.json).
+[scale evidence](../evidence/k2460-2026-10-09-m5-external-start-256-v12-evidence.json)
+and [archive](../evidence/k2460-2026-10-09-m5-external-start-256-v12-archive.json).
 
 The runtime reported START overrun during digitization. This did not start a
 second acquisition or change the exact 256-record result, but it means one or
@@ -248,9 +248,9 @@ Warning/error counts stayed zero. Recovery retained all records at IDLE/OFF/0 A;
 after checked archival and explicit authorization, discard emptied the buffer.
 A final fresh session confirmed v14 IDLE, trigger model idle, output OFF,
 programmed level 0 A and an empty 10,000-record-capacity buffer. See the
-[archive](evidence/k2460-2026-10-12-capacity-10000-archive.json),
-[summary](evidence/k2460-2026-10-12-capacity-10000-evidence.json), and
-[discard record](evidence/k2460-2026-10-12-capacity-10000-discard.json).
+[archive](../evidence/k2460-2026-10-12-capacity-10000-archive.json),
+[summary](../evidence/k2460-2026-10-12-capacity-10000-evidence.json), and
+[discard record](../evidence/k2460-2026-10-12-capacity-10000-discard.json).
 This adds substantial partial G03/G04/G05 evidence but does not establish the
 250,000-record host ceiling, calibrated accuracy, interrupted-transfer behavior,
 or external-START/aperture/clock timing. No complete gate is promoted.
@@ -264,7 +264,7 @@ configured as an ordinary digital input and the SMU IDLE/OFF/0 A, the Keithley
 recognized 16 alternating transitions over eight seconds. HIGH and LOW sample
 counts were 159 and 157, and the mean host-observed half-period was 0.49994 s.
 The steady-state monitor added no warning or error. See the
-[generator-input evidence](evidence/k2460-2026-10-09-generator-digital-input.json).
+[generator-input evidence](../evidence/k2460-2026-10-09-generator-digital-input.json).
 This qualifies logic-level recognition only; trigger capture, edge integrity,
 and timing remain open under G01.
 
@@ -282,8 +282,8 @@ resistor limited current but does not establish compliance with the voltage
 limit. The generator was physically disconnected. This run is invalid as
 trigger-acceptance evidence, line 3 required a conservative functional retest,
 and G01 remains **NOT RUN**. See the
-[rising-edge evidence](evidence/k2460-2026-10-09-m5-rising-generator-v12-evidence.json)
-and [archive](evidence/k2460-2026-10-09-m5-rising-generator-v12-archive.json).
+[rising-edge evidence](../evidence/k2460-2026-10-09-m5-rising-generator-v12-evidence.json)
+and [archive](../evidence/k2460-2026-10-09-m5-rising-generator-v12-archive.json).
 
 The functional retest used a scope-verified 0.10 Hz square wave of approximately
 0.01–4.60 V through the 1 kohm path. Line 3 recognized successive LOW, HIGH and
@@ -297,20 +297,20 @@ disconnect let the input float HIGH. This establishes present basic line
 function and one clean rising-start path, but cannot exclude latent damage or
 cover G01's READY-race, held/stale/repeated START and independent timing-trace
 requirements. G01 therefore remains **NOT RUN**. See the
-[clean-run evidence](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-evidence.json)
-and [checked archive](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-archive.json).
+[clean-run evidence](../evidence/k2460-2026-10-09-m5-rising-square-clean-v12-evidence.json)
+and [checked archive](../evidence/k2460-2026-10-09-m5-rising-square-clean-v12-archive.json).
 
 ## M4 runtime installation, immediate hold, and programmatic abort — PASS within narrow scope
 
 The exact-artifact loader, packaged finite-current-hold TSP runtime, typed host
 adapter, and guarded commissioning notebook are implemented. After the retained
-[SCPI preflight](evidence/k2460-2026-10-05-m4-preflight.json), the user selected
+[SCPI preflight](../evidence/k2460-2026-10-05-m4-preflight.json), the user selected
 TSP at the front panel and rebooted. Serial 04686198 then compiled, loaded, and
 initialized ABI `oe-k2460-m4-hold-v1` from volatile memory. The typed state was
 `idle`, the trigger model was empty, and output was `smu.OFF`. Reuse verified the
 same ABI/build without rerunning the script top level. No hold was prepared or
 armed, and no source output was enabled. The complete record is
-[M4 runtime-install evidence](evidence/k2460-2026-10-05-m4-runtime-install.json).
+[M4 runtime-install evidence](../evidence/k2460-2026-10-05-m4-runtime-install.json).
 
 Commissioning exposed three firmware-1.7.16a constraints now enforced by the
 loader: omit blank messages within `loadscript`, keep the instrument-side script
@@ -333,7 +333,7 @@ read back. The runtime now reports its software-tracked commanded levels. A
 second identical hold completed with warning and error counts unchanged; two
 informational events were added. Final independent queries confirmed IDLE,
 `smu.OFF`, and 0 A. The full record is
-[M4 immediate-hold evidence](evidence/k2460-2026-10-05-m4-immediate-hold.json).
+[M4 immediate-hold evidence](../evidence/k2460-2026-10-05-m4-immediate-hold.json).
 
 This proves the narrow local immediate TriggerFlow path, not electrical current,
 voltage, or duration accuracy: this M4 runtime does not acquire readings and no
@@ -348,7 +348,7 @@ reported ABORTED/output-off, deasserted READY/BUSY, and independently read
 abort remained safely ABORTED without an additional warning, and recovery
 returned IDLE/OFF/0 A. The active abort added the expected instrument warning
 “Trigger model path 1 has been aborted”; the error count remained zero. See
-[M4 programmatic-abort evidence](evidence/k2460-2026-10-09-m4-programmatic-abort.json).
+[M4 programmatic-abort evidence](../evidence/k2460-2026-10-09-m4-programmatic-abort.json).
 
 The 0.196 s observation includes host/VISA/query latency and is not an
 independent electrical measurement of output cutoff. It therefore establishes
@@ -379,7 +379,7 @@ START_TIMEOUT at terminal block 15 after 2.047 s host-observed wall time, with
 both flags low and no detector/timer overrun. Warnings and errors were unchanged.
 The programmed 1 mA level remained configured while output was off; recovery
 explicitly restored IDLE/OFF/0 A. See
-[M4 start-timeout evidence](evidence/k2460-2026-10-09-m4-start-timeout.json).
+[M4 start-timeout evidence](../evidence/k2460-2026-10-09-m4-start-timeout.json).
 
 Polling does not exclude a brief electrical pulse, and host time is not an
 independent timing trace. The result proves the no-edge state path, not the
@@ -392,7 +392,7 @@ wall time with the trigger model ABORTED, both flags low, `smu.OFF`, and 0 A.
 Repeated abort added no warning, recovery returned IDLE/OFF/0 A, and the retained
 error count stayed at six. The active abort added only the expected
 trigger-model-aborted warning. See
-[M4 START-wait abort evidence](evidence/k2460-2026-10-09-m4-waiting-start-abort.json).
+[M4 START-wait abort evidence](../evidence/k2460-2026-10-09-m4-waiting-start-abort.json).
 
 This establishes safe command/state behavior while waiting, not electrical
 abort latency or actual external-edge timing.
@@ -402,7 +402,7 @@ The DB-9 wiring was subsequently commissioned with READY on line 1, BUSY on line
 edge produced by removing a held 1 kohm pull-down after READY. The trace reported
 WAITING_START/OFF/READY, RUNNING/ON/BUSY, shutdown OFF, COMPLETE with both flags
 low, and recovery to IDLE/OFF/0 A. Warning/error counts were unchanged. See the
-[v10 external-START evidence](evidence/k2460-2026-10-09-m4-external-start-v10.json).
+[v10 external-START evidence](../evidence/k2460-2026-10-09-m4-external-start-v10.json).
 
 This is narrow state-path evidence, not an independent electrical timing trace.
 READY-boundary races, held/stale/repeated START, coincident START/ABORT, external

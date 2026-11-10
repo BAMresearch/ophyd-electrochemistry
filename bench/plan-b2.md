@@ -3,7 +3,7 @@
 For Thu 5 Nov 2026, continuing on the next bench day and over the weekend.
 There is no RC dummy cell yet. B1's C1/C2 are deferred, and a hard-carbon / Na
 coin cell takes the place of B2's "sacrificial cell". Operator steps follow
-`docs/operator-guide.md`. This tests the guide as well as the code.
+`docs/operator-guide.md` (now `docs/user/`). This tests the guide as well as the code.
 
 Prepared offline:
 - `bench/b2_sheets.py` writes and validates the run sheets.

@@ -200,7 +200,7 @@ the front-terminal bit. Mean measured V/I was 102.5112 ohm. Repeating the same
 offset read returned the same records and SHA-256. Warning and error counts did
 not change, recovery reached IDLE/OFF/0 A, and a new VISA session independently
 confirmed that state while the three records remained retained. See the
-[complete evidence](evidence/k2460-2026-10-09-m5-buffer-proof.json) and guarded
+[complete evidence](../evidence/k2460-2026-10-09-m5-buffer-proof.json) and guarded
 `notebooks/keithley_2460_m5_buffer.ipynb`.
 
 This does not yet instantiate `MeasurementRecord`: the 2460
@@ -220,8 +220,8 @@ form with payload SHA-256
 Mean V/I was 102.5092 ohm, warning/error counts were unchanged, and a new session
 verified all eight records retained at IDLE/OFF/0 A before explicit discard left
 the buffer empty. See the
-[run evidence](evidence/k2460-2026-10-09-m5-max8-evidence.json) and
-[machine-verifiable raw archive](evidence/k2460-2026-10-09-m5-max8-archive.json).
+[run evidence](../evidence/k2460-2026-10-09-m5-max8-evidence.json) and
+[machine-verifiable raw archive](../evidence/k2460-2026-10-09-m5-max8-archive.json).
 
 Eight is not a 2460 capacity limit. With output off and all existing buffers left
 intact, a temporary standard-style `buffer.make(0, ...)` allocation reported
@@ -231,7 +231,7 @@ was unchanged, and the temporary buffer was deleted and garbage-collected. The
 warning/error counts did not change and the source remained IDLE/OFF/0 A. This
 is allocation evidence only: the buffer was not filled and no large transfer or
 wrap behavior was tested. See the
-[capacity-probe evidence](evidence/k2460-2026-10-09-buffer-capacity-probe.json).
+[capacity-probe evidence](../evidence/k2460-2026-10-09-buffer-capacity-probe.json).
 
 Runtime build v6 then removed the artificial v5 limits. Safe replacement first
 verified that the v5 buffer was empty and the source was IDLE/OFF/0 A. A 17-count
@@ -242,8 +242,8 @@ same digest. The checked archive reloaded exactly with payload SHA-256
 Mean V/I was 102.5087 ohm. Warning/error counts remained 5/6, and an independent
 session confirmed all 17 records retained at IDLE/OFF/0 A before explicit discard
 left the exact-sized buffer empty. See the
-[run evidence](evidence/k2460-2026-10-09-m5-v6-exact-buffer-evidence.json) and
-[raw archive](evidence/k2460-2026-10-09-m5-v6-exact-buffer-archive.json). This
+[run evidence](../evidence/k2460-2026-10-09-m5-v6-exact-buffer-evidence.json) and
+[raw archive](../evidence/k2460-2026-10-09-m5-v6-exact-buffer-archive.json). This
 validates a small exact-size allocation and a transfer larger than the old
 eight-record ceiling, not a 250,000-record acquisition or multi-megabyte reply.
 
@@ -264,8 +264,8 @@ block 13 with output and both flags low. Five records filled extent 1–5 of the
 the v12 run. Recovery and a new session confirmed IDLE/OFF/0 A while all records
 remained retained; explicit post-archive discard then emptied the buffer. Mean
 V/I was 102.5105 ohm on the uncalibrated resistor. See the
-[run evidence](evidence/k2460-2026-10-09-m5-external-start-v12-evidence.json)
-and [checked raw archive](evidence/k2460-2026-10-09-m5-external-start-v12-archive.json).
+[run evidence](../evidence/k2460-2026-10-09-m5-external-start-v12-evidence.json)
+and [checked raw archive](../evidence/k2460-2026-10-09-m5-external-start-v12-archive.json).
 This proves the narrow state/data path, not edge-to-aperture latency or electrical
 timing.
 
@@ -282,8 +282,8 @@ Exactly one acquisition completed with exactly 256 records, but one or more
 additional input edges were detected after the accepted edge. Manual-contact
 bounce is plausible and was not independently measured, so the run is useful
 scale/no-wrap evidence but not clean single-edge or repeated-input acceptance.
-See the [scale-run evidence](evidence/k2460-2026-10-09-m5-external-start-256-v12-evidence.json)
-and [raw archive](evidence/k2460-2026-10-09-m5-external-start-256-v12-archive.json).
+See the [scale-run evidence](../evidence/k2460-2026-10-09-m5-external-start-256-v12-evidence.json)
+and [raw archive](../evidence/k2460-2026-10-09-m5-external-start-256-v12-archive.json).
 
 Runtime v14 later completed an immediate 10,000-reading acquisition at +1 mA
 and 0.01 NPLC. An exact 10,000-record standard fill-once buffer retained extent
@@ -293,9 +293,9 @@ decode and a complete fresh-session reread all matched. Warning/error counts
 remained zero. Recovery preserved the records at IDLE/OFF/0 A until explicit
 post-archive discard, after which another fresh session confirmed the buffer
 empty and the source safe. See the
-[archive](evidence/k2460-2026-10-12-capacity-10000-archive.json),
-[summary](evidence/k2460-2026-10-12-capacity-10000-evidence.json), and
-[discard record](evidence/k2460-2026-10-12-capacity-10000-discard.json).
+[archive](../evidence/k2460-2026-10-12-capacity-10000-archive.json),
+[summary](../evidence/k2460-2026-10-12-capacity-10000-evidence.json), and
+[discard record](../evidence/k2460-2026-10-12-capacity-10000-discard.json).
 This establishes bounded no-wrap and multi-chunk behavior at 10,000 records,
 not the configured 250,000-record ceiling or START/aperture timing.
 
@@ -307,8 +307,8 @@ and mean V/I was 102.5025 ohm. Physical disconnect then produced a separate
 floating-HIGH transition and set the historical overrun flag after the terminal
 snapshot. This narrows the earlier manual-contact ambiguity but does not establish
 START-to-aperture timing or the full G01 input cases. See the
-[clean-run evidence](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-evidence.json)
-and [archive](evidence/k2460-2026-10-09-m5-rising-square-clean-v12-archive.json).
+[clean-run evidence](../evidence/k2460-2026-10-09-m5-rising-square-clean-v12-evidence.json)
+and [archive](../evidence/k2460-2026-10-09-m5-rising-square-clean-v12-archive.json).
 
 The following remain open before M5 is complete:
 

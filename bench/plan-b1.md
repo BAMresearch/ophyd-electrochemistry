@@ -2,7 +2,7 @@
 
 Purpose: run the packaged sequencer runtime on the 2460 through
 `Keithley2460SequenceBackend`, the code path the beamtime notebook uses, and
-answer the open B1 items in `docs/sequencer-design.md` §13. Runner:
+answer the open B1 items in `docs/technical/sequencer.md` §13 (then `docs/sequencer-design.md`). Runner:
 `bench/b1_sequencer.py`. One evidence file per load:
 `docs/evidence/k2460-<date>-b1-<load>.json`, written after every test.
 

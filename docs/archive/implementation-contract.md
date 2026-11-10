@@ -2,7 +2,7 @@
 
 MUST is required behavior; SHOULD permits a documented alternative. This file
 defines intended behavior. Current implementation coverage is in
-[validation](validation.md), not implied by normative language.
+[validation](../validation.md), not implied by normative language.
 
 ## C01 — Ownership and boundaries
 

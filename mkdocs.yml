@@ -1,31 +1,46 @@
-site_name: ophyd-electrochemistry contract
+site_name: ophyd-electrochemistry
 theme: readthedocs
 nav:
-  - Overview: index.md
-  - Current project state: current-state.md
-  - MVP sprint plan: mvp-plan.md
-  - Operator guide (Excel + command line): operator-guide.md
-  - User guide and quickstart: user-guide.md
-  - Available sequences: available-sequences.md
-  - Development and releases: development.md
-  - Contract: implementation-contract.md
-  - Waveforms: waveforms.md
-  - M1 compiler: m1-compiler.md
-  - M2 simulator: m2-simulator.md
-  - M3 transport: m3-transport.md
-  - M4 local runtime: m4-runtime.md
-  - M5 data records: m5-data.md
-  - Aperture calibration design: timestamp-aperture-calibration.md
-  - M6 Ophyd device: m6-device.md
-  - Timed-hold commissioning: timed-hold-commissioning.md
-  - Evidence: assumptions.md
-  - Architecture: architecture.md
-  - Triggering: triggering.md
-  - Safety: safety.md
-  - Data: data-contract.md
-  - Roadmap: roadmap.md
-  - Hardware acceptance: hardware-acceptance.md
-  - Validation: validation.md
-  - Decision records:
-      - Contract baseline: adr/0001-contract-baseline.md
-      - Finite waveforms: adr/0002-finite-waveforms.md
+  - Home: index.md
+  - User guide:
+      - Overview: user/index.md
+      - Quickstart: user/quickstart.md
+      - Run sheets: user/run-sheets.md
+      - Sessions: user/sessions.md
+      - At the beamtime: user/beamtime.md
+      - Data and the viewer: user/data.md
+      - Command reference: user/reference.md
+  - Technical documentation:
+      - Overview: technical/index.md
+      - Sequencer runtime: technical/sequencer.md
+      - Simulator and fakes: technical/simulator.md
+      - Testing: technical/testing.md
+      - Development and releases: technical/development.md
+  - Project:
+      - Current state: current-state.md
+      - MVP sprint plan: mvp-plan.md
+      - Beamtime concept: beamtime-concept.md
+      - Validation record: validation.md
+  - Archive (revision 0.2):
+      - Overview: archive/index.md
+      - Contract: archive/implementation-contract.md
+      - Architecture: archive/architecture.md
+      - Waveforms: archive/waveforms.md
+      - M1 compiler: archive/m1-compiler.md
+      - M2 simulator: archive/m2-simulator.md
+      - M3 transport: archive/m3-transport.md
+      - M4 local runtime: archive/m4-runtime.md
+      - M5 data records: archive/m5-data.md
+      - M6 Ophyd device: archive/m6-device.md
+      - M6 user guide: archive/m6-user-guide.md
+      - Available sequences: archive/available-sequences.md
+      - Triggering: archive/triggering.md
+      - Safety: archive/safety.md
+      - Data contract: archive/data-contract.md
+      - Evidence: archive/assumptions.md
+      - Hardware acceptance: archive/hardware-acceptance.md
+      - Roadmap: archive/roadmap.md
+      - Timed-hold commissioning: archive/timed-hold-commissioning.md
+      - Aperture calibration design: archive/timestamp-aperture-calibration.md
+      - Contract baseline (ADR 0001): archive/adr/0001-contract-baseline.md
+      - Finite waveforms (ADR 0002): archive/adr/0002-finite-waveforms.md

@@ -102,7 +102,7 @@ procedure switched output off after each point, returned the programmed current
 to zero, and verified those conditions again in an independent session.
 
 See `notebooks/keithley_2460_resistor_smoke.ipynb` and the
-[raw JSON evidence](evidence/k2460-2026-10-05-resistor-smoke.json). Because the
+[raw JSON evidence](../evidence/k2460-2026-10-05-resistor-smoke.json). Because the
 resistor was not calibrated and no failure injection, transfer fairness, abort,
 or OFF-mode behavior was exercised, this result does not pass G05 or any other
 hardware gate.
@@ -111,7 +111,7 @@ The follow-up six-point bipolar sweep collected five readings at each of −1 mA
 −500 µA, −100 µA, +100 µA, +500 µA, and +1 mA. Its 30 paired source-readback and
 four-wire-voltage samples produced a 102.502310 ohm slope, −33.020 µV intercept,
 and R-squared 0.999999999914 without a voltage-limit trip. The complete samples
-are in the [bipolar sweep evidence](evidence/k2460-2026-10-05-resistor-bipolar-sweep.json).
+are in the [bipolar sweep evidence](../evidence/k2460-2026-10-05-resistor-bipolar-sweep.json).
 The guarded procedure is
 `notebooks/keithley_2460_resistor_bipolar_sweep.ipynb`.
 This remains a bounded commissioning test rather than G05 acceptance.
@@ -128,7 +128,7 @@ before retrieval, and the unique temporary buffer was deleted. Mean readback was
 The exception path and final independent session both confirmed OFF and 0 A.
 The two user-reviewed historical LAN errors were preserved and the error count
 did not increase. See the
-[complete JSON evidence](evidence/k2460-2026-10-05-buffer-cleanup.json).
+[complete JSON evidence](../evidence/k2460-2026-10-05-buffer-cleanup.json).
 This does not cover process termination, Ethernet loss, interrupted retrieval,
 abort starvation, or instrument-local timeout, so G05 remains open.
 
