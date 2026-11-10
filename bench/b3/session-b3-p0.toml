@@ -1,0 +1,19 @@
+# B3 P0: overnight sodiation of a healthy HC/Na coin cell (tier 2).
+# Cell: ____________ (fill in before loading). Front terminals, four-wire,
+# HC on HI (force + sense), Na on LO. Window 0-3 V: a reversed cell (negative
+# OCV) stops at the first reading. 100 uA covers C/10 of a cell up to 1 mAh and
+# caps a CV hold at 5 mV. Loading this session confirms set-up and limits.
+# qserver/start-k2460-re-manager.sh bench/b3/session-b3-p0.toml
+backend = "k2460"
+data_dir = "~/k2460-data/b3"
+resource = "TCPIP0::169.254.113.151::5025::SOCKET"
+serial = "04686198"
+terminals = "front"
+poll_period_s = 1.0
+
+[limits]
+v_min_abs = 0.0
+v_max_abs = 3.0
+i_max_abs = 0.0001
+max_duration_s = 72000.0
+max_records = 1000000
