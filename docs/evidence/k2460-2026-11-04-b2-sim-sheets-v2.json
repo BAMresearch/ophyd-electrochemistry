@@ -1,0 +1,560 @@
+{
+  "test_matrix": "bench/plan-b2.md",
+  "load": "sim",
+  "written_utc": "2026-11-04T15:16:14+00:00",
+  "data_dirs": [
+    "/Users/bpauw/k2460-data/b2/sim"
+  ],
+  "runs": [
+    {
+      "file": "/Users/bpauw/k2460-data/b2/sim/k8-reference-cycle_20261104T151454Z.h5",
+      "measurement_id": "k8-reference-cycle",
+      "sample_id": "HC-coin-sim",
+      "protocol": "cycling",
+      "start_utc": "2026-11-04T15:14:54.505788Z",
+      "duration_s": 3137.0,
+      "records": 3137,
+      "outcome": "aborted",
+      "cutoffs": 1,
+      "stops": 0,
+      "aborts": 1,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k8-reference-cycle",
+        "outcome": "aborted",
+        "records": 3137,
+        "duration_s": 3137.0,
+        "spacing_s": {
+          "1s": {
+            "median": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          }
+        },
+        "spacing_max_s": 1.0,
+        "rest_v_first_last": [
+          0.19924774492352765,
+          0.19796369817212103
+        ],
+        "v_min_max": [
+          0.10078791927288962,
+          0.2001247286454626
+        ],
+        "i_min_max": [
+          0.0,
+          3e-05
+        ],
+        "events": [
+          "0.000 step_start ",
+          "2519.000 cutoff v_max",
+          "2519.000 step_start ",
+          "3137.275 abort bluesky_stop"
+        ],
+        "median_v_over_i_ohm": 5035.597542959869
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/sim/k6-sod-pulse-10s_20261104T151340Z.h5",
+      "measurement_id": "k6-sod-pulse-10s",
+      "sample_id": "HC-coin-sim",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-04T15:13:40.380478Z",
+      "duration_s": 3660.0,
+      "records": 46159,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k6-sod-pulse-10s",
+        "outcome": "completed",
+        "records": 46159,
+        "duration_s": 3660.0,
+        "spacing_s": {
+          "0.006s": {
+            "median": 0.005952380952294334,
+            "p99": 0.005952380952749081,
+            "max": 0.005952380952749081
+          },
+          "0.1s": {
+            "median": 0.09999999999990905,
+            "p99": 0.1000000000003638,
+            "max": 0.1000000000003638
+          }
+        },
+        "spacing_max_s": 0.1000000000003638,
+        "rest_v_first_last": [
+          0.10000628651105467,
+          0.08986577984079545
+        ],
+        "v_min_max": [
+          0.05898771081948548,
+          0.10015330183695245
+        ],
+        "i_min_max": [
+          -0.0006,
+          0.0
+        ],
+        "events": [
+          "0.000 step_start ",
+          "60.000 step_start ",
+          "70.000 step_start ",
+          "120.000 step_start ",
+          "130.000 step_start ",
+          "180.000 step_start ",
+          "190.000 step_start ",
+          "240.000 step_start ",
+          "250.000 step_start ",
+          "300.000 step_start ",
+          "310.000 step_start ",
+          "360.000 step_start ",
+          "370.000 step_start ",
+          "420.000 step_start ",
+          "430.000 step_start ",
+          "480.000 step_start ",
+          "490.000 step_start ",
+          "540.000 step_start ",
+          "550.000 step_start ",
+          "600.000 step_start ",
+          "610.000 step_start ",
+          "660.000 step_start ",
+          "670.000 step_start ",
+          "720.000 step_start ",
+          "730.000 step_start ",
+          "780.000 step_start ",
+          "790.000 step_start ",
+          "840.000 step_start ",
+          "850.000 step_start ",
+          "900.000 step_start ",
+          "910.000 step_start ",
+          "960.000 step_start ",
+          "970.000 step_start ",
+          "1020.000 step_start ",
+          "1030.000 step_start ",
+          "1080.000 step_start ",
+          "1090.000 step_start ",
+          "1140.000 step_start ",
+          "1150.000 step_start ",
+          "1200.000 step_start ",
+          "1210.000 step_start ",
+          "1260.000 step_start ",
+          "1270.000 step_start ",
+          "1320.000 step_start ",
+          "1330.000 step_start ",
+          "1380.000 step_start ",
+          "1390.000 step_start ",
+          "1440.000 step_start ",
+          "1450.000 step_start ",
+          "1500.000 step_start "
+        ],
+        "median_v_over_i_ohm": -130.22661862605344
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/sim/k5-desod-pulse-60s_20261104T151330Z.h5",
+      "measurement_id": "k5-desod-pulse-60s",
+      "sample_id": "HC-coin-sim",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-04T15:13:30.781602Z",
+      "duration_s": 439.9,
+      "records": 4715,
+      "outcome": "stopped_cutoff",
+      "cutoffs": 1,
+      "stops": 1,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "v_max",
+      "checks": {
+        "measurement_id": "k5-desod-pulse-60s",
+        "outcome": "stopped_cutoff",
+        "records": 4715,
+        "duration_s": 439.9,
+        "spacing_s": {
+          "0.006s": {
+            "median": 0.005952380952379599,
+            "p99": 0.005952380952408021,
+            "max": 0.005952380952408021
+          },
+          "0.1s": {
+            "median": 0.09999999999999964,
+            "p99": 0.10000000000002274,
+            "max": 0.10000000000002274
+          }
+        },
+        "spacing_max_s": 0.10000000000002274,
+        "rest_v_first_last": [
+          0.10000628651105467,
+          0.14661707049254089
+        ],
+        "v_min_max": [
+          0.09980502891349728,
+          0.20001985070087305
+        ],
+        "i_min_max": [
+          0.0,
+          0.0006
+        ],
+        "events": [
+          "0.000 step_start ",
+          "60.000 step_start ",
+          "120.000 step_start ",
+          "420.000 step_start ",
+          "439.900 cutoff v_max",
+          "439.900 stop v_max"
+        ],
+        "median_v_over_i_ohm": 273.8534083112815
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/sim/k4-desod-pulse-10s_20261104T151319Z.h5",
+      "measurement_id": "k4-desod-pulse-10s",
+      "sample_id": "HC-coin-sim",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-04T15:13:19.218008Z",
+      "duration_s": 549.5,
+      "records": 6917,
+      "outcome": "stopped_cutoff",
+      "cutoffs": 1,
+      "stops": 1,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "v_max",
+      "checks": {
+        "measurement_id": "k4-desod-pulse-10s",
+        "outcome": "stopped_cutoff",
+        "records": 6917,
+        "duration_s": 549.5,
+        "spacing_s": {
+          "0.006s": {
+            "median": 0.005952380952379599,
+            "p99": 0.005952380952408021,
+            "max": 0.005952380952408021
+          },
+          "0.1s": {
+            "median": 0.10000000000000009,
+            "p99": 0.10000000000002274,
+            "max": 0.10000000000002274
+          }
+        },
+        "spacing_max_s": 0.10000000000002274,
+        "rest_v_first_last": [
+          0.10000628651105467,
+          0.16229459457389375
+        ],
+        "v_min_max": [
+          0.09980502891349728,
+          0.2000257300447679
+        ],
+        "i_min_max": [
+          0.0,
+          0.0006
+        ],
+        "events": [
+          "0.000 step_start ",
+          "60.000 step_start ",
+          "70.000 step_start ",
+          "120.000 step_start ",
+          "130.000 step_start ",
+          "180.000 step_start ",
+          "190.000 step_start ",
+          "240.000 step_start ",
+          "250.000 step_start ",
+          "300.000 step_start ",
+          "310.000 step_start ",
+          "360.000 step_start ",
+          "370.000 step_start ",
+          "420.000 step_start ",
+          "430.000 step_start ",
+          "480.000 step_start ",
+          "490.000 step_start ",
+          "540.000 step_start ",
+          "549.500 cutoff v_max",
+          "549.500 stop v_max"
+        ],
+        "median_v_over_i_ohm": 253.28798819472192
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/sim/k3-sodiate-5mV_20261104T145554Z.h5",
+      "measurement_id": "k3-sodiate-5mV",
+      "sample_id": "HC-coin-sim",
+      "protocol": "soc_position",
+      "start_utc": "2026-11-04T14:55:54.336538Z",
+      "duration_s": 52200.0,
+      "records": 52200,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k3-sodiate-5mV",
+        "outcome": "completed",
+        "records": 52200,
+        "duration_s": 52200.0,
+        "spacing_s": {
+          "1s": {
+            "median": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          }
+        },
+        "spacing_max_s": 1.0,
+        "rest_v_first_last": [
+          0.07723057592488376,
+          0.08002304661643278
+        ],
+        "v_min_max": [
+          0.07557529414799105,
+          0.0985191320984959
+        ],
+        "i_min_max": [
+          -5.999999999999999e-05,
+          0.0
+        ],
+        "events": [
+          "0.000 step_start ",
+          "50400.000 step_start "
+        ],
+        "median_v_over_i_ohm": -1263.795990820547
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/sim/k2-pulse-check_20261104T145552Z.h5",
+      "measurement_id": "k2-pulse-check",
+      "sample_id": "HC-coin-sim",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-04T14:55:52.729733Z",
+      "duration_s": 35.0,
+      "records": 1219,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k2-pulse-check",
+        "outcome": "completed",
+        "records": 1219,
+        "duration_s": 35.0,
+        "spacing_s": {
+          "0.006s": {
+            "median": 0.005952380952380952,
+            "p99": 0.005952380952383152,
+            "max": 0.005952380952383152
+          },
+          "0.1s": {
+            "median": 0.10000000000000009,
+            "p99": 0.10000000000000142,
+            "max": 0.10000000000000142
+          }
+        },
+        "spacing_max_s": 0.10000000000000142,
+        "rest_v_first_last": [
+          0.10000628651105467,
+          0.09547981228737434
+        ],
+        "v_min_max": [
+          0.0812602062339397,
+          0.10010011962918226
+        ],
+        "i_min_max": [
+          -0.0006,
+          0.0
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.000 step_start ",
+          "11.000 step_start ",
+          "15.000 step_start ",
+          "16.000 step_start ",
+          "20.000 step_start ",
+          "21.000 step_start ",
+          "25.000 step_start ",
+          "26.000 step_start ",
+          "30.000 step_start ",
+          "31.000 step_start "
+        ],
+        "median_v_over_i_ohm": -140.22193247568904
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/sim/k1-ocv_20261104T145549Z.h5",
+      "measurement_id": "k1-ocv",
+      "sample_id": "HC-coin-sim",
+      "protocol": "rest",
+      "start_utc": "2026-11-04T14:55:49.294411Z",
+      "duration_s": 120.0,
+      "records": 120,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k1-ocv",
+        "outcome": "completed",
+        "records": 120,
+        "duration_s": 120.0,
+        "spacing_s": {
+          "1s": {
+            "median": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          }
+        },
+        "spacing_max_s": 1.0,
+        "rest_v_first_last": [
+          0.10000628651105467,
+          0.10005824319905555
+        ],
+        "v_min_max": [
+          0.09988374846126806,
+          0.10010011962918226
+        ],
+        "i_min_max": [
+          0.0,
+          0.0
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    }
+  ],
+  "monitor": {
+    "samples": 81,
+    "first_utc": "2026-11-04T14:55:49.737+00:00",
+    "last_utc": "2026-11-04T15:15:59.630+00:00",
+    "processes": {
+      "60895": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python /Users/bpauw/Code/ophy",
+        "cpu_pct_median": 0.1,
+        "cpu_pct_max": 0.4,
+        "rss_mb_first_last_max": [
+          52.1,
+          52.1,
+          52.1
+        ]
+      },
+      "60933": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 1.1,
+        "cpu_pct_max": 28.0,
+        "rss_mb_first_last_max": [
+          156.8,
+          171.7,
+          171.8
+        ]
+      },
+      "60900": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.1,
+        "cpu_pct_max": 0.7,
+        "rss_mb_first_last_max": [
+          69.3,
+          69.4,
+          69.4
+        ]
+      },
+      "60899": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.0,
+        "cpu_pct_max": 0.0,
+        "rss_mb_first_last_max": [
+          20.2,
+          20.2,
+          20.2
+        ]
+      },
+      "61502": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python /Users/bpauw/Code/ophy",
+        "cpu_pct_median": 0.2,
+        "cpu_pct_max": 0.2,
+        "rss_mb_first_last_max": [
+          51.9,
+          51.9,
+          51.9
+        ]
+      },
+      "61505": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 5.0,
+        "cpu_pct_max": 5.0,
+        "rss_mb_first_last_max": [
+          158.5,
+          158.5,
+          158.5
+        ]
+      },
+      "61504": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 1.4,
+        "cpu_pct_max": 1.4,
+        "rss_mb_first_last_max": [
+          69.9,
+          69.9,
+          69.9
+        ]
+      },
+      "61503": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.0,
+        "cpu_pct_max": 0.0,
+        "rss_mb_first_last_max": [
+          20.2,
+          20.2,
+          20.2
+        ]
+      },
+      "65180": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python /Users/bpauw/Code/ophy",
+        "cpu_pct_median": 0.0,
+        "cpu_pct_max": 0.0,
+        "rss_mb_first_last_max": [
+          52.2,
+          52.2,
+          52.2
+        ]
+      },
+      "65192": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 1.6,
+        "cpu_pct_max": 3.2,
+        "rss_mb_first_last_max": [
+          105.7,
+          158.5,
+          158.5
+        ]
+      },
+      "65187": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 9.65,
+        "cpu_pct_max": 19.2,
+        "rss_mb_first_last_max": [
+          69.6,
+          69.7,
+          69.7
+        ]
+      },
+      "65186": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.0,
+        "cpu_pct_max": 0.0,
+        "rss_mb_first_last_max": [
+          20.3,
+          20.3,
+          20.3
+        ]
+      }
+    },
+    "viewer_refresh_s_max": 0.1104,
+    "viewer_refresh_at_most_records": 51929
+  }
+}

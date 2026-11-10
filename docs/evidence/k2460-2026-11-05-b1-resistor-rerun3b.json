@@ -1,0 +1,288 @@
+{
+  "tests": [
+    "R2",
+    "R4",
+    "R8",
+    "R9",
+    "R10",
+    "R11"
+  ],
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "equipment": {
+    "backend": "k2460-sequencer",
+    "runtime_build": "seq-v1",
+    "runtime_sha256": "f998740decd088cd27547de013d12a43dd0a3eac8e2ab8f27ed07803308791a0",
+    "terminals": "front",
+    "four_wire": true,
+    "start_edge": "rising",
+    "line_frequency_hz": 50,
+    "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "serial_number": "04686198",
+    "firmware": "1.7.16a"
+  },
+  "status_at_start": [
+    "idle",
+    false
+  ],
+  "R2": {
+    "measurement_id": "b1-s1-immediate",
+    "blocks": 53,
+    "expected_records": 208,
+    "nominal_s": 1.3000000000000003,
+    "clock_offset_s": 4171.463784456253,
+    "clock_uncertainty_s": 0.0005846023559570312,
+    "outcome": "completed",
+    "detail": "",
+    "wall_s": 1.4893719999818131,
+    "cpu_s": 0.011658000000000002,
+    "records": 208,
+    "polls": 8,
+    "lag_s_median": 0.008780717849731445,
+    "lag_s_max": 0.1651439666748047,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [],
+    "step_starts": 13,
+    "instrument_log": [
+      "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "checks": {
+      "completed": "ok",
+      "all records": "ok",
+      "13 step starts": "ok",
+      "R within 1 %": "FAIL 102.4940487188634",
+      "output OFF after run": "ok"
+    },
+    "timing": {
+      "executions": 13,
+      "deviation_ms_median": 0.2583399999999958,
+      "deviation_ms_min": -0.08509999999997686,
+      "deviation_ms_max": 18.351719999999933,
+      "run_s_actual": 1.32522528,
+      "run_s_nominal": 1.3000000000000003
+    },
+    "resistance": {
+      "r_ohm_median": 102.4940487188634,
+      "r_ohm_spread": 0.04026178697138505
+    },
+    "seconds": 1.7244725830387324
+  },
+  "R4": {
+    "measurement_id": "b1-next-repeat",
+    "blocks": 46,
+    "expected_records": 250,
+    "nominal_s": 2.5,
+    "clock_offset_s": 4171.463793039322,
+    "clock_uncertainty_s": 0.0005151033401489258,
+    "outcome": "error",
+    "detail": "predicted completed, logged end; readback mismatch",
+    "wall_s": 1.0608198340050876,
+    "cpu_s": 0.010682000000000025,
+    "records": 103,
+    "polls": 6,
+    "lag_s_median": 0.01171112060546875,
+    "lag_s_max": 0.012994050979614258,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [
+      [
+        0.21615363999999992,
+        0,
+        0,
+        "error",
+        "readback mismatch, 1 samples"
+      ],
+      [
+        0.22792875999999995,
+        1,
+        1,
+        "cutoff",
+        "v_max"
+      ],
+      [
+        0.4389825599999999,
+        1,
+        2,
+        "cutoff",
+        "v_max"
+      ],
+      [
+        0.6516707799999999,
+        1,
+        3,
+        "cutoff",
+        "v_max"
+      ]
+    ],
+    "step_starts": 8,
+    "instrument_log": [
+      "2753\t4\tTrigger model is not optimized for speed due to greater than 4 branch counters",
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "checks": {
+      "completed (replay = logged END)": "FAIL predicted completed, logged end; readback mismatch",
+      "3 v_max cutoffs": "ok",
+      "one cc sample per repeat": "ok",
+      "output OFF after run": "ok"
+    },
+    "cc_samples_per_repeat": [
+      1,
+      1,
+      1
+    ],
+    "seconds": 1.2457244169781916
+  },
+  "R8": {
+    "measurement_id": "b1-s1-external",
+    "blocks": 55,
+    "expected_records": 208,
+    "nominal_s": 1.3000000000000003,
+    "clock_offset_s": 4171.463809967041,
+    "clock_uncertainty_s": 0.0004755258560180664,
+    "outcome": "completed",
+    "detail": "",
+    "wall_s": 50.854026249959134,
+    "cpu_s": 0.362421,
+    "records": 208,
+    "polls": 243,
+    "lag_s_median": 0.012684345245361328,
+    "lag_s_max": 0.17856645584106445,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [],
+    "step_starts": 13,
+    "instrument_log": [
+      "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "status_while_waiting": [
+      "armed\ttrigger.STATE_RUNNING\t2\tsmu.OFF\t0\t0",
+      "running",
+      "armed\ttrigger.STATE_RUNNING\t2\tsmu.OFF\t0\t0",
+      "running",
+      "armed\ttrigger.STATE_RUNNING\t2\tsmu.OFF\t0\t0",
+      "running",
+      "armed\ttrigger.STATE_WAITING\t2\tsmu.OFF\t0\t0",
+      "waiting_start",
+      "armed\ttrigger.STATE_WAITING\t2\tsmu.OFF\t0\t0",
+      "waiting_start"
+    ],
+    "checks": {
+      "WAITING_START observed": "ok",
+      "completed": "ok",
+      "all records": "ok",
+      "output OFF after run": "ok"
+    },
+    "seconds": 51.06105416698847
+  },
+  "R9": {
+    "outcome": "completed",
+    "file": "/Users/bpauw/k2460-data/b1/b1-long-300s_20261105T101500Z.h5",
+    "records": 49786,
+    "expected_records": 49786,
+    "wall_s": 303.5737730420078,
+    "cpu_s": 11.748407,
+    "lag_s_median": 0.015104413032531738,
+    "lag_s_max": 0.12239623069763184,
+    "timing": {
+      "executions": 149,
+      "deviation_ms_median": 19.78913999999854,
+      "deviation_ms_min": 6.195280000014236,
+      "deviation_ms_max": 80.19439999999989,
+      "run_s_actual": 303.14886392,
+      "run_s_nominal": 300.0
+    },
+    "spacing": {
+      "spacing_ms_median": 5.9924000000251,
+      "spacing_ms_p1": 5.96211999999241,
+      "spacing_ms_p99": 8.308532800002123
+    },
+    "checks": {
+      "completed": "ok",
+      "all records in the file": "ok",
+      "run length within 0.1 %": "FAIL 3.149 s",
+      "live lag < 2 s": "ok",
+      "output OFF after run": "ok"
+    },
+    "drift_s": 3.1488639199999966,
+    "seconds": 303.88579629099695
+  },
+  "R10": {
+    "measurement_id": "b1-long-60s",
+    "blocks": 59,
+    "expected_records": 9706,
+    "nominal_s": 60.0,
+    "clock_offset_s": 4171.462643146515,
+    "clock_uncertainty_s": 0.0004973411560058594,
+    "aborted_at_s": 5.050683542038314,
+    "state_after_abort": [
+      "aborted",
+      false
+    ],
+    "outcome": "aborted",
+    "detail": "B1 abort",
+    "wall_s": 5.071215292031411,
+    "cpu_s": 0.03784199999999949,
+    "records": 516,
+    "polls": 26,
+    "lag_s_median": 0.011381864547729492,
+    "lag_s_max": 0.09560155868530273,
+    "state_final": [
+      "aborted",
+      "False"
+    ],
+    "events": [
+      [
+        5.05309188,
+        1,
+        1,
+        "abort",
+        "B1 abort"
+      ]
+    ],
+    "step_starts": 2,
+    "instrument_log": [
+      "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2728\t2\tTrigger model path #1 has been aborted"
+    ],
+    "checks": {
+      "aborted": "ok",
+      "ABORTED, OFF": "ok",
+      "abort event last": "ok",
+      "recovered IDLE, OFF": "ok"
+    },
+    "seconds": 5.322892167023383
+  },
+  "R11": {
+    "child": [
+      0,
+      "child: started, exiting without cleanup\n",
+      ""
+    ],
+    "states": [
+      "running",
+      "(<DeviceState.COMPLETE: 'complete'>, False)"
+    ],
+    "checks": {
+      "running after the host died": "ok",
+      "ended OFF by itself": "ok",
+      "prepare refuses unread records": "ok",
+      "prepare after archive": "ok"
+    },
+    "refusal": "the instrument holds 3026 unread records of an earlier run; archive_retained() them first",
+    "archived_records": 3026,
+    "archive": "/Users/bpauw/k2460-data/b1/retained-b1-1793874030.npz",
+    "seconds": 21.70869787503034
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "analysis": {
+    "busy_marker_span_s": 2.228e-05,
+    "configured_aperture_s": 0.02,
+    "measurement_block_span_s": 0.04103528,
+    "pre_measure_to_reading_s": 0.0409182,
+    "reading_after_start_max_s": 0.04465184,
+    "reading_after_start_min_s": 0.04462756,
+    "reading_to_post_measure_s": 0.00011708
+  },
+  "assessment": [
+    "Clean terminal START-overrun and timer-overrun flags are false, with four unique monotonic instrument markers and independently matched retained data.",
+    "Under the marker-bracketing model and reported scope timing/uncertainty, the conditional buffered-timestamp offset is 44.62756 to 44.65184 ms after START, approximately 44.64 ms. These are calculated values, not a validated total timing-accuracy claim.",
+    "BUSY falling timing is not an input to analyze_timestamp_proof and its absence does not prevent this calculation. It limits independent assessment of the total BUSY interval.",
+    "The timestamp lies 0.11708 ms before POST_MEASURE, while the measurement block spans 41.03528 ms; the 20 ms configured integration setting does not establish the source-readback or DUT aperture positions.",
+    "No timestamp-reference/aperture convention or hardware acceptance gate is promoted from a single user-reported capture without a retained raw trace or complete uncertainty characterization."
+  ],
+  "final_observed_state": {
+    "default_buffers": {
+      "defbuffer1": "12867\t100000\t1\t12867",
+      "defbuffer2": "0\t100000\t0\t0"
+    },
+    "retained_proof_records": 1,
+    "source_level_a": 0.0,
+    "status": {
+      "abi": "oe-k2460-m4-hold-v1",
+      "busy_level": 0,
+      "last_block": 17,
+      "model_state": "trigger.STATE_IDLE",
+      "model_substate": "trigger.STATE_IDLE",
+      "output_enabled": false,
+      "ready_level": 0,
+      "start_level": -1,
+      "start_overrun": false,
+      "state": "idle",
+      "timer_overrun": false
+    }
+  },
+  "hardware_gates_promoted": [],
+  "proof_run_id": 2026110203,
+  "recorded_at_utc": "2026-11-02T11:05:29.287209+00:00",
+  "schema": "ophyd-electrochemistry/k2460-timestamp-scope-analysis-v1",
+  "scope": {
+    "interpreted_parenthetical_uncertainty_s": 1e-06,
+    "raw_trace_available": false,
+    "reported_start_to_busy_rising_s": 0.001276,
+    "reported_verbatim": "start-to-busy delay is 1.276(1) ms. falling delay I could not capture, the scope buffer cleared for some reason.",
+    "start_to_busy_falling_s": null,
+    "trace_limitation": "User reported scope buffer clearing; no falling-edge measurement or exported trace is available in the repository.",
+    "uncertainty_interpretation": "1.276(1) ms interpreted as 1.276 ms with 0.001 ms uncertainty. Confidence/coverage and full scope/threshold/channel error budget are unspecified; no guaranteed uncertainty bound is asserted."
+  },
+  "source_artifact": {
+    "path": "docs/evidence/k2460-2026-11-02-timestamp-attempt-03.json",
+    "sha256": "52e56ea05a5397c0b72a9880dec90a774165c69d5cac1d50eb4f0d3acb6fbd0a"
+  }
+}

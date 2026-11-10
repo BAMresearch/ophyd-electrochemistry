@@ -1,0 +1,1780 @@
+{
+  "acquisition_id": "timed-20261102-05",
+  "acquisition_outcome": "normal_completion",
+  "authorization": "User freshly confirmed unchanged 100 ohm / 1 W front-terminal four-wire resistor, wiring, physical output OFF, and scope Single CH4 rising at approximately 250 mV, CH4 1 Mohm/DC/1x 200 mV/div, 200 ms/div. Explicitly authorized checksum and fresh matching of run-04, discard only its one reading, one immediate +5 mA / 1 V / 1 s hold at 1 s sample spacing (one reading), archive new data/events marking events read, recover IDLE/OFF/0 A, retain new reading and preserve all default-buffer records.",
+  "authorization_scope_note": "One newly authorized single-reading duration diagnostic; unchanged exact v17 artifact. Does not test repeated cadence. Expected normal completion, one retained record and approximately 1 s physical CH4 pulse; report observed values and uncertainty without promoting timing acceptance.",
+  "before_recovery": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 14,
+    "model_state": "trigger.STATE_IDLE",
+    "model_substate": "trigger.STATE_IDLE",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "complete",
+    "timer_overrun": false
+  },
+  "completed_at_utc": "2026-11-02T16:19:03.707532+00:00",
+  "config": {
+    "buffer": {
+      "capacity_ceiling_records": 600,
+      "transfer_chunk_records": 128
+    },
+    "io": {
+      "abort": 4,
+      "abort_edge": "rising",
+      "busy": 2,
+      "busy_asserted_level": 1,
+      "external_abort_enabled": false,
+      "ready": 1,
+      "ready_asserted_level": 1,
+      "start": 3,
+      "start_edge": "rising"
+    },
+    "safety": {
+      "charge_current_max_a": 0.005,
+      "discharge_current_max_a": 0.005,
+      "power_abs_max_w": 0.005,
+      "source_off_mode": "normal",
+      "voltage_max_v": 1.0,
+      "voltage_min_v": -1.0
+    },
+    "sense": "remote",
+    "source_terminal": "front",
+    "timing": {
+      "command_timeout_s": 2.0,
+      "duration_tolerance_s": 0.0,
+      "external_start_timeout_s": 2.0,
+      "frequency_tolerance_hz": 0.0,
+      "measurement_period_tolerance_s": 0.0,
+      "poll_period_s": 0.01,
+      "required_abort_latency_s": 1.0,
+      "required_cutoff_latency_s": 1.0,
+      "scan_rate_tolerance_v_per_s": 0.0,
+      "shutdown_timeout_s": 5.0,
+      "source_period_tolerance_s": 0.0
+    },
+    "visa_resource": "TCPIP0::169.254.113.151::5025::SOCKET"
+  },
+  "defaults_after_run": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "defaults_before": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "defaults_final": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "documents": [
+    {
+      "document": {
+        "commissioning_load": "100 ohm / 1 W resistor",
+        "experiment_id": "timed-v17-one-reading-duration-diagnostic",
+        "hardware_ready": false,
+        "plan_name": "plan",
+        "plan_type": "generator",
+        "scan_id": 1,
+        "time": 1793636341.961292,
+        "timing": "uncalibrated",
+        "uid": "996e21e0-dcd0-4bbb-b3a4-724ebde704ba",
+        "versions": {
+          "bluesky": "1.15.1",
+          "event_model": "1.24.0",
+          "ophyd": "1.11.2"
+        }
+      },
+      "name": "start"
+    },
+    {
+      "document": {
+        "configuration": {
+          "ec": {
+            "data": {
+              "ec_acquisition_id": "timed-20261102-05",
+              "ec_actual_start_known": 0,
+              "ec_backend": "ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend",
+              "ec_collection_chunk_records": 128,
+              "ec_completion_timeout": 5.0,
+              "ec_completion_timeout_effective": 14.51,
+              "ec_current_origin": "source_readback",
+              "ec_instrument_timestamp_origin": "Keithley 2460 buffer.relativetimestamps; first stored reading",
+              "ec_instrument_timestamp_resolution": -1.0,
+              "ec_measurement_schema": "ophyd-electrochemistry/measurement-v4",
+              "ec_measurement_status_definition": "Keithley Model 2460 Reference Manual Rev. C: bufferVar.statuses; unmodified raw measurement-status bitmask",
+              "ec_poll_period": 0.01,
+              "ec_prepared_capacity_records": 16,
+              "ec_prepared_communication_margin": 8.0,
+              "ec_prepared_completion_bound": 6.51,
+              "ec_prepared_expected_records": 1,
+              "ec_prepared_program_sha256": "c0a323d8f3904064f17709ef0bd0d081d17aa7be20ccc50f4ed252cff10f1ded",
+              "ec_prepared_request_sha256": "d5acfa113866b2b1facbd747a875051911703fa5bfb0492fdb011857e87eb688",
+              "ec_relative_time_origin": "first_stored_reading",
+              "ec_source_status_definition": "Keithley Model 2460 Reference Manual Rev. C: bufferVar.sourcestatuses; unmodified raw source-status bitmask",
+              "ec_start_edge": "rising",
+              "ec_start_mode": "immediate",
+              "ec_target_config_json": "{\"fields\":{\"buffer\":{\"fields\":{\"capacity_ceiling_records\":600,\"transfer_chunk_records\":128},\"type\":\"BufferPolicy\"},\"io\":{\"fields\":{\"abort\":4,\"abort_edge\":\"rising\",\"busy\":2,\"busy_asserted_level\":1,\"external_abort_enabled\":false,\"ready\":1,\"ready_asserted_level\":1,\"start\":3,\"start_edge\":\"rising\"},\"type\":\"DigitalIOConfig\"},\"safety\":{\"fields\":{\"charge_current_max_a\":0.005,\"discharge_current_max_a\":0.005,\"power_abs_max_w\":0.005,\"source_off_mode\":\"normal\",\"voltage_max_v\":1.0,\"voltage_min_v\":-1.0},\"type\":\"SafetyConfig\"},\"sense\":\"remote\",\"source_terminal\":\"front\",\"timing\":{\"fields\":{\"command_timeout_s\":2.0,\"duration_tolerance_s\":0.0,\"external_start_timeout_s\":2.0,\"frequency_tolerance_hz\":0.0,\"measurement_period_tolerance_s\":0.0,\"poll_period_s\":0.01,\"required_abort_latency_s\":1.0,\"required_cutoff_latency_s\":1.0,\"scan_rate_tolerance_v_per_s\":0.0,\"shutdown_timeout_s\":5.0,\"source_period_tolerance_s\":0.0},\"type\":\"TimingPolicy\"},\"visa_resource\":\"TCPIP0::169.254.113.151::5025::SOCKET\"},\"type\":\"Keithley2460Config\"}",
+              "ec_target_hardware_ready": 0,
+              "ec_target_instrument_identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+              "ec_target_line_frequency_hz": 50,
+              "ec_target_measurement_profile": "k2460_2v_1nplc_v1",
+              "ec_target_plan_json": "{\"fields\":{\"current_a\":0.005,\"duration_s\":1.0,\"lower_cutoff_v\":-1.0,\"measurement_profile\":{\"enum\":\"K2460MeasurementProfile\",\"value\":\"k2460_2v_1nplc_v1\"},\"sample_period_s\":1.0,\"source_range_a\":0.01,\"start_mode\":{\"enum\":\"StartMode\",\"value\":\"immediate\"},\"upper_cutoff_v\":1.0,\"voltage_limit_v\":1.0},\"type\":\"TimedHoldPlan\"}",
+              "ec_target_request_json": "{\"request\":{\"fields\":{\"experiment_id\":\"timed-v17-one-reading-duration-diagnostic\",\"program\":{\"fields\":{\"current_a\":0.005,\"duration_s\":1.0,\"lower_cutoff_v\":null,\"sample_period_s\":1.0,\"upper_cutoff_v\":null,\"voltage_limit_v\":1.0},\"type\":\"GalvanostaticHold\"},\"start_mode\":{\"enum\":\"StartMode\",\"value\":\"immediate\"}},\"type\":\"AcquisitionRequest\"},\"schema\":\"ophyd-electrochemistry/request-v1\"}",
+              "ec_target_runtime_build": "m4-finite-current-hold-v17",
+              "ec_target_runtime_sha256": "68b25b2e332351cc134ccdf47d04799a365e2294776f9ab30ca78f6e5408b521",
+              "ec_target_timing_status": "uncommissioned",
+              "ec_target_transport_config_json": "{\"fields\":{\"backend\":\"@py\",\"chunk_size_bytes\":4096,\"expected_model\":\"2460\",\"io_timeout_ms\":1000,\"max_command_bytes\":16384,\"max_response_bytes\":65536,\"open_timeout_ms\":3000,\"read_termination\":\"\\n\",\"required_language\":\"TSP\",\"resource_name\":\"TCPIP0::169.254.113.151::5025::SOCKET\",\"script_line_delay_s\":0.01,\"write_termination\":\"\\n\"},\"type\":\"VisaTransportConfig\"}",
+              "ec_timestamp_field": "unknown",
+              "ec_timestamp_reference": "unresolved",
+              "ec_timing_origin": "instrument_reported",
+              "ec_voltage_origin": "measured"
+            },
+            "data_keys": {
+              "ec_acquisition_id": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/acquisition_id"
+              },
+              "ec_actual_start_known": {
+                "dtype": "integer",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/actual_start_known"
+              },
+              "ec_backend": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/backend"
+              },
+              "ec_collection_chunk_records": {
+                "dtype": "integer",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/collection_chunk_records"
+              },
+              "ec_completion_timeout": {
+                "dtype": "number",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/completion_timeout",
+                "units": "s"
+              },
+              "ec_completion_timeout_effective": {
+                "dtype": "number",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/completion_timeout_effective",
+                "units": "s"
+              },
+              "ec_current_origin": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/current_origin"
+              },
+              "ec_instrument_timestamp_origin": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/instrument_timestamp_origin"
+              },
+              "ec_instrument_timestamp_resolution": {
+                "dtype": "number",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/instrument_timestamp_resolution",
+                "units": "s"
+              },
+              "ec_measurement_schema": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/measurement_schema"
+              },
+              "ec_measurement_status_definition": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/measurement_status_definition"
+              },
+              "ec_poll_period": {
+                "dtype": "number",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/poll_period",
+                "units": "s"
+              },
+              "ec_prepared_capacity_records": {
+                "dtype": "integer",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/prepared_capacity_records"
+              },
+              "ec_prepared_communication_margin": {
+                "dtype": "number",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/prepared_communication_margin",
+                "units": "s"
+              },
+              "ec_prepared_completion_bound": {
+                "dtype": "number",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/prepared_completion_bound",
+                "units": "s"
+              },
+              "ec_prepared_expected_records": {
+                "dtype": "integer",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/prepared_expected_records"
+              },
+              "ec_prepared_program_sha256": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/prepared_program_sha256"
+              },
+              "ec_prepared_request_sha256": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/prepared_request_sha256"
+              },
+              "ec_relative_time_origin": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/relative_time_origin"
+              },
+              "ec_source_status_definition": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/source_status_definition"
+              },
+              "ec_start_edge": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/start_edge"
+              },
+              "ec_start_mode": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/start_mode"
+              },
+              "ec_target_config_json": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/target_config_json"
+              },
+              "ec_target_hardware_ready": {
+                "dtype": "integer",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/target_hardware_ready"
+              },
+              "ec_target_instrument_identity": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/target_instrument_identity"
+              },
+              "ec_target_line_frequency_hz": {
+                "dtype": "integer",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/target_line_frequency_hz"
+              },
+              "ec_target_measurement_profile": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/target_measurement_profile"
+              },
+              "ec_target_plan_json": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/target_plan_json"
+              },
+              "ec_target_request_json": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/target_request_json"
+              },
+              "ec_target_runtime_build": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/target_runtime_build"
+              },
+              "ec_target_runtime_sha256": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/target_runtime_sha256"
+              },
+              "ec_target_timing_status": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/target_timing_status"
+              },
+              "ec_target_transport_config_json": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/target_transport_config_json"
+              },
+              "ec_timestamp_field": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/timestamp_field"
+              },
+              "ec_timestamp_reference": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/timestamp_reference"
+              },
+              "ec_timing_origin": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/timing_origin"
+              },
+              "ec_voltage_origin": {
+                "dtype": "string",
+                "shape": [],
+                "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/configuration/voltage_origin"
+              }
+            },
+            "timestamps": {
+              "ec_acquisition_id": 1793636343.284127,
+              "ec_actual_start_known": 1793636343.284127,
+              "ec_backend": 1793636343.284127,
+              "ec_collection_chunk_records": 1793636343.284127,
+              "ec_completion_timeout": 1793636343.284127,
+              "ec_completion_timeout_effective": 1793636343.284127,
+              "ec_current_origin": 1793636343.284127,
+              "ec_instrument_timestamp_origin": 1793636343.284127,
+              "ec_instrument_timestamp_resolution": 1793636343.284127,
+              "ec_measurement_schema": 1793636343.284127,
+              "ec_measurement_status_definition": 1793636343.284127,
+              "ec_poll_period": 1793636343.284127,
+              "ec_prepared_capacity_records": 1793636343.284127,
+              "ec_prepared_communication_margin": 1793636343.284127,
+              "ec_prepared_completion_bound": 1793636343.284127,
+              "ec_prepared_expected_records": 1793636343.284127,
+              "ec_prepared_program_sha256": 1793636343.284127,
+              "ec_prepared_request_sha256": 1793636343.284127,
+              "ec_relative_time_origin": 1793636343.284127,
+              "ec_source_status_definition": 1793636343.284127,
+              "ec_start_edge": 1793636343.284127,
+              "ec_start_mode": 1793636343.284127,
+              "ec_target_config_json": 1793636343.284127,
+              "ec_target_hardware_ready": 1793636343.284127,
+              "ec_target_instrument_identity": 1793636343.284127,
+              "ec_target_line_frequency_hz": 1793636343.284127,
+              "ec_target_measurement_profile": 1793636343.284127,
+              "ec_target_plan_json": 1793636343.284127,
+              "ec_target_request_json": 1793636343.284127,
+              "ec_target_runtime_build": 1793636343.284127,
+              "ec_target_runtime_sha256": 1793636343.284127,
+              "ec_target_timing_status": 1793636343.284127,
+              "ec_target_transport_config_json": 1793636343.284127,
+              "ec_timestamp_field": 1793636343.284127,
+              "ec_timestamp_reference": 1793636343.284127,
+              "ec_timing_origin": 1793636343.284127,
+              "ec_voltage_origin": 1793636343.284127
+            }
+          }
+        },
+        "data_keys": {
+          "ec_available": {
+            "dtype": "number",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/available",
+            "units": "s"
+          },
+          "ec_current": {
+            "dtype": "number",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/current",
+            "units": "A"
+          },
+          "ec_current_aperture_end": {
+            "dtype": "number",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/current_aperture_end",
+            "units": "s"
+          },
+          "ec_current_aperture_start": {
+            "dtype": "number",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/current_aperture_start",
+            "units": "s"
+          },
+          "ec_current_timing_origin": {
+            "dtype": "string",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/current_timing_origin"
+          },
+          "ec_current_timing_uncertainty": {
+            "dtype": "number",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/current_timing_uncertainty",
+            "units": "s"
+          },
+          "ec_cycle_index": {
+            "dtype": "integer",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/cycle_index"
+          },
+          "ec_first_logical_point": {
+            "dtype": "integer",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/first_logical_point"
+          },
+          "ec_instrument_timestamp": {
+            "dtype": "number",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/instrument_timestamp",
+            "units": "s"
+          },
+          "ec_last_logical_point": {
+            "dtype": "integer",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/last_logical_point"
+          },
+          "ec_mapping_quality": {
+            "dtype": "string",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/mapping_quality"
+          },
+          "ec_measurement_status": {
+            "dtype": "integer",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/measurement_status"
+          },
+          "ec_point_index": {
+            "dtype": "integer",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/point_index"
+          },
+          "ec_repeat_index": {
+            "dtype": "integer",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/repeat_index"
+          },
+          "ec_sample_index": {
+            "dtype": "integer",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/sample_index"
+          },
+          "ec_segment_index": {
+            "dtype": "integer",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/segment_index"
+          },
+          "ec_source_function": {
+            "dtype": "string",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/source_function"
+          },
+          "ec_source_setpoint": {
+            "dtype": "number",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/source_setpoint",
+            "units": "A"
+          },
+          "ec_source_status": {
+            "dtype": "integer",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/source_status"
+          },
+          "ec_time_relative": {
+            "dtype": "number",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/time_relative",
+            "units": "s"
+          },
+          "ec_voltage": {
+            "dtype": "number",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/voltage",
+            "units": "V"
+          },
+          "ec_voltage_aperture_end": {
+            "dtype": "number",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/voltage_aperture_end",
+            "units": "s"
+          },
+          "ec_voltage_aperture_start": {
+            "dtype": "number",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/voltage_aperture_start",
+            "units": "s"
+          },
+          "ec_voltage_timing_origin": {
+            "dtype": "string",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/voltage_timing_origin"
+          },
+          "ec_voltage_timing_uncertainty": {
+            "dtype": "number",
+            "object_name": "ec",
+            "shape": [],
+            "source": "ophyd-electrochemistry://ophyd_electrochemistry.keithley.k2460.backend.Keithley2460Backend/voltage_timing_uncertainty",
+            "units": "s"
+          }
+        },
+        "hints": {
+          "ec": {
+            "fields": []
+          }
+        },
+        "name": "electrochemistry",
+        "object_classes": {},
+        "object_keys": {
+          "ec": [
+            "ec_sample_index",
+            "ec_time_relative",
+            "ec_instrument_timestamp",
+            "ec_voltage_aperture_start",
+            "ec_voltage_aperture_end",
+            "ec_current_aperture_start",
+            "ec_current_aperture_end",
+            "ec_voltage_timing_origin",
+            "ec_current_timing_origin",
+            "ec_voltage_timing_uncertainty",
+            "ec_current_timing_uncertainty",
+            "ec_available",
+            "ec_voltage",
+            "ec_current",
+            "ec_source_function",
+            "ec_source_setpoint",
+            "ec_source_status",
+            "ec_measurement_status",
+            "ec_mapping_quality",
+            "ec_first_logical_point",
+            "ec_last_logical_point",
+            "ec_repeat_index",
+            "ec_point_index",
+            "ec_cycle_index",
+            "ec_segment_index"
+          ]
+        },
+        "run_start": "996e21e0-dcd0-4bbb-b3a4-724ebde704ba",
+        "time": 1793636343.2846541,
+        "uid": "f5e194d2-69d0-4ade-9f05-dc111465f893"
+      },
+      "name": "descriptor"
+    },
+    {
+      "document": {
+        "data": {
+          "ec_available": [
+            -1
+          ],
+          "ec_current": [
+            0.0049842773005
+          ],
+          "ec_current_aperture_end": [
+            -1
+          ],
+          "ec_current_aperture_start": [
+            -1
+          ],
+          "ec_current_timing_origin": [
+            "unknown"
+          ],
+          "ec_current_timing_uncertainty": [
+            -1
+          ],
+          "ec_cycle_index": [
+            -1
+          ],
+          "ec_first_logical_point": [
+            -1
+          ],
+          "ec_instrument_timestamp": [
+            0.0
+          ],
+          "ec_last_logical_point": [
+            -1
+          ],
+          "ec_mapping_quality": [
+            "unknown"
+          ],
+          "ec_measurement_status": [
+            8
+          ],
+          "ec_point_index": [
+            -1
+          ],
+          "ec_repeat_index": [
+            -1
+          ],
+          "ec_sample_index": [
+            0
+          ],
+          "ec_segment_index": [
+            -1
+          ],
+          "ec_source_function": [
+            "current"
+          ],
+          "ec_source_setpoint": [
+            0.005
+          ],
+          "ec_source_status": [
+            200
+          ],
+          "ec_time_relative": [
+            0.0
+          ],
+          "ec_voltage": [
+            0.51248002052
+          ],
+          "ec_voltage_aperture_end": [
+            -1
+          ],
+          "ec_voltage_aperture_start": [
+            -1
+          ],
+          "ec_voltage_timing_origin": [
+            "unknown"
+          ],
+          "ec_voltage_timing_uncertainty": [
+            -1
+          ]
+        },
+        "descriptor": "f5e194d2-69d0-4ade-9f05-dc111465f893",
+        "filled": {},
+        "seq_num": [
+          1
+        ],
+        "time": [
+          1793636343.30687
+        ],
+        "timestamps": {
+          "ec_available": [
+            1793636343.306806
+          ],
+          "ec_current": [
+            1793636343.306806
+          ],
+          "ec_current_aperture_end": [
+            1793636343.306806
+          ],
+          "ec_current_aperture_start": [
+            1793636343.306806
+          ],
+          "ec_current_timing_origin": [
+            1793636343.306806
+          ],
+          "ec_current_timing_uncertainty": [
+            1793636343.306806
+          ],
+          "ec_cycle_index": [
+            1793636343.306806
+          ],
+          "ec_first_logical_point": [
+            1793636343.306806
+          ],
+          "ec_instrument_timestamp": [
+            1793636343.306806
+          ],
+          "ec_last_logical_point": [
+            1793636343.306806
+          ],
+          "ec_mapping_quality": [
+            1793636343.306806
+          ],
+          "ec_measurement_status": [
+            1793636343.306806
+          ],
+          "ec_point_index": [
+            1793636343.306806
+          ],
+          "ec_repeat_index": [
+            1793636343.306806
+          ],
+          "ec_sample_index": [
+            1793636343.306806
+          ],
+          "ec_segment_index": [
+            1793636343.306806
+          ],
+          "ec_source_function": [
+            1793636343.306806
+          ],
+          "ec_source_setpoint": [
+            1793636343.306806
+          ],
+          "ec_source_status": [
+            1793636343.306806
+          ],
+          "ec_time_relative": [
+            1793636343.306806
+          ],
+          "ec_voltage": [
+            1793636343.306806
+          ],
+          "ec_voltage_aperture_end": [
+            1793636343.306806
+          ],
+          "ec_voltage_aperture_start": [
+            1793636343.306806
+          ],
+          "ec_voltage_timing_origin": [
+            1793636343.306806
+          ],
+          "ec_voltage_timing_uncertainty": [
+            1793636343.306806
+          ]
+        },
+        "uid": [
+          "d669040e-6099-4dc1-aaf3-52362c91f653"
+        ]
+      },
+      "name": "event_page"
+    },
+    {
+      "document": {
+        "exit_status": "success",
+        "num_events": {
+          "electrochemistry": 1
+        },
+        "reason": "",
+        "run_start": "996e21e0-dcd0-4bbb-b3a4-724ebde704ba",
+        "time": 1793636343.3099022,
+        "uid": "a17a629a-3d50-41fb-b87d-38db7a491b7b"
+      },
+      "name": "stop"
+    }
+  ],
+  "events_after_archive": {
+    "errors": 0,
+    "information": 0,
+    "warnings": 0
+  },
+  "events_after_run": {
+    "errors": 0,
+    "information": 3,
+    "warnings": 2
+  },
+  "events_before": {
+    "errors": 0,
+    "information": 0,
+    "warnings": 0
+  },
+  "events_final": {
+    "errors": 0,
+    "information": 0,
+    "warnings": 0
+  },
+  "export": {
+    "file_sha256": "8d61c8310db8c31aed09ba2421415dc50c43a6db4a076450537da2c8946177d0",
+    "path": "/Users/bpauw/Code/ophyd-electrochemistry/docs/evidence/k2460-2026-11-02-timed-v17-run-05-export.json",
+    "payload_sha256": "207779dcf3582e48d384ca904cb849780256c834dd44766b131c87bc77cf3b21"
+  },
+  "fresh_final": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 14,
+    "model_state": "trigger.STATE_EMPTY",
+    "model_substate": "trigger.STATE_EMPTY",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "idle",
+    "timer_overrun": false
+  },
+  "fresh_raw_chunk": {
+    "offset": 0,
+    "records": [
+      {
+        "buffer_relative_time_s": 0.0,
+        "measured_voltage_v": 0.51248002052,
+        "measurement_status": 8,
+        "sample_index": 0,
+        "source_current_a": 0.0049842773005,
+        "source_status": 200
+      }
+    ],
+    "records_sha256": "47dc7e2b6edd5830f2b8b91266a3d517ad1009656458c0cfc9d7e3d025f0f379",
+    "schema": "ophyd-electrochemistry/k2460-buffer-proof-v1",
+    "total_records": 1
+  },
+  "fresh_run04_match": {
+    "offset": 0,
+    "records": [
+      {
+        "buffer_relative_time_s": 0.0,
+        "measured_voltage_v": 0.51247859001,
+        "measurement_status": 8,
+        "sample_index": 0,
+        "source_current_a": 0.004983975552,
+        "source_status": 200
+      }
+    ],
+    "records_sha256": "5059f832f31ea1d2e5c1a1a324c57a96375290bc9d9952f5b17241273c68c37e",
+    "schema": "ophyd-electrochemistry/k2460-buffer-proof-v1",
+    "total_records": 1
+  },
+  "hardware_gates_promoted": [],
+  "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "initial": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 28,
+    "model_state": "trigger.STATE_EMPTY",
+    "model_substate": "trigger.STATE_EMPTY",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "idle",
+    "timer_overrun": false
+  },
+  "instrument_events": [
+    {
+      "parsed": {
+        "event_number": 5076,
+        "message": "Source Limit changed to 0.21 V due to new measure Range",
+        "node_id": 2,
+        "severity": 2,
+        "utc_nanoseconds_part": 617839700,
+        "utc_seconds": 1793640506
+      },
+      "raw": "5076\tSource Limit changed to 0.21 V due to new measure Range\t2\t2\t1793640506\t617839700"
+    },
+    {
+      "parsed": {
+        "event_number": 5076,
+        "message": "Source Limit changed to 0.212 V due to new measure Range",
+        "node_id": 2,
+        "severity": 2,
+        "utc_nanoseconds_part": 664739860,
+        "utc_seconds": 1793640506
+      },
+      "raw": "5076\tSource Limit changed to 0.212 V due to new measure Range\t2\t2\t1793640506\t664739860"
+    },
+    {
+      "parsed": {
+        "event_number": 2753,
+        "message": "Trigger model is not optimized for speed due to multiple blocks waiting on same event",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 847989340,
+        "utc_seconds": 1793640506
+      },
+      "raw": "2753\tTrigger model is not optimized for speed due to multiple blocks waiting on same event\t4\t2\t1793640506\t847989340"
+    },
+    {
+      "parsed": {
+        "event_number": 2731,
+        "message": "Trigger model path #1 has been initiated",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 848040040,
+        "utc_seconds": 1793640506
+      },
+      "raw": "2731\tTrigger model path #1 has been initiated\t4\t2\t1793640506\t848040040"
+    },
+    {
+      "parsed": {
+        "event_number": 2732,
+        "message": "Trigger model path #1 has been idled",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 850615920,
+        "utc_seconds": 1793640507
+      },
+      "raw": "2732\tTrigger model path #1 has been idled\t4\t2\t1793640507\t850615920"
+    }
+  ],
+  "io": [
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t28\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(oe_m4_runtime_build)",
+      "kind": "query",
+      "response": "m4-finite-current-hold-v17"
+    },
+    {
+      "command": "print(oe_m4_68b25b2e332351cc134ccdf4 == nil)",
+      "kind": "query",
+      "response": "false"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "1\t1\t1\t16"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "kind": "query",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "kind": "query",
+      "response": "0\t100000\t0\t0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t28\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "1\t1\t1\t16"
+    },
+    {
+      "command": "oe_m5_print_buffer(1,1)",
+      "kind": "query",
+      "response": "0.004983975552, 0.51247859001, 0, 200, 8"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t28\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "oe_m5_discard_buffer()",
+      "delivery": "write_confirmed",
+      "kind": "mutation"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "0\t0\t0\t16"
+    },
+    {
+      "command": "*IDN?",
+      "kind": "query",
+      "response": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a"
+    },
+    {
+      "command": "*LANG?",
+      "kind": "query",
+      "response": "TSP"
+    },
+    {
+      "command": "print(localnode.linefreq)",
+      "kind": "query",
+      "response": "50"
+    },
+    {
+      "command": "print(oe_m4_runtime_build)",
+      "kind": "query",
+      "response": "m4-finite-current-hold-v17"
+    },
+    {
+      "command": "print(oe_m4_68b25b2e332351cc134ccdf4 ~= nil)",
+      "kind": "query",
+      "response": "true"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t28\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t28\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t28\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "0\t0\t0\t16"
+    },
+    {
+      "command": "print(oe_m4_runtime_build)",
+      "kind": "query",
+      "response": "m4-finite-current-hold-v17"
+    },
+    {
+      "command": "print(oe_m4_68b25b2e332351cc134ccdf4 == nil)",
+      "kind": "query",
+      "response": "false"
+    },
+    {
+      "command": "oe_timed_prepare_current_hold(0.0050000000000000001,0.01,1,1,1,1,-1,1,0,2,0.01,1,1,1,2,3,1,1,1,4)",
+      "delivery": "write_confirmed",
+      "kind": "mutation"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tprepared\ttrigger.STATE_BUILDING\ttrigger.STATE_BUILDING\t28\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "0\t0\t0\t16"
+    },
+    {
+      "command": "print(oe_m5_measurement_profile_status())",
+      "kind": "query",
+      "response": "4\t1\t2\tsmu.OFF\tsmu.OFF\tsmu.OFF\tsmu.OFF"
+    },
+    {
+      "command": "print(oe_timed_plan_status())",
+      "kind": "query",
+      "response": "1\t1\t1\t-1\t1\t0.5"
+    },
+    {
+      "command": "print(smu.source.level, smu.source.range, smu.source.vlimit.level)",
+      "kind": "query",
+      "response": "0.005\t0.01\t1"
+    },
+    {
+      "command": "print((string.gsub(trigger.model.getblocklist(), \"\\n\", \"|\")))",
+      "kind": "query",
+      "response": " 1) DIGITAL_IO            PATTERN: 0x02  MASK: 0x03| 2) BUFFER_CLEAR          BUFFER: oe_m5_buffer| 3) SOURCE_OUTPUT         OUTPUT: ON| 4) NOTIFY                NOTIFY: 4| 5) BRANCH_ON_EVENT       EVENT: EVENT_TIMER4  BRANCH_BLOCK: 26| 6) MEASURE_DIGITIZE      BUFFER: oe_m5_buffer INITIAL MODE: MEAS INITIAL COUNT: 1| 7) BRANCH_LIMIT_CONSTANT OUTSIDE: 1.000000,-1.000000  MEAS_BLOCK: 6   BRANCH_BLOCK: 18| 8) BRANCH_ON_EVENT       EVENT: EVENT_TIMER4  BRANCH_BLOCK: 22| 9) WAIT                  EVENT1_ID: EVENT_TIMER4  LOGIC: AND  EVENT2_ID: <n/a>  EVENT3_ID: <n/a>  CLEAR: NEVER|10) BRANCH_COUNTER        VALUE: 1  BRANCH_BLOCK: 16|11) WAIT                  EVENT1_ID: EVENT_TIMER2  LOGIC: AND  EVENT2_ID: <n/a>  EVENT3_ID: <n/a>  CLEAR: NEVER|12) SOURCE_OUTPUT         OUTPUT: OFF|13) DIGITAL_IO            PATTERN: 0x00  MASK: 0x03|14) NOTIFY                NOTIFY: 2|15) BRANCH_ALWAYS         BRANCH_BLOCK: 0 |16) WAIT                  EVENT1_ID: EVENT_TIMER3  LOGIC: AND  EVENT2_ID: <n/a>  EVENT3_ID: <n/a>  CLEAR: NEVER|17) BRANCH_ALWAYS         BRANCH_BLOCK: 5 |18) SOURCE_OUTPUT         OUTPUT: OFF|19) DIGITAL_IO            PATTERN: 0x00  MASK: 0x03|20) NOTIFY                NOTIFY: 5|21) BRANCH_ALWAYS         BRANCH_BLOCK: 0 |22) SOURCE_OUTPUT         OUTPUT: OFF|23) DIGITAL_IO            PATTERN: 0x00  MASK: 0x03|24) NOTIFY                NOTIFY: 6|25) BRANCH_ALWAYS         BRANCH_BLOCK: 0 |26) SOURCE_OUTPUT         OUTPUT: OFF|27) DIGITAL_IO            PATTERN: 0x00  MASK: 0x03|28) NOTIFY                NOTIFY: 7|29) BRANCH_ALWAYS         BRANCH_BLOCK: 0 ||* This trigger model may not be set up for low latency. *|"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "0\t0\t0\t16"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tprepared\ttrigger.STATE_BUILDING\ttrigger.STATE_BUILDING\t28\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "oe_m4_arm()",
+      "delivery": "write_confirmed",
+      "kind": "mutation"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t9\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\trunning\ttrigger.STATE_WAITING\ttrigger.STATE_WAITING\t11\tsmu.ON\t0\t1\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tcomplete\ttrigger.STATE_IDLE\ttrigger.STATE_IDLE\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_timed_terminal_cause())",
+      "kind": "query",
+      "response": "normal_completion"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "1\t1\t1\t16"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tcomplete\ttrigger.STATE_IDLE\ttrigger.STATE_IDLE\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tcomplete\ttrigger.STATE_IDLE\ttrigger.STATE_IDLE\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "1\t1\t1\t16"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tcomplete\ttrigger.STATE_IDLE\ttrigger.STATE_IDLE\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "1\t1\t1\t16"
+    },
+    {
+      "command": "oe_m5_print_buffer(1,1)",
+      "kind": "query",
+      "response": "0.0049842773005, 0.51248002052, 0, 200, 8"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tcomplete\ttrigger.STATE_IDLE\ttrigger.STATE_IDLE\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "1\t1\t1\t16"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tcomplete\ttrigger.STATE_IDLE\ttrigger.STATE_IDLE\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "1\t1\t1\t16"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tcomplete\ttrigger.STATE_IDLE\ttrigger.STATE_IDLE\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "1\t1\t1\t16"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tcomplete\ttrigger.STATE_IDLE\ttrigger.STATE_IDLE\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tcomplete\ttrigger.STATE_IDLE\ttrigger.STATE_IDLE\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tcomplete\ttrigger.STATE_IDLE\ttrigger.STATE_IDLE\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "*IDN?",
+      "kind": "query",
+      "response": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a"
+    },
+    {
+      "command": "*LANG?",
+      "kind": "query",
+      "response": "TSP"
+    },
+    {
+      "command": "print(localnode.linefreq)",
+      "kind": "query",
+      "response": "50"
+    },
+    {
+      "command": "print(oe_m4_runtime_build)",
+      "kind": "query",
+      "response": "m4-finite-current-hold-v17"
+    },
+    {
+      "command": "print(oe_m4_68b25b2e332351cc134ccdf4 ~= nil)",
+      "kind": "query",
+      "response": "true"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tcomplete\ttrigger.STATE_IDLE\ttrigger.STATE_IDLE\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "oe_m4_recover()",
+      "delivery": "write_confirmed",
+      "kind": "mutation"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "1\t1\t1\t16"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "1\t1\t1\t16"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "1\t1\t1\t16"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "1\t1\t1\t16"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "kind": "query",
+      "response": "3"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "kind": "query",
+      "response": "2"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "kind": "query",
+      "response": "5076\tSource Limit changed to 0.21 V due to new measure Range\t2\t2\t1793640506\t617839700"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "kind": "query",
+      "response": "5076\tSource Limit changed to 0.212 V due to new measure Range\t2\t2\t1793640506\t664739860"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "kind": "query",
+      "response": "2753\tTrigger model is not optimized for speed due to multiple blocks waiting on same event\t4\t2\t1793640506\t847989340"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "kind": "query",
+      "response": "2731\tTrigger model path #1 has been initiated\t4\t2\t1793640506\t848040040"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "kind": "query",
+      "response": "2732\tTrigger model path #1 has been idled\t4\t2\t1793640507\t850615920"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "kind": "query",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "kind": "query",
+      "response": "0\t100000\t0\t0"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t14\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "1\t1\t1\t16"
+    },
+    {
+      "command": "oe_m5_print_buffer(1,1)",
+      "kind": "query",
+      "response": "0.0049842773005, 0.51248002052, 0, 200, 8"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "kind": "query",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "kind": "query",
+      "response": "0\t100000\t0\t0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "kind": "query",
+      "response": "0"
+    }
+  ],
+  "phase": "complete_safe_retained_evidence_archived",
+  "prepared_state": {
+    "output": false,
+    "state": "prepared"
+  },
+  "recovered": {
+    "output": false,
+    "state": "idle"
+  },
+  "request": {
+    "experiment_id": "timed-v17-one-reading-duration-diagnostic",
+    "program": {
+      "current_a": 0.005,
+      "duration_s": 1.0,
+      "lower_cutoff_v": null,
+      "sample_period_s": 1.0,
+      "upper_cutoff_v": null,
+      "voltage_limit_v": 1.0
+    },
+    "start_mode": "immediate"
+  },
+  "retained_metadata": {
+    "acquisition_id": "timed-20261102-05",
+    "capacity_records": 16,
+    "expected_records": 1,
+    "first_sample_index": 0,
+    "last_sample_index": 0,
+    "program_sha256": "c0a323d8f3904064f17709ef0bd0d081d17aa7be20ccc50f4ed252cff10f1ded",
+    "records_sha256": "fb6d50d3ed90ceeff8e00cefb806a592ed11d4de14df8ff2fe85d0bd22e67e8f",
+    "request_sha256": "d5acfa113866b2b1facbd747a875051911703fa5bfb0492fdb011857e87eb688",
+    "retained_records": 1,
+    "schema": "ophyd-electrochemistry/measurement-v4",
+    "terminal_cause": "normal_completion",
+    "waveform_complete": true
+  },
+  "retained_schema": {
+    "clock_mapping": null,
+    "current_origin": "FieldOrigin.SOURCE_READBACK",
+    "instrument_start_timestamp_s": null,
+    "instrument_timestamp_origin": "Keithley 2460 buffer.relativetimestamps; first stored reading",
+    "instrument_timestamp_resolution_s": null,
+    "measurement_status_definition": "Keithley Model 2460 Reference Manual Rev. C: bufferVar.statuses; unmodified raw measurement-status bitmask",
+    "relative_time_origin": "RelativeTimeOrigin.FIRST_STORED_READING",
+    "schema": "ophyd-electrochemistry/measurement-v4",
+    "source_function": "current",
+    "source_status_definition": "Keithley Model 2460 Reference Manual Rev. C: bufferVar.sourcestatuses; unmodified raw source-status bitmask",
+    "synthetic": false,
+    "timestamp_field": null,
+    "timestamp_reference": "TimestampReference.UNRESOLVED",
+    "timing_origin": "TimingOrigin.INSTRUMENT_REPORTED",
+    "voltage_origin": "FieldOrigin.MEASURED"
+  },
+  "run04_disposition": {
+    "capacity_records": 16,
+    "end_index": null,
+    "record_count": 0,
+    "start_index": null
+  },
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v17",
+    "script_name": "oe_m4_68b25b2e332351cc134ccdf4",
+    "sha256": "68b25b2e332351cc134ccdf47d04799a365e2294776f9ab30ca78f6e5408b521"
+  },
+  "schema": "ophyd-electrochemistry/timed-resistor-run-v1",
+  "shared_chunk": {
+    "acquisition_id": "timed-20261102-05",
+    "offset": 0,
+    "records": [
+      {
+        "available_relative_s": null,
+        "current_a": 0.0049842773005,
+        "current_aperture": null,
+        "cycle_index": null,
+        "first_logical_point": null,
+        "instrument_timestamp_s": 0.0,
+        "last_logical_point": null,
+        "mapping_quality": "MappingQuality.UNKNOWN",
+        "measurement_status": 8,
+        "point_index": null,
+        "repeat_index": null,
+        "sample_index": 0,
+        "segment_index": null,
+        "source_function": "current",
+        "source_setpoint": 0.005,
+        "source_status": 200,
+        "time_relative_s": 0.0,
+        "voltage_aperture": null,
+        "voltage_v": 0.51248002052
+      }
+    ],
+    "records_sha256": "fb6d50d3ed90ceeff8e00cefb806a592ed11d4de14df8ff2fe85d0bd22e67e8f",
+    "schema": "ophyd-electrochemistry/measurement-v4",
+    "total_records": 1
+  },
+  "started_at_utc": "2026-11-02T16:19:01.704129+00:00"
+}

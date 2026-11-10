@@ -1,0 +1,16 @@
+{
+  "capture_obtained": false,
+  "hardware_gates_promoted": [],
+  "next_capture_procedure": "CH2 BUSY rising trigger, 100 ms window, 10\u201320 ms pretrigger; scope waiting in Single before instrument arm.",
+  "proof_run_id": 2026110204,
+  "recorded_at_utc": "2026-11-02T11:18:24.723034+00:00",
+  "schema": "ophyd-electrochemistry/k2460-timestamp-scope-status-v1",
+  "scope_model_reported": "older Agilent Infinium; exact model not supplied",
+  "scope_report_verbatim": "I missed it, setting the scope to single skipped the trigger.",
+  "source_artifact": {
+    "path": "docs/evidence/k2460-2026-11-02-timestamp-attempt-04.json",
+    "sha256": "e92cee782f3dd6913f6bfe4222f873c21edc3235fda66f21bf72a02d0ab00a5e"
+  },
+  "timing_claim": null,
+  "waveform_retention_report": "waveform can only be retained on the scope"
+}

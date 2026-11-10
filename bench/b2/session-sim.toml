@@ -1,0 +1,13 @@
+# B2 rehearsal on the simulator: the cell sheet through a real RE Manager.
+# OE_SESSION=bench/b2/session-sim.toml (sim_speed 1.0 = real time)
+backend = "simulator"
+data_dir = "~/k2460-data/b2/sim"
+sim_speed = 50.0
+poll_period_s = 1.0
+
+[limits]
+v_min_abs = 0.0
+v_max_abs = 3.0
+i_max_abs = 0.03
+max_duration_s = 172800.0
+max_records = 1000000

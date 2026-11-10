@@ -1,0 +1,25 @@
+{
+  "assessment": [
+    "One channel remains for a possible analog waveform. No analog probe connection is specified or authorized by this report.",
+    "The latest channel assignment does not independently establish the channel wiring of earlier unexported captures. Existing raw run files are preserved.",
+    "A constant current/voltage waveform still cannot independently identify either integration window; electrical stimulus review remains necessary."
+  ],
+  "channel_assignments_reported": {
+    "1": "READY",
+    "2": "BUSY",
+    "3": "signal generator; exact node before/after START series resistor unconfirmed",
+    "4": "unassigned in the report"
+  },
+  "dut_lo_earth_bond": null,
+  "exact_probe_model": null,
+  "exact_scope_model": null,
+  "hardware_commands_sent": false,
+  "hardware_gates_promoted": [],
+  "probe_reported": "1:10 voltage probe",
+  "probe_type_or_isolation": null,
+  "recorded_at_utc": "2026-11-02T11:46:16.038051+00:00",
+  "reported_verbatim": "I have four channels available, 3 is connected to the signal generator, 1 to READY, 2 to BUSY. I have a 1:10 voltage probe available",
+  "schema": "ophyd-electrochemistry/k2460-scope-equipment-report-v1",
+  "scope_channels_reported": 4,
+  "source": "User report for planning; no instrument queries or hardware actions"
+}

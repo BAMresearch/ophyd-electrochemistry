@@ -1,9 +1,8 @@
 """Classic-ophyd Flyer for a finite, backend-owned electrochemistry acquisition.
 
-The first operational slice consumes the hardware-neutral M5 schema, metadata
-and offset-chunk contracts. The independent simulator satisfies this backend
-today. A target adapter must not be added until the 2460 buffer timestamp can be
-mapped to actual START and measurement apertures without inventing precision.
+Consumes the hardware-neutral M5 schema, metadata and offset-chunk contracts.
+Uncalibrated target records must explicitly identify a first-reading time origin
+and leave actual START and electrical apertures unknown.
 """
 
 # mypy: disable-error-code="attr-defined,no-untyped-call,misc"
@@ -14,7 +13,7 @@ import threading
 import time
 import uuid
 from collections.abc import Callable, Iterator, Mapping
-from typing import Any, Protocol
+from typing import Any, Protocol, runtime_checkable
 
 from event_model.documents import DataKey, PartialEvent
 from ophyd.device import Device
@@ -41,7 +40,7 @@ from ...measurement import (
 from ...protocols import CurrentPulseSequence, GalvanostaticHold
 from ...serialization import request_sha256
 from ...state import DeviceState
-from ...validation import integer, positive, text
+from ...validation import integer, number, positive, text
 
 
 class AcquisitionBackend(Protocol):
@@ -78,6 +77,13 @@ class AcquisitionBackend(Protocol):
     def discard_retained_data(self, *, acquisition_id: str, reason: str) -> None: ...
 
 
+@runtime_checkable
+class _BackendConfiguration(Protocol):
+    def configuration_metadata(self) -> dict[str, int | float | str]:
+        """Return cached provenance without querying or mutating hardware."""
+        ...
+
+
 _ACTIVE_STATES = {
     DeviceState.PREPARING,
     DeviceState.PREPARED,
@@ -106,9 +112,9 @@ class Keithley2460Device(Device):
 
     This initial M6 slice supports :class:`GalvanostaticHold` and
     :class:`CurrentPulseSequence` by default. It is operational with the
-    independent simulator backend, but is intentionally not wired to
-    ``M4RuntimeController`` while the target timestamp/aperture mapping remains
-    unresolved.
+    independent simulator backend. The separate timed target backend is an
+    explicitly opted-in resistor commissioning candidate; its physical timing
+    and protection latency remain uncommissioned.
     """
 
     _stream_name = "electrochemistry"
@@ -450,7 +456,13 @@ class Keithley2460Device(Device):
         with self._lock:
             if self._retained_schema is not None and self._retained_metadata is not None:
                 return self._retained_schema, self._retained_metadata
-            if self._state not in _TERMINAL_STATES:
+            retained_idle = (
+                self._state == DeviceState.IDLE
+                and self._output is False
+                and self._prepared_acquisition is not None
+                and self._acquisition_id is not None
+            )
+            if self._state not in _TERMINAL_STATES and not retained_idle:
                 raise RetainedDataError("Collection requires a terminal acquisition")
         schema = self._backend.retained_schema()
         metadata = self._backend.retained_metadata()
@@ -516,8 +528,14 @@ class Keithley2460Device(Device):
             ("sample_index", "integer", None),
             ("time_relative", "number", "s"),
             ("instrument_timestamp", "number", "s"),
-            ("aperture_start", "number", "s"),
-            ("aperture_end", "number", "s"),
+            ("voltage_aperture_start", "number", "s"),
+            ("voltage_aperture_end", "number", "s"),
+            ("current_aperture_start", "number", "s"),
+            ("current_aperture_end", "number", "s"),
+            ("voltage_timing_origin", "string", None),
+            ("current_timing_origin", "string", None),
+            ("voltage_timing_uncertainty", "number", "s"),
+            ("current_timing_uncertainty", "number", "s"),
             ("available", "number", "s"),
             ("voltage", "number", "V"),
             ("current", "number", "A"),
@@ -546,13 +564,13 @@ class Keithley2460Device(Device):
         return result
 
     def _record_data(self, record: MeasurementRecord) -> dict[str, int | float | str]:
-        return {
+        data: dict[str, int | float | str] = {
             self._field_name("sample_index"): record.sample_index,
             self._field_name("time_relative"): record.time_relative_s,
             self._field_name("instrument_timestamp"): record.instrument_timestamp_s,
-            self._field_name("aperture_start"): record.aperture_start_relative_s,
-            self._field_name("aperture_end"): record.aperture_end_relative_s,
-            self._field_name("available"): record.available_relative_s,
+            self._field_name("available"): (
+                -1 if record.available_relative_s is None else record.available_relative_s
+            ),
             self._field_name("voltage"): record.voltage_v,
             self._field_name("current"): record.current_a,
             self._field_name("source_function"): record.source_function,
@@ -567,6 +585,23 @@ class Keithley2460Device(Device):
             self._field_name("cycle_index"): mapping_index(record.cycle_index),
             self._field_name("segment_index"): mapping_index(record.segment_index),
         }
+        for field, aperture in (
+            ("voltage", record.voltage_aperture),
+            ("current", record.current_aperture),
+        ):
+            data[self._field_name(f"{field}_aperture_start")] = (
+                -1 if aperture is None else aperture.start_relative_s
+            )
+            data[self._field_name(f"{field}_aperture_end")] = (
+                -1 if aperture is None else aperture.end_relative_s
+            )
+            data[self._field_name(f"{field}_timing_origin")] = (
+                "unknown" if aperture is None else aperture.origin.value
+            )
+            data[self._field_name(f"{field}_timing_uncertainty")] = (
+                -1 if aperture is None or aperture.uncertainty_s is None else aperture.uncertainty_s
+            )
+        return data
 
     @staticmethod
     def _event_time(schema: MeasurementSchema, record: MeasurementRecord) -> float:
@@ -627,7 +662,7 @@ class Keithley2460Device(Device):
             prepared = self._prepared_acquisition
             effective_completion_timeout_s = self._effective_completion_timeout_s
         backend = type(self._backend)
-        return {
+        values: dict[str, int | float | str] = {
             self._field_name("backend"): f"{backend.__module__}.{backend.__qualname__}",
             self._field_name("poll_period"): self._poll_period_s,
             self._field_name("completion_timeout"): self._completion_timeout_s,
@@ -657,6 +692,41 @@ class Keithley2460Device(Device):
             self._field_name("start_edge"): start_edge,
             self._field_name("acquisition_id"): acquisition_id,
             self._field_name("measurement_schema"): MEASUREMENT_SCHEMA,
+            self._field_name("timestamp_reference"): (
+                "unknown" if retained_schema is None else retained_schema.timestamp_reference.value
+            ),
+            self._field_name("timestamp_field"): (
+                "unknown"
+                if retained_schema is None or retained_schema.timestamp_field is None
+                else retained_schema.timestamp_field.value
+            ),
+            self._field_name("relative_time_origin"): (
+                "unknown" if retained_schema is None else retained_schema.relative_time_origin.value
+            ),
+            self._field_name("instrument_timestamp_origin"): (
+                "unknown"
+                if retained_schema is None
+                else retained_schema.instrument_timestamp_origin
+            ),
+            self._field_name("actual_start_known"): int(
+                retained_schema is not None
+                and retained_schema.instrument_start_timestamp_s is not None
+            ),
+            self._field_name("instrument_timestamp_resolution"): (
+                -1.0
+                if retained_schema is None
+                or retained_schema.instrument_timestamp_resolution_s is None
+                else retained_schema.instrument_timestamp_resolution_s
+            ),
+            self._field_name("voltage_origin"): (
+                "unknown" if retained_schema is None else retained_schema.voltage_origin.value
+            ),
+            self._field_name("current_origin"): (
+                "unknown" if retained_schema is None else retained_schema.current_origin.value
+            ),
+            self._field_name("timing_origin"): (
+                "unknown" if retained_schema is None else retained_schema.timing_origin.value
+            ),
             self._field_name("source_status_definition"): (
                 "unavailable before retained schema"
                 if retained_schema is None
@@ -668,6 +738,15 @@ class Keithley2460Device(Device):
                 else retained_schema.measurement_status_definition
             ),
         }
+        if isinstance(self._backend, _BackendConfiguration):
+            for suffix, value in self._backend.configuration_metadata().items():
+                text(suffix, "backend configuration key")
+                if type(value) not in (int, float, str):
+                    raise ValidationError("Backend configuration values must be finite scalars")
+                if isinstance(value, (int, float)):
+                    number(value, "backend configuration value")
+                values[self._field_name(f"target_{suffix}")] = value
+        return values
 
     def read_configuration(self) -> dict[str, dict[str, int | float | str]]:
         timestamp = time.time()
@@ -698,6 +777,7 @@ class Keithley2460Device(Device):
                 "completion_timeout_effective",
                 "prepared_completion_bound",
                 "prepared_communication_margin",
+                "instrument_timestamp_resolution",
             ):
                 result[key]["units"] = "s"
         return result
@@ -732,7 +812,12 @@ class Keithley2460Device(Device):
         with self._lock:
             if acquisition_id != self._acquisition_id:
                 raise RetainedDataError("Discard requires the exact acquisition ID")
-            if self._state not in _TERMINAL_STATES:
+            retained_idle = (
+                self._state == DeviceState.IDLE
+                and self._output is False
+                and self._prepared_acquisition is not None
+            )
+            if self._state not in _TERMINAL_STATES and not retained_idle:
                 raise RetainedDataError("Discard requires a terminal acquisition")
         self._backend.discard_retained_data(acquisition_id=acquisition_id, reason=reason)
         with self._lock:

@@ -1,0 +1,66 @@
+{
+  "before": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 0,
+    "model_state": "trigger.STATE_BUILDING",
+    "model_substate": "trigger.STATE_BUILDING",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": 1,
+    "start_overrun": false,
+    "state": "prepared",
+    "timer_overrun": false
+  },
+  "buffer": {
+    "capacity_records": 16,
+    "end_index": null,
+    "record_count": 0,
+    "start_index": null
+  },
+  "default_buffers_after": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "default_buffers_before": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "event_counts": {
+    "errors": 1,
+    "information": 2,
+    "warnings": 1
+  },
+  "events_consumed": false,
+  "force_safe": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 0,
+    "model_state": "trigger.STATE_BUILDING",
+    "model_substate": "trigger.STATE_BUILDING",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "aborted",
+    "timer_overrun": false
+  },
+  "observed_at_utc": "2026-11-02T10:27:37.786935+00:00",
+  "phase": "idle_output_off_zero_level_verified",
+  "reason": "Safe shutdown of authorized proof after START-high arm rejection; no retry or re-arm.",
+  "records_discarded": false,
+  "recovered": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 0,
+    "model_state": "trigger.STATE_BUILDING",
+    "model_substate": "trigger.STATE_BUILDING",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "idle",
+    "timer_overrun": false
+  },
+  "source_level_a": 0.0
+}

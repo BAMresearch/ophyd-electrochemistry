@@ -1,0 +1,58 @@
+{
+  "assessment": [
+    "Clean recorded terminal START/timer-overrun flags, four unique monotonic run-tagged markers, archived events, independently matched retained reading.",
+    "Only explicitly authorized run2026110205 proof record discarded after archive checksum and independent instrument match. New run2026110206 reading retained; default-buffer counts/extents/capacities preserved, contents not compared.",
+    "No new timestamp reference, individual electrical aperture or analog waveform claim until scope report; constant resistor output trace alone does not identify integration windows."
+  ],
+  "final_observed_state": {
+    "default_buffers": {
+      "defbuffer1": "12867\t100000\t1\t12867",
+      "defbuffer2": "0\t100000\t0\t0"
+    },
+    "programmed_source_level_a": 0.0,
+    "retained_proof_records": 1,
+    "status": {
+      "abi": "oe-k2460-m4-hold-v1",
+      "busy_level": 0,
+      "last_block": 17,
+      "model_state": "trigger.STATE_IDLE",
+      "model_substate": "trigger.STATE_IDLE",
+      "output_enabled": false,
+      "ready_level": 0,
+      "start_level": -1,
+      "start_overrun": false,
+      "state": "idle",
+      "timer_overrun": false
+    },
+    "unread_event_counts": {
+      "errors": 0,
+      "information": 0,
+      "warnings": 0
+    }
+  },
+  "hardware_gates_promoted": [],
+  "instrument_only_analysis": {
+    "busy_marker_span_s": 2.682e-05,
+    "configured_aperture_s": 0.02,
+    "measurement_block_span_s": 0.0410295,
+    "pre_measure_to_reading_s": 0.0409142,
+    "reading_after_start_max_s": null,
+    "reading_after_start_min_s": null,
+    "reading_to_post_measure_s": 0.0001153
+  },
+  "proof_run_id": 2026110206,
+  "reviewed_at_utc": "2026-11-02T13:46:14.972901+00:00",
+  "schema": "ophyd-electrochemistry/k2460-timestamp-review-v1",
+  "scope": {
+    "confirmed_capture_setup": "CH4 1 Mohm/DC/1x; Single CH2 BUSY rising, 100 ms window, 10-20 ms pretrigger; clean START pin edge within -0.25..5.25 V",
+    "confirmed_wiring": "CH1 READY, CH2 BUSY, CH3 physical START pin 3 after 1 kohm; CH4 tip resistor HI, ground LO; front-terminal nominal 100 ohm four-wire resistor, intentional analog LO earth bond",
+    "probe_model_reported": "Tektronix P2220 at 1x",
+    "raw_trace_available_in_repository": false,
+    "scope_model_reported": "Agilent 54831B",
+    "status": "Pending user report; scope already waiting in Single before arm"
+  },
+  "source_artifact": {
+    "path": "docs/evidence/k2460-2026-11-02-timestamp-attempt-06.json",
+    "sha256": "47644615630fa568bde7c2022dac8eb22290d2a7b29a04109f976305782d0f77"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "buffer": {
+    "capacity_records": 16,
+    "end_index": null,
+    "record_count": 0,
+    "start_index": null
+  },
+  "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "mutating_hardware_commands_sent": false,
+  "observed_at_utc": "2026-11-02T10:26:49.132404+00:00",
+  "output": "smu.OFF",
+  "queries": [
+    {
+      "command": "print(smu.source.output)",
+      "response": "smu.OFF"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "response": "oe-k2460-m4-hold-v1\tprepared\ttrigger.STATE_BUILDING\ttrigger.STATE_BUILDING\t0\tsmu.OFF\t0\t0\tdigio.STATE_HIGH\tfalse\tfalse"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "response": "0.001"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "response": "0\t0\t0\t16"
+    },
+    {
+      "command": "print(digio.line[3].mode)",
+      "response": "digio.MODE_DIGITAL_IN"
+    },
+    {
+      "command": "print(digio.line[3].state)",
+      "response": "digio.STATE_HIGH"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "response": "2"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "response": "1"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "response": "1"
+    },
+    {
+      "command": "print(smu.measure.sense)",
+      "response": "smu.SENSE_4WIRE"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "response": "0\t100000\t0\t0"
+    }
+  ],
+  "source_level_a": 0.001,
+  "start_input_state": "digio.STATE_HIGH",
+  "status": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 0,
+    "model_state": "trigger.STATE_BUILDING",
+    "model_substate": "trigger.STATE_BUILDING",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": 1,
+    "start_overrun": false,
+    "state": "prepared",
+    "timer_overrun": false
+  }
+}

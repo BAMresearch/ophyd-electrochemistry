@@ -1,0 +1,79 @@
+{
+  "analysis_with_provisional_full_fuzz_width_uncertainty": {
+    "busy_marker_span_s": 2.858e-05,
+    "configured_aperture_s": 0.02,
+    "measurement_block_span_s": 0.04102474,
+    "pre_measure_to_reading_s": 0.04091342,
+    "reading_after_start_max_s": 0.04573508,
+    "reading_after_start_min_s": 0.0445865,
+    "reading_to_post_measure_s": 0.00011132
+  },
+  "classification": "REVIEWED DIAGNOSTIC ONLY; clean START/aperture timing acceptance remains open",
+  "derived_busy_high_duration_s_approximate": 0.0453,
+  "final_observed_state": {
+    "default_buffers": {
+      "defbuffer1": "12867\t100000\t1\t12867",
+      "defbuffer2": "0\t100000\t0\t0"
+    },
+    "output_enabled": false,
+    "programmed_source_level_a": 0.0,
+    "retained_proof_records": 1,
+    "runtime_state": "idle",
+    "unread_event_counts": {
+      "errors": 0,
+      "information": 0,
+      "warnings": 0
+    }
+  },
+  "hardware_gates_promoted": [],
+  "interpretation": [
+    "All four uniquely run-tagged timestamp markers are present and monotonically ordered.",
+    "The buffered timestamp is 40.91342 ms after PRE_MEASURE and 0.11132 ms before POST_MEASURE; the measurement-block bracket spans 41.02474 ms. This places the timestamp near the end of the operation, not at its start.",
+    "Configured 1 NPLC at 50 Hz corresponds to a nominal 20 ms integration setting, not an independently observed aperture or a 20 ms total paired-record duration.",
+    "Official documentation says source readback measures the actual source immediately before the DUT measurement; current readback and voltage must not be assumed simultaneous or assigned an identical proved aperture.",
+    "The 44.58650 to 45.73508 ms START-to-buffer-timestamp interval is conditional on the approximate scope delay and provisional full-fuzz-width uncertainty. It does not locate the voltage or current aperture.",
+    "START overrun means a digital input event was ignored while its detector was already detected. Generator DC-setting transient/threshold recrossing is a plausible explanation, not an established cause.",
+    "The expected mode-change warning 1811 and informational speed-optimization message 2753 are archived. No new error was present."
+  ],
+  "next_prerequisites": [
+    "Keep the proof reading retained until archive review and explicit disposition. Preserve default-buffer records.",
+    "Before a clean repeat, establish a controlled generator edge with valid scope-verified input levels and an uncertainty estimate; do not use a front-panel DC amplitude adjustment as the timing edge.",
+    "Reconfirm START low before a deliberate new arm; do not re-arm automatically. Complete required retained-record disposition first.",
+    "Clean repeated START/measurement marker evidence and a justified mapping of sequential source-readback and DUT apertures are still needed before the real adapter projection is accepted."
+  ],
+  "official_manual": {
+    "part": "2460-901-01 Rev. C / September 2019",
+    "sections": {
+      "buffer_timestamp_seconds": "14-36",
+      "digital_input_overrun": "14-218",
+      "source_readback": "14-183 to 14-184"
+    },
+    "url": "https://download.tek.com/manual/2460-901-01C_Sept_2019_Ref.pdf"
+  },
+  "proof_run_id": 2026110202,
+  "records_discarded": false,
+  "reviewed_at_utc": "2026-11-02T10:38:06.089839+00:00",
+  "schema": "ophyd-electrochemistry/k2460-timestamp-review-v1",
+  "scope_observations": {
+    "raw_trace_available": false,
+    "reported_start_edge_fuzziness_s_approximate": 0.00056,
+    "reported_start_method": "Signal generator DC voltage setting changed high; one intended transition held high. User confirms START still held high after completion.",
+    "reported_start_to_busy_falling_s_approximate": 0.0471,
+    "reported_start_to_busy_rising_s_approximate": 0.0018
+  },
+  "source_artifacts": {
+    "attempt": {
+      "path": "docs/evidence/k2460-2026-11-02-timestamp-attempt-02.json",
+      "sha256": "4eba2e8858e97e78a7a709a7b73f83d95f89611f829546c78d2714135b1fd712"
+    },
+    "audit": {
+      "path": "docs/evidence/k2460-2026-11-02-timestamp-attempt-02-audit-verified.json",
+      "sha256": "d700243bef1b97f9a00184decb55a9174ee71acd1143f729d3b7f2dd69878d33"
+    },
+    "events": {
+      "path": "docs/evidence/k2460-2026-11-02-timestamp-attempt-02-events.json",
+      "sha256": "d97c0f74b41ffeaa93c028ccd4a2f0d27a2fa4e2523c888f0c2a4605c8e51b03"
+    }
+  },
+  "uncertainty_assumption": "Use full reported 560 microsecond fuzz width as provisional plus/minus uncertainty about the reported START reference. This is not a characterized total instrument/scope/threshold/channel uncertainty."
+}

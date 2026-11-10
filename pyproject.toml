@@ -9,27 +9,39 @@ description = "Contract template for Bluesky electrochemistry and a Keithley 246
 readme = "README.md"
 license = "BSD-3-Clause"
 requires-python = ">=3.11"
-dependencies = ["bluesky>=1.15.1,<1.16", "ophyd>=1.11.2,<2", "event-model>=1.23,<2"]
+dependencies = ["bluesky>=1.16,<1.17", "ophyd>=1.11.2,<2", "event-model>=1.23,<2"]
 classifiers = ["Development Status :: 1 - Planning", "Programming Language :: Python :: 3"]
 
 [project.optional-dependencies]
 visa = ["pyvisa>=1.14,<2", "pyvisa-py>=0.7,<1"]
+experiment = ["pandas>=2.2,<3", "openpyxl>=3.1,<4", "h5py>=3.11,<4", "plotly>=6,<7", "nbformat>=5.10,<6"]
+queueserver = ["bluesky-queueserver>=0.0.25,<0.1", "bluesky-queueserver-api>=0.0.13,<0.1"]
 
 [project.urls]
 repository = "https://github.com/BAMresearch/ophyd-electrochemistry"
 issues = "https://github.com/BAMresearch/ophyd-electrochemistry/issues"
 
 [project.scripts]
-ophyd-electrochemistry-k2460-diagnose = "ophyd_electrochemistry.keithley.k2460.commissioning:main"
+oe-diagnose = "ophyd_electrochemistry.keithley.k2460.commissioning:main"
+oe-new-run = "ophyd_electrochemistry.sequences.notebook:main"
+oe-template = "ophyd_electrochemistry.sequences.run_sheet:template_main"
+oe-archive-retained = "ophyd_electrochemistry.sequences.queueserver:archive_main"
+oe-enqueue = "ophyd_electrochemistry.sequences.queueserver:enqueue_main"
+oe-validate = "ophyd_electrochemistry.sequences.queueserver:validate_main"
 
 [dependency-groups]
-test = ["pytest>=8,<10"]
+test = ["pytest>=8,<10", "lupa>=2.8,<3"]
 lint = ["ruff>=0.11,<1", "mypy>=1.15,<3"]
 docs = ["mkdocs>=1.6,<2"]
 notebook = ["ipykernel>=6,<8", "nbformat>=5.10,<6", "plotly>=6,<7"]
 build = ["twine>=6,<7"]
 release = ["python-semantic-release==10.7.0"]
 dev = [
+    "pandas>=2.2,<3",
+    "openpyxl>=3.1,<4",
+    "h5py>=3.11,<4",
+    "bluesky-queueserver>=0.0.25,<0.1",
+    "bluesky-queueserver-api>=0.0.13,<0.1",
     {include-group = "test"},
     {include-group = "lint"},
     {include-group = "docs"},
@@ -54,11 +66,15 @@ ophyd_electrochemistry = ["py.typed", "keithley/k2460/tsp/*.tsp"]
 testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "-ra --strict-markers -m 'not hardware'"
-markers = ["hardware: explicit bench tests requiring a commissioned 2460 and a dummy load"]
+markers = [
+    "hardware: explicit bench tests requiring a commissioned 2460 and a dummy load",
+    "queueserver: starts redis-server and an RE Manager (skipped without redis-server)",
+]
 
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+extend-exclude = ["briefs"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]

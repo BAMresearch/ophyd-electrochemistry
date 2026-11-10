@@ -1,0 +1,287 @@
+{
+  "assessment": "UNREVIEWED diagnostic attempt: START overrun true; no accepted timestamp reference, aperture placement, calibrated uncertainty, or timing gate claim.",
+  "attempt_path": "docs/evidence/k2460-2026-11-02-timestamp-attempt-02.json",
+  "attempt_sha256": "4eba2e8858e97e78a7a709a7b73f83d95f89611f829546c78d2714135b1fd712",
+  "authorization": "User explicitly answered: Yes, read and archive all 8 events. Remote-unread consumption was explained.",
+  "buffer_before": {
+    "capacity_records": 16,
+    "end_index": 1,
+    "record_count": 1,
+    "start_index": 1
+  },
+  "counts_after": {
+    "errors": 0,
+    "information": 0,
+    "warnings": 0
+  },
+  "counts_before": {
+    "errors": 0,
+    "information": 7,
+    "warnings": 1
+  },
+  "default_buffers_after": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "events": [
+    {
+      "parsed": {
+        "event_number": 1811,
+        "message": "Setting digio line 3 to digital has reset a trigger setting for digio line",
+        "node_id": 2,
+        "severity": 2,
+        "utc_nanoseconds_part": 929899620,
+        "utc_seconds": 1793619578
+      },
+      "raw": "1811\tSetting digio line 3 to digital has reset a trigger setting for digio line\t2\t2\t1793619578\t929899620"
+    },
+    {
+      "parsed": {
+        "event_number": 2753,
+        "message": "Trigger model is not optimized for speed due to multiple blocks waiting on same event",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 930064580,
+        "utc_seconds": 1793619578
+      },
+      "raw": "2753\tTrigger model is not optimized for speed due to multiple blocks waiting on same event\t4\t2\t1793619578\t930064580"
+    },
+    {
+      "parsed": {
+        "event_number": 2731,
+        "message": "Trigger model path #1 has been initiated",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 930100200,
+        "utc_seconds": 1793619578
+      },
+      "raw": "2731\tTrigger model path #1 has been initiated\t4\t2\t1793619578\t930100200"
+    },
+    {
+      "parsed": {
+        "event_number": 2734,
+        "message": "TM path #1 block #7 logged: OE_TS_PRE_BUSY:2026110202",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 883081860,
+        "utc_seconds": 1793619609
+      },
+      "raw": "2734\tTM path #1 block #7 logged: OE_TS_PRE_BUSY:2026110202\t4\t2\t1793619609\t883081860"
+    },
+    {
+      "parsed": {
+        "event_number": 2735,
+        "message": "TM path #1 block #9 logged: OE_TS_POST_BUSY:2026110202",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 883110440,
+        "utc_seconds": 1793619609
+      },
+      "raw": "2735\tTM path #1 block #9 logged: OE_TS_POST_BUSY:2026110202\t4\t2\t1793619609\t883110440"
+    },
+    {
+      "parsed": {
+        "event_number": 2736,
+        "message": "TM path #1 block #12 logged: OE_TS_PRE_MEASURE:2026110202",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 885543520,
+        "utc_seconds": 1793619609
+      },
+      "raw": "2736\tTM path #1 block #12 logged: OE_TS_PRE_MEASURE:2026110202\t4\t2\t1793619609\t885543520"
+    },
+    {
+      "parsed": {
+        "event_number": 2737,
+        "message": "TM path #1 block #14 logged: OE_TS_POST_MEASURE:2026110202",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 926568260,
+        "utc_seconds": 1793619609
+      },
+      "raw": "2737\tTM path #1 block #14 logged: OE_TS_POST_MEASURE:2026110202\t4\t2\t1793619609\t926568260"
+    },
+    {
+      "parsed": {
+        "event_number": 2732,
+        "message": "Trigger model path #1 has been idled",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 928463940,
+        "utc_seconds": 1793619609
+      },
+      "raw": "2732\tTrigger model path #1 has been idled\t4\t2\t1793619609\t928463940"
+    }
+  ],
+  "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "instrument_only_analysis": {
+    "busy_marker_span_s": 2.858e-05,
+    "configured_aperture_s": 0.02,
+    "measurement_block_span_s": 0.04102474,
+    "pre_measure_to_reading_s": 0.04091342,
+    "reading_after_start_max_s": null,
+    "reading_after_start_min_s": null,
+    "reading_to_post_measure_s": 0.00011132
+  },
+  "phase": "eight_events_archived_record_preserved_analysis_unreviewed",
+  "proof_run_id": 2026110202,
+  "provisional_scope_analysis": {
+    "busy_marker_span_s": 2.858e-05,
+    "configured_aperture_s": 0.02,
+    "measurement_block_span_s": 0.04102474,
+    "pre_measure_to_reading_s": 0.04091342,
+    "reading_after_start_max_s": 0.04573508,
+    "reading_after_start_min_s": 0.0445865,
+    "reading_to_post_measure_s": 0.00011132
+  },
+  "queries": [
+    {
+      "command": "print(oe_m4_runtime_build)",
+      "response": "m4-finite-current-hold-v14"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "response": "7"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "response": "1"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "1811\tSetting digio line 3 to digital has reset a trigger setting for digio line\t2\t2\t1793619578\t929899620"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2753\tTrigger model is not optimized for speed due to multiple blocks waiting on same event\t4\t2\t1793619578\t930064580"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2731\tTrigger model path #1 has been initiated\t4\t2\t1793619578\t930100200"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2734\tTM path #1 block #7 logged: OE_TS_PRE_BUSY:2026110202\t4\t2\t1793619609\t883081860"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2735\tTM path #1 block #9 logged: OE_TS_POST_BUSY:2026110202\t4\t2\t1793619609\t883110440"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2736\tTM path #1 block #12 logged: OE_TS_PRE_MEASURE:2026110202\t4\t2\t1793619609\t885543520"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2737\tTM path #1 block #14 logged: OE_TS_POST_MEASURE:2026110202\t4\t2\t1793619609\t926568260"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2732\tTrigger model path #1 has been idled\t4\t2\t1793619609\t928463940"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "response": "0"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "response": "0"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "response": "0\t100000\t0\t0"
+    }
+  ],
+  "raw_chunk_after": {
+    "offset": 0,
+    "records": [
+      {
+        "buffer_relative_time_s": 0.0,
+        "measured_voltage_v": 0.10248732567,
+        "measurement_status": 8,
+        "sample_index": 0,
+        "source_current_a": 0.0010000156472,
+        "source_status": 200
+      }
+    ],
+    "records_sha256": "dff88ad8c3563238d0068f4a259bc7d9650cf26322dcd4bfeac5cce04d036e12",
+    "schema": "ophyd-electrochemistry/k2460-buffer-proof-v1",
+    "total_records": 1
+  },
+  "raw_chunk_before": {
+    "offset": 0,
+    "records": [
+      {
+        "buffer_relative_time_s": 0.0,
+        "measured_voltage_v": 0.10248732567,
+        "measurement_status": 8,
+        "sample_index": 0,
+        "source_current_a": 0.0010000156472,
+        "source_status": 200
+      }
+    ],
+    "records_sha256": "dff88ad8c3563238d0068f4a259bc7d9650cf26322dcd4bfeac5cce04d036e12",
+    "schema": "ophyd-electrochemistry/k2460-buffer-proof-v1",
+    "total_records": 1
+  },
+  "recorded_at_utc": "2026-11-02T10:35:43.216761+00:00",
+  "records_discarded": false,
+  "schema": "ophyd-electrochemistry/k2460-timestamp-event-archive-v1",
+  "scope": {
+    "derived_busy_high_duration_s_approximate": 0.0453,
+    "provisional_uncertainty_assumption_s": 0.00056,
+    "reported_start_edge_fuzziness_s": 0.00056,
+    "reported_start_method": "single transition held high",
+    "reported_start_to_busy_falling_s": 0.0471,
+    "reported_start_to_busy_rising_s": 0.0018,
+    "source": "User-reported scope observations; no raw trace file supplied.",
+    "uncertainty_assessment": "Use the entire reported fuzz width as a provisional plus/minus bound, rather than halving it. This is an analysis assumption, not a characterized total scope/threshold/channel uncertainty."
+  },
+  "source_level_after_a": 0.0,
+  "status_after": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_IDLE",
+    "model_substate": "trigger.STATE_IDLE",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": true,
+    "state": "idle",
+    "timer_overrun": false
+  },
+  "status_before": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_IDLE",
+    "model_substate": "trigger.STATE_IDLE",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": true,
+    "state": "idle",
+    "timer_overrun": false
+  }
+}

@@ -86,3 +86,6 @@ example_notebook/playground.ipynb
 example_notebook/profile.html
 example_notebook/mydask.html
 # uv.lock
+
+# QueueServer plan/device list generated at environment open
+qserver/startup/existing_plans_and_devices.yaml

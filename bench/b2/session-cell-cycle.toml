@@ -1,0 +1,17 @@
+# B2 coin cell, reference cycling (tier 2): HC on HI (force + sense), Na on LO.
+# The CV hold's current limit is i_max_abs: 100 uA keeps a 5 mV hold that
+# follows a timed-out CC step near C/6 instead of the 50C of session-cell.toml.
+# Same K-rule as session-cell.toml. OE_SESSION=bench/b2/session-cell-cycle.toml
+backend = "k2460"
+data_dir = "~/k2460-data/b2/cell"
+resource = "TCPIP0::169.254.113.151::5025::SOCKET"
+serial = "04686198"
+terminals = "front"
+poll_period_s = 1.0
+
+[limits]
+v_min_abs = 0.0
+v_max_abs = 0.5
+i_max_abs = 0.0001
+max_duration_s = 172800.0
+max_records = 1000000

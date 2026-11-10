@@ -1,0 +1,649 @@
+{
+ "matrix": "rehearsal sheet b2-cell-rehearsal.xlsx (bench/b2_sheets.py rehearsal_rows, --rehearsal-v 0.75 0.70 0.90), session bench/b2/session-cell-neg.toml, QueueServer",
+ "cell": "Richard-HC400-rev, 0.48 mAh assumed (1C = 480 uA)",
+ "runs": {
+  "r1-ocv-1033": {
+   "file": "r1-ocv_20261109T103337Z.h5",
+   "outcome": "completed",
+   "duration_s": 600.14,
+   "records": 766,
+   "charge_uah": 0.0,
+   "first_v": 1.09241,
+   "last_v": 1.09251,
+   "cutoffs": [],
+   "row": {
+    "fast_interval_s": 0.006,
+    "fast_window_s": 1,
+    "interval_s": 1,
+    "measurement_id": "r1-ocv",
+    "protocol": "rest",
+    "rest_s": 600,
+    "sample_id": "Richard-HC400-rev"
+   }
+  },
+  "r1-ocv-1451": {
+   "file": "r1-ocv_20261109T145147Z.h5",
+   "outcome": "completed",
+   "duration_s": 600.14,
+   "records": 766,
+   "charge_uah": 0.0,
+   "first_v": 0.97211,
+   "last_v": 0.97615,
+   "cutoffs": [],
+   "row": {
+    "fast_interval_s": 0.006,
+    "fast_window_s": 1,
+    "interval_s": 1,
+    "measurement_id": "r1-ocv",
+    "protocol": "rest",
+    "rest_s": 600,
+    "sample_id": "Richard-HC400-rev"
+   }
+  },
+  "r2-sod-1min": {
+   "file": "r2-sod-1min_20261109T104825Z.h5",
+   "outcome": "stopped_cutoff",
+   "duration_s": 1902.41,
+   "records": 17870,
+   "charge_uah": -4.165,
+   "first_v": 1.04926,
+   "last_v": 0.74841,
+   "cutoffs": [
+    [
+     1902.412,
+     3,
+     31,
+     "cutoff",
+     "v_min"
+    ],
+    [
+     1902.412,
+     3,
+     31,
+     "stop",
+     "v_min"
+    ]
+   ],
+   "row": {
+    "current_a": -0.00048,
+    "fast_window_s": 1,
+    "interval_s": 0.25,
+    "measurement_id": "r2-sod-1min",
+    "pre_rest_s": 10,
+    "protocol": "pulse_train",
+    "pulse_s": 1,
+    "repeats": 90,
+    "rest_end_v": 0.75,
+    "rest_s": 60,
+    "sample_id": "Richard-HC400-rev"
+   },
+   "per_pulse": [
+    {
+     "rep": 1,
+     "pulse_min_v": 0.11031,
+     "rest_1s": 0.7179,
+     "rest_10s": 0.86829,
+     "rest_59s": 0.96382,
+     "check_min_v": 0.96401
+    },
+    {
+     "rep": 2,
+     "pulse_min_v": 0.07635,
+     "rest_1s": 0.67713,
+     "rest_10s": 0.82853,
+     "rest_59s": 0.92679,
+     "check_min_v": 0.92699
+    },
+    {
+     "rep": 3,
+     "pulse_min_v": 0.05904,
+     "rest_1s": 0.65675,
+     "rest_10s": 0.80866,
+     "rest_59s": 0.90524,
+     "check_min_v": 0.90543
+    },
+    {
+     "rep": 4,
+     "pulse_min_v": 0.04723,
+     "rest_1s": 0.64186,
+     "rest_10s": 0.7945,
+     "rest_59s": 0.88933,
+     "check_min_v": 0.88953
+    },
+    {
+     "rep": 5,
+     "pulse_min_v": 0.03644,
+     "rest_1s": 0.63112,
+     "rest_10s": 0.78391,
+     "rest_59s": 0.87691,
+     "check_min_v": 0.87711
+    },
+    {
+     "rep": 6,
+     "pulse_min_v": 0.02929,
+     "rest_1s": 0.62249,
+     "rest_10s": 0.77558,
+     "rest_59s": 0.86671,
+     "check_min_v": 0.86691
+    },
+    {
+     "rep": 7,
+     "pulse_min_v": 0.02192,
+     "rest_1s": 0.61472,
+     "rest_10s": 0.76796,
+     "rest_59s": 0.85771,
+     "check_min_v": 0.85791
+    },
+    {
+     "rep": 8,
+     "pulse_min_v": 0.0165,
+     "rest_1s": 0.60847,
+     "rest_10s": 0.76188,
+     "rest_59s": 0.85003,
+     "check_min_v": 0.85021
+    },
+    {
+     "rep": 9,
+     "pulse_min_v": 0.01147,
+     "rest_1s": 0.6031,
+     "rest_10s": 0.75651,
+     "rest_59s": 0.84318,
+     "check_min_v": 0.84336
+    },
+    {
+     "rep": 10,
+     "pulse_min_v": 0.00557,
+     "rest_1s": 0.59872,
+     "rest_10s": 0.75199,
+     "rest_59s": 0.83706,
+     "check_min_v": 0.83725
+    },
+    {
+     "rep": 11,
+     "pulse_min_v": 0.00169,
+     "rest_1s": 0.5943,
+     "rest_10s": 0.74768,
+     "rest_59s": 0.83132,
+     "check_min_v": 0.8315
+    },
+    {
+     "rep": 12,
+     "pulse_min_v": -0.0032,
+     "rest_1s": 0.60633,
+     "rest_10s": 0.74335,
+     "rest_59s": 0.82573,
+     "check_min_v": 0.8259
+    },
+    {
+     "rep": 13,
+     "pulse_min_v": -0.00842,
+     "rest_1s": 0.58617,
+     "rest_10s": 0.73949,
+     "rest_59s": 0.82042,
+     "check_min_v": 0.82059
+    },
+    {
+     "rep": 14,
+     "pulse_min_v": -0.01224,
+     "rest_1s": 0.58273,
+     "rest_10s": 0.7359,
+     "rest_59s": 0.81541,
+     "check_min_v": 0.81557
+    },
+    {
+     "rep": 15,
+     "pulse_min_v": -0.01662,
+     "rest_1s": 0.58016,
+     "rest_10s": 0.7328,
+     "rest_59s": 0.81072,
+     "check_min_v": 0.81087
+    },
+    {
+     "rep": 16,
+     "pulse_min_v": -0.01973,
+     "rest_1s": 0.57683,
+     "rest_10s": 0.72951,
+     "rest_59s": 0.80609,
+     "check_min_v": 0.80624
+    },
+    {
+     "rep": 17,
+     "pulse_min_v": -0.02296,
+     "rest_1s": 0.57417,
+     "rest_10s": 0.72659,
+     "rest_59s": 0.8017,
+     "check_min_v": 0.80186
+    },
+    {
+     "rep": 18,
+     "pulse_min_v": -0.02523,
+     "rest_1s": 0.58777,
+     "rest_10s": 0.72342,
+     "rest_59s": 0.79727,
+     "check_min_v": 0.79742
+    },
+    {
+     "rep": 19,
+     "pulse_min_v": -0.03264,
+     "rest_1s": 0.56894,
+     "rest_10s": 0.72056,
+     "rest_59s": 0.79296,
+     "check_min_v": 0.7931
+    },
+    {
+     "rep": 20,
+     "pulse_min_v": -0.03642,
+     "rest_1s": 0.56637,
+     "rest_10s": 0.7178,
+     "rest_59s": 0.78881,
+     "check_min_v": 0.78895
+    },
+    {
+     "rep": 21,
+     "pulse_min_v": -0.03967,
+     "rest_1s": 0.56412,
+     "rest_10s": 0.71518,
+     "rest_59s": 0.78481,
+     "check_min_v": 0.78495
+    },
+    {
+     "rep": 22,
+     "pulse_min_v": -0.04258,
+     "rest_1s": 0.56216,
+     "rest_10s": 0.71258,
+     "rest_59s": 0.78091,
+     "check_min_v": 0.78104
+    },
+    {
+     "rep": 23,
+     "pulse_min_v": -0.04626,
+     "rest_1s": 0.5597,
+     "rest_10s": 0.70996,
+     "rest_59s": 0.77703,
+     "check_min_v": 0.77716
+    },
+    {
+     "rep": 24,
+     "pulse_min_v": -0.05016,
+     "rest_1s": 0.55704,
+     "rest_10s": 0.70687,
+     "rest_59s": 0.77293,
+     "check_min_v": 0.77306
+    },
+    {
+     "rep": 25,
+     "pulse_min_v": -0.05665,
+     "rest_1s": 0.55482,
+     "rest_10s": 0.70429,
+     "rest_59s": 0.76911,
+     "check_min_v": 0.76924
+    },
+    {
+     "rep": 26,
+     "pulse_min_v": -0.0607,
+     "rest_1s": 0.55231,
+     "rest_10s": 0.70161,
+     "rest_59s": 0.76532,
+     "check_min_v": 0.76544
+    },
+    {
+     "rep": 27,
+     "pulse_min_v": -0.06343,
+     "rest_1s": 0.55075,
+     "rest_10s": 0.69923,
+     "rest_59s": 0.76176,
+     "check_min_v": 0.76188
+    },
+    {
+     "rep": 28,
+     "pulse_min_v": -0.06728,
+     "rest_1s": 0.54824,
+     "rest_10s": 0.69649,
+     "rest_59s": 0.75812,
+     "check_min_v": 0.75825
+    },
+    {
+     "rep": 29,
+     "pulse_min_v": -0.06993,
+     "rest_1s": 0.54651,
+     "rest_10s": 0.69447,
+     "rest_59s": 0.75488,
+     "check_min_v": 0.75498
+    },
+    {
+     "rep": 30,
+     "pulse_min_v": -0.07122,
+     "rest_1s": 0.54452,
+     "rest_10s": 0.69193,
+     "rest_59s": 0.75144,
+     "check_min_v": 0.75155
+    },
+    {
+     "rep": 31,
+     "pulse_min_v": -0.07376,
+     "rest_1s": 0.5432,
+     "rest_10s": 0.69001,
+     "rest_59s": 0.74831,
+     "check_min_v": 0.74841
+    }
+   ]
+  },
+  "r3-sod-5min": {
+   "file": "r3-sod-5min_20261109T112009Z.h5",
+   "outcome": "completed",
+   "duration_s": 7236.09,
+   "records": 36923,
+   "charge_uah": -3.196,
+   "first_v": 0.70794,
+   "last_v": 0.82927,
+   "cutoffs": [],
+   "row": {
+    "current_a": -0.00048,
+    "fast_window_s": 1,
+    "interval_s": 0.25,
+    "measurement_id": "r3-sod-5min",
+    "pre_rest_s": 10,
+    "protocol": "pulse_train",
+    "pulse_s": 1,
+    "repeats": 24,
+    "rest_end_v": 0.7,
+    "rest_s": 300,
+    "sample_id": "Richard-HC400-rev"
+   },
+   "per_pulse": [
+    {
+     "rep": 1,
+     "pulse_min_v": -0.07369,
+     "rest_1s": 0.54309,
+     "rest_10s": 0.6901,
+     "rest_59s": 0.74733,
+     "rest_299s": 0.79488,
+     "check_min_v": 0.79491
+    },
+    {
+     "rep": 2,
+     "pulse_min_v": -0.06849,
+     "rest_1s": 0.55574,
+     "rest_10s": 0.71078,
+     "rest_59s": 0.77411,
+     "rest_299s": 0.81106,
+     "check_min_v": 0.81109
+    },
+    {
+     "rep": 3,
+     "pulse_min_v": -0.06868,
+     "rest_1s": 0.56019,
+     "rest_10s": 0.7177,
+     "rest_59s": 0.78566,
+     "rest_299s": 0.82038,
+     "check_min_v": 0.82041
+    },
+    {
+     "rep": 4,
+     "pulse_min_v": -0.06622,
+     "rest_1s": 0.56253,
+     "rest_10s": 0.72153,
+     "rest_59s": 0.79232,
+     "rest_299s": 0.82634,
+     "check_min_v": 0.82636
+    },
+    {
+     "rep": 5,
+     "pulse_min_v": -0.06775,
+     "rest_1s": 0.5633,
+     "rest_10s": 0.72344,
+     "rest_59s": 0.79625,
+     "rest_299s": 0.83018,
+     "check_min_v": 0.8302
+    },
+    {
+     "rep": 6,
+     "pulse_min_v": -0.06617,
+     "rest_1s": 0.56467,
+     "rest_10s": 0.72497,
+     "rest_59s": 0.79894,
+     "rest_299s": 0.83291,
+     "check_min_v": 0.83294
+    },
+    {
+     "rep": 7,
+     "pulse_min_v": -0.06261,
+     "rest_1s": 0.5666,
+     "rest_10s": 0.72692,
+     "rest_59s": 0.80123,
+     "rest_299s": 0.83496,
+     "check_min_v": 0.83498
+    },
+    {
+     "rep": 8,
+     "pulse_min_v": -0.06199,
+     "rest_1s": 0.56685,
+     "rest_10s": 0.72757,
+     "rest_59s": 0.80253,
+     "rest_299s": 0.83636,
+     "check_min_v": 0.83638
+    },
+    {
+     "rep": 9,
+     "pulse_min_v": -0.04381,
+     "rest_1s": 0.56781,
+     "rest_10s": 0.72866,
+     "rest_59s": 0.80365,
+     "rest_299s": 0.83722,
+     "check_min_v": 0.83723
+    },
+    {
+     "rep": 10,
+     "pulse_min_v": -0.0457,
+     "rest_1s": 0.56687,
+     "rest_10s": 0.72818,
+     "rest_59s": 0.80378,
+     "rest_299s": 0.83757,
+     "check_min_v": 0.83759
+    },
+    {
+     "rep": 11,
+     "pulse_min_v": -0.04664,
+     "rest_1s": 0.56789,
+     "rest_10s": 0.72903,
+     "rest_59s": 0.80437,
+     "rest_299s": 0.83779,
+     "check_min_v": 0.83781
+    },
+    {
+     "rep": 12,
+     "pulse_min_v": -0.04134,
+     "rest_1s": 0.56697,
+     "rest_10s": 0.72836,
+     "rest_59s": 0.8041,
+     "rest_299s": 0.83759,
+     "check_min_v": 0.8376
+    },
+    {
+     "rep": 13,
+     "pulse_min_v": -0.04418,
+     "rest_1s": 0.5662,
+     "rest_10s": 0.72771,
+     "rest_59s": 0.80363,
+     "rest_299s": 0.83709,
+     "check_min_v": 0.83712
+    },
+    {
+     "rep": 14,
+     "pulse_min_v": -0.04728,
+     "rest_1s": 0.56621,
+     "rest_10s": 0.72768,
+     "rest_59s": 0.80341,
+     "rest_299s": 0.83671,
+     "check_min_v": 0.83673
+    },
+    {
+     "rep": 15,
+     "pulse_min_v": -0.04714,
+     "rest_1s": 0.56631,
+     "rest_10s": 0.72773,
+     "rest_59s": 0.80319,
+     "rest_299s": 0.83641,
+     "check_min_v": 0.83642
+    },
+    {
+     "rep": 16,
+     "pulse_min_v": -0.04196,
+     "rest_1s": 0.56757,
+     "rest_10s": 0.72863,
+     "rest_59s": 0.80333,
+     "rest_299s": 0.83617,
+     "check_min_v": 0.83618
+    },
+    {
+     "rep": 17,
+     "pulse_min_v": -0.04363,
+     "rest_1s": 0.56684,
+     "rest_10s": 0.72824,
+     "rest_59s": 0.80294,
+     "rest_299s": 0.83565,
+     "check_min_v": 0.83566
+    },
+    {
+     "rep": 18,
+     "pulse_min_v": -0.04753,
+     "rest_1s": 0.56628,
+     "rest_10s": 0.72773,
+     "rest_59s": 0.80233,
+     "rest_299s": 0.83482,
+     "check_min_v": 0.83484
+    },
+    {
+     "rep": 19,
+     "pulse_min_v": -0.04676,
+     "rest_1s": 0.56571,
+     "rest_10s": 0.72715,
+     "rest_59s": 0.80165,
+     "rest_299s": 0.83405,
+     "check_min_v": 0.83407
+    },
+    {
+     "rep": 20,
+     "pulse_min_v": -0.04916,
+     "rest_1s": 0.56532,
+     "rest_10s": 0.72676,
+     "rest_59s": 0.80099,
+     "rest_299s": 0.83314,
+     "check_min_v": 0.83315
+    },
+    {
+     "rep": 21,
+     "pulse_min_v": -0.0522,
+     "rest_1s": 0.56457,
+     "rest_10s": 0.72595,
+     "rest_59s": 0.80015,
+     "rest_299s": 0.83226,
+     "check_min_v": 0.83227
+    },
+    {
+     "rep": 22,
+     "pulse_min_v": -0.05062,
+     "rest_1s": 0.56407,
+     "rest_10s": 0.72547,
+     "rest_59s": 0.79936,
+     "rest_299s": 0.83124,
+     "check_min_v": 0.83126
+    },
+    {
+     "rep": 23,
+     "pulse_min_v": -0.05532,
+     "rest_1s": 0.56366,
+     "rest_10s": 0.72488,
+     "rest_59s": 0.79856,
+     "rest_299s": 0.8302,
+     "check_min_v": 0.83022
+    },
+    {
+     "rep": 24,
+     "pulse_min_v": -0.05573,
+     "rest_1s": 0.56284,
+     "rest_10s": 0.72416,
+     "rest_59s": 0.7977,
+     "rest_299s": 0.8292,
+     "check_min_v": 0.82922
+    }
+   ]
+  },
+  "r4-desod-20s": {
+   "file": "r4-desod-20s_20261109T132047Z.h5",
+   "outcome": "stopped_cutoff",
+   "duration_s": 30.38,
+   "records": 610,
+   "charge_uah": 0.134,
+   "first_v": 0.77251,
+   "last_v": 0.96171,
+   "cutoffs": [
+    [
+     30.382,
+     3,
+     1,
+     "cutoff",
+     "v_max"
+    ],
+    [
+     30.382,
+     3,
+     1,
+     "stop",
+     "v_max"
+    ]
+   ],
+   "row": {
+    "current_a": 0.00048,
+    "fast_window_s": 1,
+    "interval_s": 0.25,
+    "measurement_id": "r4-desod-20s",
+    "pre_rest_s": 10,
+    "protocol": "pulse_train",
+    "pulse_s": 1,
+    "repeats": 120,
+    "rest_end_v": 0.9,
+    "rest_s": 20,
+    "sample_id": "Richard-HC400-rev"
+   },
+   "per_pulse": [
+    {
+     "rep": 1,
+     "pulse_min_v": 1.28343,
+     "rest_1s": 1.18371,
+     "rest_10s": 1.01602,
+     "rest_59s": 0.96276,
+     "check_min_v": 0.96171
+    }
+   ]
+  },
+  "r5-restore-c3": {
+   "file": "r5-restore-c3_20261109T132118Z.h5",
+   "outcome": "completed",
+   "duration_s": 350.05,
+   "records": 350,
+   "charge_uah": 2.2,
+   "first_v": 1.40844,
+   "last_v": 1.1337,
+   "cutoffs": [
+    [
+     50.026,
+     0,
+     0,
+     "cutoff",
+     "v_max"
+    ]
+   ],
+   "row": {
+    "current_a": 0.00016,
+    "interval_s": 1,
+    "max_step_s": 1800,
+    "measurement_id": "r5-restore-c3",
+    "protocol": "soc_position",
+    "rest_s": 300,
+    "sample_id": "Richard-HC400-rev",
+    "target_v": 2.9
+   }
+  }
+ }
+}

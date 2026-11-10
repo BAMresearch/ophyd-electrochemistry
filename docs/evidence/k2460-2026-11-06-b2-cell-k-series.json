@@ -1,0 +1,5181 @@
+{
+  "test_matrix": "bench/plan-b2.md",
+  "load": "cell",
+  "written_utc": "2026-11-06T14:23:21+00:00",
+  "data_dirs": [
+    "/Users/bpauw/k2460-data/b2/cell",
+    "/Users/bpauw/k2460-data/b2/explore"
+  ],
+  "runs": [
+    {
+      "file": "/Users/bpauw/k2460-data/b2/cell/k9-relax-1C_20261106T102241Z.h5",
+      "measurement_id": "k9-relax-1C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T10:22:41.542637Z",
+      "duration_s": 1515.50441376,
+      "records": 3341,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k9-relax-1C",
+        "outcome": "completed",
+        "records": 3341,
+        "duration_s": 1515.50441376,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1817,
+            "median": 0.005975559999999991,
+            "p99": 0.006032743999990657,
+            "max": 0.006541760000004615
+          },
+          "0.0112s": {
+            "n": 2,
+            "median": 0.011239569999986543,
+            "p99": 0.012032595799986438,
+            "max": 0.012048779999986436
+          },
+          "0.0159s": {
+            "n": 3,
+            "median": 0.01588774000003923,
+            "p99": 0.01754009840000162,
+            "max": 0.01757382000000085
+          },
+          "0.0189s": {
+            "n": 4,
+            "median": 0.018857770000016538,
+            "p99": 0.01895514600001661,
+            "max": 0.018956160000016098
+          },
+          "1s": {
+            "n": 1504,
+            "median": 1.0000725500000271,
+            "p99": 1.0001224799999866,
+            "max": 1.041605699999991
+          }
+        },
+        "spacing_max_s": 1.041605699999991,
+        "rest_v_first_last": [
+          0.432228088378906,
+          0.535472869873047
+        ],
+        "v_min_max": [
+          -0.395740509033203,
+          0.535472869873047
+        ],
+        "i_min_max": [
+          -0.00048000318929553,
+          2.17696651816368e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.079 step_start ",
+          "11.084 step_start ",
+          "311.159 step_start ",
+          "312.165 step_start ",
+          "612.243 step_start ",
+          "613.253 step_start ",
+          "913.331 step_start ",
+          "914.340 step_start ",
+          "1214.415 step_start ",
+          "1215.428 step_start "
+        ],
+        "apparent_r_ohm": 1616.7526557463345,
+        "median_v_over_i_ohm": 692.7795699237682
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/cell/k8-sod-1C_20261106T095743Z.h5",
+      "measurement_id": "k8-sod-1C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T09:57:43.466687Z",
+      "duration_s": 673.77321868,
+      "records": 22403,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k8-sod-1C",
+        "outcome": "completed",
+        "records": 22403,
+        "duration_s": 673.77321868,
+        "spacing_s": {
+          "0.00597s": {
+            "n": 19986,
+            "median": 0.005974380000001389,
+            "p99": 0.0060249269999957285,
+            "max": 0.00733024000001592
+          },
+          "0.00801s": {
+            "n": 10,
+            "median": 0.008013199999993503,
+            "p99": 0.009163846599993235,
+            "max": 0.009164139999995768
+          },
+          "0.0109s": {
+            "n": 17,
+            "median": 0.010883860000035384,
+            "p99": 0.011967580800009614,
+            "max": 0.011971360000003983
+          },
+          "0.0142s": {
+            "n": 21,
+            "median": 0.014228819999971165,
+            "p99": 0.015222748000019238,
+            "max": 0.01523034000001644
+          },
+          "0.0176s": {
+            "n": 43,
+            "median": 0.017576599999983955,
+            "p99": 0.018869243200010145,
+            "max": 0.01896250000001487
+          },
+          "0.0195s": {
+            "n": 9,
+            "median": 0.01952240000002803,
+            "p99": 0.01960186239999757,
+            "max": 0.0196036799999888
+          },
+          "0.25s": {
+            "n": 2196,
+            "median": 0.2499822999999708,
+            "p99": 0.2915193669999951,
+            "max": 0.291552519999982
+          }
+        },
+        "spacing_max_s": 0.291552519999982,
+        "rest_v_first_last": [
+          0.739154815673828,
+          0.349063873291016
+        ],
+        "v_min_max": [
+          -0.341949462890625,
+          0.749626159667969
+        ],
+        "i_min_max": [
+          -0.000480005284771323,
+          2.23517417907715e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.078 step_start ",
+          "11.083 step_start ",
+          "21.137 step_start ",
+          "22.143 step_start ",
+          "32.198 step_start ",
+          "33.203 step_start ",
+          "43.255 step_start ",
+          "44.260 step_start ",
+          "54.317 step_start ",
+          "55.322 step_start ",
+          "65.377 step_start ",
+          "66.383 step_start ",
+          "76.436 step_start ",
+          "77.445 step_start ",
+          "87.495 step_start ",
+          "88.505 step_start ",
+          "98.556 step_start ",
+          "99.567 step_start ",
+          "109.619 step_start ",
+          "110.631 step_start ",
+          "120.685 step_start ",
+          "121.696 step_start ",
+          "131.752 step_start ",
+          "132.765 step_start ",
+          "142.816 step_start ",
+          "143.821 step_start ",
+          "153.873 step_start ",
+          "154.878 step_start ",
+          "164.929 step_start ",
+          "165.933 step_start ",
+          "175.985 step_start ",
+          "176.992 step_start ",
+          "187.046 step_start ",
+          "188.052 step_start ",
+          "198.107 step_start ",
+          "199.113 step_start ",
+          "209.168 step_start ",
+          "210.175 step_start ",
+          "220.229 step_start ",
+          "221.239 step_start ",
+          "231.289 step_start ",
+          "232.301 step_start ",
+          "242.351 step_start ",
+          "243.366 step_start ",
+          "253.418 step_start ",
+          "254.429 step_start ",
+          "264.482 step_start ",
+          "265.497 step_start ",
+          "275.538 step_start "
+        ],
+        "apparent_r_ohm": 810.4565095845498,
+        "median_v_over_i_ohm": 10.657333968654505
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/cell/k8-ocv_20261106T095251Z.h5",
+      "measurement_id": "k8-ocv",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "rest",
+      "start_utc": "2026-11-06T09:52:51.400429Z",
+      "duration_s": 120.03851776,
+      "records": 120,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k8-ocv",
+        "outcome": "completed",
+        "records": 120,
+        "duration_s": 120.03851776,
+        "spacing_s": {
+          "1s": {
+            "n": 119,
+            "median": 1.0000843400000008,
+            "p99": 1.0001191103999927,
+            "max": 1.000127
+          }
+        },
+        "spacing_max_s": 1.000127,
+        "rest_v_first_last": [
+          0.764915466308594,
+          0.758018493652344
+        ],
+        "v_min_max": [
+          0.758018493652344,
+          0.764915466308594
+        ],
+        "i_min_max": [
+          1.45519152283669e-11,
+          3.63797880709171e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/cell/k7-desod-1C_20261106T093401Z.h5",
+      "measurement_id": "k7-desod-1C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T09:34:01.825987Z",
+      "duration_s": 673.88623808,
+      "records": 22403,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k7-desod-1C",
+        "outcome": "completed",
+        "records": 22403,
+        "duration_s": 673.88623808,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 19983,
+            "median": 0.005979000000024826,
+            "p99": 0.006018812399981925,
+            "max": 0.006925019999982851
+          },
+          "0.009s": {
+            "n": 11,
+            "median": 0.009000799999995479,
+            "p99": 0.009694371999978557,
+            "max": 0.009735859999977947
+          },
+          "0.0105s": {
+            "n": 13,
+            "median": 0.010502080000009073,
+            "p99": 0.012024598400087143,
+            "max": 0.012028280000095037
+          },
+          "0.0142s": {
+            "n": 30,
+            "median": 0.014182899999980236,
+            "p99": 0.015510013200005232,
+            "max": 0.015541600000005928
+          },
+          "0.0171s": {
+            "n": 45,
+            "median": 0.017129900000014686,
+            "p99": 0.019120961600012833,
+            "max": 0.019230240000013055
+          },
+          "0.0196s": {
+            "n": 4,
+            "median": 0.019636620000028415,
+            "p99": 0.019672914000005336,
+            "max": 0.01967292000000498
+          },
+          "0.25s": {
+            "n": 2196,
+            "median": 0.2499884999999864,
+            "p99": 0.2915277669999938,
+            "max": 0.3045453400000042
+          }
+        },
+        "spacing_max_s": 0.3045453400000042,
+        "rest_v_first_last": [
+          0.275344848632813,
+          0.98828125
+        ],
+        "v_min_max": [
+          0.275344848632813,
+          1.6471061706543
+        ],
+        "i_min_max": [
+          -2.06055119633675e-08,
+          0.000480046961456537
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.079 step_start ",
+          "11.085 step_start ",
+          "21.136 step_start ",
+          "22.144 step_start ",
+          "32.197 step_start ",
+          "33.204 step_start ",
+          "43.257 step_start ",
+          "44.265 step_start ",
+          "54.318 step_start ",
+          "55.327 step_start ",
+          "65.381 step_start ",
+          "66.391 step_start ",
+          "76.444 step_start ",
+          "77.454 step_start ",
+          "87.507 step_start ",
+          "88.521 step_start ",
+          "98.575 step_start ",
+          "99.587 step_start ",
+          "109.639 step_start ",
+          "110.654 step_start ",
+          "120.707 step_start ",
+          "121.720 step_start ",
+          "131.770 step_start ",
+          "132.786 step_start ",
+          "142.841 step_start ",
+          "143.847 step_start ",
+          "153.909 step_start ",
+          "154.916 step_start ",
+          "164.970 step_start ",
+          "165.979 step_start ",
+          "176.029 step_start ",
+          "177.038 step_start ",
+          "187.091 step_start ",
+          "188.101 step_start ",
+          "198.155 step_start ",
+          "199.164 step_start ",
+          "209.217 step_start ",
+          "210.227 step_start ",
+          "220.277 step_start ",
+          "221.288 step_start ",
+          "231.344 step_start ",
+          "232.355 step_start ",
+          "242.409 step_start ",
+          "243.419 step_start ",
+          "253.475 step_start ",
+          "254.487 step_start ",
+          "264.539 step_start ",
+          "265.556 step_start ",
+          "275.609 step_start "
+        ],
+        "apparent_r_ohm": 540.295436712933,
+        "median_v_over_i_ohm": 2951.548914668781
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/cell/k7-ocv_20261106T092147Z.h5",
+      "measurement_id": "k7-ocv",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "rest",
+      "start_utc": "2026-11-06T09:21:47.626571Z",
+      "duration_s": 120.04108558,
+      "records": 120,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k7-ocv",
+        "outcome": "completed",
+        "records": 120,
+        "duration_s": 120.04108558,
+        "spacing_s": {
+          "1s": {
+            "n": 119,
+            "median": 1.0001004599999987,
+            "p99": 1.0001339659999993,
+            "max": 1.0008000199999998
+          }
+        },
+        "spacing_max_s": 1.0008000199999998,
+        "rest_v_first_last": [
+          0.598129272460938,
+          0.598220825195313
+        ],
+        "v_min_max": [
+          0.598121643066406,
+          0.598228454589844
+        ],
+        "i_min_max": [
+          2.18278728425503e-11,
+          5.0931703299284e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/cell/k3-sodiate-5mV_20261105T130014Z.h5",
+      "measurement_id": "k3-sodiate-5mV",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "soc_position",
+      "start_utc": "2026-11-05T13:00:14.634291Z",
+      "duration_s": 4385.4579435,
+      "records": 4385,
+      "outcome": "incomplete",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k3-sodiate-5mV",
+        "outcome": "incomplete",
+        "records": 4385,
+        "duration_s": 4385.4579435,
+        "spacing_s": {
+          "1s": {
+            "n": 4384,
+            "median": 1.0000970600002574,
+            "p99": 1.0001363909997394,
+            "max": 1.001062960000013
+          }
+        },
+        "spacing_max_s": 1.001062960000013,
+        "rest_v_first_last": null,
+        "v_min_max": [
+          0.0963325500488281,
+          1.8167724609375
+        ],
+        "i_min_max": [
+          -4.80010494356975e-05,
+          -4.79997979709879e-05
+        ],
+        "events": [
+          "0.000 step_start "
+        ],
+        "apparent_r_ohm": -692908951.8546222,
+        "median_v_over_i_ohm": -4741.742256192822
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/cell/k2-sod-1C_20261105T125516Z.h5",
+      "measurement_id": "k2-sod-1C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-05T12:55:16.316832Z",
+      "duration_s": 73.25858884,
+      "records": 1829,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k2-sod-1C",
+        "outcome": "completed",
+        "records": 1829,
+        "duration_s": 73.25858884,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.005976560000000575,
+            "p99": 0.006030507200001125,
+            "max": 0.007331680000000063
+          },
+          "0.009s": {
+            "n": 1,
+            "median": 0.008997900000004222,
+            "p99": 0.008997900000004222,
+            "max": 0.008997900000004222
+          },
+          "0.0153s": {
+            "n": 3,
+            "median": 0.015263740000001746,
+            "p99": 0.017251317199999963,
+            "max": 0.017291879999999926
+          },
+          "0.0196s": {
+            "n": 1,
+            "median": 0.019570139999999014,
+            "p99": 0.019570139999999014,
+            "max": 0.019570139999999014
+          },
+          "0.1s": {
+            "n": 656,
+            "median": 0.10000031999999948,
+            "p99": 0.10002407400000246,
+            "max": 0.10125363999999593
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.1415417500000009,
+            "p99": 0.1415629234,
+            "max": 0.14156356000000003
+          }
+        },
+        "spacing_max_s": 0.14156356000000003,
+        "rest_v_first_last": [
+          2.23536682128906,
+          1.72750473022461
+        ],
+        "v_min_max": [
+          0.777233123779297,
+          2.27422332763672
+        ],
+        "i_min_max": [
+          -0.000480003887787461,
+          2.11875885725021e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.078 step_start ",
+          "11.084 step_start ",
+          "31.136 step_start ",
+          "32.141 step_start ",
+          "52.198 step_start ",
+          "53.206 step_start "
+        ],
+        "apparent_r_ohm": 1389.581580593313,
+        "median_v_over_i_ohm": -2129.5934473972343
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/cell/k2-sod-1C_20261105T124539Z.h5",
+      "measurement_id": "k2-sod-1C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-05T12:45:39.209395Z",
+      "duration_s": 73.2612471,
+      "records": 1829,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k2-sod-1C",
+        "outcome": "completed",
+        "records": 1829,
+        "duration_s": 73.2612471,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1156,
+            "median": 0.00597630999999943,
+            "p99": 0.006019224999999751,
+            "max": 0.006781160000000064
+          },
+          "0.00817s": {
+            "n": 1,
+            "median": 0.00816684000000123,
+            "p99": 0.00816684000000123,
+            "max": 0.00816684000000123
+          },
+          "0.0131s": {
+            "n": 2,
+            "median": 0.013066169999998323,
+            "p99": 0.01445872059999992,
+            "max": 0.014487139999999954
+          },
+          "0.0176s": {
+            "n": 3,
+            "median": 0.01756272000000081,
+            "p99": 0.01783659079999538,
+            "max": 0.017842179999995267
+          },
+          "0.1s": {
+            "n": 656,
+            "median": 0.09999965999999638,
+            "p99": 0.10002422100000068,
+            "max": 0.10051553999999996
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14153619999999822,
+            "p99": 0.1415792138,
+            "max": 0.14158052
+          }
+        },
+        "spacing_max_s": 0.14158052,
+        "rest_v_first_last": [
+          2.34827423095703,
+          1.89235687255859
+        ],
+        "v_min_max": [
+          0.804653167724609,
+          2.43392181396484
+        ],
+        "i_min_max": [
+          -0.000480013550259173,
+          2.17696651816368e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.076 step_start ",
+          "11.081 step_start ",
+          "31.135 step_start ",
+          "32.142 step_start ",
+          "52.197 step_start ",
+          "53.207 step_start "
+        ],
+        "apparent_r_ohm": 1662.8383372532983,
+        "median_v_over_i_ohm": -2169.865279706254
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/cell/k1-ocv_20261105T124103Z.h5",
+      "measurement_id": "k1-ocv",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "rest",
+      "start_utc": "2026-11-05T12:41:03.446819Z",
+      "duration_s": 120.03841366,
+      "records": 120,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k1-ocv",
+        "outcome": "completed",
+        "records": 120,
+        "duration_s": 120.03841366,
+        "spacing_s": {
+          "1s": {
+            "n": 119,
+            "median": 1.0000785400000005,
+            "p99": 1.0001129483999986,
+            "max": 1.0009185600000023
+          }
+        },
+        "spacing_max_s": 1.0009185600000023,
+        "rest_v_first_last": [
+          2.43134689331055,
+          2.4337272644043
+        ],
+        "v_min_max": [
+          2.43134689331055,
+          2.4337272644043
+        ],
+        "i_min_max": [
+          -3.8198777474463e-11,
+          -1.09139364212751e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/cell/k1-ocv_20261105T121349Z.h5",
+      "measurement_id": "k1-ocv",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "rest",
+      "start_utc": "2026-11-05T12:13:49.532568Z",
+      "duration_s": 120.03776836,
+      "records": 120,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k1-ocv",
+        "outcome": "completed",
+        "records": 120,
+        "duration_s": 120.03776836,
+        "spacing_s": {
+          "1s": {
+            "n": 119,
+            "median": 1.0000792200000035,
+            "p99": 1.0001006971999973,
+            "max": 1.0001058
+          }
+        },
+        "spacing_max_s": 1.0001058,
+        "rest_v_first_last": [
+          2.35482788085938,
+          2.36832046508789
+        ],
+        "v_min_max": [
+          2.35482788085938,
+          2.36832046508789
+        ],
+        "i_min_max": [
+          -4.36557456851006e-11,
+          -2.18278728425503e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/k12-cv-3V_20261106T134648Z.h5",
+      "measurement_id": "k12-cv-3V",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "soc_position",
+      "start_utc": "2026-11-06T13:46:48.555630Z",
+      "duration_s": 2164.2887557,
+      "records": 2164,
+      "outcome": "completed",
+      "cutoffs": 1,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k12-cv-3V",
+        "outcome": "completed",
+        "records": 2164,
+        "duration_s": 2164.2887557,
+        "spacing_s": {
+          "1s": {
+            "n": 2161,
+            "median": 1.0000921799999105,
+            "p99": 1.0001431880000098,
+            "max": 1.0138598400001229
+          }
+        },
+        "spacing_max_s": 1.0138598400001229,
+        "rest_v_first_last": [
+          2.94480895996094,
+          1.78898620605469
+        ],
+        "v_min_max": [
+          1.2520637512207,
+          3.00652313232422
+        ],
+        "i_min_max": [
+          -5.23868948221207e-09,
+          0.000160004594363272
+        ],
+        "events": [
+          "0.000 step_start ",
+          "64.027 cutoff v_max",
+          "64.027 step_start ",
+          "1864.235 step_start "
+        ],
+        "apparent_r_ohm": 884.1360845966173,
+        "median_v_over_i_ohm": 146245.24797024217
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/k11-desod-c3_20261106T132527Z.h5",
+      "measurement_id": "k11-desod-c3",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "soc_position",
+      "start_utc": "2026-11-06T13:25:27.906784Z",
+      "duration_s": 1066.12414002,
+      "records": 1066,
+      "outcome": "completed",
+      "cutoffs": 1,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k11-desod-c3",
+        "outcome": "completed",
+        "records": 1066,
+        "duration_s": 1066.12414002,
+        "spacing_s": {
+          "1s": {
+            "n": 1064,
+            "median": 1.0000936499999966,
+            "p99": 1.0001260237999918,
+            "max": 1.0009661800000345
+          }
+        },
+        "spacing_max_s": 1.0009661800000345,
+        "rest_v_first_last": [
+          2.55696105957031,
+          0.982868194580078
+        ],
+        "v_min_max": [
+          0.751010894775391,
+          2.90317916870117
+        ],
+        "i_min_max": [
+          -5.58793544769287e-09,
+          0.000160002731718123
+        ],
+        "events": [
+          "0.000 step_start ",
+          "766.095 cutoff v_max",
+          "766.095 step_start "
+        ],
+        "apparent_r_ohm": 2929.8037658688972,
+        "median_v_over_i_ohm": 9618.392052023533
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/k11-ocv_20261106T132232Z.h5",
+      "measurement_id": "k11-ocv",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "rest",
+      "start_utc": "2026-11-06T13:22:32.627442Z",
+      "duration_s": 120.03830284,
+      "records": 120,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "k11-ocv",
+        "outcome": "completed",
+        "records": 120,
+        "duration_s": 120.03830284,
+        "spacing_s": {
+          "1s": {
+            "n": 119,
+            "median": 1.000083140000001,
+            "p99": 1.0001612952000016,
+            "max": 1.0001867399999997
+          }
+        },
+        "spacing_max_s": 1.0001867399999997,
+        "rest_v_first_last": [
+          0.454570770263672,
+          0.459781646728516
+        ],
+        "v_min_max": [
+          0.454570770263672,
+          0.459781646728516
+        ],
+        "i_min_max": [
+          1.09139364212751e-11,
+          3.63797880709171e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-09d_20261106T130457Z.h5",
+      "measurement_id": "ref-09d",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T13:04:57.572413Z",
+      "duration_s": 73.27229192,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-09d",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.27229192,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.005979220000000396,
+            "p99": 0.006018041600000501,
+            "max": 0.007018219999999076
+          },
+          "0.00959s": {
+            "n": 1,
+            "median": 0.009594719999999057,
+            "p99": 0.009594719999999057,
+            "max": 0.009594719999999057
+          },
+          "0.0185s": {
+            "n": 4,
+            "median": 0.018493009999998478,
+            "p99": 0.019025396800000115,
+            "max": 0.019032520000000108
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.25000471000000246,
+            "p99": 0.29153247099999946,
+            "max": 0.2915704400000001
+          }
+        },
+        "spacing_max_s": 0.2915704400000001,
+        "rest_v_first_last": [
+          0.116950988769531,
+          0.282169342041016
+        ],
+        "v_min_max": [
+          0.116950988769531,
+          0.626777648925781
+        ],
+        "i_min_max": [
+          -1.11758708953857e-08,
+          0.000480007845908403
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.080 step_start ",
+          "11.085 step_start ",
+          "31.143 step_start ",
+          "32.151 step_start ",
+          "52.210 step_start ",
+          "53.217 step_start "
+        ],
+        "apparent_r_ohm": 657.3085302368664,
+        "median_v_over_i_ohm": 1153.3801060382025
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/h3-s-40C-1s_20261106T130337Z.h5",
+      "measurement_id": "h3-s-40C-1s",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T13:03:37.311599Z",
+      "duration_s": 73.25561716,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "h3-s-40C-1s",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.25561716,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.005978219999995815,
+            "p99": 0.0060146919999998355,
+            "max": 0.006536580000000569
+          },
+          "0.00902s": {
+            "n": 2,
+            "median": 0.009015449999999703,
+            "p99": 0.009919764600002167,
+            "max": 0.009938220000002218
+          },
+          "0.0168s": {
+            "n": 3,
+            "median": 0.016766480000001138,
+            "p99": 0.01942610200000445,
+            "max": 0.019480380000004516
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.250002980000005,
+            "p99": 0.2915319993999968,
+            "max": 0.30048352
+          }
+        },
+        "spacing_max_s": 0.30048352,
+        "rest_v_first_last": [
+          0.417606353759766,
+          0.096221923828125
+        ],
+        "v_min_max": [
+          -1.73093795776367,
+          0.510719299316406
+        ],
+        "i_min_max": [
+          -0.0192009508609772,
+          5.81145286560059e-07
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.075 step_start ",
+          "11.080 step_start ",
+          "31.131 step_start ",
+          "32.138 step_start ",
+          "52.194 step_start ",
+          "53.202 step_start "
+        ],
+        "apparent_r_ohm": 84.1734284538154,
+        "median_v_over_i_ohm": 79.89077057287722
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/h2-s-40C_20261106T130221Z.h5",
+      "measurement_id": "h2-s-40C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T13:02:21.890430Z",
+      "duration_s": 70.35458676,
+      "records": 343,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "h2-s-40C",
+        "outcome": "completed",
+        "records": 343,
+        "duration_s": 70.35458676,
+        "spacing_s": {
+          "0.0054s": {
+            "n": 56,
+            "median": 0.0054040099999994595,
+            "p99": 0.005840820999999763,
+            "max": 0.00632777999999945
+          },
+          "0.249s": {
+            "n": 280,
+            "median": 0.24937385999999861,
+            "p99": 0.2904028753999994,
+            "max": 0.2909202999999998
+          }
+        },
+        "spacing_max_s": 0.2909202999999998,
+        "rest_v_first_last": [
+          0.475334167480469,
+          0.503429412841797
+        ],
+        "v_min_max": [
+          -1.73189163208008,
+          0.567478179931641
+        ],
+        "i_min_max": [
+          -0.019200012087822,
+          4.4703483581543e-07
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.063 step_start ",
+          "10.119 step_start ",
+          "30.161 step_start ",
+          "30.216 step_start ",
+          "50.258 step_start ",
+          "50.313 step_start "
+        ],
+        "apparent_r_ohm": 112.30946537060716,
+        "median_v_over_i_ohm": 88.09638733752011
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/h2-d-40C_20261106T130148Z.h5",
+      "measurement_id": "h2-d-40C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T13:01:48.058234Z",
+      "duration_s": 10.10245948,
+      "records": 55,
+      "outcome": "stopped_cutoff",
+      "cutoffs": 1,
+      "stops": 1,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "v_max",
+      "checks": {
+        "measurement_id": "h2-d-40C",
+        "outcome": "stopped_cutoff",
+        "records": 55,
+        "duration_s": 10.10245948,
+        "spacing_s": {
+          "0.00541s": {
+            "n": 13,
+            "median": 0.005410660000000789,
+            "p99": 0.005453136000000007,
+            "max": 0.005456760000000005
+          },
+          "0.249s": {
+            "n": 40,
+            "median": 0.24873836999999988,
+            "p99": 0.27408319859999986,
+            "max": 0.29027688
+          }
+        },
+        "spacing_max_s": 0.29027688,
+        "rest_v_first_last": [
+          0.452693939208984,
+          0.542678833007813
+        ],
+        "v_min_max": [
+          0.365421295166016,
+          2.93395233154297
+        ],
+        "i_min_max": [
+          -0.00154216587543488,
+          0.0191992819309235
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.063 step_start ",
+          "10.102 cutoff v_max",
+          "10.102 stop v_max"
+        ],
+        "apparent_r_ohm": 116.65728185912684,
+        "median_v_over_i_ohm": 140.81252490496448
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/h2-s-30C_20261106T130032Z.h5",
+      "measurement_id": "h2-s-30C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T13:00:32.970467Z",
+      "duration_s": 70.35507366,
+      "records": 343,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "h2-s-30C",
+        "outcome": "completed",
+        "records": 343,
+        "duration_s": 70.35507366,
+        "spacing_s": {
+          "0.00541s": {
+            "n": 56,
+            "median": 0.005411869999999652,
+            "p99": 0.005496876999999856,
+            "max": 0.005503400000000269
+          },
+          "0.249s": {
+            "n": 280,
+            "median": 0.2493746399999992,
+            "p99": 0.2903829472000001,
+            "max": 0.2909182200000018
+          }
+        },
+        "spacing_max_s": 0.2909182200000018,
+        "rest_v_first_last": [
+          0.503231048583984,
+          0.539020538330078
+        ],
+        "v_min_max": [
+          -1.51032257080078,
+          0.604183197021484
+        ],
+        "i_min_max": [
+          -0.014398992061615,
+          4.32133674621582e-07
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.063 step_start ",
+          "10.119 step_start ",
+          "30.160 step_start ",
+          "30.216 step_start ",
+          "50.257 step_start ",
+          "50.313 step_start "
+        ],
+        "apparent_r_ohm": 136.149705602979,
+        "median_v_over_i_ohm": 101.10662113215324
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/h2-d-30C_20261106T125917Z.h5",
+      "measurement_id": "h2-d-30C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:59:17.727916Z",
+      "duration_s": 70.35562714,
+      "records": 343,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "h2-d-30C",
+        "outcome": "completed",
+        "records": 343,
+        "duration_s": 70.35562714,
+        "spacing_s": {
+          "0.00541s": {
+            "n": 56,
+            "median": 0.00541033000000013,
+            "p99": 0.005447029999999995,
+            "max": 0.005459019999999981
+          },
+          "0.249s": {
+            "n": 280,
+            "median": 0.24937904000000088,
+            "p99": 0.29039862300000097,
+            "max": 0.2909056000000003
+          }
+        },
+        "spacing_max_s": 0.2909056000000003,
+        "rest_v_first_last": [
+          0.462028503417969,
+          0.614017486572266
+        ],
+        "v_min_max": [
+          0.368556976318359,
+          2.83897399902344
+        ],
+        "i_min_max": [
+          -0.00141943991184235,
+          0.0143993943929672
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.064 step_start ",
+          "10.119 step_start ",
+          "30.161 step_start ",
+          "30.216 step_start ",
+          "50.258 step_start ",
+          "50.314 step_start "
+        ],
+        "apparent_r_ohm": 133.46963671649735,
+        "median_v_over_i_ohm": 186.6521359224464
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/h1-s-20C_20261106T125748Z.h5",
+      "measurement_id": "h1-s-20C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:57:48.549466Z",
+      "duration_s": 70.50702006,
+      "records": 399,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "h1-s-20C",
+        "outcome": "completed",
+        "records": 399,
+        "duration_s": 70.50702006,
+        "spacing_s": {
+          "0.0058s": {
+            "n": 111,
+            "median": 0.005803219999998888,
+            "p99": 0.005931568000000277,
+            "max": 0.005970019999999465
+          },
+          "0.00783s": {
+            "n": 1,
+            "median": 0.00782751999999931,
+            "p99": 0.00782751999999931,
+            "max": 0.00782751999999931
+          },
+          "0.249s": {
+            "n": 280,
+            "median": 0.24874901000000094,
+            "p99": 0.2892810156000003,
+            "max": 0.29031005999999593
+          }
+        },
+        "spacing_max_s": 0.29031005999999593,
+        "rest_v_first_last": [
+          0.562854766845703,
+          0.536605834960938
+        ],
+        "v_min_max": [
+          -1.25651168823242,
+          0.623458862304688
+        ],
+        "i_min_max": [
+          -0.00960008800029755,
+          6.89178705215454e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.063 step_start ",
+          "10.168 step_start ",
+          "30.210 step_start ",
+          "30.315 step_start ",
+          "50.359 step_start ",
+          "50.465 step_start "
+        ],
+        "apparent_r_ohm": 169.92627630254816,
+        "median_v_over_i_ohm": 119.6136993960262
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/h1-d-20C_20261106T125633Z.h5",
+      "measurement_id": "h1-d-20C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:56:33.917658Z",
+      "duration_s": 70.5093215,
+      "records": 399,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "h1-d-20C",
+        "outcome": "completed",
+        "records": 399,
+        "duration_s": 70.5093215,
+        "spacing_s": {
+          "0.0058s": {
+            "n": 111,
+            "median": 0.0058026800000000045,
+            "p99": 0.006004817999999618,
+            "max": 0.006213960000000185
+          },
+          "0.00898s": {
+            "n": 1,
+            "median": 0.008981400000003248,
+            "p99": 0.008981400000003248,
+            "max": 0.008981400000003248
+          },
+          "0.249s": {
+            "n": 280,
+            "median": 0.24875533999999888,
+            "p99": 0.2892652272000002,
+            "max": 0.29029202000000254
+          }
+        },
+        "spacing_max_s": 0.29029202000000254,
+        "rest_v_first_last": [
+          0.471889495849609,
+          0.634311676025391
+        ],
+        "v_min_max": [
+          0.388870239257813,
+          2.61470413208008
+        ],
+        "i_min_max": [
+          -0.000140950083732605,
+          0.0096000274643302
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.063 step_start ",
+          "10.169 step_start ",
+          "30.211 step_start ",
+          "30.316 step_start ",
+          "50.359 step_start ",
+          "50.464 step_start "
+        ],
+        "apparent_r_ohm": 170.86887104842904,
+        "median_v_over_i_ohm": 249.873971957929
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-08s_20261106T125309Z.h5",
+      "measurement_id": "ref-08s",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:53:09.161444Z",
+      "duration_s": 73.25741332,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-08s",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.25741332,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.005975939999999014,
+            "p99": 0.006027846399999817,
+            "max": 0.006800580000000167
+          },
+          "0.0106s": {
+            "n": 1,
+            "median": 0.01055765999999636,
+            "p99": 0.01055765999999636,
+            "max": 0.01055765999999636
+          },
+          "0.0171s": {
+            "n": 4,
+            "median": 0.017138879999998302,
+            "p99": 0.017829567199996108,
+            "max": 0.017835319999996102
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.24999776000000318,
+            "p99": 0.2915195071999996,
+            "max": 0.2915614000000002
+          }
+        },
+        "spacing_max_s": 0.2915614000000002,
+        "rest_v_first_last": [
+          0.573570251464844,
+          0.539958953857422
+        ],
+        "v_min_max": [
+          -0.0110969543457031,
+          0.588520050048828
+        ],
+        "i_min_max": [
+          -0.000480002607218921,
+          2.23517417907715e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.078 step_start ",
+          "11.082 step_start ",
+          "31.135 step_start ",
+          "32.140 step_start ",
+          "52.194 step_start ",
+          "53.203 step_start "
+        ],
+        "apparent_r_ohm": 882.0217057983507,
+        "median_v_over_i_ohm": -83.62903884161287
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-08d_20261106T125148Z.h5",
+      "measurement_id": "ref-08d",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:51:48.920084Z",
+      "duration_s": 73.25688504,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-08d",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.25688504,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1158,
+            "median": 0.005979190000000023,
+            "p99": 0.0060223515999961565,
+            "max": 0.007396959999999453
+          },
+          "0.00912s": {
+            "n": 1,
+            "median": 0.009116740000003176,
+            "p99": 0.009116740000003176,
+            "max": 0.009116740000003176
+          },
+          "0.0154s": {
+            "n": 3,
+            "median": 0.015405579999999475,
+            "p99": 0.017224244399999124,
+            "max": 0.017261359999999115
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.25000588999999884,
+            "p99": 0.29153242039999955,
+            "max": 0.30042668000000017
+          }
+        },
+        "spacing_max_s": 0.30042668000000017,
+        "rest_v_first_last": [
+          0.528491973876953,
+          0.59283447265625
+        ],
+        "v_min_max": [
+          0.528491973876953,
+          1.18426132202148
+        ],
+        "i_min_max": [
+          -1.76951289176941e-08,
+          0.000480007147416472
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.075 step_start ",
+          "11.082 step_start ",
+          "31.136 step_start ",
+          "32.143 step_start ",
+          "52.197 step_start ",
+          "53.205 step_start "
+        ],
+        "apparent_r_ohm": 841.3358656192046,
+        "median_v_over_i_ohm": 2323.02399732248
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/e1-rest600_20261106T124141Z.h5",
+      "measurement_id": "e1-rest600",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "rest",
+      "start_utc": "2026-11-06T12:41:41.169490Z",
+      "duration_s": 600.08904664,
+      "records": 600,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "e1-rest600",
+        "outcome": "completed",
+        "records": 600,
+        "duration_s": 600.08904664,
+        "spacing_s": {
+          "1s": {
+            "n": 599,
+            "median": 1.0001014000000055,
+            "p99": 1.0001276399999606,
+            "max": 1.0001846400000147
+          }
+        },
+        "spacing_max_s": 1.0001846400000147,
+        "rest_v_first_last": [
+          0.484272003173828,
+          0.549114227294922
+        ],
+        "v_min_max": [
+          0.484272003173828,
+          0.549114227294922
+        ],
+        "i_min_max": [
+          3.27418092638254e-11,
+          6.18456397205591e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-07s_20261106T124021Z.h5",
+      "measurement_id": "ref-07s",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:40:21.476632Z",
+      "duration_s": 73.24706258,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-07s",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.24706258,
+        "spacing_s": {
+          "0.00597s": {
+            "n": 1157,
+            "median": 0.005974379999997836,
+            "p99": 0.006011636000002341,
+            "max": 0.006826960000001492
+          },
+          "0.00794s": {
+            "n": 2,
+            "median": 0.00794474999999828,
+            "p99": 0.008183879799995956,
+            "max": 0.00818875999999591
+          },
+          "0.0142s": {
+            "n": 3,
+            "median": 0.014179200000000947,
+            "p99": 0.015893788399999453,
+            "max": 0.01592877999999942
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.24999955000000185,
+            "p99": 0.29152105379999804,
+            "max": 0.3001133199999999
+          }
+        },
+        "spacing_max_s": 0.3001133199999999,
+        "rest_v_first_last": [
+          0.490360260009766,
+          0.480808258056641
+        ],
+        "v_min_max": [
+          0.025665283203125,
+          0.501312255859375
+        ],
+        "i_min_max": [
+          -0.000480002723634243,
+          2.11875885725021e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.074 step_start ",
+          "11.079 step_start ",
+          "31.133 step_start ",
+          "32.139 step_start ",
+          "52.190 step_start ",
+          "53.197 step_start "
+        ],
+        "apparent_r_ohm": 740.257964226584,
+        "median_v_over_i_ohm": -125.08244322019611
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-07d_20261106T123901Z.h5",
+      "measurement_id": "ref-07d",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:39:01.250235Z",
+      "duration_s": 73.2630348,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-07d",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.2630348,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1156,
+            "median": 0.005979470000000653,
+            "p99": 0.006034847000000987,
+            "max": 0.006769439999999349
+          },
+          "0.00987s": {
+            "n": 2,
+            "median": 0.009873349999997671,
+            "p99": 0.009965381799996287,
+            "max": 0.009967259999996259
+          },
+          "0.0149s": {
+            "n": 3,
+            "median": 0.014880040000001316,
+            "p99": 0.015178038400000702,
+            "max": 0.01518412000000069
+          },
+          "0.0189s": {
+            "n": 1,
+            "median": 0.018927879999999675,
+            "p99": 0.018927879999999675,
+            "max": 0.018927879999999675
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.25000393000000365,
+            "p99": 0.29153146399999824,
+            "max": 0.29156114000000066
+          }
+        },
+        "spacing_max_s": 0.29156114000000066,
+        "rest_v_first_last": [
+          0.382350921630859,
+          0.498489379882813
+        ],
+        "v_min_max": [
+          0.382350921630859,
+          0.950351715087891
+        ],
+        "i_min_max": [
+          -8.96397978067398e-09,
+          0.000480007031001151
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.075 step_start ",
+          "11.082 step_start ",
+          "31.134 step_start ",
+          "32.144 step_start ",
+          "52.200 step_start ",
+          "53.210 step_start "
+        ],
+        "apparent_r_ohm": 693.7834711384062,
+        "median_v_over_i_ohm": 1742.8169045237637
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/e1-s-5_20261106T123807Z.h5",
+      "measurement_id": "e1-s-5",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:38:07.364925Z",
+      "duration_s": 46.43356636,
+      "records": 2303,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "e1-s-5",
+        "outcome": "completed",
+        "records": 2303,
+        "duration_s": 46.43356636,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2150,
+            "median": 0.005984569999998968,
+            "p99": 0.006037289800000209,
+            "max": 0.007282580000001815
+          },
+          "0.00933s": {
+            "n": 1,
+            "median": 0.009325960000005296,
+            "p99": 0.009325960000005296,
+            "max": 0.009325960000005296
+          },
+          "0.0142s": {
+            "n": 3,
+            "median": 0.014150739999999828,
+            "p99": 0.014203111200000116,
+            "max": 0.014204180000000122
+          },
+          "0.0189s": {
+            "n": 4,
+            "median": 0.018871220000001188,
+            "p99": 0.018995579399999997,
+            "max": 0.018996000000000013
+          },
+          "0.25s": {
+            "n": 132,
+            "median": 0.24994176000000223,
+            "p99": 0.29148862799999953,
+            "max": 0.29156483999999994
+          }
+        },
+        "spacing_max_s": 0.29156483999999994,
+        "rest_v_first_last": [
+          0.742935180664063,
+          0.353290557861328
+        ],
+        "v_min_max": [
+          -0.529312133789063,
+          0.7889404296875
+        ],
+        "i_min_max": [
+          -0.00240011513233185,
+          5.02914190292358e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.078 step_start ",
+          "11.085 step_start ",
+          "16.134 step_start ",
+          "17.141 step_start ",
+          "22.191 step_start ",
+          "23.198 step_start ",
+          "28.251 step_start ",
+          "29.259 step_start ",
+          "34.313 step_start ",
+          "35.321 step_start ",
+          "40.370 step_start ",
+          "41.380 step_start "
+        ],
+        "apparent_r_ohm": 315.69734882326725,
+        "median_v_over_i_ohm": 159.58207243930093
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/e1-d-5_20261106T123713Z.h5",
+      "measurement_id": "e1-d-5",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:37:13.970525Z",
+      "duration_s": 46.4290187,
+      "records": 2303,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "e1-d-5",
+        "outcome": "completed",
+        "records": 2303,
+        "duration_s": 46.4290187,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2151,
+            "median": 0.005981280000000311,
+            "p99": 0.006021260000000694,
+            "max": 0.007152899999997686
+          },
+          "0.00946s": {
+            "n": 1,
+            "median": 0.009463979999999594,
+            "p99": 0.009463979999999594,
+            "max": 0.009463979999999594
+          },
+          "0.0153s": {
+            "n": 2,
+            "median": 0.01528375000000004,
+            "p99": 0.016693372199998856,
+            "max": 0.01672213999999883
+          },
+          "0.0182s": {
+            "n": 4,
+            "median": 0.018153659999999405,
+            "p99": 0.019187443199999238,
+            "max": 0.01920971999999921
+          },
+          "0.25s": {
+            "n": 132,
+            "median": 0.2499529100000002,
+            "p99": 0.2914879843999983,
+            "max": 0.30086294
+          }
+        },
+        "spacing_max_s": 0.30086294,
+        "rest_v_first_last": [
+          0.32427978515625,
+          0.943309783935547
+        ],
+        "v_min_max": [
+          0.32427978515625,
+          2.32239151000977
+        ],
+        "i_min_max": [
+          -3.24100255966187e-07,
+          0.00240009464323521
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.075 step_start ",
+          "11.081 step_start ",
+          "16.134 step_start ",
+          "17.140 step_start ",
+          "22.192 step_start ",
+          "23.197 step_start ",
+          "28.246 step_start ",
+          "29.253 step_start ",
+          "34.306 step_start ",
+          "35.315 step_start ",
+          "40.368 step_start ",
+          "41.375 step_start "
+        ],
+        "apparent_r_ohm": 318.84843417701256,
+        "median_v_over_i_ohm": 725.167982602888
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/e1-s-4_20261106T123620Z.h5",
+      "measurement_id": "e1-s-4",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:36:20.379918Z",
+      "duration_s": 46.43085054,
+      "records": 2303,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "e1-s-4",
+        "outcome": "completed",
+        "records": 2303,
+        "duration_s": 46.43085054,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2149,
+            "median": 0.005984200000000328,
+            "p99": 0.006030336800001805,
+            "max": 0.006787760000001697
+          },
+          "0.00752s": {
+            "n": 2,
+            "median": 0.0075194500000019815,
+            "p99": 0.007559855400001005,
+            "max": 0.0075606800000009855
+          },
+          "0.0152s": {
+            "n": 6,
+            "median": 0.015200300000000055,
+            "p99": 0.016500217999996993,
+            "max": 0.01651025999999689
+          },
+          "0.0194s": {
+            "n": 1,
+            "median": 0.019357960000000674,
+            "p99": 0.019357960000000674,
+            "max": 0.019357960000000674
+          },
+          "0.25s": {
+            "n": 132,
+            "median": 0.24994079000000013,
+            "p99": 0.2914990202,
+            "max": 0.2915429999999999
+          }
+        },
+        "spacing_max_s": 0.2915429999999999,
+        "rest_v_first_last": [
+          0.741844177246094,
+          0.354934692382813
+        ],
+        "v_min_max": [
+          -0.512260437011719,
+          0.788215637207031
+        ],
+        "i_min_max": [
+          -0.00240014307200909,
+          5.02914190292358e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.075 step_start ",
+          "11.082 step_start ",
+          "16.133 step_start ",
+          "17.141 step_start ",
+          "22.192 step_start ",
+          "23.199 step_start ",
+          "28.248 step_start ",
+          "29.256 step_start ",
+          "34.310 step_start ",
+          "35.318 step_start ",
+          "40.371 step_start ",
+          "41.379 step_start "
+        ],
+        "apparent_r_ohm": 311.521384448857,
+        "median_v_over_i_ohm": 154.8324889291693
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/e1-d-4_20261106T123526Z.h5",
+      "measurement_id": "e1-d-4",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:35:26.747823Z",
+      "duration_s": 46.43316794,
+      "records": 2303,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "e1-d-4",
+        "outcome": "completed",
+        "records": 2303,
+        "duration_s": 46.43316794,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2149,
+            "median": 0.005981059999996319,
+            "p99": 0.006028965600001186,
+            "max": 0.006629840000002218
+          },
+          "0.00858s": {
+            "n": 2,
+            "median": 0.008577709999999072,
+            "p99": 0.009001373799998085,
+            "max": 0.009010019999998065
+          },
+          "0.0172s": {
+            "n": 5,
+            "median": 0.017204239999998094,
+            "p99": 0.01846893439999988,
+            "max": 0.01848517999999988
+          },
+          "0.0191s": {
+            "n": 2,
+            "median": 0.019103899999998397,
+            "p99": 0.019499290800000377,
+            "max": 0.019507360000000418
+          },
+          "0.25s": {
+            "n": 132,
+            "median": 0.24994753999999908,
+            "p99": 0.29149364279999906,
+            "max": 0.29154598
+          }
+        },
+        "spacing_max_s": 0.29154598,
+        "rest_v_first_last": [
+          0.322441101074219,
+          0.944683074951172
+        ],
+        "v_min_max": [
+          0.322441101074219,
+          2.32248687744141
+        ],
+        "i_min_max": [
+          -3.68803739547729e-07,
+          0.00240009650588036
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.078 step_start ",
+          "11.084 step_start ",
+          "16.139 step_start ",
+          "17.144 step_start ",
+          "22.196 step_start ",
+          "23.204 step_start ",
+          "28.256 step_start ",
+          "29.261 step_start ",
+          "34.315 step_start ",
+          "35.323 step_start ",
+          "40.377 step_start ",
+          "41.383 step_start "
+        ],
+        "apparent_r_ohm": 319.1909455319103,
+        "median_v_over_i_ohm": 727.3116314116421
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/e1-s-3_20261106T123433Z.h5",
+      "measurement_id": "e1-s-3",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:34:33.143836Z",
+      "duration_s": 46.42956128,
+      "records": 2303,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "e1-s-3",
+        "outcome": "completed",
+        "records": 2303,
+        "duration_s": 46.42956128,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2151,
+            "median": 0.005983719999999693,
+            "p99": 0.006019240000000536,
+            "max": 0.006793580000000077
+          },
+          "0.0168s": {
+            "n": 6,
+            "median": 0.016817360000000114,
+            "p99": 0.018496707000000077,
+            "max": 0.01850516000000013
+          },
+          "0.0188s": {
+            "n": 1,
+            "median": 0.018845419999998114,
+            "p99": 0.018845419999998114,
+            "max": 0.018845419999998114
+          },
+          "0.25s": {
+            "n": 132,
+            "median": 0.2499415299999974,
+            "p99": 0.2914824662000006,
+            "max": 0.29155146
+          }
+        },
+        "spacing_max_s": 0.29155146,
+        "rest_v_first_last": [
+          0.746273040771484,
+          0.356002807617188
+        ],
+        "v_min_max": [
+          -0.524799346923828,
+          0.792625427246094
+        ],
+        "i_min_max": [
+          -0.00240013189613819,
+          4.4703483581543e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.074 step_start ",
+          "11.082 step_start ",
+          "16.133 step_start ",
+          "17.140 step_start ",
+          "22.193 step_start ",
+          "23.201 step_start ",
+          "28.254 step_start ",
+          "29.261 step_start ",
+          "34.315 step_start ",
+          "35.321 step_start ",
+          "40.371 step_start ",
+          "41.377 step_start "
+        ],
+        "apparent_r_ohm": 314.56779746618065,
+        "median_v_over_i_ohm": 156.5030261475399
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/e1-d-3_20261106T123339Z.h5",
+      "measurement_id": "e1-d-3",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:33:39.689341Z",
+      "duration_s": 46.42866678,
+      "records": 2303,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "e1-d-3",
+        "outcome": "completed",
+        "records": 2303,
+        "duration_s": 46.42866678,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2149,
+            "median": 0.005981600000001919,
+            "p99": 0.006025610400000234,
+            "max": 0.006810260000001733
+          },
+          "0.00812s": {
+            "n": 2,
+            "median": 0.008120800000000372,
+            "p99": 0.008290967200000238,
+            "max": 0.008294440000000236
+          },
+          "0.0155s": {
+            "n": 4,
+            "median": 0.015513130000001318,
+            "p99": 0.01682073760000183,
+            "max": 0.016827460000001793
+          },
+          "0.0191s": {
+            "n": 3,
+            "median": 0.019111699999999843,
+            "p99": 0.019270087599999926,
+            "max": 0.019273319999999927
+          },
+          "0.25s": {
+            "n": 132,
+            "median": 0.2499479200000012,
+            "p99": 0.29148259919999914,
+            "max": 0.29152810000000007
+          }
+        },
+        "spacing_max_s": 0.29152810000000007,
+        "rest_v_first_last": [
+          0.327816009521484,
+          0.947662353515625
+        ],
+        "v_min_max": [
+          0.327816009521484,
+          2.32682418823242
+        ],
+        "i_min_max": [
+          -3.52039933204651e-07,
+          0.0024001020938158
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.078 step_start ",
+          "11.084 step_start ",
+          "16.134 step_start ",
+          "17.140 step_start ",
+          "22.194 step_start ",
+          "23.202 step_start ",
+          "28.253 step_start ",
+          "29.261 step_start ",
+          "34.315 step_start ",
+          "35.321 step_start ",
+          "40.373 step_start ",
+          "41.379 step_start "
+        ],
+        "apparent_r_ohm": 320.02798034603285,
+        "median_v_over_i_ohm": 729.5413697275673
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/e1-s-2_20261106T123246Z.h5",
+      "measurement_id": "e1-s-2",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:32:46.206772Z",
+      "duration_s": 46.43220958,
+      "records": 2303,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "e1-s-2",
+        "outcome": "completed",
+        "records": 2303,
+        "duration_s": 46.43220958,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2149,
+            "median": 0.005984540000000038,
+            "p99": 0.006020549600001459,
+            "max": 0.006627699999999237
+          },
+          "0.00824s": {
+            "n": 2,
+            "median": 0.008244639999999137,
+            "p99": 0.008634209600000808,
+            "max": 0.008642160000000843
+          },
+          "0.0147s": {
+            "n": 3,
+            "median": 0.014716959999999446,
+            "p99": 0.014801906400000214,
+            "max": 0.014803640000000229
+          },
+          "0.019s": {
+            "n": 4,
+            "median": 0.0190283400000002,
+            "p99": 0.019689117399994734,
+            "max": 0.019697439999994515
+          },
+          "0.25s": {
+            "n": 132,
+            "median": 0.24994024999999986,
+            "p99": 0.29148320559999996,
+            "max": 0.29154670000000005
+          }
+        },
+        "spacing_max_s": 0.29154670000000005,
+        "rest_v_first_last": [
+          0.754566192626953,
+          0.359306335449219
+        ],
+        "v_min_max": [
+          -0.518733978271484,
+          0.800365447998047
+        ],
+        "i_min_max": [
+          -0.00240015052258968,
+          3.91155481338501e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.074 step_start ",
+          "11.081 step_start ",
+          "16.131 step_start ",
+          "17.137 step_start ",
+          "22.191 step_start ",
+          "23.200 step_start ",
+          "28.253 step_start ",
+          "29.261 step_start ",
+          "34.310 step_start ",
+          "35.316 step_start ",
+          "40.369 step_start ",
+          "41.378 step_start "
+        ],
+        "apparent_r_ohm": 312.084021601263,
+        "median_v_over_i_ohm": 153.90772687845003
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/e1-d-2_20261106T123152Z.h5",
+      "measurement_id": "e1-d-2",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:31:52.813828Z",
+      "duration_s": 46.4263903,
+      "records": 2303,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "e1-d-2",
+        "outcome": "completed",
+        "records": 2303,
+        "duration_s": 46.4263903,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2151,
+            "median": 0.005980879999999189,
+            "p99": 0.006035779999999991,
+            "max": 0.006783300000002157
+          },
+          "0.0169s": {
+            "n": 6,
+            "median": 0.01687968000000062,
+            "p99": 0.01784306699999406,
+            "max": 0.01784885999999375
+          },
+          "0.0196s": {
+            "n": 1,
+            "median": 0.01963954000000001,
+            "p99": 0.01963954000000001,
+            "max": 0.01963954000000001
+          },
+          "0.25s": {
+            "n": 132,
+            "median": 0.24994263999999866,
+            "p99": 0.2914929495999994,
+            "max": 0.2915402200000001
+          }
+        },
+        "spacing_max_s": 0.2915402200000001,
+        "rest_v_first_last": [
+          0.333370208740234,
+          0.956333160400391
+        ],
+        "v_min_max": [
+          0.333370208740234,
+          2.33987045288086
+        ],
+        "i_min_max": [
+          -3.7066638469696e-07,
+          0.00240009278059006
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.077 step_start ",
+          "11.084 step_start ",
+          "16.135 step_start ",
+          "17.140 step_start ",
+          "22.192 step_start ",
+          "23.197 step_start ",
+          "28.249 step_start ",
+          "29.256 step_start ",
+          "34.307 step_start ",
+          "35.313 step_start ",
+          "40.368 step_start ",
+          "41.374 step_start "
+        ],
+        "apparent_r_ohm": 319.65953262796216,
+        "median_v_over_i_ohm": 735.581919947011
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/e1-s-1_20261106T123059Z.h5",
+      "measurement_id": "e1-s-1",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:30:59.015173Z",
+      "duration_s": 46.43045518,
+      "records": 2303,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "e1-s-1",
+        "outcome": "completed",
+        "records": 2303,
+        "duration_s": 46.43045518,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2152,
+            "median": 0.0059841599999970185,
+            "p99": 0.006027928199998343,
+            "max": 0.007084920000000494
+          },
+          "0.0179s": {
+            "n": 5,
+            "median": 0.01789394000000044,
+            "p99": 0.018689020799998134,
+            "max": 0.018706899999997972
+          },
+          "0.0188s": {
+            "n": 1,
+            "median": 0.018842100000000528,
+            "p99": 0.018842100000000528,
+            "max": 0.018842100000000528
+          },
+          "0.25s": {
+            "n": 132,
+            "median": 0.24994119999999853,
+            "p99": 0.29149232579999856,
+            "max": 0.29939234000000026
+          }
+        },
+        "spacing_max_s": 0.29939234000000026,
+        "rest_v_first_last": [
+          0.776470184326172,
+          0.366634368896484
+        ],
+        "v_min_max": [
+          -0.532295227050781,
+          0.822639465332031
+        ],
+        "i_min_max": [
+          -0.00240010768175125,
+          5.02914190292358e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.074 step_start ",
+          "11.080 step_start ",
+          "16.135 step_start ",
+          "17.142 step_start ",
+          "22.195 step_start ",
+          "23.202 step_start ",
+          "28.255 step_start ",
+          "29.262 step_start ",
+          "34.312 step_start ",
+          "35.319 step_start ",
+          "40.373 step_start ",
+          "41.379 step_start "
+        ],
+        "apparent_r_ohm": 311.2015055131439,
+        "median_v_over_i_ohm": 146.7419876756756
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/e1-d-1_20261106T123005Z.h5",
+      "measurement_id": "e1-d-1",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:30:05.611486Z",
+      "duration_s": 46.416569,
+      "records": 2303,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "e1-d-1",
+        "outcome": "completed",
+        "records": 2303,
+        "duration_s": 46.416569,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2152,
+            "median": 0.005981300000001966,
+            "p99": 0.006034068799997313,
+            "max": 0.007019059999997523
+          },
+          "0.0154s": {
+            "n": 3,
+            "median": 0.015414620000001378,
+            "p99": 0.015609110800001389,
+            "max": 0.01561308000000139
+          },
+          "0.0187s": {
+            "n": 3,
+            "median": 0.01865209999999884,
+            "p99": 0.019116384799995566,
+            "max": 0.019125859999995498
+          },
+          "0.25s": {
+            "n": 132,
+            "median": 0.24996061999999952,
+            "p99": 0.2915011496000004,
+            "max": 0.2915820200000001
+          }
+        },
+        "spacing_max_s": 0.2915820200000001,
+        "rest_v_first_last": [
+          0.404315948486328,
+          0.983665466308594
+        ],
+        "v_min_max": [
+          0.404315948486328,
+          2.38820648193359
+        ],
+        "i_min_max": [
+          -4.69386577606201e-07,
+          0.00240009464323521
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.066 step_start ",
+          "11.071 step_start ",
+          "16.126 step_start ",
+          "17.132 step_start ",
+          "22.183 step_start ",
+          "23.189 step_start ",
+          "28.240 step_start ",
+          "29.245 step_start ",
+          "34.300 step_start ",
+          "35.305 step_start ",
+          "40.355 step_start ",
+          "41.362 step_start "
+        ],
+        "apparent_r_ohm": 323.15835310508396,
+        "median_v_over_i_ohm": 777.5626667421056
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-06s_20261106T122814Z.h5",
+      "measurement_id": "ref-06s",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:28:14.067911Z",
+      "duration_s": 73.25103162,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-06s",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.25103162,
+        "spacing_s": {
+          "0.00597s": {
+            "n": 1158,
+            "median": 0.005974229999999636,
+            "p99": 0.006022128400001776,
+            "max": 0.0070347600000033594
+          },
+          "0.0145s": {
+            "n": 2,
+            "median": 0.014479399999998255,
+            "p99": 0.015406460399996418,
+            "max": 0.01542537999999638
+          },
+          "0.0187s": {
+            "n": 2,
+            "median": 0.018713870000001798,
+            "p99": 0.01930278140000359,
+            "max": 0.01931480000000363
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.25000145999999823,
+            "p99": 0.2915366736000028,
+            "max": 0.29154687999999984
+          }
+        },
+        "spacing_max_s": 0.29154687999999984,
+        "rest_v_first_last": [
+          0.493274688720703,
+          0.483940124511719
+        ],
+        "v_min_max": [
+          0.0261459350585938,
+          0.504253387451172
+        ],
+        "i_min_max": [
+          -0.00048000190872699,
+          2.17696651816368e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.073 step_start ",
+          "11.077 step_start ",
+          "31.132 step_start ",
+          "32.137 step_start ",
+          "52.193 step_start ",
+          "53.199 step_start "
+        ],
+        "apparent_r_ohm": 734.7935516021411,
+        "median_v_over_i_ohm": -134.269839479719
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-06d_20261106T122654Z.h5",
+      "measurement_id": "ref-06d",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:26:54.388226Z",
+      "duration_s": 73.2628948,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-06d",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.2628948,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.005980080000000498,
+            "p99": 0.006017496000000904,
+            "max": 0.007314959999998649
+          },
+          "0.00924s": {
+            "n": 1,
+            "median": 0.009237120000001653,
+            "p99": 0.009237120000001653,
+            "max": 0.009237120000001653
+          },
+          "0.0152s": {
+            "n": 2,
+            "median": 0.015151439999998129,
+            "p99": 0.016429634399996215,
+            "max": 0.016455719999996177
+          },
+          "0.0184s": {
+            "n": 2,
+            "median": 0.018422000000003713,
+            "p99": 0.018685522000001117,
+            "max": 0.018690900000001065
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.25000476999999677,
+            "p99": 0.29154890699999814,
+            "max": 0.2915629399999986
+          }
+        },
+        "spacing_max_s": 0.2915629399999986,
+        "rest_v_first_last": [
+          0.347919464111328,
+          0.501228332519531
+        ],
+        "v_min_max": [
+          0.347919464111328,
+          0.942855834960938
+        ],
+        "i_min_max": [
+          -8.96397978067398e-09,
+          0.000480007380247116
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.076 step_start ",
+          "11.081 step_start ",
+          "31.138 step_start ",
+          "32.145 step_start ",
+          "52.200 step_start ",
+          "53.209 step_start "
+        ],
+        "apparent_r_ohm": 675.4800932431993,
+        "median_v_over_i_ohm": 1716.6237074972328
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/d1-s-r1_20261106T122626Z.h5",
+      "measurement_id": "d1-s-r1",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:26:26.989578Z",
+      "duration_s": 22.21365882,
+      "records": 2207,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "d1-s-r1",
+        "outcome": "completed",
+        "records": 2207,
+        "duration_s": 22.21365882,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2146,
+            "median": 0.00598385999999973,
+            "p99": 0.006021983999999759,
+            "max": 0.006851499999999788
+          },
+          "0.0155s": {
+            "n": 6,
+            "median": 0.015497339999997806,
+            "p99": 0.016811886999999803,
+            "max": 0.016834799999999817
+          },
+          "0.0184s": {
+            "n": 6,
+            "median": 0.01844885999999968,
+            "p99": 0.019605083999998208,
+            "max": 0.019609159999998127
+          },
+          "0.25s": {
+            "n": 36,
+            "median": 0.24997956999999982,
+            "p99": 0.27718292100000014,
+            "max": 0.29155544
+          }
+        },
+        "spacing_max_s": 0.29155544,
+        "rest_v_first_last": [
+          0.875648498535156,
+          0.260971069335938
+        ],
+        "v_min_max": [
+          -0.511444091796875,
+          0.915615081787109
+        ],
+        "i_min_max": [
+          -0.0024001095443964,
+          2.79396772384644e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.078 step_start ",
+          "11.085 step_start ",
+          "12.094 step_start ",
+          "13.106 step_start ",
+          "14.118 step_start ",
+          "15.127 step_start ",
+          "16.140 step_start ",
+          "17.153 step_start ",
+          "18.162 step_start ",
+          "19.177 step_start ",
+          "20.188 step_start ",
+          "21.200 step_start "
+        ],
+        "apparent_r_ohm": 308.45297552648924,
+        "median_v_over_i_ohm": 146.4365933235893
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/d1-d-r1_20261106T122559Z.h5",
+      "measurement_id": "d1-d-r1",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:25:59.633825Z",
+      "duration_s": 22.20635184,
+      "records": 2207,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "d1-d-r1",
+        "outcome": "completed",
+        "records": 2207,
+        "duration_s": 22.20635184,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2146,
+            "median": 0.005982099999999491,
+            "p99": 0.006021370999999398,
+            "max": 0.006665840000000145
+          },
+          "0.0154s": {
+            "n": 9,
+            "median": 0.01540284000000014,
+            "p99": 0.017900900800000487,
+            "max": 0.017904440000000577
+          },
+          "0.0188s": {
+            "n": 3,
+            "median": 0.018757479999997884,
+            "p99": 0.019029900400001267,
+            "max": 0.019035460000001336
+          },
+          "0.25s": {
+            "n": 36,
+            "median": 0.24998338999999992,
+            "p99": 0.2773965739999998,
+            "max": 0.2915596600000001
+          }
+        },
+        "spacing_max_s": 0.2915596600000001,
+        "rest_v_first_last": [
+          0.327423095703125,
+          1.3321418762207
+        ],
+        "v_min_max": [
+          0.327423095703125,
+          2.44622421264648
+        ],
+        "i_min_max": [
+          -3.52039933204651e-07,
+          0.0024001020938158
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.075 step_start ",
+          "11.081 step_start ",
+          "12.090 step_start ",
+          "13.102 step_start ",
+          "14.116 step_start ",
+          "15.128 step_start ",
+          "16.140 step_start ",
+          "17.151 step_start ",
+          "18.163 step_start ",
+          "19.173 step_start ",
+          "20.183 step_start ",
+          "21.193 step_start "
+        ],
+        "apparent_r_ohm": 339.11515874350147,
+        "median_v_over_i_ohm": 773.2832894162274
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/d1-s-r5_20261106T122506Z.h5",
+      "measurement_id": "d1-s-r5",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:25:06.202230Z",
+      "duration_s": 46.44571482,
+      "records": 2303,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "d1-s-r5",
+        "outcome": "completed",
+        "records": 2303,
+        "duration_s": 46.44571482,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2150,
+            "median": 0.005983989999999828,
+            "p99": 0.006022327999999604,
+            "max": 0.007230339999999558
+          },
+          "0.00795s": {
+            "n": 2,
+            "median": 0.007949019999998086,
+            "p99": 0.008087748800001009,
+            "max": 0.008090580000001069
+          },
+          "0.0168s": {
+            "n": 6,
+            "median": 0.016835580000000405,
+            "p99": 0.01896202999999872,
+            "max": 0.019005499999998676
+          },
+          "0.25s": {
+            "n": 132,
+            "median": 0.24994190999999866,
+            "p99": 0.2914932950000005,
+            "max": 0.30350491999999996
+          }
+        },
+        "spacing_max_s": 0.30350491999999996,
+        "rest_v_first_last": [
+          0.771190643310547,
+          0.362743377685547
+        ],
+        "v_min_max": [
+          -0.524154663085938,
+          0.818321228027344
+        ],
+        "i_min_max": [
+          -0.0024001132696867,
+          4.4703483581543e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.077 step_start ",
+          "11.084 step_start ",
+          "16.135 step_start ",
+          "17.142 step_start ",
+          "22.195 step_start ",
+          "23.202 step_start ",
+          "28.254 step_start ",
+          "29.263 step_start ",
+          "34.314 step_start ",
+          "35.323 step_start ",
+          "40.386 step_start ",
+          "41.394 step_start "
+        ],
+        "apparent_r_ohm": 305.4978293953327,
+        "median_v_over_i_ohm": 144.27879893341918
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/d1-d-r5_20261106T122412Z.h5",
+      "measurement_id": "d1-d-r5",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:24:12.670558Z",
+      "duration_s": 46.42460938,
+      "records": 2303,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "d1-d-r5",
+        "outcome": "completed",
+        "records": 2303,
+        "duration_s": 46.42460938,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2149,
+            "median": 0.00598116000000104,
+            "p99": 0.00604007759999952,
+            "max": 0.006429599999997038
+          },
+          "0.00782s": {
+            "n": 3,
+            "median": 0.007824039999995591,
+            "p99": 0.00804120799999879,
+            "max": 0.008045639999998855
+          },
+          "0.0163s": {
+            "n": 4,
+            "median": 0.016264679999999032,
+            "p99": 0.017145477800000003,
+            "max": 0.017146340000000038
+          },
+          "0.018s": {
+            "n": 2,
+            "median": 0.01799336999999923,
+            "p99": 0.018146573399998617,
+            "max": 0.018149699999998603
+          },
+          "0.25s": {
+            "n": 132,
+            "median": 0.24994682999999984,
+            "p99": 0.29148057560000323,
+            "max": 0.30078294000000017
+          }
+        },
+        "spacing_max_s": 0.30078294000000017,
+        "rest_v_first_last": [
+          0.371444702148438,
+          0.97711181640625
+        ],
+        "v_min_max": [
+          0.371444702148438,
+          2.35482788085938
+        ],
+        "i_min_max": [
+          -5.23403286933899e-07,
+          0.0024001020938158
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.075 step_start ",
+          "11.081 step_start ",
+          "16.134 step_start ",
+          "17.141 step_start ",
+          "22.194 step_start ",
+          "23.199 step_start ",
+          "28.252 step_start ",
+          "29.259 step_start ",
+          "34.310 step_start ",
+          "35.317 step_start ",
+          "40.369 step_start ",
+          "41.376 step_start "
+        ],
+        "apparent_r_ohm": 326.9276427013896,
+        "median_v_over_i_ohm": 770.8599472811286
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/d1-s-r60_20261106T121751Z.h5",
+      "measurement_id": "d1-s-r60",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:17:51.968107Z",
+      "duration_s": 376.47366238,
+      "records": 3623,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "d1-s-r60",
+        "outcome": "completed",
+        "records": 3623,
+        "duration_s": 376.47366238,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2150,
+            "median": 0.005984459999993419,
+            "p99": 0.0060287636000004065,
+            "max": 0.006819980000017267
+          },
+          "0.0121s": {
+            "n": 2,
+            "median": 0.01211807999999337,
+            "p99": 0.012496928399990566,
+            "max": 0.012504659999990508
+          },
+          "0.0174s": {
+            "n": 6,
+            "median": 0.01739759999999535,
+            "p99": 0.018348682000004148,
+            "max": 0.01835850000000505
+          },
+          "0.25s": {
+            "n": 1452,
+            "median": 0.2500133000000133,
+            "p99": 0.25005186080000064,
+            "max": 0.3004080600000001
+          }
+        },
+        "spacing_max_s": 0.3004080600000001,
+        "rest_v_first_last": [
+          0.624866485595703,
+          0.471923828125
+        ],
+        "v_min_max": [
+          -0.581233978271484,
+          0.694583892822266
+        ],
+        "i_min_max": [
+          -0.00240014307200909,
+          4.4703483581543e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.074 step_start ",
+          "11.081 step_start ",
+          "71.137 step_start ",
+          "72.150 step_start ",
+          "132.207 step_start ",
+          "133.214 step_start ",
+          "193.277 step_start ",
+          "194.290 step_start ",
+          "254.347 step_start ",
+          "255.354 step_start ",
+          "315.411 step_start ",
+          "316.418 step_start "
+        ],
+        "apparent_r_ohm": 357.3284252606829,
+        "median_v_over_i_ohm": 174.07718276523548
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/d1-d-r60_20261106T121126Z.h5",
+      "measurement_id": "d1-d-r60",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:11:26.573650Z",
+      "duration_s": 376.46737734,
+      "records": 3623,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "d1-d-r60",
+        "outcome": "completed",
+        "records": 3623,
+        "duration_s": 376.46737734,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2148,
+            "median": 0.005981399999996029,
+            "p99": 0.006024521199999473,
+            "max": 0.006830280000002631
+          },
+          "0.00883s": {
+            "n": 2,
+            "median": 0.008834180000008018,
+            "p99": 0.009473825999997416,
+            "max": 0.0094868799999972
+          },
+          "0.0141s": {
+            "n": 6,
+            "median": 0.014075569999988602,
+            "p99": 0.01510671299999924,
+            "max": 0.015113299999999441
+          },
+          "0.0187s": {
+            "n": 2,
+            "median": 0.01870816000000275,
+            "p99": 0.01972604680002263,
+            "max": 0.019746820000023035
+          },
+          "0.25s": {
+            "n": 1452,
+            "median": 0.25001627999996856,
+            "p99": 0.2500728991999955,
+            "max": 0.30059219999999987
+          }
+        },
+        "spacing_max_s": 0.30059219999999987,
+        "rest_v_first_last": [
+          0.400688171386719,
+          0.702930450439453
+        ],
+        "v_min_max": [
+          0.400688171386719,
+          2.21538543701172
+        ],
+        "i_min_max": [
+          -5.12227416038513e-07,
+          0.00240009836852551
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.074 step_start ",
+          "11.080 step_start ",
+          "71.134 step_start ",
+          "72.144 step_start ",
+          "132.199 step_start ",
+          "133.205 step_start ",
+          "193.260 step_start ",
+          "194.274 step_start ",
+          "254.328 step_start ",
+          "255.340 step_start ",
+          "315.399 step_start ",
+          "316.406 step_start "
+        ],
+        "apparent_r_ohm": 392.7990508925409,
+        "median_v_over_i_ohm": 749.8955719624121
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-05s_20261106T121006Z.h5",
+      "measurement_id": "ref-05s",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:10:06.869287Z",
+      "duration_s": 73.2577647,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-05s",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.2577647,
+        "spacing_s": {
+          "0.00597s": {
+            "n": 1156,
+            "median": 0.005973730000000899,
+            "p99": 0.006023875000001233,
+            "max": 0.006612739999994233
+          },
+          "0.00881s": {
+            "n": 1,
+            "median": 0.008813759999998894,
+            "p99": 0.008813759999998894,
+            "max": 0.008813759999998894
+          },
+          "0.0127s": {
+            "n": 2,
+            "median": 0.012703249999997723,
+            "p99": 0.01406632219999743,
+            "max": 0.014094139999997424
+          },
+          "0.0162s": {
+            "n": 2,
+            "median": 0.01616943000000237,
+            "p99": 0.017901922999999993,
+            "max": 0.017937279999999944
+          },
+          "0.0192s": {
+            "n": 1,
+            "median": 0.019175920000000346,
+            "p99": 0.019175920000000346,
+            "max": 0.019175920000000346
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.2500019499999979,
+            "p99": 0.2915297145999951,
+            "max": 0.2915436600000001
+          }
+        },
+        "spacing_max_s": 0.2915436600000001,
+        "rest_v_first_last": [
+          0.518562316894531,
+          0.497097015380859
+        ],
+        "v_min_max": [
+          -0.00218963623046875,
+          0.531219482421875
+        ],
+        "i_min_max": [
+          -0.000480002607218921,
+          2.23517417907715e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.077 step_start ",
+          "11.082 step_start ",
+          "31.138 step_start ",
+          "32.145 step_start ",
+          "52.197 step_start ",
+          "53.207 step_start "
+        ],
+        "apparent_r_ohm": 812.0145475933193,
+        "median_v_over_i_ohm": -81.98441291844745
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-05d_20261106T120847Z.h5",
+      "measurement_id": "ref-05d",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:08:47.261916Z",
+      "duration_s": 73.26402576,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-05d",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.26402576,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.0059787599999978625,
+            "p99": 0.0060339047999995055,
+            "max": 0.006611379999998945
+          },
+          "0.0101s": {
+            "n": 1,
+            "median": 0.010135019999999884,
+            "p99": 0.010135019999999884,
+            "max": 0.010135019999999884
+          },
+          "0.0176s": {
+            "n": 4,
+            "median": 0.017599360000001063,
+            "p99": 0.018707768999999246,
+            "max": 0.018741779999999153
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.25000447000000037,
+            "p99": 0.29155219880000127,
+            "max": 0.2915744
+          }
+        },
+        "spacing_max_s": 0.2915744,
+        "rest_v_first_last": [
+          0.474552154541016,
+          0.532920837402344
+        ],
+        "v_min_max": [
+          0.474552154541016,
+          1.05633926391602
+        ],
+        "i_min_max": [
+          -1.12922862172127e-08,
+          0.000480008078739047
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.077 step_start ",
+          "11.083 step_start ",
+          "31.136 step_start ",
+          "32.143 step_start ",
+          "52.199 step_start ",
+          "53.209 step_start "
+        ],
+        "apparent_r_ohm": 792.6140919617338,
+        "median_v_over_i_ohm": 2047.46753589445
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/c1-s-20s_20261106T120309Z.h5",
+      "measurement_id": "c1-s-20s",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:03:09.047909Z",
+      "duration_s": 330.23399782,
+      "records": 1809,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "c1-s-20s",
+        "outcome": "completed",
+        "records": 1809,
+        "duration_s": 330.23399782,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 496,
+            "median": 0.005982789999999905,
+            "p99": 0.0060205480000000144,
+            "max": 0.006337339999999969
+          },
+          "0.00949s": {
+            "n": 1,
+            "median": 0.00949171999999976,
+            "p99": 0.00949171999999976,
+            "max": 0.00949171999999976
+          },
+          "0.0179s": {
+            "n": 1,
+            "median": 0.017874039999999924,
+            "p99": 0.017874039999999924,
+            "max": 0.017874039999999924
+          },
+          "0.25s": {
+            "n": 1308,
+            "median": 0.2500458699999939,
+            "p99": 0.25007481239999907,
+            "max": 0.2915635000000023
+          }
+        },
+        "spacing_max_s": 0.2915635000000023,
+        "rest_v_first_last": [
+          0.712863922119141,
+          0.485877990722656
+        ],
+        "v_min_max": [
+          -0.362071990966797,
+          0.780452728271484
+        ],
+        "i_min_max": [
+          -0.00143998302519321,
+          2.79396772384644e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.077 step_start ",
+          "30.124 step_start "
+        ],
+        "apparent_r_ohm": 319.6929370060433,
+        "median_v_over_i_ohm": -14.784947404912321
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/c1-d-60s_20261106T120114Z.h5",
+      "measurement_id": "c1-d-60s",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T12:01:14.041453Z",
+      "duration_s": 31.12800508,
+      "records": 363,
+      "outcome": "stopped_cutoff",
+      "cutoffs": 1,
+      "stops": 1,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "v_max",
+      "checks": {
+        "measurement_id": "c1-d-60s",
+        "outcome": "stopped_cutoff",
+        "records": 363,
+        "duration_s": 31.12800508,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 331,
+            "median": 0.005980459999999965,
+            "p99": 0.0060389640000002125,
+            "max": 0.00714091999999944
+          },
+          "0.0194s": {
+            "n": 1,
+            "median": 0.01937451999999995,
+            "p99": 0.01937451999999995,
+            "max": 0.01937451999999995
+          },
+          "1s": {
+            "n": 29,
+            "median": 1.0000645400000003,
+            "p99": 1.0415597816,
+            "max": 1.0415978
+          }
+        },
+        "spacing_max_s": 1.0415978,
+        "rest_v_first_last": [
+          0.317451477050781,
+          0.406742095947266
+        ],
+        "v_min_max": [
+          0.317451477050781,
+          2.95796966552734
+        ],
+        "i_min_max": [
+          -3.94880771636963e-07,
+          0.00144008547067642
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.079 step_start ",
+          "31.128 cutoff v_max",
+          "31.128 stop v_max"
+        ],
+        "apparent_r_ohm": 626.3808063463082,
+        "median_v_over_i_ohm": 834.0258068521649
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/c1-s-5s_20261106T115912Z.h5",
+      "measurement_id": "c1-s-5s",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:59:12.375526Z",
+      "duration_s": 115.38895444,
+      "records": 1601,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "c1-s-5s",
+        "outcome": "completed",
+        "records": 1601,
+        "duration_s": 115.38895444,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1159,
+            "median": 0.005984019999999646,
+            "p99": 0.0060316163999993575,
+            "max": 0.006830620000002341
+          },
+          "0.0104s": {
+            "n": 1,
+            "median": 0.010355740000008495,
+            "p99": 0.010355740000008495,
+            "max": 0.010355740000008495
+          },
+          "0.0162s": {
+            "n": 2,
+            "median": 0.01624099999999884,
+            "p99": 0.017575034799999847,
+            "max": 0.01760225999999987
+          },
+          "0.25s": {
+            "n": 432,
+            "median": 0.25003214000000007,
+            "p99": 0.2914804199999998,
+            "max": 0.29157442000000344
+          }
+        },
+        "spacing_max_s": 0.29157442000000344,
+        "rest_v_first_last": [
+          0.749721527099609,
+          0.386436462402344
+        ],
+        "v_min_max": [
+          -0.378959655761719,
+          0.810909271240234
+        ],
+        "i_min_max": [
+          -0.00143998488783836,
+          2.79396772384644e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.078 step_start ",
+          "15.125 step_start ",
+          "45.178 step_start ",
+          "50.225 step_start ",
+          "80.277 step_start ",
+          "85.333 step_start "
+        ],
+        "apparent_r_ohm": 370.6793120851037,
+        "median_v_over_i_ohm": 100.308084747495
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/c1-d-5s_20261106T115710Z.h5",
+      "measurement_id": "c1-d-5s",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:57:10.656541Z",
+      "duration_s": 115.39806356,
+      "records": 1601,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "c1-d-5s",
+        "outcome": "completed",
+        "records": 1601,
+        "duration_s": 115.39806356,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1158,
+            "median": 0.005980360000002349,
+            "p99": 0.006028140400002555,
+            "max": 0.006491199999999253
+          },
+          "0.0124s": {
+            "n": 3,
+            "median": 0.012419719999996914,
+            "p99": 0.012706134799991844,
+            "max": 0.01271197999999174
+          },
+          "0.0191s": {
+            "n": 1,
+            "median": 0.019074019999999914,
+            "p99": 0.019074019999999914,
+            "max": 0.019074019999999914
+          },
+          "0.25s": {
+            "n": 432,
+            "median": 0.2500422900000032,
+            "p99": 0.29148422979999994,
+            "max": 0.29157849999999996
+          }
+        },
+        "spacing_max_s": 0.29157849999999996,
+        "rest_v_first_last": [
+          0.402530670166016,
+          0.843162536621094
+        ],
+        "v_min_max": [
+          0.402530670166016,
+          2.54582977294922
+        ],
+        "i_min_max": [
+          -6.2212347984314e-07,
+          0.00144009850919247
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.079 step_start ",
+          "15.124 step_start ",
+          "45.177 step_start ",
+          "50.223 step_start ",
+          "80.281 step_start ",
+          "85.333 step_start "
+        ],
+        "apparent_r_ohm": 384.2994144321167,
+        "median_v_over_i_ohm": 1146.906278213676
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/c1-s-50ms_20261106T115513Z.h5",
+      "measurement_id": "c1-s-50ms",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:55:14.001034Z",
+      "duration_s": 111.98238544,
+      "records": 809,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "c1-s-50ms",
+        "outcome": "completed",
+        "records": 809,
+        "duration_s": 111.98238544,
+        "spacing_s": {
+          "0.00541s": {
+            "n": 328,
+            "median": 0.005412229999997464,
+            "p99": 0.0055262254000004426,
+            "max": 0.005724539999999223
+          },
+          "0.247s": {
+            "n": 440,
+            "median": 0.24745427000000042,
+            "p99": 0.2889829583999973,
+            "max": 0.29027075999999996
+          }
+        },
+        "spacing_max_s": 0.29027075999999996,
+        "rest_v_first_last": [
+          0.528720855712891,
+          0.533298492431641
+        ],
+        "v_min_max": [
+          -0.277660369873047,
+          0.606834411621094
+        ],
+        "i_min_max": [
+          -0.00143996998667717,
+          1.86264514923096e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.063 step_start ",
+          "10.119 step_start ",
+          "15.159 step_start ",
+          "15.215 step_start ",
+          "20.255 step_start ",
+          "20.311 step_start ",
+          "25.353 step_start ",
+          "25.408 step_start ",
+          "30.449 step_start ",
+          "30.504 step_start ",
+          "35.544 step_start ",
+          "35.600 step_start ",
+          "40.640 step_start ",
+          "40.696 step_start ",
+          "45.736 step_start ",
+          "45.792 step_start ",
+          "50.832 step_start ",
+          "50.887 step_start ",
+          "55.928 step_start ",
+          "55.983 step_start ",
+          "61.024 step_start ",
+          "61.079 step_start ",
+          "66.119 step_start ",
+          "66.175 step_start ",
+          "71.215 step_start ",
+          "71.271 step_start ",
+          "76.311 step_start ",
+          "76.367 step_start ",
+          "81.407 step_start ",
+          "81.462 step_start ",
+          "86.503 step_start ",
+          "86.558 step_start ",
+          "91.599 step_start ",
+          "91.654 step_start ",
+          "96.695 step_start ",
+          "96.750 step_start ",
+          "101.791 step_start ",
+          "101.846 step_start ",
+          "106.886 step_start ",
+          "106.942 step_start "
+        ],
+        "apparent_r_ohm": 474.0935775536515,
+        "median_v_over_i_ohm": 142.7354281900164
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/c1-d-50ms_20261106T115317Z.h5",
+      "measurement_id": "c1-d-50ms",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:53:17.812115Z",
+      "duration_s": 111.98636512,
+      "records": 809,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "c1-d-50ms",
+        "outcome": "completed",
+        "records": 809,
+        "duration_s": 111.98636512,
+        "spacing_s": {
+          "0.00541s": {
+            "n": 327,
+            "median": 0.005409240000000537,
+            "p99": 0.005477655200003824,
+            "max": 0.006250180000000327
+          },
+          "0.007s": {
+            "n": 1,
+            "median": 0.006998620000000955,
+            "p99": 0.006998620000000955,
+            "max": 0.006998620000000955
+          },
+          "0.247s": {
+            "n": 440,
+            "median": 0.2474602800000021,
+            "p99": 0.2889970803999973,
+            "max": 0.29026667999999994
+          }
+        },
+        "spacing_max_s": 0.29026667999999994,
+        "rest_v_first_last": [
+          0.458637237548828,
+          0.631126403808594
+        ],
+        "v_min_max": [
+          0.367267608642578,
+          1.35272216796875
+        ],
+        "i_min_max": [
+          -0.000151276588439941,
+          0.0014401450753212
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.064 step_start ",
+          "10.119 step_start ",
+          "15.161 step_start ",
+          "15.217 step_start ",
+          "20.258 step_start ",
+          "20.313 step_start ",
+          "25.354 step_start ",
+          "25.410 step_start ",
+          "30.450 step_start ",
+          "30.506 step_start ",
+          "35.546 step_start ",
+          "35.601 step_start ",
+          "40.642 step_start ",
+          "40.697 step_start ",
+          "45.738 step_start ",
+          "45.793 step_start ",
+          "50.834 step_start ",
+          "50.889 step_start ",
+          "55.930 step_start ",
+          "55.985 step_start ",
+          "61.025 step_start ",
+          "61.081 step_start ",
+          "66.121 step_start ",
+          "66.177 step_start ",
+          "71.217 step_start ",
+          "71.273 step_start ",
+          "76.313 step_start ",
+          "76.368 step_start ",
+          "81.410 step_start ",
+          "81.465 step_start ",
+          "86.506 step_start ",
+          "86.561 step_start ",
+          "91.603 step_start ",
+          "91.658 step_start ",
+          "96.699 step_start ",
+          "96.754 step_start ",
+          "101.795 step_start ",
+          "101.850 step_start ",
+          "106.890 step_start ",
+          "106.946 step_start "
+        ],
+        "apparent_r_ohm": 428.0772548301648,
+        "median_v_over_i_ohm": 901.7787694524546
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-04s_20261106T115128Z.h5",
+      "measurement_id": "ref-04s",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:51:28.928091Z",
+      "duration_s": 73.25222406,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-04s",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.25222406,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1158,
+            "median": 0.005975740000001117,
+            "p99": 0.006042027200001954,
+            "max": 0.006614559999999159
+          },
+          "0.00978s": {
+            "n": 1,
+            "median": 0.009784860000003448,
+            "p99": 0.009784860000003448,
+            "max": 0.009784860000003448
+          },
+          "0.0159s": {
+            "n": 3,
+            "median": 0.015877879999999678,
+            "p99": 0.017204937200001533,
+            "max": 0.01723202000000157
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.25000209000000595,
+            "p99": 0.29152328540000005,
+            "max": 0.30101694
+          }
+        },
+        "spacing_max_s": 0.30101694,
+        "rest_v_first_last": [
+          0.580806732177734,
+          0.545516967773438
+        ],
+        "v_min_max": [
+          -0.082977294921875,
+          0.602306365966797
+        ],
+        "i_min_max": [
+          -0.000480002025142312,
+          2.17696651816368e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.076 step_start ",
+          "11.081 step_start ",
+          "31.134 step_start ",
+          "32.138 step_start ",
+          "52.193 step_start ",
+          "53.201 step_start "
+        ],
+        "apparent_r_ohm": 1003.7224150912346,
+        "median_v_over_i_ohm": 59.461573498061036
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-04d_20261106T115009Z.h5",
+      "measurement_id": "ref-04d",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:50:09.364545Z",
+      "duration_s": 73.26698344,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-04d",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.26698344,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1155,
+            "median": 0.005980040000000741,
+            "p99": 0.006018764800000547,
+            "max": 0.006259460000002548
+          },
+          "0.00807s": {
+            "n": 2,
+            "median": 0.00807378000000103,
+            "p99": 0.008351610000002,
+            "max": 0.008357280000002021
+          },
+          "0.011s": {
+            "n": 1,
+            "median": 0.011049960000001136,
+            "p99": 0.011049960000001136,
+            "max": 0.011049960000001136
+          },
+          "0.0168s": {
+            "n": 3,
+            "median": 0.016829579999999567,
+            "p99": 0.01724292439999993,
+            "max": 0.017251359999999938
+          },
+          "0.0187s": {
+            "n": 1,
+            "median": 0.018666480000000263,
+            "p99": 0.018666480000000263,
+            "max": 0.018666480000000263
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.2500057799999986,
+            "p99": 0.29152716880000124,
+            "max": 0.29155006000000006
+          }
+        },
+        "spacing_max_s": 0.29155006000000006,
+        "rest_v_first_last": [
+          0.522922515869141,
+          0.608207702636719
+        ],
+        "v_min_max": [
+          0.522922515869141,
+          1.28245162963867
+        ],
+        "i_min_max": [
+          -2.07219272851944e-08,
+          0.000480008544400334
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.079 step_start ",
+          "11.086 step_start ",
+          "31.140 step_start ",
+          "32.148 step_start ",
+          "52.204 step_start ",
+          "53.215 step_start "
+        ],
+        "apparent_r_ohm": 961.5659435358896,
+        "median_v_over_i_ohm": 2520.317668601251
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/b1-rest600_20261106T114002Z.h5",
+      "measurement_id": "b1-rest600",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "rest",
+      "start_utc": "2026-11-06T11:40:02.284752Z",
+      "duration_s": 600.08956672,
+      "records": 600,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b1-rest600",
+        "outcome": "completed",
+        "records": 600,
+        "duration_s": 600.08956672,
+        "spacing_s": {
+          "1s": {
+            "n": 599,
+            "median": 1.0001018800000168,
+            "p99": 1.0001338479999573,
+            "max": 1.0002179400000273
+          }
+        },
+        "spacing_max_s": 1.0002179400000273,
+        "rest_v_first_last": [
+          0.530403137207031,
+          0.559921264648438
+        ],
+        "v_min_max": [
+          0.530403137207031,
+          0.559921264648438
+        ],
+        "i_min_max": [
+          3.27418092638254e-11,
+          6.54836185276508e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-03s_20261106T113842Z.h5",
+      "measurement_id": "ref-03s",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:38:42.861944Z",
+      "duration_s": 73.2648883,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-03s",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.2648883,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.00597581999999619,
+            "p99": 0.0060224087999999655,
+            "max": 0.00611995999999948
+          },
+          "0.0106s": {
+            "n": 1,
+            "median": 0.010553779999998625,
+            "p99": 0.010553779999998625,
+            "max": 0.010553779999998625
+          },
+          "0.0161s": {
+            "n": 3,
+            "median": 0.016123219999998994,
+            "p99": 0.01688593439999597,
+            "max": 0.016901499999995906
+          },
+          "0.0188s": {
+            "n": 1,
+            "median": 0.018790219999999636,
+            "p99": 0.018790219999999636,
+            "max": 0.018790219999999636
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.2500002800000001,
+            "p99": 0.29150938059999815,
+            "max": 0.30056188000000006
+          }
+        },
+        "spacing_max_s": 0.30056188000000006,
+        "rest_v_first_last": [
+          0.555900573730469,
+          0.527511596679688
+        ],
+        "v_min_max": [
+          -0.060760498046875,
+          0.576545715332031
+        ],
+        "i_min_max": [
+          -0.000480003887787461,
+          2.11875885725021e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.075 step_start ",
+          "11.080 step_start ",
+          "31.133 step_start ",
+          "32.142 step_start ",
+          "52.194 step_start ",
+          "53.209 step_start "
+        ],
+        "apparent_r_ohm": 944.4131156693823,
+        "median_v_over_i_ohm": 17.11853122006234
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-03d_20261106T113723Z.h5",
+      "measurement_id": "ref-03d",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:37:23.161877Z",
+      "duration_s": 73.26213236,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-03d",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.26213236,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.005979740000000788,
+            "p99": 0.0060235400000022655,
+            "max": 0.006422059999998453
+          },
+          "0.0102s": {
+            "n": 2,
+            "median": 0.010177280000000621,
+            "p99": 0.010281552000000574,
+            "max": 0.010283680000000572
+          },
+          "0.014s": {
+            "n": 2,
+            "median": 0.014009819999996509,
+            "p99": 0.014116247999999025,
+            "max": 0.014118419999999077
+          },
+          "0.0182s": {
+            "n": 1,
+            "median": 0.018194620000002715,
+            "p99": 0.018194620000002715,
+            "max": 0.018194620000002715
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.2500055300000019,
+            "p99": 0.2915387322000013,
+            "max": 0.3017145000000001
+          }
+        },
+        "spacing_max_s": 0.3017145000000001,
+        "rest_v_first_last": [
+          0.507713317871094,
+          0.580814361572266
+        ],
+        "v_min_max": [
+          0.507713317871094,
+          1.21168899536133
+        ],
+        "i_min_max": [
+          -1.72294676303864e-08,
+          0.000480007380247116
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.076 step_start ",
+          "11.083 step_start ",
+          "31.135 step_start ",
+          "32.145 step_start ",
+          "52.197 step_start ",
+          "53.206 step_start "
+        ],
+        "apparent_r_ohm": 921.03577925275,
+        "median_v_over_i_ohm": 2387.0984261507474
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/b1-rest300_20261106T113216Z.h5",
+      "measurement_id": "b1-rest300",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "rest",
+      "start_utc": "2026-11-06T11:32:16.355309Z",
+      "duration_s": 300.05924722,
+      "records": 300,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b1-rest300",
+        "outcome": "completed",
+        "records": 300,
+        "duration_s": 300.05924722,
+        "spacing_s": {
+          "1s": {
+            "n": 299,
+            "median": 1.0001018199999976,
+            "p99": 1.0001295455999737,
+            "max": 1.0005925000000104
+          }
+        },
+        "spacing_max_s": 1.0005925000000104,
+        "rest_v_first_last": [
+          0.499603271484375,
+          0.534000396728516
+        ],
+        "v_min_max": [
+          0.499603271484375,
+          0.534000396728516
+        ],
+        "i_min_max": [
+          2.72848410531878e-11,
+          5.63886715099216e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-02s_20261106T113039Z.h5",
+      "measurement_id": "ref-02s",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:30:39.708806Z",
+      "duration_s": 73.26807608,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-02s",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.26807608,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.0059756200000009585,
+            "p99": 0.006024537600001452,
+            "max": 0.006845820000000558
+          },
+          "0.0115s": {
+            "n": 2,
+            "median": 0.01153852999999927,
+            "p99": 0.012724026199998874,
+            "max": 0.012748219999998867
+          },
+          "0.0174s": {
+            "n": 2,
+            "median": 0.017441660000002912,
+            "p99": 0.019285451600006526,
+            "max": 0.0193230800000066
+          },
+          "0.0196s": {
+            "n": 1,
+            "median": 0.019562960000001794,
+            "p99": 0.019562960000001794,
+            "max": 0.019562960000001794
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.2500002899999956,
+            "p99": 0.2915305874000012,
+            "max": 0.3011308799999999
+          }
+        },
+        "spacing_max_s": 0.3011308799999999,
+        "rest_v_first_last": [
+          0.506458282470703,
+          0.490989685058594
+        ],
+        "v_min_max": [
+          -0.0417900085449219,
+          0.519912719726563
+        ],
+        "i_min_max": [
+          -0.000480002490803599,
+          2.23517417907715e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.075 step_start ",
+          "11.080 step_start ",
+          "31.135 step_start ",
+          "32.144 step_start ",
+          "52.201 step_start ",
+          "53.212 step_start "
+        ],
+        "apparent_r_ohm": 842.8878353654574,
+        "median_v_over_i_ohm": -27.497493443177195
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-02d_20261106T112919Z.h5",
+      "measurement_id": "ref-02d",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:29:19.763511Z",
+      "duration_s": 73.2639706,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-02d",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.2639706,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.005979399999999302,
+            "p99": 0.006027272800000491,
+            "max": 0.007155280000000985
+          },
+          "0.00848s": {
+            "n": 2,
+            "median": 0.008478439999997534,
+            "p99": 0.008623401600000875,
+            "max": 0.008626360000000943
+          },
+          "0.0165s": {
+            "n": 3,
+            "median": 0.016457060000000467,
+            "p99": 0.016528717599996696,
+            "max": 0.01653017999999662
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.25000544999999974,
+            "p99": 0.2915181756000014,
+            "max": 0.3049863799999999
+          }
+        },
+        "spacing_max_s": 0.3049863799999999,
+        "rest_v_first_last": [
+          0.427051544189453,
+          0.519332885742188
+        ],
+        "v_min_max": [
+          0.427051544189453,
+          1.03982925415039
+        ],
+        "i_min_max": [
+          -1.12922862172127e-08,
+          0.000480008660815656
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.080 step_start ",
+          "11.087 step_start ",
+          "31.139 step_start ",
+          "32.148 step_start ",
+          "52.202 step_start ",
+          "53.210 step_start "
+        ],
+        "apparent_r_ohm": 780.843121362169,
+        "median_v_over_i_ohm": 1926.5004853000873
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/a1-s-10C_20261106T112759Z.h5",
+      "measurement_id": "a1-s-10C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:27:59.657739Z",
+      "duration_s": 73.26236744,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "a1-s-10C",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.26236744,
+        "spacing_s": {
+          "0.00599s": {
+            "n": 1158,
+            "median": 0.0059862800000001215,
+            "p99": 0.006039199999997997,
+            "max": 0.006378820000000118
+          },
+          "0.0154s": {
+            "n": 4,
+            "median": 0.015369840000001744,
+            "p99": 0.017017323799999443,
+            "max": 0.017034499999999397
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.2500029099999992,
+            "p99": 0.2915179958000008,
+            "max": 0.29978101999999995
+          }
+        },
+        "spacing_max_s": 0.29978101999999995,
+        "rest_v_first_last": [
+          0.715366363525391,
+          0.425617218017578
+        ],
+        "v_min_max": [
+          -0.770374298095703,
+          0.773059844970703
+        ],
+        "i_min_max": [
+          -0.00480010360479355,
+          6.14672899246216e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.075 step_start ",
+          "11.082 step_start ",
+          "31.136 step_start ",
+          "32.144 step_start ",
+          "52.197 step_start ",
+          "53.212 step_start "
+        ],
+        "apparent_r_ohm": 221.547526436176,
+        "median_v_over_i_ohm": 146.7145215353894
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/a1-d-10C_20261106T112646Z.h5",
+      "measurement_id": "a1-d-10C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:26:46.494110Z",
+      "duration_s": 52.97588866,
+      "records": 1153,
+      "outcome": "stopped_cutoff",
+      "cutoffs": 1,
+      "stops": 1,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "v_max",
+      "checks": {
+        "measurement_id": "a1-d-10C",
+        "outcome": "stopped_cutoff",
+        "records": 1153,
+        "duration_s": 52.97588866,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 955,
+            "median": 0.005979620000001518,
+            "p99": 0.006046669200001205,
+            "max": 0.0073577000000000226
+          },
+          "0.00999s": {
+            "n": 2,
+            "median": 0.009990030000000871,
+            "p99": 0.010450933800001607,
+            "max": 0.010460340000001622
+          },
+          "0.0165s": {
+            "n": 2,
+            "median": 0.016492630000001895,
+            "p99": 0.017388124599998774,
+            "max": 0.017406399999998712
+          },
+          "0.25s": {
+            "n": 188,
+            "median": 0.2500015399999995,
+            "p99": 0.29154375339999716,
+            "max": 0.29166902000000006
+          }
+        },
+        "spacing_max_s": 0.29166902000000006,
+        "rest_v_first_last": [
+          0.374710083007813,
+          0.735553741455078
+        ],
+        "v_min_max": [
+          0.374710083007813,
+          2.90016937255859
+        ],
+        "i_min_max": [
+          -4.58210706710815e-07,
+          0.00480011850595474
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.066 step_start ",
+          "11.072 step_start ",
+          "31.126 step_start ",
+          "32.134 step_start ",
+          "52.187 step_start ",
+          "52.976 cutoff v_max",
+          "52.976 stop v_max"
+        ],
+        "apparent_r_ohm": 290.4741637418819,
+        "median_v_over_i_ohm": 487.60676735406355
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/a1-s-7C_20261106T112526Z.h5",
+      "measurement_id": "a1-s-7C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:25:26.735430Z",
+      "duration_s": 73.25677188,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "a1-s-7C",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.25677188,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.0059823599999973,
+            "p99": 0.0060328752000003765,
+            "max": 0.006526499999999658
+          },
+          "0.00936s": {
+            "n": 2,
+            "median": 0.0093600000000027,
+            "p99": 0.010275437600001104,
+            "max": 0.010294120000001072
+          },
+          "0.0142s": {
+            "n": 2,
+            "median": 0.014152439999999267,
+            "p99": 0.01428573960000124,
+            "max": 0.01428846000000128
+          },
+          "0.0192s": {
+            "n": 1,
+            "median": 0.01916911999999371,
+            "p99": 0.01916911999999371,
+            "max": 0.01916911999999371
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.2499989400000011,
+            "p99": 0.2915208013999992,
+            "max": 0.3007195600000001
+          }
+        },
+        "spacing_max_s": 0.3007195600000001,
+        "rest_v_first_last": [
+          0.665424346923828,
+          0.461978912353516
+        ],
+        "v_min_max": [
+          -0.683860778808594,
+          0.730594635009766
+        ],
+        "i_min_max": [
+          -0.00336004979908466,
+          5.02914190292358e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.076 step_start ",
+          "11.082 step_start ",
+          "31.134 step_start ",
+          "32.143 step_start ",
+          "52.194 step_start ",
+          "53.202 step_start "
+        ],
+        "apparent_r_ohm": 287.2350413054433,
+        "median_v_over_i_ohm": 169.61933239979714
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/a1-d-7C_20261106T112406Z.h5",
+      "measurement_id": "a1-d-7C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:24:06.853883Z",
+      "duration_s": 73.25796496,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "a1-d-7C",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.25796496,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.005982240000001582,
+            "p99": 0.006026464800001179,
+            "max": 0.006730739999994739
+          },
+          "0.00979s": {
+            "n": 1,
+            "median": 0.009786980000001222,
+            "p99": 0.009786980000001222,
+            "max": 0.009786980000001222
+          },
+          "0.0166s": {
+            "n": 4,
+            "median": 0.016581810000000585,
+            "p99": 0.01811474040000185,
+            "max": 0.018133380000001864
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.25000122999999874,
+            "p99": 0.2915284370000004,
+            "max": 0.29154670000000005
+          }
+        },
+        "spacing_max_s": 0.29154670000000005,
+        "rest_v_first_last": [
+          0.391262054443359,
+          0.767158508300781
+        ],
+        "v_min_max": [
+          0.391262054443359,
+          2.52895355224609
+        ],
+        "i_min_max": [
+          -5.40167093276978e-07,
+          0.00336014106869698
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.075 step_start ",
+          "11.082 step_start ",
+          "31.135 step_start ",
+          "32.141 step_start ",
+          "52.196 step_start ",
+          "53.205 step_start "
+        ],
+        "apparent_r_ohm": 327.90090866115577,
+        "median_v_over_i_ohm": 628.1368463474845
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/a1-s-5C_20261106T112238Z.h5",
+      "measurement_id": "a1-s-5C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:22:38.254813Z",
+      "duration_s": 73.25493694,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "a1-s-5C",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.25493694,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1158,
+            "median": 0.005983579999998601,
+            "p99": 0.0060382119999992465,
+            "max": 0.006813160000000096
+          },
+          "0.00783s": {
+            "n": 1,
+            "median": 0.007827100000000087,
+            "p99": 0.007827100000000087,
+            "max": 0.007827100000000087
+          },
+          "0.0172s": {
+            "n": 3,
+            "median": 0.01720856000000026,
+            "p99": 0.017567553599999747,
+            "max": 0.017574879999999737
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.25000045999999965,
+            "p99": 0.2915180852000019,
+            "max": 0.29912994000000004
+          }
+        },
+        "spacing_max_s": 0.29912994000000004,
+        "rest_v_first_last": [
+          0.634433746337891,
+          0.487869262695313
+        ],
+        "v_min_max": [
+          -0.592555999755859,
+          0.705226898193359
+        ],
+        "i_min_max": [
+          -0.00240013189613819,
+          4.4703483581543e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.073 step_start ",
+          "11.080 step_start ",
+          "31.134 step_start ",
+          "32.141 step_start ",
+          "52.193 step_start ",
+          "53.202 step_start "
+        ],
+        "apparent_r_ohm": 367.21339192287184,
+        "median_v_over_i_ohm": 195.89447738490708
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/a1-d-5C_20261106T112118Z.h5",
+      "measurement_id": "a1-d-5C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:21:18.602283Z",
+      "duration_s": 73.25641652,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "a1-d-5C",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.25641652,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1158,
+            "median": 0.005981030000000054,
+            "p99": 0.006027428199998042,
+            "max": 0.006953760000001807
+          },
+          "0.0179s": {
+            "n": 4,
+            "median": 0.017855280000002693,
+            "p99": 0.018441916200000113,
+            "max": 0.018443879999999968
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.2500035899999977,
+            "p99": 0.2915191024000014,
+            "max": 0.29156358000000004
+          }
+        },
+        "spacing_max_s": 0.29156358000000004,
+        "rest_v_first_last": [
+          0.397373199462891,
+          0.736907958984375
+        ],
+        "v_min_max": [
+          0.397373199462891,
+          2.19456481933594
+        ],
+        "i_min_max": [
+          -5.56930899620056e-07,
+          0.00240012817084789
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.078 step_start ",
+          "11.083 step_start ",
+          "31.135 step_start ",
+          "32.141 step_start ",
+          "52.195 step_start ",
+          "53.202 step_start "
+        ],
+        "apparent_r_ohm": 395.0722490589844,
+        "median_v_over_i_ohm": 799.7171112930571
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/a1-s-3C_20261106T111958Z.h5",
+      "measurement_id": "a1-s-3C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:19:59.001436Z",
+      "duration_s": 73.25663842,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "a1-s-3C",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.25663842,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1158,
+            "median": 0.005982229999999755,
+            "p99": 0.006039088399998942,
+            "max": 0.006773980000000179
+          },
+          "0.0131s": {
+            "n": 2,
+            "median": 0.01311417000000148,
+            "p99": 0.014004705799998901,
+            "max": 0.01402287999999885
+          },
+          "0.0167s": {
+            "n": 2,
+            "median": 0.016708560000003203,
+            "p99": 0.016922494000005166,
+            "max": 0.016926860000005206
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.25000186000000024,
+            "p99": 0.29153638580000063,
+            "max": 0.3005961800000001
+          }
+        },
+        "spacing_max_s": 0.3005961800000001,
+        "rest_v_first_last": [
+          0.579208374023438,
+          0.514347076416016
+        ],
+        "v_min_max": [
+          -0.455837249755859,
+          0.662551879882813
+        ],
+        "i_min_max": [
+          -0.00144000165164471,
+          3.91155481338501e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.075 step_start ",
+          "11.081 step_start ",
+          "31.134 step_start ",
+          "32.141 step_start ",
+          "52.194 step_start ",
+          "53.206 step_start "
+        ],
+        "apparent_r_ohm": 515.8902708122902,
+        "median_v_over_i_ohm": 218.76448529706633
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/a1-d-3C_20261106T111839Z.h5",
+      "measurement_id": "a1-d-3C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:18:39.164387Z",
+      "duration_s": 73.25488916,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "a1-d-3C",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.25488916,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.005979959999997675,
+            "p99": 0.006014006399998495,
+            "max": 0.006374360000002355
+          },
+          "0.014s": {
+            "n": 3,
+            "median": 0.01403266000000003,
+            "p99": 0.014034404400003137,
+            "max": 0.014034440000003201
+          },
+          "0.0183s": {
+            "n": 2,
+            "median": 0.01830920000000269,
+            "p99": 0.01923518239999968,
+            "max": 0.019254079999999618
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.25000637999999853,
+            "p99": 0.2915241350000028,
+            "max": 0.2915534199999996
+          }
+        },
+        "spacing_max_s": 0.2915534199999996,
+        "rest_v_first_last": [
+          0.400379180908203,
+          0.686744689941406
+        ],
+        "v_min_max": [
+          0.400379180908203,
+          1.81757736206055
+        ],
+        "i_min_max": [
+          -6.16535544395447e-07,
+          0.00144009850919247
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.073 step_start ",
+          "11.078 step_start ",
+          "31.134 step_start ",
+          "32.139 step_start ",
+          "52.190 step_start ",
+          "53.201 step_start "
+        ],
+        "apparent_r_ohm": 527.03642819003,
+        "median_v_over_i_ohm": 1148.299016196666
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/a1-s-2C_20261106T111656Z.h5",
+      "measurement_id": "a1-s-2C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:16:56.602325Z",
+      "duration_s": 73.26428368,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "a1-s-2C",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.26428368,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1156,
+            "median": 0.0059777499999977834,
+            "p99": 0.006018581999999839,
+            "max": 0.00616533999999902
+          },
+          "0.00833s": {
+            "n": 1,
+            "median": 0.00832516000000183,
+            "p99": 0.00832516000000183,
+            "max": 0.00832516000000183
+          },
+          "0.0107s": {
+            "n": 1,
+            "median": 0.010720880000000932,
+            "p99": 0.010720880000000932,
+            "max": 0.010720880000000932
+          },
+          "0.0175s": {
+            "n": 4,
+            "median": 0.01748517999999999,
+            "p99": 0.018619858200000658,
+            "max": 0.01863660000000067
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.2500028100000016,
+            "p99": 0.2915436061999961,
+            "max": 0.29159954
+          }
+        },
+        "spacing_max_s": 0.29159954,
+        "rest_v_first_last": [
+          0.628391265869141,
+          0.529392242431641
+        ],
+        "v_min_max": [
+          -0.356082916259766,
+          0.642974853515625
+        ],
+        "i_min_max": [
+          -0.000960000441409647,
+          2.53785401582718e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.079 step_start ",
+          "11.084 step_start ",
+          "31.138 step_start ",
+          "32.145 step_start ",
+          "52.199 step_start ",
+          "53.208 step_start "
+        ],
+        "apparent_r_ohm": 706.2776781300155,
+        "median_v_over_i_ohm": 245.84310933975365
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/a1-d-2C_20261106T111536Z.h5",
+      "measurement_id": "a1-d-2C",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:15:36.864664Z",
+      "duration_s": 73.25417516,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "a1-d-2C",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.25417516,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.005975700000000472,
+            "p99": 0.00603886959999965,
+            "max": 0.00639649999999925
+          },
+          "0.00842s": {
+            "n": 1,
+            "median": 0.008420199999999767,
+            "p99": 0.008420199999999767,
+            "max": 0.008420199999999767
+          },
+          "0.0153s": {
+            "n": 4,
+            "median": 0.015337530000000932,
+            "p99": 0.017999373199998343,
+            "max": 0.018080779999998242
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.25000504000000134,
+            "p99": 0.29152183000000026,
+            "max": 0.2915514200000002
+          }
+        },
+        "spacing_max_s": 0.2915514200000002,
+        "rest_v_first_last": [
+          0.490398406982422,
+          0.655513763427734
+        ],
+        "v_min_max": [
+          0.490398406982422,
+          1.59953308105469
+        ],
+        "i_min_max": [
+          -2.30502337217331e-08,
+          0.000960002187639475
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.075 step_start ",
+          "11.079 step_start ",
+          "31.132 step_start ",
+          "32.139 step_start ",
+          "52.193 step_start ",
+          "53.198 step_start "
+        ],
+        "apparent_r_ohm": 671.6791426052638,
+        "median_v_over_i_ohm": 1552.866854658034
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-01s_20261106T111416Z.h5",
+      "measurement_id": "ref-01s",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:14:16.983509Z",
+      "duration_s": 73.2575698,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-01s",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.2575698,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.005975079999998911,
+            "p99": 0.006021935200000854,
+            "max": 0.0060928999999987354
+          },
+          "0.0129s": {
+            "n": 2,
+            "median": 0.012884700000000748,
+            "p99": 0.014190177600001448,
+            "max": 0.014216820000001462
+          },
+          "0.0165s": {
+            "n": 2,
+            "median": 0.01652429000000244,
+            "p99": 0.01775386659999984,
+            "max": 0.01777895999999979
+          },
+          "0.0196s": {
+            "n": 1,
+            "median": 0.01963801999999859,
+            "p99": 0.01963801999999859,
+            "max": 0.01963801999999859
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.2499994000000001,
+            "p99": 0.29151875819999873,
+            "max": 0.2915464600000002
+          }
+        },
+        "spacing_max_s": 0.2915464600000002,
+        "rest_v_first_last": [
+          0.553691864013672,
+          0.543537139892578
+        ],
+        "v_min_max": [
+          -0.235889434814453,
+          0.603836059570313
+        ],
+        "i_min_max": [
+          -0.000480007263831794,
+          2.11875885725021e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.078 step_start ",
+          "11.082 step_start ",
+          "31.138 step_start ",
+          "32.143 step_start ",
+          "52.195 step_start ",
+          "53.205 step_start "
+        ],
+        "apparent_r_ohm": 1222.160168944202,
+        "median_v_over_i_ohm": 301.41770949673196
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/explore/ref-01d_20261106T111244Z.h5",
+      "measurement_id": "ref-01d",
+      "sample_id": "Richard-HC400-rev",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-06T11:12:44.194281Z",
+      "duration_s": 73.26364032,
+      "records": 1433,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-01d",
+        "outcome": "completed",
+        "records": 1433,
+        "duration_s": 73.26364032,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1158,
+            "median": 0.0059796600000012745,
+            "p99": 0.0060357042000001564,
+            "max": 0.0072881399999999985
+          },
+          "0.0156s": {
+            "n": 2,
+            "median": 0.015636800000000672,
+            "p99": 0.017335943600001215,
+            "max": 0.017370620000001225
+          },
+          "0.0192s": {
+            "n": 2,
+            "median": 0.019176730000000752,
+            "p99": 0.01932581739999991,
+            "max": 0.019328859999999892
+          },
+          "0.25s": {
+            "n": 264,
+            "median": 0.25000608999999585,
+            "p99": 0.2915242394000007,
+            "max": 0.2915532400000007
+          }
+        },
+        "spacing_max_s": 0.2915532400000007,
+        "rest_v_first_last": [
+          0.404018402099609,
+          0.616912841796875
+        ],
+        "v_min_max": [
+          0.404018402099609,
+          1.3240852355957
+        ],
+        "i_min_max": [
+          -2.66591086983681e-08,
+          0.000480020884424448
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.075 step_start ",
+          "11.081 step_start ",
+          "31.138 step_start ",
+          "32.145 step_start ",
+          "52.200 step_start ",
+          "53.207 step_start "
+        ],
+        "apparent_r_ohm": 1046.898493104992,
+        "median_v_over_i_ohm": 2628.4672171423135
+      }
+    }
+  ],
+  "monitor": null
+}

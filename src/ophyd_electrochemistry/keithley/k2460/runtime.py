@@ -170,6 +170,10 @@ class RuntimeArtifact:
     source: str
     sha256: str
     script_name: str
+    # Globals the installer checks; the M4/timed runtimes use the defaults.
+    abi_variable: str = "oe_m4_runtime_abi"
+    build_variable: str = "oe_m4_runtime_build"
+    initializer: str = "oe_m4_initialize"
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -225,6 +229,8 @@ class CurrentHoldAcquisitionProof:
         if not isinstance(self.start_mode, StartMode):
             raise ValidationError("start_mode must be a StartMode")
         settings = resolve_measurement_profile(self.measurement_profile)
+        if settings.voltage_range_v != 0.2:
+            raise ValidationError("M5 proof supports only the commissioned 0.2 V profiles")
         if self.voltage_limit_v > settings.voltage_range_v:
             raise ValidationError(
                 "M5 voltage limit must not exceed the fixed measurement-profile range"

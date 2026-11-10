@@ -1,0 +1,618 @@
+{
+  "tests": [
+    "DC1",
+    "DC2",
+    "DC3"
+  ],
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "equipment": {
+    "backend": "k2460-sequencer",
+    "runtime_build": "seq-v2",
+    "runtime_sha256": "2f7010bc22895e881cac03355bbe1918745ecc835a488107d65a3112e393d6ae",
+    "terminals": "front",
+    "four_wire": true,
+    "start_edge": "rising",
+    "line_frequency_hz": 50,
+    "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "serial_number": "04686198",
+    "firmware": "1.7.16a"
+  },
+  "status_at_start": [
+    "idle",
+    false
+  ],
+  "DC1": {
+    "a1": {
+      "outcome": "completed",
+      "detail": "",
+      "step0_first_t_s": 0.03203141999999992,
+      "step0_first_dv_mv": -36.07177734375,
+      "step0_first5_dv_mv": [
+        -36.07177734375,
+        -16.643524169921985,
+        -9.82284545898493,
+        -7.022857666015958,
+        -5.680084228515958
+      ],
+      "step0_first5_readback_ua": [
+        -0.00011641532182693499,
+        0.0129221007227898,
+        0.014086253941059099,
+        0.0158324837684631,
+        0.0169966369867325
+      ],
+      "step1_first_t_s": 2.08479394,
+      "step1_first_dv_mv": -0.37765502929654193,
+      "step1_first5_dv_mv": [
+        -0.37765502929654193,
+        -0.37765502929654193,
+        -0.38909912109352796,
+        -0.37765502929654193,
+        -0.37765502929654193
+      ],
+      "step1_first5_readback_ua": [
+        0.0175787135958672,
+        0.0158324837684631,
+        0.0158324837684631,
+        0.0158324837684631,
+        0.0164145603775978
+      ],
+      "output_on_steps_0_1": true,
+      "source_status_values": [
+        200
+      ],
+      "instrument_log": [
+        "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+        "2731\t4\tTrigger model path #1 has been initiated",
+        "2732\t4\tTrigger model path #1 has been idled"
+      ]
+    },
+    "checks": {
+      "a1 positive cell voltage": "ok",
+      "a1 completed": "ok",
+      "a1 output ON through steps 0-1": "ok",
+      "b2 positive cell voltage": "ok",
+      "b2 completed": "ok",
+      "b2 output ON through steps 0-1": "ok",
+      "a3 positive cell voltage": "ok",
+      "a3 completed": "ok",
+      "a3 output ON through steps 0-1": "ok",
+      "b4 positive cell voltage": "ok",
+      "b4 completed": "ok",
+      "b4 output ON through steps 0-1": "ok",
+      "output OFF after run": "ok"
+    },
+    "b2": {
+      "outcome": "completed",
+      "detail": "",
+      "step0_first_t_s": 0.08052196,
+      "step0_first_dv_mv": -1.705169677734042,
+      "step0_first5_dv_mv": [
+        -1.705169677734042,
+        -1.670837402343972,
+        -1.670837402343972,
+        -1.670837402343972,
+        -1.636505126953014
+      ],
+      "step0_first5_readback_ua": [
+        2.0008883439004398e-05,
+        3.09228198602796e-05,
+        6.0026650317013304e-05,
+        3.09228198602796e-05,
+        3.6379788070917096e-05
+      ],
+      "step1_first_t_s": 2.17049496,
+      "step1_first_dv_mv": -0.934600830077903,
+      "step1_first5_dv_mv": [
+        -0.934600830077903,
+        -0.957489013671986,
+        -0.934600830077903,
+        -0.934600830077903,
+        -0.934600830077903
+      ],
+      "step1_first5_readback_ua": [
+        0.0164145603775978,
+        0.0164145603775978,
+        0.0152504071593285,
+        0.0158324837684631,
+        0.0164145603775978
+      ],
+      "output_on_steps_0_1": true,
+      "source_status_values": [
+        200
+      ],
+      "instrument_log": [
+        "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+        "2731\t4\tTrigger model path #1 has been initiated",
+        "2732\t4\tTrigger model path #1 has been idled"
+      ]
+    },
+    "a3": {
+      "outcome": "completed",
+      "detail": "",
+      "step0_first_t_s": 0.03201483999999993,
+      "step0_first_dv_mv": -38.15078735351596,
+      "step0_first5_dv_mv": [
+        -38.15078735351596,
+        -18.749237060546985,
+        -12.02011108398493,
+        -9.250640869140959,
+        -7.896423339843972
+      ],
+      "step0_first5_readback_ua": [
+        -0.000698491930961609,
+        0.0123400241136551,
+        0.0136205926537514,
+        0.0159488990902901,
+        0.016530975699424702
+      ],
+      "step1_first_t_s": 2.0812367,
+      "step1_first_dv_mv": -1.651763916015958,
+      "step1_first5_dv_mv": [
+        -1.651763916015958,
+        -1.651763916015958,
+        -1.663208007812944,
+        -1.640319824218972,
+        -1.628875732421986
+      ],
+      "step1_first5_readback_ua": [
+        0.0146683305501938,
+        0.0158324837684631,
+        0.0176951289176941,
+        0.0152504071593285,
+        0.0152504071593285
+      ],
+      "output_on_steps_0_1": true,
+      "source_status_values": [
+        200
+      ],
+      "instrument_log": [
+        "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+        "2731\t4\tTrigger model path #1 has been initiated",
+        "2732\t4\tTrigger model path #1 has been idled"
+      ]
+    },
+    "b4": {
+      "outcome": "completed",
+      "detail": "",
+      "step0_first_t_s": 0.08049156000000002,
+      "step0_first_dv_mv": -2.357482910156028,
+      "step0_first5_dv_mv": [
+        -2.357482910156028,
+        -2.300262451171986,
+        -2.288818359375,
+        -2.300262451171986,
+        -2.288818359375
+      ],
+      "step0_first5_readback_ua": [
+        3.6379788070917096e-05,
+        2.5465851649642e-05,
+        4.72937244921923e-05,
+        3.09228198602796e-05,
+        5.45696821063757e-05
+      ],
+      "step1_first_t_s": 2.1765625,
+      "step1_first_dv_mv": -1.453399658202903,
+      "step1_first5_dv_mv": [
+        -1.453399658202903,
+        -1.46484375,
+        -1.4305114746099301,
+        -1.4305114746099301,
+        -1.453399658202903
+      ],
+      "step1_first5_readback_ua": [
+        0.0181607902050018,
+        0.0158324837684631,
+        0.0175787135958672,
+        0.0158324837684631,
+        0.0175787135958672
+      ],
+      "output_on_steps_0_1": true,
+      "source_status_values": [
+        200
+      ],
+      "instrument_log": [
+        "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+        "2731\t4\tTrigger model path #1 has been initiated",
+        "2732\t4\tTrigger model path #1 has been idled"
+      ]
+    },
+    "seconds": 27.45427608297905
+  },
+  "DC2": {
+    "a1": {
+      "outcome": "completed",
+      "detail": "",
+      "step0_first_t_s": 0.03110547999999999,
+      "step0_first_dv_mv": -172.149658203125,
+      "step0_first5_dv_mv": [
+        -172.149658203125,
+        -99.529266357421,
+        -71.82312011718706,
+        -58.34197998046808,
+        -50.811767578125
+      ],
+      "step0_first5_readback_ua": [
+        -0.676140189170837,
+        -0.160187482833862,
+        -0.061467289924621596,
+        -0.0204890966415405,
+        -0.0149011611938477
+      ],
+      "step1_first_t_s": 2.0786178,
+      "step1_first_dv_mv": -5.420684814453014,
+      "step1_first5_dv_mv": [
+        -5.420684814453014,
+        -5.43212890625,
+        -5.363464355468972,
+        -5.340576171875,
+        -5.329132080078014
+      ],
+      "step1_first5_readback_ua": [
+        0.0167638063430786,
+        0.00931322574615479,
+        0.0037252902984619097,
+        -0.0018626451492309599,
+        0.00931322574615479
+      ],
+      "output_on_steps_0_1": true,
+      "source_status_values": [
+        200
+      ],
+      "instrument_log": [
+        "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+        "2731\t4\tTrigger model path #1 has been initiated",
+        "2732\t4\tTrigger model path #1 has been idled"
+      ]
+    },
+    "checks": {
+      "a1 positive cell voltage": "ok",
+      "a1 completed": "ok",
+      "a1 output ON through steps 0-1": "ok",
+      "b2 positive cell voltage": "ok",
+      "b2 completed": "ok",
+      "b2 output ON through steps 0-1": "ok",
+      "a3 positive cell voltage": "ok",
+      "a3 completed": "ok",
+      "a3 output ON through steps 0-1": "ok",
+      "b4 positive cell voltage": "ok",
+      "b4 completed": "ok",
+      "b4 output ON through steps 0-1": "ok",
+      "output OFF after run": "ok"
+    },
+    "b2": {
+      "outcome": "completed",
+      "detail": "",
+      "step0_first_t_s": 0.08051619999999993,
+      "step0_first_dv_mv": -9.723663330078015,
+      "step0_first5_dv_mv": [
+        -9.723663330078015,
+        -9.677886962890959,
+        -9.60922241210993,
+        -9.540557861328015,
+        -9.46044921875
+      ],
+      "step0_first5_readback_ua": [
+        7.09405867382884e-05,
+        4.91127138957381e-05,
+        7.82165443524718e-05,
+        4.36557456851006e-05,
+        4.91127138957381e-05
+      ],
+      "step1_first_t_s": 2.1728527399999997,
+      "step1_first_dv_mv": -4.554748535156028,
+      "step1_first5_dv_mv": [
+        -4.554748535156028,
+        -4.520416259765958,
+        -4.486083984375,
+        -4.474639892578014,
+        -4.474639892578014
+      ],
+      "step1_first5_readback_ua": [
+        0.027939677238464397,
+        0.0223517417907715,
+        0.011175870895385699,
+        0.0223517417907715,
+        0.0167638063430786
+      ],
+      "output_on_steps_0_1": true,
+      "source_status_values": [
+        200
+      ],
+      "instrument_log": [
+        "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+        "2731\t4\tTrigger model path #1 has been initiated",
+        "2732\t4\tTrigger model path #1 has been idled"
+      ]
+    },
+    "a3": {
+      "outcome": "completed",
+      "detail": "",
+      "step0_first_t_s": 0.031110259999999945,
+      "step0_first_dv_mv": -172.74475097656205,
+      "step0_first5_dv_mv": [
+        -172.74475097656205,
+        -104.644775390625,
+        -78.765869140625,
+        -66.16973876953102,
+        -58.9599609375
+      ],
+      "step0_first5_readback_ua": [
+        -0.651925802230835,
+        -0.141561031341553,
+        -0.048428773880004904,
+        -0.00745058059692383,
+        -0.00745058059692383
+      ],
+      "step1_first_t_s": 2.08195916,
+      "step1_first_dv_mv": -8.785247802734485,
+      "step1_first5_dv_mv": [
+        -8.785247802734485,
+        -8.750915527343416,
+        -8.716583251953459,
+        -8.6822509765625,
+        -8.64791870117243
+      ],
+      "step1_first5_readback_ua": [
+        0.00931322574615479,
+        0.0149011611938477,
+        0.027939677238464397,
+        0.0149011611938477,
+        0.027939677238464397
+      ],
+      "output_on_steps_0_1": true,
+      "source_status_values": [
+        200
+      ],
+      "instrument_log": [
+        "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+        "2731\t4\tTrigger model path #1 has been initiated",
+        "2732\t4\tTrigger model path #1 has been idled"
+      ]
+    },
+    "b4": {
+      "outcome": "completed",
+      "detail": "",
+      "step0_first_t_s": 0.08049657999999998,
+      "step0_first_dv_mv": -11.390686035155916,
+      "step0_first5_dv_mv": [
+        -11.390686035155916,
+        -11.310577392578015,
+        -11.23046875,
+        -11.161804199218972,
+        -11.10458374023493
+      ],
+      "step0_first5_readback_ua": [
+        3.6379788070917096e-05,
+        4.18367562815547e-05,
+        3.6379788070917096e-05,
+        6.548361852765079e-05,
+        4.91127138957381e-05
+      ],
+      "step1_first_t_s": 2.17212726,
+      "step1_first_dv_mv": -5.79833984375,
+      "step1_first5_dv_mv": [
+        -5.79833984375,
+        -5.764007568359042,
+        -5.729675292968972,
+        -5.718231201171986,
+        -5.683898925781028
+      ],
+      "step1_first5_readback_ua": [
+        0.00931322574615479,
+        0.0037252902984619097,
+        0.00931322574615479,
+        -0.0018626451492309599,
+        0.0167638063430786
+      ],
+      "output_on_steps_0_1": true,
+      "source_status_values": [
+        200
+      ],
+      "instrument_log": [
+        "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+        "2731\t4\tTrigger model path #1 has been initiated",
+        "2732\t4\tTrigger model path #1 has been idled"
+      ]
+    },
+    "seconds": 26.72228066698881
+  },
+  "DC3": {
+    "a1": {
+      "outcome": "completed",
+      "detail": "",
+      "step0_first_t_s": 0.0311183599999999,
+      "step0_first_dv_mv": -221.080780029296,
+      "step0_first5_dv_mv": [
+        -221.080780029296,
+        -143.096923828125,
+        -111.949920654296,
+        -95.806121826171,
+        -85.94131469726507
+      ],
+      "step0_first5_readback_ua": [
+        -7.7188014984130895,
+        -1.51991844177246,
+        -0.357627868652344,
+        0.0596046447753906,
+        0.23841857910156297
+      ],
+      "step1_first_t_s": 2.08252684,
+      "step1_first_dv_mv": -11.405944824218972,
+      "step1_first5_dv_mv": [
+        -11.405944824218972,
+        -11.371612548827903,
+        -11.383056640625,
+        -11.241912841796985,
+        -11.161804199218972
+      ],
+      "step1_first5_readback_ua": [
+        0.402331352233887,
+        0.357627868652344,
+        0.357627868652344,
+        0.298023223876953,
+        0.298023223876953
+      ],
+      "output_on_steps_0_1": true,
+      "source_status_values": [
+        200
+      ],
+      "instrument_log": [
+        "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+        "2731\t4\tTrigger model path #1 has been initiated",
+        "2732\t4\tTrigger model path #1 has been idled"
+      ]
+    },
+    "checks": {
+      "a1 positive cell voltage": "ok",
+      "a1 completed": "ok",
+      "a1 output ON through steps 0-1": "ok",
+      "b2 positive cell voltage": "ok",
+      "b2 completed": "ok",
+      "b2 output ON through steps 0-1": "ok",
+      "a3 positive cell voltage": "ok",
+      "a3 completed": "ok",
+      "a3 output ON through steps 0-1": "ok",
+      "b4 positive cell voltage": "ok",
+      "b4 completed": "ok",
+      "b4 output ON through steps 0-1": "ok",
+      "output OFF after run": "ok"
+    },
+    "b2": {
+      "outcome": "completed",
+      "detail": "",
+      "step0_first_t_s": 0.08050573999999999,
+      "step0_first_dv_mv": -26.30996704101507,
+      "step0_first5_dv_mv": [
+        -26.30996704101507,
+        -26.16119384765603,
+        -26.03530883789007,
+        -25.863647460937056,
+        -25.737762451170987
+      ],
+      "step0_first5_readback_ua": [
+        5.45696821063757e-05,
+        7.09405867382884e-05,
+        6.0026650317013304e-05,
+        5.45696821063757e-05,
+        4.91127138957381e-05
+      ],
+      "step1_first_t_s": 2.1766459,
+      "step1_first_dv_mv": -13.137817382813054,
+      "step1_first5_dv_mv": [
+        -13.137817382813054,
+        -13.031005859375,
+        -12.996673583985041,
+        -12.928009033204013,
+        -12.905120849610041
+      ],
+      "step1_first5_readback_ua": [
+        0.342726707458496,
+        0.342726707458496,
+        0.342726707458496,
+        0.342726707458496,
+        0.28312206268310497
+      ],
+      "output_on_steps_0_1": true,
+      "source_status_values": [
+        200
+      ],
+      "instrument_log": [
+        "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+        "2731\t4\tTrigger model path #1 has been initiated",
+        "2732\t4\tTrigger model path #1 has been idled"
+      ]
+    },
+    "a3": {
+      "outcome": "completed",
+      "detail": "",
+      "step0_first_t_s": 0.031088479999999974,
+      "step0_first_dv_mv": -215.79360961914097,
+      "step0_first5_dv_mv": [
+        -215.79360961914097,
+        -159.35897827148392,
+        -136.66152954101597,
+        -123.55041503906294,
+        -114.43328857421898
+      ],
+      "step0_first5_readback_ua": [
+        -6.13927841186523,
+        -0.998377799987793,
+        -0.119209289550781,
+        0.0,
+        0.178813934326172
+      ],
+      "step1_first_t_s": 2.0826892,
+      "step1_first_dv_mv": -20.671844482421985,
+      "step1_first5_dv_mv": [
+        -20.671844482421985,
+        -20.62606811523493,
+        -20.523071289062944,
+        -20.42007446289096,
+        -20.31707763671897
+      ],
+      "step1_first5_readback_ua": [
+        0.357627868652344,
+        0.357627868652344,
+        0.417232513427734,
+        0.357627868652344,
+        0.417232513427734
+      ],
+      "output_on_steps_0_1": true,
+      "source_status_values": [
+        200
+      ],
+      "instrument_log": [
+        "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+        "2731\t4\tTrigger model path #1 has been initiated",
+        "2732\t4\tTrigger model path #1 has been idled"
+      ]
+    },
+    "b4": {
+      "outcome": "completed",
+      "detail": "",
+      "step0_first_t_s": 0.08052579999999998,
+      "step0_first_dv_mv": -28.823852539063054,
+      "step0_first5_dv_mv": [
+        -28.823852539063054,
+        -28.663635253907028,
+        -28.514862060547095,
+        -28.35464477539107,
+        -28.205871582032028
+      ],
+      "step0_first5_readback_ua": [
+        6.0026650317013304e-05,
+        6.0026650317013304e-05,
+        5.45696821063757e-05,
+        4.36557456851006e-05,
+        4.91127138957381e-05
+      ],
+      "step1_first_t_s": 2.17113708,
+      "step1_first_dv_mv": -14.812469482422097,
+      "step1_first5_dv_mv": [
+        -14.812469482422097,
+        -14.732360839844084,
+        -14.663696289063054,
+        -14.617919921875,
+        -14.537811279297097
+      ],
+      "step1_first5_readback_ua": [
+        0.298023223876953,
+        0.342726707458496,
+        0.298023223876953,
+        0.298023223876953,
+        0.23841857910156297
+      ],
+      "output_on_steps_0_1": true,
+      "source_status_values": [
+        200
+      ],
+      "instrument_log": [
+        "2753\t4\tTrigger model is not optimized for speed due to greater than 15 blocks",
+        "2731\t4\tTrigger model path #1 has been initiated",
+        "2732\t4\tTrigger model path #1 has been idled"
+      ]
+    },
+    "seconds": 27.27544937498169
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "language": "TSP",
+  "mutating_hardware_commands_sent": false,
+  "observed_at_utc": "2026-11-02T10:16:12.906758+00:00",
+  "queries": [
+    {
+      "command": "print(smu.source.output)",
+      "response": "smu.OFF"
+    },
+    {
+      "command": "print(oe_m4_runtime_build)",
+      "response": "nil"
+    },
+    {
+      "command": "print(oe_m4_runtime_abi)",
+      "response": "nil"
+    }
+  ],
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "runtime_abi": "nil",
+  "runtime_build": "nil",
+  "schema": "ophyd-electrochemistry/k2460-query-only-resumption-v1"
+}

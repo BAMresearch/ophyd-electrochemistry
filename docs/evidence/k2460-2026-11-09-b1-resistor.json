@@ -1,0 +1,268 @@
+{
+  "tests": [
+    "R1",
+    "R4",
+    "R5",
+    "R6",
+    "R7"
+  ],
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "equipment": {
+    "backend": "k2460-sequencer",
+    "runtime_build": "seq-v2",
+    "runtime_sha256": "2f7010bc22895e881cac03355bbe1918745ecc835a488107d65a3112e393d6ae",
+    "terminals": "front",
+    "four_wire": true,
+    "start_edge": "rising",
+    "line_frequency_hz": 50,
+    "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "serial_number": "04686198",
+    "firmware": "1.7.16a"
+  },
+  "status_at_start": [
+    "idle",
+    false
+  ],
+  "R1": {
+    "b1-s1-immediate": {
+      "clock_offset_s": 4179.387865781784,
+      "clock_uncertainty_s": 0.0004914999008178711,
+      "clock_method": "eventlog.post bracket, best of 5",
+      "block_count": 53,
+      "block_overhead_s": 0.00014
+    },
+    "checks": {
+      "b1-s1-immediate PREPARED, OFF": "ok",
+      "b1-long-300s PREPARED, OFF": "ok",
+      "b1-cv-switch PREPARED, OFF": "ok"
+    },
+    "b1-long-300s": {
+      "clock_offset_s": 4179.387874126434,
+      "clock_uncertainty_s": 0.0004825592041015625,
+      "clock_method": "eventlog.post bracket, best of 5",
+      "block_count": 59,
+      "block_overhead_s": 0.00014
+    },
+    "b1-cv-switch": {
+      "clock_offset_s": 4179.387851476669,
+      "clock_uncertainty_s": 0.0004924535751342773,
+      "clock_method": "eventlog.post bracket, best of 5",
+      "block_count": 54,
+      "block_overhead_s": 0.00014
+    },
+    "status_line": "ready\ttrigger.STATE_BUILDING\t0\tsmu.OFF\t0\t0",
+    "seconds": 1.3716797920060344
+  },
+  "R4": {
+    "measurement_id": "b1-next-repeat",
+    "blocks": 46,
+    "expected_records": 250,
+    "nominal_s": 2.5,
+    "clock_offset_s": 4179.387837171555,
+    "clock_uncertainty_s": 0.0005259513854980469,
+    "outcome": "completed",
+    "detail": "",
+    "wall_s": 1.0616908330121078,
+    "cpu_s": 0.010268,
+    "records": 103,
+    "polls": 6,
+    "lag_s_median": 0.012384653091430664,
+    "lag_s_max": 0.013214349746704102,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [
+      [
+        0.2284164999999999,
+        1,
+        1,
+        "cutoff",
+        "v_max"
+      ],
+      [
+        0.44022907999999994,
+        1,
+        2,
+        "cutoff",
+        "v_max"
+      ],
+      [
+        0.6510619,
+        1,
+        3,
+        "cutoff",
+        "v_max"
+      ]
+    ],
+    "step_starts": 8,
+    "instrument_log": [
+      "2753\t4\tTrigger model is not optimized for speed due to greater than 4 branch counters",
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "checks": {
+      "completed (replay = logged END)": "ok",
+      "3 v_max cutoffs": "ok",
+      "one cc sample per repeat": "ok",
+      "output OFF after run": "ok"
+    },
+    "cc_samples_per_repeat": [
+      1,
+      1,
+      1
+    ],
+    "seconds": 1.2432764579425566
+  },
+  "R5": {
+    "measurement_id": "b1-stop",
+    "blocks": 35,
+    "expected_records": 90,
+    "nominal_s": 0.9,
+    "clock_offset_s": 4179.387834072113,
+    "clock_uncertainty_s": 0.0005209445953369141,
+    "outcome": "stopped_cutoff",
+    "detail": "",
+    "wall_s": 0.43287916597910225,
+    "cpu_s": 0.006888000000000005,
+    "records": 21,
+    "polls": 3,
+    "lag_s_median": 0.1098102331161499,
+    "lag_s_max": 0.2062842845916748,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [
+      [
+        0.22725923999999997,
+        1,
+        0,
+        "cutoff",
+        "v_max"
+      ],
+      [
+        0.22725923999999997,
+        1,
+        0,
+        "stop",
+        "v_max"
+      ]
+    ],
+    "step_starts": 2,
+    "instrument_log": [
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "checks": {
+      "stopped_cutoff": "ok",
+      "no records after the stop": "ok",
+      "output OFF after run": "ok"
+    },
+    "seconds": 0.6031181670259684
+  },
+  "R6": {
+    "measurement_id": "b1-abs-window",
+    "blocks": 35,
+    "expected_records": 90,
+    "nominal_s": 0.9,
+    "clock_offset_s": 4179.387847900391,
+    "clock_uncertainty_s": 0.0005279779434204102,
+    "outcome": "stopped_cutoff",
+    "detail": "",
+    "wall_s": 0.42933979199733585,
+    "cpu_s": 0.0048439999999999594,
+    "records": 21,
+    "polls": 3,
+    "lag_s_median": 0.10775971412658691,
+    "lag_s_max": 0.20201969146728516,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [
+      [
+        0.22822092000000002,
+        1,
+        0,
+        "cutoff",
+        "abs_window"
+      ],
+      [
+        0.22822092000000002,
+        1,
+        0,
+        "stop",
+        "abs_window"
+      ]
+    ],
+    "step_starts": 2,
+    "instrument_log": [
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "checks": {
+      "stopped_cutoff": "ok",
+      "abs_window": "ok",
+      "output OFF after run": "ok"
+    },
+    "seconds": 0.6013267919770442
+  },
+  "R7": {
+    "measurement_id": "b1-cv-switch",
+    "blocks": 54,
+    "expected_records": 290,
+    "nominal_s": 2.9,
+    "clock_offset_s": 4179.387794494629,
+    "clock_uncertainty_s": 0.0005595684051513672,
+    "outcome": "completed",
+    "detail": "",
+    "wall_s": 2.1366126670036465,
+    "cpu_s": 0.018261000000000083,
+    "records": 191,
+    "polls": 11,
+    "lag_s_median": 0.012772560119628906,
+    "lag_s_max": 0.1676478385925293,
+    "state_final": [
+      "complete",
+      "False"
+    ],
+    "events": [
+      [
+        1.24778628,
+        2,
+        0,
+        "cutoff",
+        "i_abs_min"
+      ]
+    ],
+    "step_starts": 5,
+    "instrument_log": [
+      "2753\t4\tTrigger model is not optimized for speed due to greater than 4 branch counters",
+      "2731\t4\tTrigger model path #1 has been initiated",
+      "2732\t4\tTrigger model path #1 has been idled"
+    ],
+    "checks": {
+      "completed": "ok",
+      "taper fires on step 2 only": "ok",
+      "CV 0.3 V readback": "ok",
+      "CV 3 mA": "ok",
+      "output OFF after run": "ok"
+    },
+    "cv_v_median": 0.300013303756714,
+    "cv_i_median": 0.0029267780482769,
+    "resistance": {
+      "r_ohm_median": 102.50660010609036,
+      "r_ohm_spread": 2.271531425155999
+    },
+    "timing": {
+      "executions": 4,
+      "deviation_ms_median": 18.314510000000034,
+      "deviation_ms_min": -0.27071999999989105,
+      "deviation_ms_max": 22.21284000000012,
+      "run_s_actual": 1.9697284000000002,
+      "run_s_nominal": 2.9
+    },
+    "seconds": 2.5275797500507906
+  }
+}

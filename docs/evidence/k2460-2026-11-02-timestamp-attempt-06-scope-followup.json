@@ -1,0 +1,44 @@
+{
+  "authorization": {
+    "discard_run2026110206_record_explicitly_authorized": false,
+    "event_read_authorization_for_new_run": false,
+    "repeat_requested": true
+  },
+  "hardware_gates_promoted": [],
+  "mutating_hardware_commands_sent": false,
+  "new_setup": {
+    "physical_output_off_and_capture_ready": "Pending fresh confirmation after rewire",
+    "reported_ch4_connection": "Banana plugs instead of P2220 probe; exact centre/shield node assignment and cable attenuation unconfirmed",
+    "required_input": "1 Mohm, DC coupling, channel scaling 1x for direct unattenuated cable"
+  },
+  "original_capture": {
+    "assessment": "Reported analog delays remain provisional: unresolved 29 mV versus 102.5784 mV discrepancy, missing OFF baseline/settings verification and unconfirmed thresholds. No combined uncertainty assigned.",
+    "derived_busy_rise_to_ch4_rise_s": 0.00086,
+    "derived_ch4_fall_before_busy_fall_s": 0.001355,
+    "derived_ch4_midpoint_duration_s": 0.0431,
+    "falling_delay_uncertainty_s": null,
+    "interpreted_rising_delay_uncertainty_s": 0.0001,
+    "midpoint_threshold_confirmed": false,
+    "plateau_interpretation": "Tentatively absolute ON plateau; OFF baseline still unknown",
+    "reported_start_to_ch4_falling_s": 0.0527,
+    "reported_start_to_ch4_rising_s": 0.0096
+  },
+  "proof_run_id": 2026110206,
+  "recorded_at_utc": "2026-11-02T14:09:08.337899+00:00",
+  "reported_verbatim": {
+    "ch4_delays": "start to rising CH4 is 9.6(1) ms, start to falling CH4 is 52.7 ms",
+    "plateau_and_rewire": "I think that's the absolute on plateau voltage. I've reconnected channel 4 with banana plugs instead of the probe, and will check the input settings on CH4.",
+    "repeat_request": "see the other comment, I've rewired, we should retry"
+  },
+  "schema": "ophyd-electrochemistry/k2460-scope-followup-v1",
+  "source_artifacts": [
+    {
+      "path": "docs/evidence/k2460-2026-11-02-timestamp-attempt-06.json",
+      "sha256": "47644615630fa568bde7c2022dac8eb22290d2a7b29a04109f976305782d0f77"
+    },
+    {
+      "path": "docs/evidence/k2460-2026-11-02-timestamp-attempt-06-scope-analysis.json",
+      "sha256": "81f541cfeb361f0180d8871d19acedddbe2a3cc1b309b87fd5797c91f9fbf99c"
+    }
+  ]
+}

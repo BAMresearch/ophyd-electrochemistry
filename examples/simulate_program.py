@@ -26,6 +26,8 @@ def main() -> None:
     retained = link.retained_buffer()
     chunk = link.read_record_chunk(offset=0, max_records=1000)
     records = chunk.records
+    first_aperture = records[0].voltage_aperture
+    assert first_aperture is not None  # The simulator supplies known synthetic windows.
     print(
         json.dumps(
             {
@@ -42,9 +44,9 @@ def main() -> None:
                 "records": len(records),
                 "records_sha256": retained.metadata.records_sha256,
                 "chunk_final": chunk.final,
-                "first_aperture_s": [
-                    records[0].aperture_start_relative_s,
-                    records[0].aperture_end_relative_s,
+                "first_voltage_aperture_s": [
+                    first_aperture.start_relative_s,
+                    first_aperture.end_relative_s,
                 ],
                 "first_synthetic_current_a": records[0].current_a,
             },

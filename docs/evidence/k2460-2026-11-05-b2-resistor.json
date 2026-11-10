@@ -1,0 +1,1269 @@
+{
+  "test_matrix": "bench/plan-b2.md",
+  "load": "resistor",
+  "written_utc": "2026-11-05T12:04:18+00:00",
+  "data_dirs": [
+    "/Users/bpauw/k2460-data/b2/resistor",
+    "/Users/bpauw/k2460-data/b2/nb"
+  ],
+  "runs": [
+    {
+      "file": "/Users/bpauw/k2460-data/b2/resistor/b2r-soak_20261105T112549Z.h5",
+      "measurement_id": "b2r-soak",
+      "sample_id": "R100",
+      "protocol": "bipolar_pulse",
+      "start_utc": "2026-11-05T11:25:49.098217Z",
+      "duration_s": 1827.84525566,
+      "records": 300807,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b2r-soak",
+        "outcome": "completed",
+        "records": 300807,
+        "duration_s": 1827.84525566,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 297208,
+            "median": 0.005980099999987942,
+            "p99": 0.006047758600008137,
+            "max": 0.006933740000022226
+          },
+          "0.0144s": {
+            "n": 430,
+            "median": 0.014363480000042728,
+            "p99": 0.015251972399962597,
+            "max": 0.015263620000041556
+          },
+          "0.0173s": {
+            "n": 1154,
+            "median": 0.01729280000004252,
+            "p99": 0.019044810199964103,
+            "max": 0.019083720000026005
+          },
+          "0.0195s": {
+            "n": 171,
+            "median": 0.019477019999840195,
+            "p99": 0.02002753599999778,
+            "max": 0.02009389999989253
+          },
+          "0.0326s": {
+            "n": 3,
+            "median": 0.032590440000035414,
+            "p99": 0.03288226439990694,
+            "max": 0.03288821999990432
+          },
+          "0.1s": {
+            "n": 39,
+            "median": 0.09997859999999914,
+            "p99": 0.09999083599999975,
+            "max": 0.09999113999999976
+          },
+          "0.142s": {
+            "n": 1,
+            "median": 0.1415430999999998,
+            "p99": 0.1415430999999998,
+            "max": 0.1415430999999998
+          }
+        },
+        "spacing_max_s": 0.1415430999999998,
+        "rest_v_first_last": [
+          2.45571136474609e-05,
+          5.79357147216797e-05
+        ],
+        "v_min_max": [
+          -0.0462453365325928,
+          0.0462534427642822
+        ],
+        "i_min_max": [
+          -0.000450006569735706,
+          0.000450026360340416
+        ],
+        "events": [
+          "0.000 step_start ",
+          "5.077 step_start ",
+          "6.095 step_start ",
+          "7.095 step_start ",
+          "8.101 step_start ",
+          "9.122 step_start ",
+          "10.134 step_start ",
+          "11.147 step_start ",
+          "12.156 step_start ",
+          "13.173 step_start ",
+          "14.187 step_start ",
+          "15.200 step_start ",
+          "16.209 step_start ",
+          "17.226 step_start ",
+          "18.237 step_start ",
+          "19.248 step_start ",
+          "20.260 step_start ",
+          "21.279 step_start ",
+          "22.288 step_start ",
+          "23.302 step_start ",
+          "24.309 step_start ",
+          "25.326 step_start ",
+          "26.337 step_start ",
+          "27.349 step_start ",
+          "28.356 step_start ",
+          "29.374 step_start ",
+          "30.383 step_start ",
+          "31.393 step_start ",
+          "32.401 step_start ",
+          "33.418 step_start ",
+          "34.429 step_start ",
+          "35.442 step_start ",
+          "36.452 step_start ",
+          "37.471 step_start ",
+          "38.479 step_start ",
+          "39.492 step_start ",
+          "40.500 step_start ",
+          "41.519 step_start ",
+          "42.533 step_start ",
+          "43.543 step_start ",
+          "44.555 step_start ",
+          "45.575 step_start ",
+          "46.584 step_start ",
+          "47.596 step_start ",
+          "48.605 step_start ",
+          "49.623 step_start ",
+          "50.632 step_start ",
+          "51.644 step_start ",
+          "52.655 step_start ",
+          "53.673 step_start "
+        ],
+        "apparent_r_ohm": 102.50779449838792,
+        "median_v_over_i_ohm": 102.50858556238899
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/resistor/b2r-rest_20261105T112311Z.h5",
+      "measurement_id": "b2r-rest",
+      "sample_id": "R100",
+      "protocol": "rest",
+      "start_utc": "2026-11-05T11:23:11.697769Z",
+      "duration_s": 10.02852296,
+      "records": 100,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b2r-rest",
+        "outcome": "completed",
+        "records": 100,
+        "duration_s": 10.02852296,
+        "spacing_s": {
+          "0.1s": {
+            "n": 99,
+            "median": 0.09998918000000145,
+            "p99": 0.10003255359999984,
+            "max": 0.1011709999999999
+          }
+        },
+        "spacing_max_s": 0.1011709999999999,
+        "rest_v_first_last": [
+          -9.77516174316406e-06,
+          -1.21593475341797e-05
+        ],
+        "v_min_max": [
+          -1.35898590087891e-05,
+          -9.29832458496094e-06
+        ],
+        "i_min_max": [
+          -4.36557456851006e-11,
+          -2.00088834390044e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/resistor/b2r-crash_20261105T111736Z.h5",
+      "measurement_id": "b2r-crash",
+      "sample_id": "R100",
+      "protocol": "bipolar_pulse",
+      "start_utc": "2026-11-05T11:17:36.170625Z",
+      "duration_s": 83.70423486,
+      "records": 13180,
+      "outcome": "incomplete",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b2r-crash",
+        "outcome": "incomplete",
+        "records": 13180,
+        "duration_s": 83.70423486,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 12986,
+            "median": 0.005980600000000891,
+            "p99": 0.0060482600000000275,
+            "max": 0.0068872599999991735
+          },
+          "0.0154s": {
+            "n": 54,
+            "median": 0.015414690000000064,
+            "p99": 0.017248817199999707,
+            "max": 0.017277839999998434
+          },
+          "0.0184s": {
+            "n": 21,
+            "median": 0.018411659999998164,
+            "p99": 0.019644032000000068,
+            "max": 0.01965912000000003
+          },
+          "0.1s": {
+            "n": 39,
+            "median": 0.09997523999999958,
+            "p99": 0.0999982372000002,
+            "max": 0.10000092000000027
+          },
+          "0.142s": {
+            "n": 1,
+            "median": 0.14154650000000002,
+            "p99": 0.14154650000000002,
+            "max": 0.14154650000000002
+          }
+        },
+        "spacing_max_s": 0.14154650000000002,
+        "rest_v_first_last": [
+          -1.9073486328125e-06,
+          5.55515289306641e-05
+        ],
+        "v_min_max": [
+          -0.0462384223937988,
+          0.0462396144866943
+        ],
+        "i_min_max": [
+          -0.000450005638413131,
+          0.000450024963356555
+        ],
+        "events": [
+          "0.000 step_start ",
+          "5.076 step_start ",
+          "6.083 step_start ",
+          "7.092 step_start ",
+          "8.103 step_start ",
+          "9.122 step_start ",
+          "10.132 step_start ",
+          "11.142 step_start ",
+          "12.150 step_start ",
+          "13.169 step_start ",
+          "14.180 step_start ",
+          "15.192 step_start ",
+          "16.202 step_start ",
+          "17.221 step_start ",
+          "18.230 step_start ",
+          "19.239 step_start ",
+          "20.250 step_start ",
+          "21.267 step_start ",
+          "22.278 step_start ",
+          "23.293 step_start ",
+          "24.305 step_start ",
+          "25.324 step_start ",
+          "26.338 step_start ",
+          "27.350 step_start ",
+          "28.357 step_start ",
+          "29.375 step_start ",
+          "30.385 step_start ",
+          "31.394 step_start ",
+          "32.401 step_start ",
+          "33.417 step_start ",
+          "34.430 step_start ",
+          "35.441 step_start ",
+          "36.451 step_start ",
+          "37.472 step_start ",
+          "38.482 step_start ",
+          "39.494 step_start ",
+          "40.504 step_start ",
+          "41.523 step_start ",
+          "42.535 step_start ",
+          "43.547 step_start ",
+          "44.554 step_start ",
+          "45.569 step_start ",
+          "46.579 step_start ",
+          "47.590 step_start ",
+          "48.600 step_start ",
+          "49.618 step_start ",
+          "50.619 step_start ",
+          "51.633 step_start ",
+          "52.641 step_start ",
+          "53.659 step_start "
+        ],
+        "apparent_r_ohm": 102.50782564941153,
+        "median_v_over_i_ohm": 102.5089037894042
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/resistor/b2r-rest_20261105T111515Z.h5",
+      "measurement_id": "b2r-rest",
+      "sample_id": "R100",
+      "protocol": "rest",
+      "start_utc": "2026-11-05T11:15:15.967254Z",
+      "duration_s": 10.02831024,
+      "records": 100,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b2r-rest",
+        "outcome": "completed",
+        "records": 100,
+        "duration_s": 10.02831024,
+        "spacing_s": {
+          "0.1s": {
+            "n": 99,
+            "median": 0.10000265999999947,
+            "p99": 0.10002015920000006,
+            "max": 0.10002306000000005
+          }
+        },
+        "spacing_max_s": 0.10002306000000005,
+        "rest_v_first_last": [
+          -1.33514404296875e-05,
+          -1.33514404296875e-05
+        ],
+        "v_min_max": [
+          -1.59740447998047e-05,
+          -1.09672546386719e-05
+        ],
+        "i_min_max": [
+          -1.81898940354586e-12,
+          1.81898940354586e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/resistor/b2r-rest_20261105T111213Z.h5",
+      "measurement_id": "b2r-rest",
+      "sample_id": "R100",
+      "protocol": "rest",
+      "start_utc": "2026-11-05T11:12:13.997475Z",
+      "duration_s": 10.02861968,
+      "records": 100,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b2r-rest",
+        "outcome": "completed",
+        "records": 100,
+        "duration_s": 10.02861968,
+        "spacing_s": {
+          "0.1s": {
+            "n": 99,
+            "median": 0.10000274000000076,
+            "p99": 0.10002181120000002,
+            "max": 0.10002628000000158
+          }
+        },
+        "spacing_max_s": 0.10002628000000158,
+        "rest_v_first_last": [
+          -1.04904174804688e-05,
+          -1.31130218505859e-05
+        ],
+        "v_min_max": [
+          -1.52587890625e-05,
+          -1.00135803222656e-05
+        ],
+        "i_min_max": [
+          7.27595761418343e-12,
+          2.5465851649642e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/resistor/b2r-abort_20261105T110919Z.h5",
+      "measurement_id": "b2r-abort",
+      "sample_id": "R100",
+      "protocol": "bipolar_pulse",
+      "start_utc": "2026-11-05T11:09:19.224995Z",
+      "duration_s": 66.69473976,
+      "records": 10370,
+      "outcome": "aborted",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 1,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b2r-abort",
+        "outcome": "aborted",
+        "records": 10370,
+        "duration_s": 66.69473976,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 10209,
+            "median": 0.005980120000003808,
+            "p99": 0.006045616800001596,
+            "max": 0.006675160000000346
+          },
+          "0.0154s": {
+            "n": 36,
+            "median": 0.015402799999997718,
+            "p99": 0.017161638000001922,
+            "max": 0.017232800000002158
+          },
+          "0.019s": {
+            "n": 23,
+            "median": 0.0189531400000007,
+            "p99": 0.019687105999998167,
+            "max": 0.01974599999999782
+          },
+          "0.1s": {
+            "n": 39,
+            "median": 0.09997787999999996,
+            "p99": 0.10000966720000014,
+            "max": 0.10001216000000035
+          },
+          "0.142s": {
+            "n": 1,
+            "median": 0.14154055999999993,
+            "p99": 0.14154055999999993,
+            "max": 0.14154055999999993
+          }
+        },
+        "spacing_max_s": 0.14154055999999993,
+        "rest_v_first_last": [
+          4.1961669921875e-05,
+          7.39097595214844e-06
+        ],
+        "v_min_max": [
+          -0.0462384223937988,
+          0.0462360382080078
+        ],
+        "i_min_max": [
+          -0.000450005987659097,
+          0.000450023449957371
+        ],
+        "events": [
+          "0.000 step_start ",
+          "5.079 step_start ",
+          "6.085 step_start ",
+          "7.100 step_start ",
+          "8.108 step_start ",
+          "9.123 step_start ",
+          "10.136 step_start ",
+          "11.148 step_start ",
+          "12.160 step_start ",
+          "13.181 step_start ",
+          "14.192 step_start ",
+          "15.202 step_start ",
+          "16.211 step_start ",
+          "17.232 step_start ",
+          "18.245 step_start ",
+          "19.257 step_start ",
+          "20.268 step_start ",
+          "21.288 step_start ",
+          "22.301 step_start ",
+          "23.313 step_start ",
+          "24.323 step_start ",
+          "25.343 step_start ",
+          "26.352 step_start ",
+          "27.366 step_start ",
+          "28.375 step_start ",
+          "29.396 step_start ",
+          "30.409 step_start ",
+          "31.419 step_start ",
+          "32.426 step_start ",
+          "33.447 step_start ",
+          "34.459 step_start ",
+          "35.470 step_start ",
+          "36.482 step_start ",
+          "37.500 step_start ",
+          "38.512 step_start ",
+          "39.526 step_start ",
+          "40.535 step_start ",
+          "41.551 step_start ",
+          "42.562 step_start ",
+          "43.574 step_start ",
+          "44.582 step_start ",
+          "45.598 step_start ",
+          "46.607 step_start ",
+          "47.617 step_start ",
+          "48.624 step_start ",
+          "49.640 step_start ",
+          "50.653 step_start ",
+          "51.662 step_start ",
+          "52.673 step_start ",
+          "53.692 step_start "
+        ],
+        "apparent_r_ohm": 102.50781891188542,
+        "median_v_over_i_ohm": 102.50871815673851
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/resistor/b2r-pulse-ext_20261105T110419Z.h5",
+      "measurement_id": "b2r-pulse-ext",
+      "sample_id": "R100",
+      "protocol": "bipolar_pulse",
+      "start_utc": "2026-11-05T11:04:58.569039Z",
+      "duration_s": 17.20782278,
+      "records": 2211,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b2r-pulse-ext",
+        "outcome": "completed",
+        "records": 2211,
+        "duration_s": 17.20782278,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 2147,
+            "median": 0.005980960000000479,
+            "p99": 0.006059978399999597,
+            "max": 0.006749260000000007
+          },
+          "0.0151s": {
+            "n": 7,
+            "median": 0.01511862000000086,
+            "p99": 0.01615930080000105,
+            "max": 0.016221360000001184
+          },
+          "0.0177s": {
+            "n": 4,
+            "median": 0.017748710000000223,
+            "p99": 0.01885958459999979,
+            "max": 0.018888839999999796
+          },
+          "0.1s": {
+            "n": 39,
+            "median": 0.09997816000000004,
+            "p99": 0.09999232599999973,
+            "max": 0.09999281999999976
+          },
+          "0.142s": {
+            "n": 1,
+            "median": 0.1415030399999999,
+            "p99": 0.1415030399999999,
+            "max": 0.1415030399999999
+          }
+        },
+        "spacing_max_s": 0.1415030399999999,
+        "rest_v_first_last": [
+          5.00679016113281e-06,
+          -6.866455078125e-05
+        ],
+        "v_min_max": [
+          -0.0462372303009033,
+          0.0462329387664795
+        ],
+        "i_min_max": [
+          -0.000450005172751844,
+          0.000450023333542049
+        ],
+        "events": [
+          "0.000 step_start ",
+          "5.067 step_start ",
+          "6.073 step_start ",
+          "7.084 step_start ",
+          "8.095 step_start ",
+          "9.112 step_start ",
+          "10.124 step_start ",
+          "11.134 step_start ",
+          "12.142 step_start ",
+          "13.160 step_start ",
+          "14.170 step_start ",
+          "15.182 step_start ",
+          "16.193 step_start "
+        ],
+        "apparent_r_ohm": 102.50805911972098,
+        "median_v_over_i_ohm": 102.50932525973381
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/resistor/b2r-cycle_20261105T110228Z.h5",
+      "measurement_id": "b2r-cycle",
+      "sample_id": "R100",
+      "protocol": "cycling",
+      "start_utc": "2026-11-05T11:02:28.415111Z",
+      "duration_s": 10.46248342,
+      "records": 103,
+      "outcome": "completed",
+      "cutoffs": 3,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b2r-cycle",
+        "outcome": "completed",
+        "records": 103,
+        "duration_s": 10.46248342,
+        "spacing_s": {
+          "0.1s": {
+            "n": 98,
+            "median": 0.0999834399999997,
+            "p99": 0.10002670059999998,
+            "max": 0.1005893200000001
+          }
+        },
+        "spacing_max_s": 0.1005893200000001,
+        "rest_v_first_last": [
+          -8.58306884765625e-06,
+          -1.26361846923828e-05
+        ],
+        "v_min_max": [
+          -0.0461397171020508,
+          0.0461149215698242
+        ],
+        "i_min_max": [
+          -0.000450004823505878,
+          0.000450012856163085
+        ],
+        "events": [
+          "0.000 step_start ",
+          "0.122 cutoff v_min",
+          "0.122 step_start ",
+          "0.290 cutoff i_abs_min",
+          "0.290 step_start ",
+          "5.358 step_start ",
+          "5.460 cutoff v_max",
+          "5.460 step_start "
+        ],
+        "apparent_r_ohm": 102.50288761154262,
+        "median_v_over_i_ohm": 102.5316056449962
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/resistor/b2r-soc_20261105T105947Z.h5",
+      "measurement_id": "b2r-soc",
+      "sample_id": "R100",
+      "protocol": "soc_position",
+      "start_utc": "2026-11-05T10:59:47.936828Z",
+      "duration_s": 10.12188512,
+      "records": 101,
+      "outcome": "completed",
+      "cutoffs": 1,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b2r-soc",
+        "outcome": "completed",
+        "records": 101,
+        "duration_s": 10.12188512,
+        "spacing_s": {
+          "0.1s": {
+            "n": 99,
+            "median": 0.0999869999999996,
+            "p99": 0.1000229180000001,
+            "max": 0.10028937999999998
+          }
+        },
+        "spacing_max_s": 0.10028937999999998,
+        "rest_v_first_last": [
+          -1.00135803222656e-05,
+          -1.21593475341797e-05
+        ],
+        "v_min_max": [
+          -0.0461394786834717,
+          -9.05990600585938e-06
+        ],
+        "i_min_max": [
+          -0.000450004823505878,
+          1.6065314412117e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "0.121 cutoff v_min",
+          "0.121 step_start "
+        ],
+        "median_v_over_i_ohm": 102.53107583161055
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/resistor/b2r-pulse_20261105T105308Z.h5",
+      "measurement_id": "b2r-pulse",
+      "sample_id": "R100",
+      "protocol": "bipolar_pulse",
+      "start_utc": "2026-11-05T10:53:08.910416Z",
+      "duration_s": 86.0888327,
+      "records": 13567,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b2r-pulse",
+        "outcome": "completed",
+        "records": 13567,
+        "duration_s": 86.0888327,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 13368,
+            "median": 0.005980089999997773,
+            "p99": 0.006046166599997935,
+            "max": 0.0070540200000017705
+          },
+          "0.0154s": {
+            "n": 46,
+            "median": 0.01536342999999718,
+            "p99": 0.017302484999998223,
+            "max": 0.017323859999999414
+          },
+          "0.0186s": {
+            "n": 32,
+            "median": 0.01855521999999965,
+            "p99": 0.019670639399998465,
+            "max": 0.019682500000001824
+          },
+          "0.1s": {
+            "n": 39,
+            "median": 0.09997604000000004,
+            "p99": 0.09998844759999988,
+            "max": 0.09998957999999991
+          },
+          "0.142s": {
+            "n": 1,
+            "median": 0.14154034000000015,
+            "p99": 0.14154034000000015,
+            "max": 0.14154034000000015
+          }
+        },
+        "spacing_max_s": 0.14154034000000015,
+        "rest_v_first_last": [
+          -1.35898590087891e-05,
+          -2.14576721191406e-05
+        ],
+        "v_min_max": [
+          -0.046290397644043,
+          0.0462329387664795
+        ],
+        "i_min_max": [
+          -0.000450006336905062,
+          0.000450024497695267
+        ],
+        "events": [
+          "0.000 step_start ",
+          "5.076 step_start ",
+          "6.082 step_start ",
+          "7.095 step_start ",
+          "8.102 step_start ",
+          "9.120 step_start ",
+          "10.132 step_start ",
+          "11.147 step_start ",
+          "12.155 step_start ",
+          "13.171 step_start ",
+          "14.183 step_start ",
+          "15.193 step_start ",
+          "16.201 step_start ",
+          "17.218 step_start ",
+          "18.231 step_start ",
+          "19.240 step_start ",
+          "20.249 step_start ",
+          "21.269 step_start ",
+          "22.283 step_start ",
+          "23.296 step_start ",
+          "24.304 step_start ",
+          "25.323 step_start ",
+          "26.336 step_start ",
+          "27.348 step_start ",
+          "28.358 step_start ",
+          "29.377 step_start ",
+          "30.388 step_start ",
+          "31.400 step_start ",
+          "32.407 step_start ",
+          "33.427 step_start ",
+          "34.439 step_start ",
+          "35.451 step_start ",
+          "36.464 step_start ",
+          "37.484 step_start ",
+          "38.494 step_start ",
+          "39.505 step_start ",
+          "40.512 step_start ",
+          "41.528 step_start ",
+          "42.537 step_start ",
+          "43.547 step_start ",
+          "44.558 step_start ",
+          "45.576 step_start ",
+          "46.589 step_start ",
+          "47.601 step_start ",
+          "48.612 step_start ",
+          "49.630 step_start ",
+          "50.642 step_start ",
+          "51.654 step_start ",
+          "52.662 step_start ",
+          "53.678 step_start "
+        ],
+        "apparent_r_ohm": 102.50771299945521,
+        "median_v_over_i_ohm": 102.50768058711901
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/resistor/b2r-rest_20261105T103455Z.h5",
+      "measurement_id": "b2r-rest",
+      "sample_id": "R100",
+      "protocol": "rest",
+      "start_utc": "2026-11-05T10:34:55.577958Z",
+      "duration_s": 10.02935394,
+      "records": 100,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b2r-rest",
+        "outcome": "completed",
+        "records": 100,
+        "duration_s": 10.02935394,
+        "spacing_s": {
+          "0.1s": {
+            "n": 99,
+            "median": 0.10000296000000031,
+            "p99": 0.10005266160000002,
+            "max": 0.10078577999999982
+          }
+        },
+        "spacing_max_s": 0.10078577999999982,
+        "rest_v_first_last": [
+          -1.16825103759766e-05,
+          -1.28746032714844e-05
+        ],
+        "v_min_max": [
+          -1.57356262207031e-05,
+          -1.12056732177734e-05
+        ],
+        "i_min_max": [
+          1.45519152283669e-11,
+          3.45607986673713e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/nb/b2r-pulse_20261105T120107Z.h5",
+      "measurement_id": "b2r-pulse",
+      "sample_id": "R100",
+      "protocol": "bipolar_pulse",
+      "start_utc": "2026-11-05T12:01:07.381919Z",
+      "duration_s": 86.08073572,
+      "records": 13567,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b2r-pulse",
+        "outcome": "completed",
+        "records": 13567,
+        "duration_s": 86.08073572,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 13368,
+            "median": 0.005980559999997581,
+            "p99": 0.006050286199999561,
+            "max": 0.007113259999999677
+          },
+          "0.0153s": {
+            "n": 44,
+            "median": 0.015253900000000264,
+            "p99": 0.017073369799999405,
+            "max": 0.01711170000000095
+          },
+          "0.0185s": {
+            "n": 34,
+            "median": 0.01854820999999962,
+            "p99": 0.019981471400000644,
+            "max": 0.02002616000000046
+          },
+          "0.1s": {
+            "n": 39,
+            "median": 0.09997455999999993,
+            "p99": 0.09999445039999984,
+            "max": 0.09999517999999963
+          },
+          "0.142s": {
+            "n": 1,
+            "median": 0.1415389600000001,
+            "p99": 0.1415389600000001,
+            "max": 0.1415389600000001
+          }
+        },
+        "spacing_max_s": 0.1415389600000001,
+        "rest_v_first_last": [
+          9.94205474853516e-05,
+          2.33650207519531e-05
+        ],
+        "v_min_max": [
+          -0.0462408065795898,
+          0.0462374687194824
+        ],
+        "i_min_max": [
+          -0.000450005289167166,
+          0.00045002275146544
+        ],
+        "events": [
+          "0.000 step_start ",
+          "5.077 step_start ",
+          "6.084 step_start ",
+          "7.095 step_start ",
+          "8.107 step_start ",
+          "9.123 step_start ",
+          "10.136 step_start ",
+          "11.149 step_start ",
+          "12.158 step_start ",
+          "13.176 step_start ",
+          "14.187 step_start ",
+          "15.200 step_start ",
+          "16.212 step_start ",
+          "17.229 step_start ",
+          "18.243 step_start ",
+          "19.258 step_start ",
+          "20.265 step_start ",
+          "21.283 step_start ",
+          "22.298 step_start ",
+          "23.310 step_start ",
+          "24.317 step_start ",
+          "25.335 step_start ",
+          "26.345 step_start ",
+          "27.360 step_start ",
+          "28.369 step_start ",
+          "29.388 step_start ",
+          "30.399 step_start ",
+          "31.411 step_start ",
+          "32.423 step_start ",
+          "33.443 step_start ",
+          "34.454 step_start ",
+          "35.456 step_start ",
+          "36.462 step_start ",
+          "37.481 step_start ",
+          "38.495 step_start ",
+          "39.509 step_start ",
+          "40.516 step_start ",
+          "41.533 step_start ",
+          "42.546 step_start ",
+          "43.561 step_start ",
+          "44.571 step_start ",
+          "45.589 step_start ",
+          "46.601 step_start ",
+          "47.613 step_start ",
+          "48.620 step_start ",
+          "49.638 step_start ",
+          "50.651 step_start ",
+          "51.662 step_start ",
+          "52.673 step_start ",
+          "53.689 step_start "
+        ],
+        "apparent_r_ohm": 102.50807299574468,
+        "median_v_over_i_ohm": 102.50861208123126
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b2/nb/b2r-pulse_20261105T115921Z.h5",
+      "measurement_id": "b2r-pulse",
+      "sample_id": "R100",
+      "protocol": "bipolar_pulse",
+      "start_utc": "2026-11-05T11:59:21.157494Z",
+      "duration_s": 85.0,
+      "records": 13567,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "b2r-pulse",
+        "outcome": "completed",
+        "records": 13567,
+        "duration_s": 85.0,
+        "spacing_s": {
+          "0.00599s": {
+            "n": 13446,
+            "median": 0.0059880239520957446,
+            "p99": 0.005988023952099297,
+            "max": 0.005988023952099297
+          },
+          "0.1s": {
+            "n": 40,
+            "median": 0.10000000000000009,
+            "p99": 0.10000000000000053,
+            "max": 0.10000000000000053
+          }
+        },
+        "spacing_max_s": 0.10000000000000053,
+        "rest_v_first_last": [
+          0.10000628651105467,
+          0.10110032737717944
+        ],
+        "v_min_max": [
+          0.08885115949581886,
+          0.11026647658763973
+        ],
+        "i_min_max": [
+          -0.00045,
+          0.00045
+        ],
+        "events": [
+          "0.000 step_start ",
+          "5.000 step_start ",
+          "6.000 step_start ",
+          "7.000 step_start ",
+          "8.000 step_start ",
+          "9.000 step_start ",
+          "10.000 step_start ",
+          "11.000 step_start ",
+          "12.000 step_start ",
+          "13.000 step_start ",
+          "14.000 step_start ",
+          "15.000 step_start ",
+          "16.000 step_start ",
+          "17.000 step_start ",
+          "18.000 step_start ",
+          "19.000 step_start ",
+          "20.000 step_start ",
+          "21.000 step_start ",
+          "22.000 step_start ",
+          "23.000 step_start ",
+          "24.000 step_start ",
+          "25.000 step_start ",
+          "26.000 step_start ",
+          "27.000 step_start ",
+          "28.000 step_start ",
+          "29.000 step_start ",
+          "30.000 step_start ",
+          "31.000 step_start ",
+          "32.000 step_start ",
+          "33.000 step_start ",
+          "34.000 step_start ",
+          "35.000 step_start ",
+          "36.000 step_start ",
+          "37.000 step_start ",
+          "38.000 step_start ",
+          "39.000 step_start ",
+          "40.000 step_start ",
+          "41.000 step_start ",
+          "42.000 step_start ",
+          "43.000 step_start ",
+          "44.000 step_start ",
+          "45.000 step_start ",
+          "46.000 step_start ",
+          "47.000 step_start ",
+          "48.000 step_start ",
+          "49.000 step_start ",
+          "50.000 step_start ",
+          "51.000 step_start ",
+          "52.000 step_start ",
+          "53.000 step_start "
+        ],
+        "apparent_r_ohm": 20.21301292417416,
+        "median_v_over_i_ohm": 20.23453011833068
+      }
+    }
+  ],
+  "monitor": {
+    "samples": 194,
+    "first_utc": "2026-11-05T10:26:50.767+00:00",
+    "last_utc": "2026-11-05T12:03:45.711+00:00",
+    "processes": {
+      "36844": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python /Users/bpauw/Code/ophy",
+        "cpu_pct_median": 0.1,
+        "cpu_pct_max": 0.4,
+        "rss_mb_first_last_max": [
+          52.6,
+          52.6,
+          52.6
+        ]
+      },
+      "37010": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.1,
+        "cpu_pct_max": 12.0,
+        "rss_mb_first_last_max": [
+          106.4,
+          166.6,
+          166.6
+        ]
+      },
+      "36849": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.1,
+        "cpu_pct_max": 0.9,
+        "rss_mb_first_last_max": [
+          53.7,
+          69.9,
+          69.9
+        ]
+      },
+      "36848": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.0,
+        "cpu_pct_max": 0.0,
+        "rss_mb_first_last_max": [
+          20.2,
+          20.2,
+          20.2
+        ]
+      },
+      "40232": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python /Users/bpauw/Code/ophy",
+        "cpu_pct_median": 0.4,
+        "cpu_pct_max": 0.4,
+        "rss_mb_first_last_max": [
+          52.4,
+          52.4,
+          52.4
+        ]
+      },
+      "40235": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 4.2,
+        "cpu_pct_max": 4.2,
+        "rss_mb_first_last_max": [
+          158.0,
+          158.0,
+          158.0
+        ]
+      },
+      "40234": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.5,
+        "cpu_pct_max": 0.5,
+        "rss_mb_first_last_max": [
+          69.2,
+          69.2,
+          69.2
+        ]
+      },
+      "40233": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.0,
+        "cpu_pct_max": 0.0,
+        "rss_mb_first_last_max": [
+          20.2,
+          20.2,
+          20.2
+        ]
+      },
+      "40475": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python /Users/bpauw/Code/ophy",
+        "cpu_pct_median": 0.1,
+        "cpu_pct_max": 0.1,
+        "rss_mb_first_last_max": [
+          52.0,
+          52.0,
+          52.0
+        ]
+      },
+      "40486": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.5,
+        "cpu_pct_max": 0.5,
+        "rss_mb_first_last_max": [
+          158.8,
+          158.8,
+          158.8
+        ]
+      },
+      "40477": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.0,
+        "cpu_pct_max": 0.0,
+        "rss_mb_first_last_max": [
+          69.2,
+          69.2,
+          69.2
+        ]
+      },
+      "40476": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.0,
+        "cpu_pct_max": 0.0,
+        "rss_mb_first_last_max": [
+          20.2,
+          20.2,
+          20.2
+        ]
+      },
+      "49086": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python /Users/bpauw/Code/ophy",
+        "cpu_pct_median": 0.1,
+        "cpu_pct_max": 0.4,
+        "rss_mb_first_last_max": [
+          52.5,
+          52.5,
+          52.5
+        ]
+      },
+      "49251": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.0,
+        "cpu_pct_max": 6.0,
+        "rss_mb_first_last_max": [
+          106.5,
+          161.9,
+          161.9
+        ]
+      },
+      "49088": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.1,
+        "cpu_pct_max": 0.7,
+        "rss_mb_first_last_max": [
+          54.1,
+          69.9,
+          69.9
+        ]
+      },
+      "49087": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.0,
+        "cpu_pct_max": 0.0,
+        "rss_mb_first_last_max": [
+          20.4,
+          20.4,
+          20.4
+        ]
+      },
+      "50111": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 1.5,
+        "cpu_pct_max": 12.9,
+        "rss_mb_first_last_max": [
+          163.8,
+          172.5,
+          172.6
+        ]
+      }
+    },
+    "viewer_refresh_s_max": 0.15860000000000002,
+    "viewer_refresh_at_most_records": 300807
+  }
+}

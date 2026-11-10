@@ -1,0 +1,71 @@
+{
+  "analysis": {
+    "busy_marker_span_s": 2.658e-05,
+    "configured_aperture_s": 0.02,
+    "measurement_block_span_s": 0.04101964,
+    "pre_measure_to_reading_s": 0.0409051,
+    "reading_after_start_max_s": 0.04837956,
+    "reading_after_start_min_s": 0.04835098,
+    "reading_to_post_measure_s": 0.00011454
+  },
+  "assessment": [
+    "Both reported physical edge delays are recorded; their difference gives 45.302 ms BUSY high.",
+    "The conditional START-to-buffered-timestamp interval uses marker bracketing and reported rising-delay uncertainty only; it does not establish calibrated timing accuracy.",
+    "The 41.01964 ms paired measurement operation and nominal 20 ms integration duration do not establish individual source-readback and DUT apertures.",
+    "No hardware acceptance gate is promoted; no further hardware commands were sent for this analysis."
+  ],
+  "comparison": {
+    "difference_in_reported_rising_delay_s": 0.003733,
+    "earlier_proof_run_id": 2026110203,
+    "earlier_reported_start_to_busy_rising_s": 0.001276,
+    "interpretation": "Different reported START latency is consistent with the packaged proof model checking the START event between 10 ms delays (blocks 3\u20136). This is a code-based interpretation, not a measured latency distribution or established cause.",
+    "reviewed_runtime_start_poll_period_s": 0.01
+  },
+  "hardware_gates_promoted": [],
+  "last_observed_hardware_state": {
+    "default_buffers": {
+      "defbuffer1": "12867\t100000\t1\t12867",
+      "defbuffer2": "0\t100000\t0\t0"
+    },
+    "programmed_source_level_a": 0.0,
+    "retained_proof_records": 1,
+    "status": {
+      "abi": "oe-k2460-m4-hold-v1",
+      "busy_level": 0,
+      "last_block": 17,
+      "model_state": "trigger.STATE_IDLE",
+      "model_substate": "trigger.STATE_IDLE",
+      "output_enabled": false,
+      "ready_level": 0,
+      "start_level": -1,
+      "start_overrun": false,
+      "state": "idle",
+      "timer_overrun": false
+    },
+    "unread_event_counts": {
+      "errors": 0,
+      "information": 0,
+      "warnings": 0
+    }
+  },
+  "proof_run_id": 2026110205,
+  "recorded_at_utc": "2026-11-02T11:22:01.856646+00:00",
+  "schema": "ophyd-electrochemistry/k2460-timestamp-scope-analysis-v1",
+  "scope": {
+    "capture_setup_confirmed_before_arm": "Single on CH2 BUSY rising, 100 ms window, 10\u201320 ms pretrigger",
+    "derived_busy_high_duration_s": 0.045302,
+    "interpreted_parenthetical_uncertainty_s": 1e-06,
+    "raw_trace_available_in_repository": false,
+    "reported_start_to_busy_falling_s": 0.050311,
+    "reported_start_to_busy_rising_s": 0.005009,
+    "reported_verbatim": "start-busy rise delay is 5.009(1) ms, start-busy fall =50.311(1) ms",
+    "sample_rate_and_actual_timebase": "not supplied",
+    "scope_model_reported": "older Agilent Infinium; exact model unspecified",
+    "trace_retention_reported": "waveform can only be retained on scope; actual save not independently confirmed",
+    "uncertainty_interpretation": "Parenthetical (1) interpreted as 0.001 ms uncertainty on each reported delay. Confidence/coverage, correlation and full scope/threshold/channel error budget unspecified; not a validated absolute bound."
+  },
+  "source_artifact": {
+    "path": "docs/evidence/k2460-2026-11-02-timestamp-attempt-05.json",
+    "sha256": "00a8116da59cdeabfce36618c9ded3b69b05c1e34c2bdc98e6b9c326edd426b3"
+  }
+}

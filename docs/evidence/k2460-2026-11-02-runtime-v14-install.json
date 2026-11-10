@@ -1,0 +1,116 @@
+{
+  "after_same_session": {
+    "default_buffers": {
+      "defbuffer1": "12867\t100000\t1\t12867",
+      "defbuffer2": "0\t100000\t0\t0"
+    },
+    "errors": 0,
+    "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "information": 2,
+    "initializer_absent": "false",
+    "model": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t0",
+    "output": "smu.OFF",
+    "runtime_abi": "oe-k2460-m4-hold-v1",
+    "runtime_buffer": {
+      "capacity_records": 0,
+      "end_index": null,
+      "record_count": 0,
+      "start_index": null
+    },
+    "runtime_buffer_absent": "true",
+    "runtime_build": "m4-finite-current-hold-v14",
+    "runtime_status": {
+      "abi": "oe-k2460-m4-hold-v1",
+      "busy_level": 0,
+      "last_block": 0,
+      "model_state": "trigger.STATE_EMPTY",
+      "model_substate": "trigger.STATE_EMPTY",
+      "output_enabled": false,
+      "ready_level": 0,
+      "start_level": -1,
+      "start_overrun": false,
+      "state": "idle",
+      "timer_overrun": false
+    },
+    "script_absent": "false",
+    "sense": "smu.SENSE_2WIRE",
+    "source_level_a": 0.0,
+    "terminals": "smu.TERMINALS_FRONT",
+    "warnings": 0
+  },
+  "artifact": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v14",
+    "script_name": "oe_m4_c4c40686bf2016f5c55c820b",
+    "sha256": "c4c40686bf2016f5c55c820b5d0bd34f78915dd10e6a77823d0a9cad245c6e82"
+  },
+  "authorization": "User explicitly authorized packaged v14 volatile installation only; output OFF and existing records preserved; no preparation or arm.",
+  "before": {
+    "default_buffers": {
+      "defbuffer1": "12867\t100000\t1\t12867",
+      "defbuffer2": "0\t100000\t0\t0"
+    },
+    "errors": 0,
+    "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "information": 2,
+    "initializer_absent": "true",
+    "model": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t0",
+    "output": "smu.OFF",
+    "runtime_abi": "nil",
+    "runtime_buffer_absent": "true",
+    "runtime_build": "nil",
+    "script_absent": "true",
+    "sense": "smu.SENSE_2WIRE",
+    "source_level_a": 0.0,
+    "terminals": "smu.TERMINALS_FRONT",
+    "warnings": 0
+  },
+  "completed_at_utc": "2026-11-02T10:21:27.692737+00:00",
+  "default_buffer_extent_and_capacity_preserved": true,
+  "events_consumed": false,
+  "independent_fresh_session_audit": {
+    "default_buffers": {
+      "defbuffer1": "12867\t100000\t1\t12867",
+      "defbuffer2": "0\t100000\t0\t0"
+    },
+    "errors": 0,
+    "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+    "information": 2,
+    "initializer_absent": "false",
+    "model": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t0",
+    "output": "smu.OFF",
+    "runtime_abi": "oe-k2460-m4-hold-v1",
+    "runtime_buffer": {
+      "capacity_records": 0,
+      "end_index": null,
+      "record_count": 0,
+      "start_index": null
+    },
+    "runtime_buffer_absent": "true",
+    "runtime_build": "m4-finite-current-hold-v14",
+    "runtime_status": {
+      "abi": "oe-k2460-m4-hold-v1",
+      "busy_level": 0,
+      "last_block": 0,
+      "model_state": "trigger.STATE_EMPTY",
+      "model_substate": "trigger.STATE_EMPTY",
+      "output_enabled": false,
+      "ready_level": 0,
+      "start_level": -1,
+      "start_overrun": false,
+      "state": "idle",
+      "timer_overrun": false
+    },
+    "script_absent": "false",
+    "sense": "smu.SENSE_2WIRE",
+    "source_level_a": 0.0,
+    "terminals": "smu.TERMINALS_FRONT",
+    "warnings": 0
+  },
+  "phase": "independently_verified",
+  "physical_wiring": "User freshly confirmed front-terminal four-wire resistor wiring.",
+  "prepared_or_armed": false,
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "schema": "ophyd-electrochemistry/k2460-runtime-install-v1",
+  "started_at_utc": "2026-11-02T10:21:19.384672+00:00"
+}

@@ -1,0 +1,108 @@
+{
+  "assessment": "UNREVIEWED; independent scope delay/uncertainty and event markers not yet combined; no timing gate claim.",
+  "authorization": "User explicitly authorized preparation and arming of the one-reading +1 mA / 0.2 V / 1 NPLC external-START proof, with four-wire resistor wiring and START/BUSY scope capture confirmed.",
+  "config": {
+    "buffer": {
+      "capacity_ceiling_records": 16,
+      "transfer_chunk_records": 16
+    },
+    "io": {
+      "abort": 4,
+      "abort_edge": "rising",
+      "busy": 2,
+      "busy_asserted_level": 1,
+      "external_abort_enabled": false,
+      "ready": 1,
+      "ready_asserted_level": 1,
+      "start": 3,
+      "start_edge": "rising"
+    },
+    "safety": {
+      "charge_current_max_a": 0.001,
+      "discharge_current_max_a": 0.001,
+      "power_abs_max_w": 0.001,
+      "source_off_mode": "normal",
+      "voltage_max_v": 0.2,
+      "voltage_min_v": -0.2
+    },
+    "sense": "remote",
+    "source_terminal": "front",
+    "timing": {
+      "command_timeout_s": 10.0,
+      "duration_tolerance_s": 0.0,
+      "external_start_timeout_s": 60.0,
+      "frequency_tolerance_hz": 0.0,
+      "measurement_period_tolerance_s": 0.0,
+      "poll_period_s": 0.01,
+      "required_abort_latency_s": 1.0,
+      "required_cutoff_latency_s": 1.0,
+      "scan_rate_tolerance_v_per_s": 0.0,
+      "shutdown_timeout_s": 2.0,
+      "source_period_tolerance_s": 0.0
+    },
+    "visa_resource": "TCPIP0::169.254.113.151::5025::SOCKET"
+  },
+  "default_buffers_before": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "event_counts_before": {
+    "errors": 0,
+    "information": 2,
+    "warnings": 0
+  },
+  "events_consumed": false,
+  "failure": {
+    "message": "M4 runtime entered unexpected state prepared",
+    "type": "TransportProtocolError"
+  },
+  "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "initial": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 0,
+    "model_state": "trigger.STATE_EMPTY",
+    "model_substate": "trigger.STATE_EMPTY",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "idle",
+    "timer_overrun": false
+  },
+  "phase": "arm_delivery_pending_no_automatic_retry",
+  "prepared": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 0,
+    "model_state": "trigger.STATE_BUILDING",
+    "model_substate": "trigger.STATE_BUILDING",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "prepared",
+    "timer_overrun": false
+  },
+  "proof_run_id": 2026110201,
+  "records_discarded": false,
+  "request": {
+    "current_a": 0.001,
+    "measurement_count": 1,
+    "measurement_profile": "k2460_0p2v_1nplc_v1",
+    "source_range_a": 0.001,
+    "start_mode": "external_trigger",
+    "voltage_limit_v": 0.2
+  },
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v14",
+    "script_name": "oe_m4_c4c40686bf2016f5c55c820b",
+    "sha256": "c4c40686bf2016f5c55c820b5d0bd34f78915dd10e6a77823d0a9cad245c6e82"
+  },
+  "schema": "ophyd-electrochemistry/k2460-timestamp-attempt-v1",
+  "sense_after_prepare": "smu.SENSE_4WIRE",
+  "showevents_mask": 0,
+  "started_at_utc": "2026-11-02T10:26:18.981247+00:00"
+}

@@ -1,0 +1,52 @@
+{
+  "assessment": [
+    "Terminal START-overrun and timer-overrun flags are false; all four unique tagged markers are present and monotonic.",
+    "The buffered timestamp is 40.91820 ms after PRE_MEASURE and 0.11708 ms before POST_MEASURE; measurement-block bracket 41.03528 ms. This repeats the near-operation-end timestamp observation, not proof of the current or voltage aperture.",
+    "Two mode-change warnings 1811 and informational speed-optimization event 2753 are preserved; no error was observed. These warnings are not silently suppressed.",
+    "Only the previous archived diagnostic proof reading was explicitly discarded. All 12,867 default-buffer records were retained with unchanged extent/capacity. The new reading is retained and matched in a fresh session and after recovery to IDLE."
+  ],
+  "classification": "Clean START observation and verified retained-data path; scope timing/uncertainty still pending; aperture projection not accepted.",
+  "final_observed_state": {
+    "programmed_source_level_a": 0.0,
+    "retained_proof_records": 1,
+    "status": {
+      "abi": "oe-k2460-m4-hold-v1",
+      "busy_level": 0,
+      "last_block": 17,
+      "model_state": "trigger.STATE_IDLE",
+      "model_substate": "trigger.STATE_IDLE",
+      "output_enabled": false,
+      "ready_level": 0,
+      "start_level": -1,
+      "start_overrun": false,
+      "state": "idle",
+      "timer_overrun": false
+    },
+    "unread_event_counts": {
+      "errors": 0,
+      "information": 0,
+      "warnings": 0
+    }
+  },
+  "hardware_gates_promoted": [],
+  "instrument_only_analysis": {
+    "busy_marker_span_s": 2.228e-05,
+    "configured_aperture_s": 0.02,
+    "measurement_block_span_s": 0.04103528,
+    "pre_measure_to_reading_s": 0.0409182,
+    "reading_after_start_max_s": null,
+    "reading_after_start_min_s": null,
+    "reading_to_post_measure_s": 0.00011708
+  },
+  "proof_run_id": 2026110203,
+  "reviewed_at_utc": "2026-11-02T11:03:03.210590+00:00",
+  "schema": "ophyd-electrochemistry/k2460-timestamp-review-v1",
+  "scope": {
+    "raw_trace_available": false,
+    "status": "pending user-reported delays and threshold uncertainty"
+  },
+  "source_artifact": {
+    "path": "docs/evidence/k2460-2026-11-02-timestamp-attempt-03.json",
+    "sha256": "52e56ea05a5397c0b72a9880dec90a774165c69d5cac1d50eb4f0d3acb6fbd0a"
+  }
+}

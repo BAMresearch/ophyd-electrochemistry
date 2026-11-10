@@ -21,6 +21,8 @@ from ophyd_electrochemistry.exceptions import (
 )
 from ophyd_electrochemistry.keithley.k2460.commissioning import run_read_only_diagnostic
 from ophyd_electrochemistry.keithley.k2460.runtime import packaged_runtime
+from ophyd_electrochemistry.keithley.k2460.sequencer_runtime import sequencer_packaged_runtime
+from ophyd_electrochemistry.keithley.k2460.timed_runtime import timed_packaged_runtime
 from ophyd_electrochemistry.keithley.k2460.transport import (
     PyVisaKeithley2460Transport,
     VisaTransportConfig,
@@ -377,8 +379,11 @@ def test_runtime_upload_rejects_every_source_except_packaged_artifact():
         transport.load_runtime("print('not sent')", abi="x", sha256="0" * 64)
 
 
-def test_runtime_upload_is_serialized_verified_and_leaves_output_off():
-    artifact = packaged_runtime()
+@pytest.mark.parametrize(
+    "runtime_factory", [packaged_runtime, timed_packaged_runtime, sequencer_packaged_runtime]
+)
+def test_runtime_upload_is_serialized_verified_and_leaves_output_off(runtime_factory):
+    artifact = runtime_factory()
     resource = FakeResource(
         IDENTITY,
         b"TSP\n",
@@ -403,17 +408,20 @@ def test_runtime_upload_is_serialized_verified_and_leaves_output_off():
     end_index = resource.writes.index("endscript")
     assert "\n".join(resource.writes[load_index + 1 : end_index]) + "\n" == artifact.source
     assert resource.writes[-5:] == [
-        "print(oe_m4_runtime_abi)",
-        "print(oe_m4_runtime_build)",
-        "print(type(oe_m4_initialize))",
-        "oe_m4_initialize()",
+        f"print({artifact.abi_variable})",
+        f"print({artifact.build_variable})",
+        f"print(type({artifact.initializer}))",
+        f"{artifact.initializer}()",
         "print(smu.source.output)",
     ]
     assert resource.writes[end_index + 1] == f"print({artifact.script_name} == nil)"
 
 
-def test_runtime_upload_reuses_digest_named_runtime_without_replacing_it():
-    artifact = packaged_runtime()
+@pytest.mark.parametrize(
+    "runtime_factory", [packaged_runtime, timed_packaged_runtime, sequencer_packaged_runtime]
+)
+def test_runtime_upload_reuses_digest_named_runtime_without_replacing_it(runtime_factory):
+    artifact = runtime_factory()
     resource = FakeResource(
         IDENTITY,
         b"TSP\n",

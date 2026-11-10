@@ -1,0 +1,55 @@
+{
+  "assessment": [
+    "Clean recorded terminal START/timer-overrun flags, four unique monotonic run-tagged markers, archived events, independently matched retained reading.",
+    "Only the explicitly authorized run2026110204 reading was discarded after archive checks and fresh match. New run2026110205 reading retained, default-buffer count/extents/capacity preserved; contents not compared.",
+    "Measurement-block markers do not establish either individual electrical aperture; no timestamp-reference or timing-accuracy acceptance claim."
+  ],
+  "final_observed_state": {
+    "default_buffers": {
+      "defbuffer1": "12867\t100000\t1\t12867",
+      "defbuffer2": "0\t100000\t0\t0"
+    },
+    "programmed_source_level_a": 0.0,
+    "retained_proof_records": 1,
+    "status": {
+      "abi": "oe-k2460-m4-hold-v1",
+      "busy_level": 0,
+      "last_block": 17,
+      "model_state": "trigger.STATE_IDLE",
+      "model_substate": "trigger.STATE_IDLE",
+      "output_enabled": false,
+      "ready_level": 0,
+      "start_level": -1,
+      "start_overrun": false,
+      "state": "idle",
+      "timer_overrun": false
+    },
+    "unread_event_counts": {
+      "errors": 0,
+      "information": 0,
+      "warnings": 0
+    }
+  },
+  "hardware_gates_promoted": [],
+  "instrument_only_analysis": {
+    "busy_marker_span_s": 2.658e-05,
+    "configured_aperture_s": 0.02,
+    "measurement_block_span_s": 0.04101964,
+    "pre_measure_to_reading_s": 0.0409051,
+    "reading_after_start_max_s": null,
+    "reading_after_start_min_s": null,
+    "reading_to_post_measure_s": 0.00011454
+  },
+  "proof_run_id": 2026110205,
+  "reviewed_at_utc": "2026-11-02T11:19:24.358885+00:00",
+  "schema": "ophyd-electrochemistry/k2460-timestamp-review-v1",
+  "scope": {
+    "scope_model_reported": "older Agilent Infinium; exact model unspecified",
+    "status": "pending user report; Single on CH2 BUSY rising was confirmed before arm",
+    "trace_retention_reported": "only on scope; no exported waveform in repository"
+  },
+  "source_artifact": {
+    "path": "docs/evidence/k2460-2026-11-02-timestamp-attempt-05.json",
+    "sha256": "00a8116da59cdeabfce36618c9ded3b69b05c1e34c2bdc98e6b9c326edd426b3"
+  }
+}

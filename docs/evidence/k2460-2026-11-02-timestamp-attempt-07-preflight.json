@@ -1,0 +1,82 @@
+{
+  "buffer": {
+    "capacity_records": 16,
+    "end_index": 1,
+    "record_count": 1,
+    "start_index": 1
+  },
+  "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "mutating_hardware_commands_sent": false,
+  "observed_at_utc": "2026-11-02T14:10:14.878683+00:00",
+  "output": "smu.OFF",
+  "queries": [
+    {
+      "command": "print(oe_m4_runtime_build)",
+      "response": "m4-finite-current-hold-v14"
+    },
+    {
+      "command": "print(oe_m4_runtime_abi)",
+      "response": "oe-k2460-m4-hold-v1"
+    },
+    {
+      "command": "print(smu.source.output)",
+      "response": "smu.OFF"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_IDLE\ttrigger.STATE_IDLE\t17\tsmu.OFF\t0\t0\t-1\ttrue\tfalse"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "response": "0"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "response": "1\t1\t1\t16"
+    },
+    {
+      "command": "print(digio.line[3].mode)",
+      "response": "digio.MODE_TRIGGER_IN"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "response": "0"
+    },
+    {
+      "command": "print(smu.measure.sense)",
+      "response": "smu.SENSE_4WIRE"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "response": "0\t100000\t0\t0"
+    }
+  ],
+  "runtime_abi": "oe-k2460-m4-hold-v1",
+  "runtime_build": "m4-finite-current-hold-v14",
+  "source_level_a": 0.0,
+  "status": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_IDLE",
+    "model_substate": "trigger.STATE_IDLE",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": true,
+    "state": "idle",
+    "timer_overrun": false
+  }
+}

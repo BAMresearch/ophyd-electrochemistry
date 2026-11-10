@@ -1,0 +1,169 @@
+# MVP sprint plan
+
+Started 2026-11-03. Experiment: two beamline days in the **first week of December 2026**;
+software freeze Mon 30 Nov. Human-facing living plan: Claude Doc
+"K2460 battery-pulse MVP — living plan". Codex task briefs: `briefs/`.
+The beamline does not run Bluesky; we run our own stack next to it.
+
+## Scope
+
+**In:**
+
+1. Reference galvanostatic (and potentiostatic) charge/discharge cycling with
+   instrument-local voltage cutoffs (optionally a CV hold with current cutoff).
+2. Bipolar square current pulses with zero-current rests, repeated N times for
+   reproducibility, at several states of charge, for a Renard series of pulse times.
+3. The user's own laptop runs the notebook and owns the 2460 (Ethernet link).
+   Start by an external hardware trigger on a 2460 digital input, or by a
+   software start whose source is not yet specified. The sequence runs
+   instrument-locally either way; the start method only gates its first step.
+   Step-start TTL markers and UTC-anchored buffer timestamps let the data be
+   aligned with beamline data afterwards.
+4. One Jupyter notebook per run, live plotting, run parameters read from an Excel
+   run sheet (one row per run, `measurement_id` first). Slowly changing settings
+   (limits, ranges, wiring, off-mode) live in the notebook.
+5. Plans launchable through a single QueueServer that owns the 2460 (no
+   leader/follower setup yet).
+
+**Decided 2026-11-03:** the notebook runs its own RunEngine (simplest path)
+and stays the beamline fallback. A QueueServer profile (O7) follows the notebook,
+reusing the MOUSE stack (Redis + RE Manager already in use); whether the dress
+rehearsal runs through it is decided at the 19–20 Nov gate. Python 3.14,
+bluesky 1.16.x; take patch releases until the 30 Nov freeze. Tiled is optional
+(the per-run HDF5 file is the primary record). Output is one
+structured HDF5 file per run with separate groups for equipment settings, run
+settings (including the full Excel row, optional sample IDs and notes) and
+readouts. Bench days are normally Thu/Fri/Mon.
+
+**Protocol estimates (user, 2026-11-03, may change):** two-electrode cells;
+capacity and currents TBD. Pulse times 0.1–100 s (Renard series); rest = pulse
+time, minimum 1 s; repeats log-interpolated from 100 at 0.1 s to 6 at 100 s; SOC set
+and checked by voltage (CC to a target voltage, then rest).
+Consequences:
+
+- A full R5 series (16 pulse times) then takes about **2.9 h per SOC** and
+  ~281k records (largest single run ~26k records).
+- 0.1 s pulses need sub-10 ms sampling (0.1 NPLC ≈ 5 ms/reading on the resistor);
+  100 s pulses at that rate would produce ~10⁶ records. Steps therefore get
+  two-phase sampling (agreed): a fast interval for an initial window after the
+  edge, then a slow interval. Proposed defaults 5 ms (0.1 NPLC) for 0.5 s, then
+  100 ms (1 NPLC); confirm on the bench.
+
+**Out (for now):** leader/follower QueueServers, PRBS/multisine/arbitrary
+waveform playback, aperture/timestamp metrology beyond buffer timestamps,
+voltage pulse trains, EIS.
+
+## Design
+
+### One step-sequence model for every protocol
+
+A run is a finite `Sequence` of `Step`s, plus an optional repeated block:
+
+| Step field | Meaning |
+|---|---|
+| `mode` | `current`, `voltage` or `rest` (rest = 0 A, output on, measures OCV) |
+| `level` | A or V |
+| `duration_s` | maximum step duration |
+| `sample_interval_s` | measurement spacing within the step (slow phase) |
+| `fast_interval_s`, `fast_window_s` | optional faster spacing for the first part of the step |
+| `v_min`, `v_max` | (current/rest steps) voltage cutoffs |
+| `i_abs_min` | (voltage steps) taper cutoff for CV holds |
+| `on_cutoff` | `next` (end step, continue) or `stop` (end run, output OFF) |
+
+Examples:
+
+- Cycling: `{CC +I → v_max (next), [CV v_max → i_abs_min], rest, CC −I → v_min (next), rest} × n`.
+- SOC positioning: `CC ±I for t (charge Q = I·t) or to a voltage`, then `rest`.
+- Bipolar pulse block: `rest r0, {+I t_p, rest t_r, −I t_p, rest t_r} × n`.
+- Renard series (R5: 1, 1.6, 2.5, 4, 6.3, 10, …; R10 for finer steps): one run
+  per pulse time, generated as run-sheet rows or by a helper.
+
+Global safety limits (absolute voltage window, max |I|, compliance, ranges,
+off-mode HIGH-Z) are configured per notebook/session and every sequence is
+validated against them before arming.
+
+### Instrument side: one packaged "sequencer" TSP runtime
+
+- The host calls one packaged function with the step table; the TSP builds a
+  trigger model: per step a source-config change, a marker on a digital output
+  line (step-start TTL for the beamline), a sample loop (delay → measure →
+  limit branch → counter), and a counter branch for the repeated block.
+  About 6 blocks per step; the 255-block limit allows ~35 distinct steps.
+- Step duration is set by sample count; the sample delay is set to
+  `interval − measured measurement time` per measurement profile. The true
+  timing comes from buffer timestamps and is checked on the host, not policed in
+  firmware. (The v17 timer/deadline approach is abandoned; its failure was very
+  likely BRANCH_ON_EVENT latching the first deadline event.)
+- Start: immediate on kickoff, or wait for the START digital line (v14 approach).
+- Output-off mode HIGH-Z; output OFF at normal end, cutoff-stop and abort.
+- **B0 answers (3 Nov, output OFF):** a source + measure config-list recall
+  switches both functions inside one model; the buffer can be read in chunks
+  while the model runs; 1M-record buffers allocate; off mode is per source
+  function (set and verify HIGH-Z for both at prepare; power-on resets it to
+  NORMAL); BRANCH_ON_EVENT latches an event (confirms the v17 failure).
+  TSP is Lua 5.0.2.
+- **E1/E2 answers (3 Nov, resistor, output ON):** a source-function change
+  (also via config recall in a model) turns the output OFF; CC -> CV needs a
+  `SOURCE_OUTPUT ON` block after the recall (24 ms extra, brief open circuit).
+  Same-function recalls keep the output ON (+1.5 ms): pulses and rests share
+  one current-mode list. Set source settings before the measure function.
+  Keep command lines under ~900 characters. Set auto-zero explicitly (1 NPLC
+  spacing was 82.6 ms with defaults).
+- **E3/E4 (3 Nov):** reading spacing with auto-zero OFF: 40.8 ms (1 NPLC),
+  4.83 ms (0.1 NPLC), 1.24 ms (0.01 NPLC). `BRANCH_LIMIT_CONSTANT` (LIMIT_OUTSIDE)
+  cuts off on the first sample past the window. `BRANCH_COUNTER N` = N passes.
+  Avoid unreachable blocks (validation fails at initiate).
+- **T1–T5 (3 Nov):** counters restart on re-entry, reset block exists; stale
+  ON avoided by an ON block after every function switch (toggle fallback kept);
+  6 ms loop at 0.1 NPLC = 6.002 ms; UTC mapping via `eventlog.post` ~1 ms;
+  live reads 250 records / 17 ms. Decided: 6 ms fast phase, 0.1 V compliance
+  margin, lines as in `Keithley2460Config`.
+- **S1/S2 (3 Nov, scope):** a 53-block prototype of the step layout runs as
+  designed; markers 13/13, lag the level change by 1.07 ms; +1.32 ms per step
+  change (compensated in the delays); external START -> busy 65 us. Still open (B1):
+  off-state at a cutoff, the stale `smu.source.output` reading seen once.
+
+### Host side
+
+- `Sequence`/`Step` models + validation + Excel run-sheet loader (pandas/openpyxl).
+- `SequenceBackend` protocol with two implementations: the real 2460 sequencer
+  backend and a Python simulator with a simple cell model
+  (OCV(SOC) + R0 + R1‖C1) for off-day work and tests.
+- The existing `Keithley2460Device` Flyer is reused where possible; it gains
+  live chunk reads during the run (bounded reads, ~1 s cadence).
+- Plans: `run_sequence(device, sequence, md)`; per-run metadata includes the
+  Excel row. Data: Bluesky documents + an exported per-run file (format TBD).
+- Notebook template: pick run by `measurement_id`, preview the sequence plot,
+  run, live V/I/t plot, save. A QueueServer startup profile exposes the same
+  device and plans.
+
+## Work packages
+
+Off-day (no hardware):
+
+| # | Task | Status |
+|---|---|---|
+| O1 | `Step`/`Sequence` models, validation, protocol builders (cycling, bipolar pulse block, Renard helper) | Done 3 Nov (brief 01, reviewed) |
+| O2 | Excel run-sheet template + loader | Done 3 Nov (brief 02, reviewed) |
+| O3 | Simulator backend with cell model | Done 3 Nov (brief 04, reviewed; Flyer integration in O4) |
+| O4 | Flyer integration with live chunk reads; `run_sequence` plan; live plot callback | Done 3 Nov (brief 05; simulator only) |
+| O5 | Sequencer TSP + host backend, mocked-transport tests, offline Lua syntax check | Compiler + replay (brief 07), runtime and hardware backend done 3 Nov, offline (Lua-mocked); notebook option and B1 remain |
+| O6 | Per-run notebook template (simulator first) | Done 3 Nov (brief 06; simulator only) |
+| O7 | QueueServer startup profile (MOUSE pattern: run-sheet rows → `run_from_sheet` queue items) + integration tests against the simulator | Done 3 Nov (simulator; real RE Manager + redis test); hardware flow in B2 |
+| O9 | HDF5 writer (equipment / run settings incl. Excel row / readouts) | Done 3 Nov (brief 03, reviewed) |
+| O11 | Read-only run viewer notebook (overview, follow live, V vs charge overlay); Grafana deferred | Done 3 Nov (brief 08; offline SWMR and notebook tests) |
+| O10 | Run file in SWMR mode: live cross-process reads (notebook plot while a QueueServer worker writes); our reader opens SWMR so crashed files read back; `repair_run_file` for other tools | Done 3 Nov |
+| O8 | Bench runner script that executes a test matrix and writes one evidence file | B1 runner + plan ready 3 Nov (`bench/b1_sequencer.py`, `bench/plan-b1.md`); B2 sheets, sessions, monitor + plan ready 4 Nov (`bench/plan-b2.md`), rehearsed on the simulator |
+
+Bench days (in order):
+
+| # | Load | Test matrix (summary) |
+|---|---|---|
+| B0 | resistor, output OFF throughout | Done 3 Nov: `bench/feature_probe.py` (HIGH-Z per function, config-list function switch, BRANCH_ON_EVENT latches, 1M buffer, live reads); E1–E4 energized on the resistor |
+| B1 | 100 Ω resistor, then RC dummy cell | Install sequencer; current/rest steps; bipolar pulse block; cutoff `next`/`stop` on the RC dummy; live reads during run; external START and software start; step-marker TTL on scope; HIGH-Z off state; measurement time per profile |
+| B2 | Resistor, then a HC/Na coin cell (no RC dummy yet; 4 Nov) | QueueServer and notebook flows on hardware incl. abort and crash recovery; 1 h soak; cell first contact, overnight sodiation (the day-before step), pulse runs at two SOCs, weekend reference cycle |
+| B3 | Real cell, beamline-like setup | Full dress rehearsal from the Excel sheet, including trigger wiring |
+
+## Open questions for the user
+
+See `docs/current-state.md` → "Information needed".

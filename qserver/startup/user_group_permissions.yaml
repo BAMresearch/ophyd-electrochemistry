@@ -1,0 +1,30 @@
+# Only the sequencer plans are queueable; no namespace function may be executed.
+user_groups:
+  root:
+    allowed_plans:
+      - "run_from_sheet"
+      - "recover_sequencer"
+      - "archive_retained"
+    forbidden_plans:
+      - ":^_"
+    allowed_devices:
+      - null
+    forbidden_devices:
+      - ":^_:?.*"
+    allowed_functions: []
+    forbidden_functions:
+      - null
+  primary:
+    allowed_plans:
+      - "run_from_sheet"
+      - "recover_sequencer"
+      - "archive_retained"
+    forbidden_plans:
+      - null
+    allowed_devices:
+      - null
+    forbidden_devices:
+      - null
+    allowed_functions: []
+    forbidden_functions:
+      - null

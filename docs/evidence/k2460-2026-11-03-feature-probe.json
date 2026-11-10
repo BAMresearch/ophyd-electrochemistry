@@ -1,0 +1,650 @@
+{
+  "schema": "ophyd-electrochemistry.bench-probe.v1",
+  "observed_at_utc": "2026-11-03T11:27:13.568657+00:00",
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "results": {
+    "P1_offmode": "smu.OFFMODE_HIGHZ",
+    "P1_func": "smu.FUNC_DC_CURRENT",
+    "P1_event_count": "0",
+    "P1_defbuffers": "1337\t100000\t0",
+    "P1_continuous": "trigger.CONT_AUTO",
+    "P2_set_highz": "OK V set:smu.OFFMODE_HIGHZ I before:smu.OFFMODE_HIGHZ I set:smu.OFFMODE_HIGHZ V after:smu.OFFMODE_HIGHZ",
+    "P3_configlist": "OK smu.FUNC_DC_CURRENT / smu.FUNC_DC_VOLTAGE",
+    "P4A_state": "trigger.STATE_WAITING\ttrigger.STATE_WAITING\t6",
+    "P4B_state": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t5",
+    "P5_1000000": "OK 1000000",
+    "P6_setup": "OK 2000",
+    "P6_reads": "0.26s n=75 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 75 0.000000..0.251204 | 0.52s n=150 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 75 0.254598..0.505801 | 0.78s n=228 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 78 0.509195..0.770523 | 1.04s n=305 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 77 0.773917..1.031888 | 1.30s n=381 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 76 1.035281..1.289867 | 1.56s n=458 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 77 1.293262..1.551243 | 1.82s n=535 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 77 1.554638..1.812618 | 2.08s n=611 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 76 1.816012..2.070594 | 2.34s n=687 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 76 2.073988..2.328589 | 2.59s n=763 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 76 2.331981..2.586571 | 2.85s n=839 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 76 2.589964..2.844547 | 3.11s n=915 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 76 2.847942..3.102544 | 3.37s n=991 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 76 3.105938..3.360530 | 3.62s n=1067 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 76 3.363926..3.618541 | 3.88s n=1143 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 76 3.621935..3.876550 | 4.14s n=1218 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 75 3.879945..4.131149 | 4.40s n=1294 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 76 4.134545..4.389157 | 4.65s n=1370 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 76 4.392551..4.647138 | 4.91s n=1446 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 76 4.650532..4.905156 | 5.17s n=1521 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 75 4.908549..5.159746 | 5.43s n=1598 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 77 5.163142..5.421148 | 5.69s n=1673 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 75 5.424543..5.675756 | 5.94s n=1749 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 76 5.679155..5.933740 | 6.20s n=1826 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 77 5.937134..6.195141 | 6.46s n=1901 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 75 6.198536..6.449731 | 6.71s n=1976 state=trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1 OK 75 6.453124..6.704339 | 6.97s n=2000 state=trigger.STATE_IDLE\ttrigger.STATE_IDLE\t1 OK 24 6.707733..6.785804",
+    "P6_reads_while_running": "26",
+    "P6_final_n": "2000",
+    "P7_lists": "OK 1",
+    "P7_list_sizes": "OK 2 / 2",
+    "P7_model": "OK 1",
+    "P7_state": "trigger.STATE_IDLE\ttrigger.STATE_IDLE\t4",
+    "P7_units": "OK Volt DC/Amp DCVolt DC/Amp DCAmp DC/Volt DCAmp DC/Volt DC",
+    "P7_func_after": "OK smu.FUNC_DC_VOLTAGE / smu.FUNC_DC_CURRENT",
+    "final_offmode": "smu.OFFMODE_HIGHZ",
+    "final_model": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t4",
+    "final_event_count": "10",
+    "final_defbuffers": "1337\t100000\t0"
+  },
+  "transcript": [
+    {
+      "drained_stale_lines": "0"
+    },
+    {
+      "query": "print(smu.source.output == smu.OFF)",
+      "reply": "true"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_IDLE\ttrigger.STATE_IDLE\t1"
+    },
+    {
+      "query": "print(smu.source.offmode)",
+      "reply": "smu.OFFMODE_HIGHZ"
+    },
+    {
+      "query": "print(smu.source.func)",
+      "reply": "smu.FUNC_DC_CURRENT"
+    },
+    {
+      "query": "print(eventlog.getcount(eventlog.SEV_ALL))",
+      "reply": "0"
+    },
+    {
+      "query": "print(defbuffer1.n, defbuffer1.capacity, defbuffer2.n)",
+      "reply": "1337\t100000\t0"
+    },
+    {
+      "query": "print(trigger.continuous)",
+      "reply": "trigger.CONT_AUTO"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.source.func = smu.FUNC_DC_VOLTAGE smu.source.offmode = smu.OFFMODE_HIGHZ local a = tostring(smu.source.offmode) smu.source.func = smu.FUNC_DC_CURRENT local b = tostring(smu.source.offmode) smu.source.offmode = smu.OFFMODE_HIGHZ local c = tostring(smu.source.offmode) smu.source.func = smu.FUNC_DC_VOLTAGE local d = tostring(smu.source.offmode) smu.source.func = smu.FUNC_DC_CURRENT return 'V set:' .. a .. ' I before:' .. b .. ' I set:' .. c .. ' V after:' .. d end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK V set:smu.OFFMODE_HIGHZ I before:smu.OFFMODE_HIGHZ I set:smu.OFFMODE_HIGHZ V after:smu.OFFMODE_HIGHZ"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.source.configlist.create(\"OE_PROBE\") smu.source.func = smu.FUNC_DC_CURRENT smu.source.level = 0 smu.source.configlist.store(\"OE_PROBE\") smu.source.func = smu.FUNC_DC_VOLTAGE smu.source.level = 0 smu.source.configlist.store(\"OE_PROBE\") smu.source.configlist.recall(\"OE_PROBE\", 1) local a = tostring(smu.source.func) smu.source.configlist.recall(\"OE_PROBE\", 2) local b = tostring(smu.source.func) return a .. \" / \" .. b end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK smu.FUNC_DC_CURRENT / smu.FUNC_DC_VOLTAGE"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.source.configlist.delete(\"OE_PROBE\") return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.source.func = smu.FUNC_DC_CURRENT smu.source.level = 0 return smu.source.func end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK smu.FUNC_DC_CURRENT"
+    },
+    {
+      "query": "print(smu.source.output == smu.OFF)",
+      "reply": "true"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_IDLE\ttrigger.STATE_IDLE\t1"
+    },
+    {
+      "write": "trigger.timer[1].reset()"
+    },
+    {
+      "write": "trigger.timer[1].delay = 0.05"
+    },
+    {
+      "write": "trigger.timer[1].count = 1"
+    },
+    {
+      "write": "trigger.timer[1].start.stimulus = trigger.EVENT_NOTIFY1"
+    },
+    {
+      "write": "trigger.timer[1].start.generate = trigger.OFF"
+    },
+    {
+      "write": "trigger.timer[1].enable = trigger.ON"
+    },
+    {
+      "write": "trigger.model.load(\"Empty\")"
+    },
+    {
+      "write": "trigger.model.setblock(1, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY1)"
+    },
+    {
+      "write": "trigger.model.setblock(2, trigger.BLOCK_BRANCH_ON_EVENT, trigger.EVENT_TIMER1, 7)"
+    },
+    {
+      "write": "trigger.model.setblock(3, trigger.BLOCK_WAIT, trigger.EVENT_TIMER1, trigger.CLEAR_NEVER)"
+    },
+    {
+      "write": "trigger.model.setblock(4, trigger.BLOCK_DELAY_CONSTANT, 0.1)"
+    },
+    {
+      "write": "trigger.model.setblock(5, trigger.BLOCK_BRANCH_COUNTER, 1, 2)"
+    },
+    {
+      "write": "trigger.model.setblock(6, trigger.BLOCK_WAIT, trigger.EVENT_NOTIFY8)"
+    },
+    {
+      "write": "trigger.model.setblock(7, trigger.BLOCK_WAIT, trigger.EVENT_NOTIFY8)"
+    },
+    {
+      "write": "trigger.model.initiate()"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_WAITING\ttrigger.STATE_WAITING\t6"
+    },
+    {
+      "write": "trigger.model.abort()"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_ABORTED\ttrigger.STATE_ABORTED\t6"
+    },
+    {
+      "write": "trigger.timer[1].reset()"
+    },
+    {
+      "write": "trigger.timer[1].delay = 0.05"
+    },
+    {
+      "write": "trigger.timer[1].count = 1"
+    },
+    {
+      "write": "trigger.timer[1].start.stimulus = trigger.EVENT_NOTIFY1"
+    },
+    {
+      "write": "trigger.timer[1].start.generate = trigger.OFF"
+    },
+    {
+      "write": "trigger.timer[1].enable = trigger.ON"
+    },
+    {
+      "write": "trigger.model.load(\"Empty\")"
+    },
+    {
+      "write": "trigger.model.setblock(1, trigger.BLOCK_NOTIFY, trigger.EVENT_NOTIFY1)"
+    },
+    {
+      "write": "trigger.model.setblock(2, trigger.BLOCK_DELAY_CONSTANT, 0.1)"
+    },
+    {
+      "write": "trigger.model.setblock(3, trigger.BLOCK_BRANCH_ON_EVENT, trigger.EVENT_TIMER1, 5)"
+    },
+    {
+      "write": "trigger.model.setblock(4, trigger.BLOCK_WAIT, trigger.EVENT_NOTIFY8)"
+    },
+    {
+      "write": "trigger.model.setblock(5, trigger.BLOCK_WAIT, trigger.EVENT_NOTIFY8)"
+    },
+    {
+      "write": "trigger.model.initiate()"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t5"
+    },
+    {
+      "write": "trigger.model.abort()"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_ABORTED\ttrigger.STATE_ABORTED\t5"
+    },
+    {
+      "write": "trigger.timer[1].enable = trigger.OFF"
+    },
+    {
+      "write": "trigger.timer[1].reset()"
+    },
+    {
+      "write": "trigger.model.load(\"Empty\")"
+    },
+    {
+      "query": "local ok, r = pcall(function() local b = buffer.make(1000000, buffer.STYLE_STANDARD) local c = b.capacity buffer.delete(b) return c end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1000000"
+    },
+    {
+      "write": "trigger.model.abort()"
+    },
+    {
+      "query": "local ok, r = pcall(function() if oe_live ~= nil then buffer.delete(oe_live) oe_live = nil end if oe_lists then smu.source.configlist.delete('OE_SRC') smu.measure.configlist.delete('OE_MEAS') oe_lists = nil end smu.source.func = smu.FUNC_DC_CURRENT smu.source.level = 0 smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.nplc = 1 trigger.model.load(\"Empty\") return smu.source.output end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK smu.OFF"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.nplc = 0.01 oe_live = buffer.make(2000, buffer.STYLE_STANDARD) trigger.model.load(\"Empty\") trigger.model.setblock(1, trigger.BLOCK_MEASURE_DIGITIZE, oe_live, 2000) return oe_live.capacity end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 2000"
+    },
+    {
+      "write": "trigger.model.initiate()"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "75"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[1]) local final = string.format('%.6f', oe_live.relativetimestamps[75]) return '75 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 75 0.000000..0.251204"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "150"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[76]) local final = string.format('%.6f', oe_live.relativetimestamps[150]) return '75 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 75 0.254598..0.505801"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "228"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[151]) local final = string.format('%.6f', oe_live.relativetimestamps[228]) return '78 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 78 0.509195..0.770523"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "305"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[229]) local final = string.format('%.6f', oe_live.relativetimestamps[305]) return '77 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 77 0.773917..1.031888"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "381"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[306]) local final = string.format('%.6f', oe_live.relativetimestamps[381]) return '76 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 76 1.035281..1.289867"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "458"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[382]) local final = string.format('%.6f', oe_live.relativetimestamps[458]) return '77 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 77 1.293262..1.551243"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "535"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[459]) local final = string.format('%.6f', oe_live.relativetimestamps[535]) return '77 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 77 1.554638..1.812618"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "611"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[536]) local final = string.format('%.6f', oe_live.relativetimestamps[611]) return '76 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 76 1.816012..2.070594"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "687"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[612]) local final = string.format('%.6f', oe_live.relativetimestamps[687]) return '76 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 76 2.073988..2.328589"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "763"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[688]) local final = string.format('%.6f', oe_live.relativetimestamps[763]) return '76 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 76 2.331981..2.586571"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "839"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[764]) local final = string.format('%.6f', oe_live.relativetimestamps[839]) return '76 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 76 2.589964..2.844547"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "915"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[840]) local final = string.format('%.6f', oe_live.relativetimestamps[915]) return '76 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 76 2.847942..3.102544"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "991"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[916]) local final = string.format('%.6f', oe_live.relativetimestamps[991]) return '76 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 76 3.105938..3.360530"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "1067"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[992]) local final = string.format('%.6f', oe_live.relativetimestamps[1067]) return '76 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 76 3.363926..3.618541"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "1143"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[1068]) local final = string.format('%.6f', oe_live.relativetimestamps[1143]) return '76 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 76 3.621935..3.876550"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "1218"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[1144]) local final = string.format('%.6f', oe_live.relativetimestamps[1218]) return '75 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 75 3.879945..4.131149"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "1294"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[1219]) local final = string.format('%.6f', oe_live.relativetimestamps[1294]) return '76 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 76 4.134545..4.389157"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "1370"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[1295]) local final = string.format('%.6f', oe_live.relativetimestamps[1370]) return '76 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 76 4.392551..4.647138"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "1446"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[1371]) local final = string.format('%.6f', oe_live.relativetimestamps[1446]) return '76 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 76 4.650532..4.905156"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "1521"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[1447]) local final = string.format('%.6f', oe_live.relativetimestamps[1521]) return '75 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 75 4.908549..5.159746"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "1598"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[1522]) local final = string.format('%.6f', oe_live.relativetimestamps[1598]) return '77 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 77 5.163142..5.421148"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "1673"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[1599]) local final = string.format('%.6f', oe_live.relativetimestamps[1673]) return '75 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 75 5.424543..5.675756"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "1749"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[1674]) local final = string.format('%.6f', oe_live.relativetimestamps[1749]) return '76 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 76 5.679155..5.933740"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "1826"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[1750]) local final = string.format('%.6f', oe_live.relativetimestamps[1826]) return '77 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 77 5.937134..6.195141"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "1901"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[1827]) local final = string.format('%.6f', oe_live.relativetimestamps[1901]) return '75 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 75 6.198536..6.449731"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_RUNNING\ttrigger.STATE_RUNNING\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "1976"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[1902]) local final = string.format('%.6f', oe_live.relativetimestamps[1976]) return '75 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 75 6.453124..6.704339"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_IDLE\ttrigger.STATE_IDLE\t1"
+    },
+    {
+      "query": "print(oe_live.n)",
+      "reply": "2000"
+    },
+    {
+      "query": "local ok, r = pcall(function() local first = string.format('%.6f', oe_live.relativetimestamps[1977]) local final = string.format('%.6f', oe_live.relativetimestamps[2000]) return '24 ' .. first .. '..' .. final end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 24 6.707733..6.785804"
+    },
+    {
+      "write": "trigger.model.abort()"
+    },
+    {
+      "query": "local ok, r = pcall(function() if oe_live ~= nil then buffer.delete(oe_live) oe_live = nil end if oe_lists then smu.source.configlist.delete('OE_SRC') smu.measure.configlist.delete('OE_MEAS') oe_lists = nil end smu.source.func = smu.FUNC_DC_CURRENT smu.source.level = 0 smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.nplc = 1 trigger.model.load(\"Empty\") return smu.source.output end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK smu.OFF"
+    },
+    {
+      "query": "print(smu.source.output == smu.OFF)",
+      "reply": "true"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t1"
+    },
+    {
+      "write": "trigger.model.abort()"
+    },
+    {
+      "query": "local ok, r = pcall(function() if oe_switch ~= nil then buffer.delete(oe_switch) oe_switch = nil end if oe_lists then smu.source.configlist.delete('OE_SRC') smu.measure.configlist.delete('OE_MEAS') oe_lists = nil end smu.source.func = smu.FUNC_DC_CURRENT smu.source.level = 0 smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.nplc = 1 trigger.model.load(\"Empty\") return smu.source.output end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK smu.OFF"
+    },
+    {
+      "query": "local ok, r = pcall(function() smu.source.configlist.create(\"OE_SRC\") smu.measure.configlist.create(\"OE_MEAS\") oe_lists = true smu.source.func = smu.FUNC_DC_CURRENT smu.source.level = 0 smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.nplc = 1 smu.source.configlist.store(\"OE_SRC\") smu.measure.configlist.store(\"OE_MEAS\") smu.source.func = smu.FUNC_DC_VOLTAGE smu.source.level = 0 smu.measure.func = smu.FUNC_DC_CURRENT smu.measure.nplc = 1 smu.source.configlist.store(\"OE_SRC\") smu.measure.configlist.store(\"OE_MEAS\") smu.source.func = smu.FUNC_DC_CURRENT smu.measure.func = smu.FUNC_DC_VOLTAGE return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "query": "local ok, r = pcall(function() return smu.source.configlist.size(\"OE_SRC\") .. \" / \" .. smu.measure.configlist.size(\"OE_MEAS\") end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 2 / 2"
+    },
+    {
+      "query": "local ok, r = pcall(function() oe_switch = buffer.make(10, buffer.STYLE_STANDARD) trigger.model.load(\"Empty\") trigger.model.setblock(1, trigger.BLOCK_CONFIG_RECALL, \"OE_SRC\", 1, \"OE_MEAS\", 1) trigger.model.setblock(2, trigger.BLOCK_MEASURE_DIGITIZE, oe_switch, 2) trigger.model.setblock(3, trigger.BLOCK_CONFIG_RECALL, \"OE_SRC\", 2, \"OE_MEAS\", 2) trigger.model.setblock(4, trigger.BLOCK_MEASURE_DIGITIZE, oe_switch, 2) return 1 end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK 1"
+    },
+    {
+      "write": "trigger.model.initiate()"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_IDLE\ttrigger.STATE_IDLE\t4"
+    },
+    {
+      "query": "local ok, r = pcall(function() local r = '' for i = 1, oe_switch.n do r = r .. tostring(oe_switch.units[i]) .. '/' .. tostring(oe_switch.sourceunits[i]) end return r end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK Volt DC/Amp DCVolt DC/Amp DCAmp DC/Volt DCAmp DC/Volt DC"
+    },
+    {
+      "query": "local ok, r = pcall(function() return tostring(smu.source.func) .. \" / \" .. tostring(smu.measure.func) end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK smu.FUNC_DC_VOLTAGE / smu.FUNC_DC_CURRENT"
+    },
+    {
+      "write": "trigger.model.abort()"
+    },
+    {
+      "query": "local ok, r = pcall(function() if oe_switch ~= nil then buffer.delete(oe_switch) oe_switch = nil end if oe_lists then smu.source.configlist.delete('OE_SRC') smu.measure.configlist.delete('OE_MEAS') oe_lists = nil end smu.source.func = smu.FUNC_DC_CURRENT smu.source.level = 0 smu.measure.func = smu.FUNC_DC_VOLTAGE smu.measure.nplc = 1 trigger.model.load(\"Empty\") return smu.source.output end) print(ok and ('OK ' .. tostring(r)) or ('ERR ' .. tostring(r)))",
+      "reply": "OK smu.OFF"
+    },
+    {
+      "query": "print(smu.source.output == smu.OFF)",
+      "reply": "true"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t4"
+    },
+    {
+      "query": "print(smu.source.output == smu.OFF)",
+      "reply": "true"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t4"
+    },
+    {
+      "query": "print(smu.source.offmode)",
+      "reply": "smu.OFFMODE_HIGHZ"
+    },
+    {
+      "query": "print(trigger.model.state())",
+      "reply": "trigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t4"
+    },
+    {
+      "query": "print(eventlog.getcount(eventlog.SEV_ALL))",
+      "reply": "10"
+    },
+    {
+      "query": "print(defbuffer1.n, defbuffer1.capacity, defbuffer2.n)",
+      "reply": "1337\t100000\t0"
+    }
+  ],
+  "load": "100 ohm 1 W resistor, four-wire; trigger generator disconnected and off; scope off; output OFF throughout",
+  "followup_P2_direct_check": {
+    "command": "output OFF: current offmode := NORMAL; read voltage offmode; voltage := HIGHZ; read current; restore both HIGHZ",
+    "reply": "OK I set NORMAL:smu.OFFMODE_NORMAL | V reads:smu.OFFMODE_HIGHZ | I after V set HIGHZ:smu.OFFMODE_NORMAL | final I:smu.OFFMODE_HIGHZ V:smu.OFFMODE_HIGHZ",
+    "error_count_after": "0"
+  },
+  "event_log_after_run": "10 entries, all trigger-model initiated/aborted/idled notices and 2753 'not optimized for speed' warnings from P4; no errors (read with eventlog.next)",
+  "interpretation": {
+    "P2": "HIGH-Z is settable and the output-off mode is stored per source function (direct check). Power-on default was NORMAL. The sequencer must set and verify HIGH-Z for both current and voltage at every prepare.",
+    "P3": "One source configuration list holds current and voltage entries.",
+    "P4A": "INVALID as run: BRANCH_COUNTER 1 means one pass in total (E4 showed the value is the number of passes), so block 2 was never re-entered and the model always fell through to block 6. Rerun with BRANCH_COUNTER 2 parked at block 7: BRANCH_ON_EVENT latches (see k2460-2026-11-03-feature-probe-p4a-rerun.json).",
+    "P4B": "Parked at block 5: an event that occurred before BRANCH_ON_EVENT was first reached is seen on that first pass.",
+    "P5": "A 1,000,000-record standard reading buffer can be allocated.",
+    "P6": "26 chunked reads succeeded while the trigger model was RUNNING, contiguous through all 2000 records; about 3.4 ms per reading at 0.01 NPLC, output OFF. Live buffer reads during a run work.",
+    "P7": "BLOCK_CONFIG_RECALL with a source and a measure config list switches both functions inside one trigger model (readings Volt/Amp twice, then Amp/Volt twice). Verified with output OFF only; switching with output ON is a B1 item.",
+    "defbuffer1": "Unchanged at 1337 records through this run. The 12,867 records of 2 Nov were lost to the overnight power-off (power-on events report defbuffer1/2 0% filled), not to the probe."
+  }
+}

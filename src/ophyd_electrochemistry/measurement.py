@@ -9,7 +9,7 @@ from .serialization import canonical_json, sha256_json
 from .validation import integer, number, positive, text
 from .waveforms import SourceFunction
 
-MEASUREMENT_SCHEMA = "ophyd-electrochemistry/measurement-v2"
+MEASUREMENT_SCHEMA = "ophyd-electrochemistry/measurement-v4"
 _SHA256_LENGTH = 64
 
 
@@ -29,12 +29,28 @@ class TimingOrigin(Enum):
     SYNTHETIC = "synthetic"
 
 
+class ElectricalField(Enum):
+    """Electrical field whose aperture a timestamp references."""
+
+    VOLTAGE = "voltage"
+    CURRENT = "current"
+
+
 class TimestampReference(Enum):
     """Physical point represented by a sample timestamp."""
 
     APERTURE_START = "aperture_start"
     APERTURE_MIDPOINT = "aperture_midpoint"
     APERTURE_END = "aperture_end"
+    BUFFER_STORED = "buffer_stored"
+    UNRESOLVED = "unresolved"
+
+
+class RelativeTimeOrigin(Enum):
+    """Zero point of a record's relative timestamp, distinct from its reference."""
+
+    ACTUAL_START = "actual_start"
+    FIRST_STORED_READING = "first_stored_reading"
 
 
 class MappingQuality(Enum):
@@ -80,19 +96,25 @@ class ClockMapping:
 
 @dataclass(frozen=True, kw_only=True)
 class MeasurementSchema:
-    """Run-constant meaning of every :class:`MeasurementRecord` field."""
+    """Run-constant meaning of every :class:`MeasurementRecord` field.
+
+    Timestamp resolution may be unknown for first-stored-reading relative
+    records. Formatting precision alone does not establish clock resolution.
+    """
 
     source_function: SourceFunction
     voltage_origin: FieldOrigin
     current_origin: FieldOrigin
     timing_origin: TimingOrigin
     timestamp_reference: TimestampReference
+    timestamp_field: ElectricalField | None
     instrument_timestamp_origin: str
-    instrument_timestamp_resolution_s: float
+    instrument_timestamp_resolution_s: float | None
     instrument_start_timestamp_s: float | None
     source_status_definition: str
     measurement_status_definition: str
     synthetic: bool
+    relative_time_origin: RelativeTimeOrigin = RelativeTimeOrigin.ACTUAL_START
     clock_mapping: ClockMapping | None = None
     schema: str = MEASUREMENT_SCHEMA
 
@@ -106,30 +128,53 @@ class MeasurementSchema:
             ("current_origin", FieldOrigin),
             ("timing_origin", TimingOrigin),
             ("timestamp_reference", TimestampReference),
+            ("relative_time_origin", RelativeTimeOrigin),
         ):
             if not isinstance(getattr(self, name), enum_type):
                 raise ValidationError(f"{name} must be {enum_type.__name__}")
+        aperture_reference = self.timestamp_reference in (
+            TimestampReference.APERTURE_START,
+            TimestampReference.APERTURE_MIDPOINT,
+            TimestampReference.APERTURE_END,
+        )
+        if aperture_reference:
+            if not isinstance(self.timestamp_field, ElectricalField):
+                raise ValidationError("Aperture timestamp reference requires an electrical field")
+        elif self.timestamp_field is not None:
+            raise ValidationError("Non-aperture timestamp reference must not select a field")
         if type(self.synthetic) is not bool:
             raise ValidationError("synthetic must be boolean")
         electrical_origins = (self.voltage_origin, self.current_origin)
-        if self.synthetic != all(origin == FieldOrigin.SYNTHETIC for origin in electrical_origins):
+        if any(
+            (origin == FieldOrigin.SYNTHETIC) != self.synthetic for origin in electrical_origins
+        ):
             raise ValidationError(
                 "synthetic records require two synthetic electrical origins, and vice versa"
             )
         if self.synthetic != (self.timing_origin == TimingOrigin.SYNTHETIC):
             raise ValidationError("synthetic records require synthetic timing, and vice versa")
         text(self.instrument_timestamp_origin, "instrument_timestamp_origin")
-        object.__setattr__(
-            self,
-            "instrument_timestamp_resolution_s",
-            positive(self.instrument_timestamp_resolution_s, "instrument timestamp resolution"),
-        )
+        if self.instrument_timestamp_resolution_s is not None:
+            object.__setattr__(
+                self,
+                "instrument_timestamp_resolution_s",
+                positive(self.instrument_timestamp_resolution_s, "instrument timestamp resolution"),
+            )
+        elif self.relative_time_origin == RelativeTimeOrigin.ACTUAL_START:
+            raise ValidationError(
+                "Actual-START origin requires known instrument timestamp resolution"
+            )
         if self.instrument_start_timestamp_s is not None:
             object.__setattr__(
                 self,
                 "instrument_start_timestamp_s",
                 number(self.instrument_start_timestamp_s, "instrument start timestamp"),
             )
+        if self.relative_time_origin == RelativeTimeOrigin.FIRST_STORED_READING:
+            if self.instrument_start_timestamp_s is not None:
+                raise ValidationError("First-stored-reading origin requires unknown actual START")
+            if aperture_reference:
+                raise ValidationError("Unknown actual START cannot declare an aperture reference")
         text(self.source_status_definition, "source_status_definition")
         text(self.measurement_status_definition, "measurement_status_definition")
         if self.clock_mapping is not None and not isinstance(self.clock_mapping, ClockMapping):
@@ -137,15 +182,48 @@ class MeasurementSchema:
 
 
 @dataclass(frozen=True, kw_only=True)
+class MeasurementAperture:
+    """One field's half-open integration window relative to actual START.
+
+    ``uncertainty_s`` bounds each boundary when established; ``None`` makes no
+    quantitative uncertainty claim. Instrument clock resolution is separate.
+    """
+
+    start_relative_s: float
+    end_relative_s: float
+    origin: TimingOrigin
+    uncertainty_s: float | None = None
+
+    def __post_init__(self) -> None:
+        for name in ("start_relative_s", "end_relative_s"):
+            object.__setattr__(self, name, positive(getattr(self, name), name, zero=True))
+        if self.start_relative_s >= self.end_relative_s:
+            raise ValidationError("Aperture must have positive width")
+        if not isinstance(self.origin, TimingOrigin):
+            raise ValidationError("Aperture origin must be TimingOrigin")
+        if self.uncertainty_s is not None:
+            object.__setattr__(
+                self,
+                "uncertainty_s",
+                positive(self.uncertainty_s, "aperture uncertainty", zero=True),
+            )
+
+
+@dataclass(frozen=True, kw_only=True)
 class MeasurementRecord:
-    """One complete paired electrical record with explicit aperture mapping."""
+    """One paired electrical record with independent, possibly unknown windows.
+
+    ``time_relative_s`` uses the schema's explicit relative-time origin. Field
+    apertures and availability always use actual START and must remain unknown
+    when the record is relative to the first stored reading instead.
+    """
 
     sample_index: int
     instrument_timestamp_s: float
     time_relative_s: float
-    aperture_start_relative_s: float
-    aperture_end_relative_s: float
-    available_relative_s: float
+    voltage_aperture: MeasurementAperture | None
+    current_aperture: MeasurementAperture | None
+    available_relative_s: float | None
     voltage_v: float
     current_a: float
     source_function: SourceFunction
@@ -165,9 +243,6 @@ class MeasurementRecord:
         for name in (
             "instrument_timestamp_s",
             "time_relative_s",
-            "aperture_start_relative_s",
-            "aperture_end_relative_s",
-            "available_relative_s",
             "voltage_v",
             "current_a",
             "source_setpoint",
@@ -182,12 +257,27 @@ class MeasurementRecord:
         integer(self.measurement_status, "measurement_status", minimum=0)
         if not isinstance(self.mapping_quality, MappingQuality):
             raise ValidationError("mapping_quality must be MappingQuality")
-        if not (
-            self.aperture_start_relative_s
-            < self.aperture_end_relative_s
-            <= self.available_relative_s
-        ):
-            raise ValidationError("Aperture must have positive width and be available afterward")
+        if self.available_relative_s is not None:
+            object.__setattr__(
+                self,
+                "available_relative_s",
+                positive(self.available_relative_s, "available_relative_s", zero=True),
+            )
+        for aperture in (self.voltage_aperture, self.current_aperture):
+            if aperture is not None and not isinstance(aperture, MeasurementAperture):
+                raise ValidationError("Field aperture must be MeasurementAperture or None")
+            if (
+                aperture is not None
+                and self.available_relative_s is not None
+                and aperture.end_relative_s > self.available_relative_s
+            ):
+                raise ValidationError(
+                    "Complete record cannot be available before a field aperture ends"
+                )
+        if (
+            self.voltage_aperture is None or self.current_aperture is None
+        ) and self.mapping_quality != MappingQuality.UNKNOWN:
+            raise ValidationError("Unknown field aperture requires unknown waveform mapping")
 
         mapping = (
             self.first_logical_point,
@@ -368,21 +458,77 @@ class RetainedBuffer:
         if record.source_function != self.schema.source_function:
             raise RetainedDataError("Record source function differs from the fixed schema")
         resolution = self.schema.instrument_timestamp_resolution_s
-        if self.schema.instrument_start_timestamp_s is None:
-            raise RetainedDataError("Records require an actual START timestamp")
-        raw_relative = record.instrument_timestamp_s - self.schema.instrument_start_timestamp_s
-        if abs(raw_relative - record.time_relative_s) > resolution:
+        if self.schema.relative_time_origin == RelativeTimeOrigin.ACTUAL_START:
+            anchor = self.schema.instrument_start_timestamp_s
+            if anchor is None:
+                raise RetainedDataError("Actual-START relative records require a START timestamp")
+        else:
+            anchor = self.records[0].instrument_timestamp_s
+            if self.records[0].time_relative_s != 0:
+                raise RetainedDataError("First-stored-reading relative time must start at zero")
+            if (
+                record.voltage_aperture is not None
+                or record.current_aperture is not None
+                or record.available_relative_s is not None
+                or record.mapping_quality != MappingQuality.UNKNOWN
+            ):
+                raise RetainedDataError(
+                    "Unknown actual START requires unknown field windows, availability and mapping"
+                )
+        raw_relative = record.instrument_timestamp_s - anchor
+        if resolution is None and raw_relative != record.time_relative_s:
+            raise RetainedDataError(
+                "Instrument and relative timestamps must match exactly when resolution is unknown"
+            )
+        if resolution is not None and abs(raw_relative - record.time_relative_s) > resolution:
             raise RetainedDataError("Instrument and relative timestamps exceed one resolution")
+        # Unknown resolution permits exact identity only, without an inferred
+        # physical tolerance. Actual-START windows always have known resolution.
+        tolerance = 0.0 if resolution is None else resolution
+        for aperture in (record.voltage_aperture, record.current_aperture):
+            if self.schema.synthetic and aperture is None:
+                raise RetainedDataError("Synthetic records require both field apertures")
+            if aperture is not None and (
+                (aperture.origin == TimingOrigin.SYNTHETIC) != self.schema.synthetic
+            ):
+                raise RetainedDataError(
+                    "Field aperture origin disagrees with synthetic declaration"
+                )
+        reference = self.schema.timestamp_reference
+        if reference in (TimestampReference.UNRESOLVED, TimestampReference.BUFFER_STORED):
+            if reference == TimestampReference.BUFFER_STORED:
+                for aperture in (record.voltage_aperture, record.current_aperture):
+                    if (
+                        aperture is not None
+                        and record.time_relative_s + tolerance < aperture.end_relative_s
+                    ):
+                        raise RetainedDataError("Stored timestamp precedes a field aperture end")
+            if (
+                reference == TimestampReference.BUFFER_STORED
+                and record.available_relative_s is not None
+                and record.time_relative_s > record.available_relative_s + tolerance
+            ):
+                raise RetainedDataError("Record availability precedes its stored timestamp")
+            return
+        aperture = (
+            record.voltage_aperture
+            if self.schema.timestamp_field == ElectricalField.VOLTAGE
+            else record.current_aperture
+        )
+        if aperture is None:
+            raise RetainedDataError("Aperture timestamp reference requires a known field aperture")
         expected_time = {
-            TimestampReference.APERTURE_START: record.aperture_start_relative_s,
+            TimestampReference.APERTURE_START: aperture.start_relative_s,
             TimestampReference.APERTURE_MIDPOINT: (
-                record.aperture_start_relative_s + record.aperture_end_relative_s
+                aperture.start_relative_s + aperture.end_relative_s
             )
             / 2,
-            TimestampReference.APERTURE_END: record.aperture_end_relative_s,
-        }[self.schema.timestamp_reference]
-        if abs(record.time_relative_s - expected_time) > resolution:
-            raise RetainedDataError("Relative timestamp disagrees with its declared reference")
+            TimestampReference.APERTURE_END: aperture.end_relative_s,
+        }[reference]
+        if abs(record.time_relative_s - expected_time) > tolerance:
+            raise RetainedDataError(
+                "Relative timestamp disagrees with its declared field reference"
+            )
 
     @property
     def metadata(self) -> RetainedBufferMetadata:

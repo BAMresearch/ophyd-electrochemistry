@@ -1,0 +1,158 @@
+{
+  "test_matrix": "bench/plan-b2.md",
+  "load": "sim",
+  "written_utc": "2026-11-04T15:28:00+00:00",
+  "data_dirs": [
+    "/Users/bpauw/k2460-data/b2/sim"
+  ],
+  "runs": [
+    {
+      "file": "/Users/bpauw/k2460-data/b2/sim/sim-soak-10C_20261104T151638Z.h5",
+      "measurement_id": "sim-soak-10C",
+      "sample_id": "",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-04T15:16:38.879181Z",
+      "duration_s": 33000.0,
+      "records": 308203,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "sim-soak-10C",
+        "outcome": "completed",
+        "records": 308203,
+        "duration_s": 33000.0,
+        "spacing_s": {
+          "0.006s": {
+            "median": 0.005988023952340882,
+            "p99": 0.0059880239532503765,
+            "max": 0.005988023956888355
+          },
+          "0.25s": {
+            "median": 0.25,
+            "p99": 0.25,
+            "max": 0.25
+          }
+        },
+        "spacing_max_s": 0.25,
+        "rest_v_first_last": [
+          0.10000628651105467,
+          2.000123700387731
+        ],
+        "v_min_max": [
+          0.09981138624219386,
+          2.1487700705320427
+        ],
+        "i_min_max": [
+          0.0,
+          0.006
+        ],
+        "events": [
+          "0.000 step_start ",
+          "60.000 step_start ",
+          "61.000 step_start ",
+          "121.000 step_start ",
+          "122.000 step_start ",
+          "182.000 step_start ",
+          "183.000 step_start ",
+          "243.000 step_start ",
+          "244.000 step_start ",
+          "304.000 step_start ",
+          "305.000 step_start ",
+          "365.000 step_start ",
+          "366.000 step_start ",
+          "426.000 step_start ",
+          "427.000 step_start ",
+          "487.000 step_start ",
+          "488.000 step_start ",
+          "548.000 step_start ",
+          "549.000 step_start ",
+          "609.000 step_start ",
+          "610.000 step_start ",
+          "670.000 step_start ",
+          "671.000 step_start ",
+          "731.000 step_start ",
+          "732.000 step_start ",
+          "792.000 step_start ",
+          "793.000 step_start ",
+          "853.000 step_start ",
+          "854.000 step_start ",
+          "914.000 step_start ",
+          "915.000 step_start ",
+          "975.000 step_start ",
+          "976.000 step_start ",
+          "1036.000 step_start ",
+          "1037.000 step_start ",
+          "1097.000 step_start ",
+          "1098.000 step_start ",
+          "1158.000 step_start ",
+          "1159.000 step_start ",
+          "1219.000 step_start ",
+          "1220.000 step_start ",
+          "1280.000 step_start ",
+          "1281.000 step_start ",
+          "1341.000 step_start ",
+          "1342.000 step_start ",
+          "1402.000 step_start ",
+          "1403.000 step_start ",
+          "1463.000 step_start ",
+          "1464.000 step_start ",
+          "1524.000 step_start "
+        ],
+        "median_v_over_i_ohm": 354.87895146506133
+      }
+    }
+  ],
+  "monitor": {
+    "samples": 45,
+    "first_utc": "2026-11-04T15:16:38.834+00:00",
+    "last_utc": "2026-11-04T15:27:45.618+00:00",
+    "processes": {
+      "65679": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python /Users/bpauw/Code/ophy",
+        "cpu_pct_median": 0.0,
+        "cpu_pct_max": 0.4,
+        "rss_mb_first_last_max": [
+          52.8,
+          52.8,
+          52.8
+        ]
+      },
+      "65731": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 4.1,
+        "cpu_pct_max": 101.6,
+        "rss_mb_first_last_max": [
+          162.6,
+          183.8,
+          183.8
+        ]
+      },
+      "65695": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.1,
+        "cpu_pct_max": 0.4,
+        "rss_mb_first_last_max": [
+          69.4,
+          69.4,
+          69.4
+        ]
+      },
+      "65694": {
+        "command": "/Users/bpauw/Code/ophyd-electrochemistry/.venv/bin/python -c from multiprocessin",
+        "cpu_pct_median": 0.0,
+        "cpu_pct_max": 0.0,
+        "rss_mb_first_last_max": [
+          20.4,
+          20.4,
+          20.4
+        ]
+      }
+    },
+    "viewer_refresh_s_max": 0.17950000000000002,
+    "viewer_refresh_at_most_records": 308203
+  }
+}

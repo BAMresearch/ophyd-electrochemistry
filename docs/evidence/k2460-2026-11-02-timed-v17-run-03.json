@@ -1,0 +1,546 @@
+{
+  "acquisition_error": {
+    "message": "Status(obj=Keithley2460Device(prefix='', name='ec', read_attrs=[], configuration_attrs=[]), done=True, success=False)",
+    "type": "FailedStatus"
+  },
+  "acquisition_id": "timed-20261102-03",
+  "authorization": "User freshly confirmed unchanged 100 ohm / 1 W four-wire resistor and wiring, physical output OFF, and scope again waiting Single on BUSY rising at the same CH4 1 Mohm/DC/1x 200 mV/div and 200 ms/div settings. Explicitly authorized exact empty v16-to-v17 replacement, independent verification, one immediate +5 mA / 1 V / 1 s hold at 100 ms spacing, record/event archival (events marked read), recovery to IDLE/OFF/0 A, retaining all new records and preserving all default-buffer records.",
+  "before_recovery": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_BUILDING",
+    "model_substate": "trigger.STATE_BUILDING",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "prepared",
+    "timer_overrun": false
+  },
+  "completed_at_utc": "2026-11-02T16:02:56.436457+00:00",
+  "config": {
+    "buffer": {
+      "capacity_ceiling_records": 600,
+      "transfer_chunk_records": 128
+    },
+    "io": {
+      "abort": 4,
+      "abort_edge": "rising",
+      "busy": 2,
+      "busy_asserted_level": 1,
+      "external_abort_enabled": false,
+      "ready": 1,
+      "ready_asserted_level": 1,
+      "start": 3,
+      "start_edge": "rising"
+    },
+    "safety": {
+      "charge_current_max_a": 0.005,
+      "discharge_current_max_a": 0.005,
+      "power_abs_max_w": 0.005,
+      "source_off_mode": "normal",
+      "voltage_max_v": 1.0,
+      "voltage_min_v": -1.0
+    },
+    "sense": "remote",
+    "source_terminal": "front",
+    "timing": {
+      "command_timeout_s": 2.0,
+      "duration_tolerance_s": 0.0,
+      "external_start_timeout_s": 2.0,
+      "frequency_tolerance_hz": 0.0,
+      "measurement_period_tolerance_s": 0.0,
+      "poll_period_s": 0.01,
+      "required_abort_latency_s": 1.0,
+      "required_cutoff_latency_s": 1.0,
+      "scan_rate_tolerance_v_per_s": 0.0,
+      "shutdown_timeout_s": 5.0,
+      "source_period_tolerance_s": 0.0
+    },
+    "visa_resource": "TCPIP0::169.254.113.151::5025::SOCKET"
+  },
+  "defaults_after_run": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "defaults_before": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "defaults_final": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "documents": [
+    {
+      "document": {
+        "commissioning_load": "100 ohm / 1 W resistor",
+        "experiment_id": "timed-v17-resistor-first-hold",
+        "hardware_ready": false,
+        "plan_name": "plan",
+        "plan_type": "generator",
+        "scan_id": 1,
+        "time": 1793635375.9496589,
+        "timing": "uncalibrated",
+        "uid": "a8b76928-f2d0-4257-b933-eaa69d5f52b6",
+        "versions": {
+          "bluesky": "1.15.1",
+          "event_model": "1.24.0",
+          "ophyd": "1.11.2"
+        }
+      },
+      "name": "start"
+    },
+    {
+      "document": {
+        "exit_status": "fail",
+        "num_events": {},
+        "reason": "Status(obj=Keithley2460Device(prefix='', name='ec', read_attrs=[], configuration_attrs=[]), done=True, success=False)",
+        "run_start": "a8b76928-f2d0-4257-b933-eaa69d5f52b6",
+        "time": 1793635376.1795352,
+        "uid": "cb340eb6-39e7-4796-8676-2212bcc7a6c8"
+      },
+      "name": "stop"
+    }
+  ],
+  "events_after_archive": {
+    "errors": 0,
+    "information": 0,
+    "warnings": 0
+  },
+  "events_after_run": {
+    "errors": 0,
+    "information": 0,
+    "warnings": 2
+  },
+  "events_before": {
+    "errors": 0,
+    "information": 0,
+    "warnings": 0
+  },
+  "events_final": {
+    "errors": 0,
+    "information": 0,
+    "warnings": 0
+  },
+  "fresh_final": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_EMPTY",
+    "model_substate": "trigger.STATE_EMPTY",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "idle",
+    "timer_overrun": false
+  },
+  "fresh_raw_chunk": {
+    "offset": 0,
+    "records": [],
+    "records_sha256": "196ac799461aa9c2ea5f74dcb52e08d0509203750d4492eeca653ed596d08e59",
+    "schema": "ophyd-electrochemistry/k2460-buffer-proof-v1",
+    "total_records": 0
+  },
+  "hardware_gates_promoted": [],
+  "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "initial": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_EMPTY",
+    "model_substate": "trigger.STATE_EMPTY",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "idle",
+    "timer_overrun": false
+  },
+  "instrument_events": [
+    {
+      "parsed": {
+        "event_number": 5076,
+        "message": "Source Limit changed to 0.21 V due to new measure Range",
+        "node_id": 2,
+        "severity": 2,
+        "utc_nanoseconds_part": 595005360,
+        "utc_seconds": 1793639540
+      },
+      "raw": "5076\tSource Limit changed to 0.21 V due to new measure Range\t2\t2\t1793639540\t595005360"
+    },
+    {
+      "parsed": {
+        "event_number": 5076,
+        "message": "Source Limit changed to 0.212 V due to new measure Range",
+        "node_id": 2,
+        "severity": 2,
+        "utc_nanoseconds_part": 649824140,
+        "utc_seconds": 1793639540
+      },
+      "raw": "5076\tSource Limit changed to 0.212 V due to new measure Range\t2\t2\t1793639540\t649824140"
+    }
+  ],
+  "io": [
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(oe_m4_runtime_build)",
+      "kind": "query",
+      "response": "m4-finite-current-hold-v17"
+    },
+    {
+      "command": "print(oe_m4_68b25b2e332351cc134ccdf4 == nil)",
+      "kind": "query",
+      "response": "false"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "0\t0\t0\t0"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "kind": "query",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "kind": "query",
+      "response": "0\t100000\t0\t0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "*IDN?",
+      "kind": "query",
+      "response": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a"
+    },
+    {
+      "command": "*LANG?",
+      "kind": "query",
+      "response": "TSP"
+    },
+    {
+      "command": "print(localnode.linefreq)",
+      "kind": "query",
+      "response": "50"
+    },
+    {
+      "command": "print(oe_m4_runtime_build)",
+      "kind": "query",
+      "response": "m4-finite-current-hold-v17"
+    },
+    {
+      "command": "print(oe_m4_68b25b2e332351cc134ccdf4 ~= nil)",
+      "kind": "query",
+      "response": "true"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "0\t0\t0\t0"
+    },
+    {
+      "command": "print(oe_m4_runtime_build)",
+      "kind": "query",
+      "response": "m4-finite-current-hold-v17"
+    },
+    {
+      "command": "print(oe_m4_68b25b2e332351cc134ccdf4 == nil)",
+      "kind": "query",
+      "response": "false"
+    },
+    {
+      "command": "oe_timed_prepare_current_hold(0.0050000000000000001,0.01,1,1,0.10000000000000001,10,-1,1,0,2,0.01,1,1,1,2,3,1,1,1,4)",
+      "delivery": "write_confirmed",
+      "kind": "mutation"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tprepared\ttrigger.STATE_BUILDING\ttrigger.STATE_BUILDING\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "0\t0\t0\t16"
+    },
+    {
+      "command": "print(oe_m5_measurement_profile_status())",
+      "kind": "query",
+      "response": "4\t1\t2\tsmu.OFF\tsmu.OFF\tsmu.OFF\tsmu.OFF"
+    },
+    {
+      "command": "print(oe_timed_plan_status())",
+      "kind": "query",
+      "response": "1\t0.1\t10\t-1\t1\t0.05"
+    },
+    {
+      "command": "print(smu.source.level, smu.source.range, smu.source.vlimit.level)",
+      "kind": "query",
+      "response": "0.005\t0.01\t1"
+    },
+    {
+      "command": "print((string.gsub(trigger.model.getblocklist(), \"\\n\", \"|\")))",
+      "kind": "query",
+      "response": " 1) DIGITAL_IO            PATTERN: 0x02  MASK: 0x03| 2) BUFFER_CLEAR          BUFFER: oe_m5_buffer| 3) SOURCE_OUTPUT         OUTPUT: ON| 4) NOTIFY                NOTIFY: 4| 5) BRANCH_ON_EVENT       EVENT: EVENT_TIMER4  BRANCH_BLOCK: 26| 6) MEASURE_DIGITIZE      BUFFER: oe_m5_buffer INITIAL MODE: MEAS INITIAL COUNT: 1| 7) BRANCH_LIMIT_CONSTANT OUTSIDE: 1.000000,-1.000000  MEAS_BLOCK: 6   BRANCH_BLOCK: 18| 8) BRANCH_ON_EVENT       EVENT: EVENT_TIMER4  BRANCH_BLOCK: 22| 9) WAIT                  EVENT1_ID: EVENT_TIMER4  LOGIC: AND  EVENT2_ID: <n/a>  EVENT3_ID: <n/a>  CLEAR: NEVER|10) BRANCH_COUNTER        VALUE: 10  BRANCH_BLOCK: 16|11) WAIT                  EVENT1_ID: EVENT_TIMER2  LOGIC: AND  EVENT2_ID: <n/a>  EVENT3_ID: <n/a>  CLEAR: NEVER|12) SOURCE_OUTPUT         OUTPUT: OFF|13) DIGITAL_IO            PATTERN: 0x00  MASK: 0x03|14) NOTIFY                NOTIFY: 2|15) BRANCH_ALWAYS         BRANCH_BLOCK: 0 |16) WAIT                  EVENT1_ID: EVENT_TIMER3  LOGIC: AND  EVENT2_ID: <n/a>  EVENT3_ID: <n/a>  CLEAR: NEVER|17) BRANCH_ALWAYS         BRANCH_BLOCK: 5 |18) SOURCE_OUTPUT         OUTPUT: OFF|19) DIGITAL_IO            PATTERN: 0x00  MASK: 0x03|20) NOTIFY                NOTIFY: 5|21) BRANCH_ALWAYS         BRANCH_BLOCK: 0 |22) SOURCE_OUTPUT         OUTPUT: OFF|23) DIGITAL_IO            PATTERN: 0x00  MASK: 0x03|24) NOTIFY                NOTIFY: 6|25) BRANCH_ALWAYS         BRANCH_BLOCK: 0 |26) SOURCE_OUTPUT         OUTPUT: OFF|27) DIGITAL_IO            PATTERN: 0x00  MASK: 0x03|28) NOTIFY                NOTIFY: 7|29) BRANCH_ALWAYS         BRANCH_BLOCK: 0 ||* This trigger model may not be set up for low latency. *|"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tprepared\ttrigger.STATE_BUILDING\ttrigger.STATE_BUILDING\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tprepared\ttrigger.STATE_BUILDING\ttrigger.STATE_BUILDING\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tprepared\ttrigger.STATE_BUILDING\ttrigger.STATE_BUILDING\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tprepared\ttrigger.STATE_BUILDING\ttrigger.STATE_BUILDING\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "*IDN?",
+      "kind": "query",
+      "response": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a"
+    },
+    {
+      "command": "*LANG?",
+      "kind": "query",
+      "response": "TSP"
+    },
+    {
+      "command": "print(localnode.linefreq)",
+      "kind": "query",
+      "response": "50"
+    },
+    {
+      "command": "print(oe_m4_runtime_build)",
+      "kind": "query",
+      "response": "m4-finite-current-hold-v17"
+    },
+    {
+      "command": "print(oe_m4_68b25b2e332351cc134ccdf4 ~= nil)",
+      "kind": "query",
+      "response": "true"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tprepared\ttrigger.STATE_BUILDING\ttrigger.STATE_BUILDING\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "oe_m4_recover()",
+      "delivery": "write_confirmed",
+      "kind": "mutation"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "kind": "query",
+      "response": "2"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "kind": "query",
+      "response": "5076\tSource Limit changed to 0.21 V due to new measure Range\t2\t2\t1793639540\t595005360"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "kind": "query",
+      "response": "5076\tSource Limit changed to 0.212 V due to new measure Range\t2\t2\t1793639540\t649824140"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "kind": "query",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "kind": "query",
+      "response": "0\t100000\t0\t0"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(oe_m4_status())",
+      "kind": "query",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_EMPTY\ttrigger.STATE_EMPTY\t17\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(oe_m5_buffer_status())",
+      "kind": "query",
+      "response": "0\t0\t0\t16"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "kind": "query",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "kind": "query",
+      "response": "0\t100000\t0\t0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "kind": "query",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "kind": "query",
+      "response": "0"
+    }
+  ],
+  "phase": "complete_safe_retained_evidence_archived",
+  "recovered": {
+    "output": false,
+    "state": "idle"
+  },
+  "request": {
+    "experiment_id": "timed-v17-resistor-first-hold",
+    "program": {
+      "current_a": 0.005,
+      "duration_s": 1.0,
+      "lower_cutoff_v": null,
+      "sample_period_s": 0.1,
+      "upper_cutoff_v": null,
+      "voltage_limit_v": 1.0
+    },
+    "start_mode": "immediate"
+  },
+  "retained_transfer_error": {
+    "message": "Unknown retained records cannot be adopted by this backend",
+    "type": "RetainedDataError"
+  },
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v17",
+    "script_name": "oe_m4_68b25b2e332351cc134ccdf4",
+    "sha256": "68b25b2e332351cc134ccdf47d04799a365e2294776f9ab30ca78f6e5408b521"
+  },
+  "schema": "ophyd-electrochemistry/timed-resistor-run-v1",
+  "started_at_utc": "2026-11-02T16:02:55.897003+00:00",
+  "stop_error": {
+    "message": "Inspect and explicitly recover uncertain hardware first",
+    "type": "ShutdownUnconfirmed"
+  }
+}

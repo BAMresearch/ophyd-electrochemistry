@@ -1,0 +1,503 @@
+{
+  "armed": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 5,
+    "model_state": "trigger.STATE_RUNNING",
+    "model_substate": "trigger.STATE_RUNNING",
+    "output_enabled": false,
+    "ready_level": 1,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "waiting_start",
+    "timer_overrun": false
+  },
+  "armed_observed_at_utc": "2026-11-02T11:18:32.532472+00:00",
+  "assessment": "UNREVIEWED: scope timing/uncertainty and aperture reference remain to be assessed; no automatic acceptance claim.",
+  "authorization": "User confirmed unchanged front-terminal four-wire nominal 100 ohm resistor, physical output OFF and 33120A START/scope setup unchanged; older Agilent Infinium already waiting in Single on CH2 BUSY rising with 100 ms window and 10\u201320 ms pretrigger. Waveform can only be retained on scope. User explicitly authorized discarding only archived independently matched run 2026110204 reading, one +1 mA / 0.2 V limit / 1 NPLC repeat, archival of its events marking them read, and return to IDLE/OFF/0 A; preserve all 12,867 default records.",
+  "completed_at_utc": "2026-11-02T11:18:50.289156+00:00",
+  "config": {
+    "buffer": {
+      "capacity_ceiling_records": 16,
+      "transfer_chunk_records": 16
+    },
+    "io": {
+      "abort": 4,
+      "abort_edge": "rising",
+      "busy": 2,
+      "busy_asserted_level": 1,
+      "external_abort_enabled": false,
+      "ready": 1,
+      "ready_asserted_level": 1,
+      "start": 3,
+      "start_edge": "rising"
+    },
+    "safety": {
+      "charge_current_max_a": 0.001,
+      "discharge_current_max_a": 0.001,
+      "power_abs_max_w": 0.001,
+      "source_off_mode": "normal",
+      "voltage_max_v": 0.2,
+      "voltage_min_v": -0.2
+    },
+    "sense": "remote",
+    "source_terminal": "front",
+    "timing": {
+      "command_timeout_s": 10.0,
+      "duration_tolerance_s": 0.0,
+      "external_start_timeout_s": 60.0,
+      "frequency_tolerance_hz": 0.0,
+      "measurement_period_tolerance_s": 0.0,
+      "poll_period_s": 0.01,
+      "required_abort_latency_s": 1.0,
+      "required_cutoff_latency_s": 1.0,
+      "scan_rate_tolerance_v_per_s": 0.0,
+      "shutdown_timeout_s": 2.0,
+      "source_period_tolerance_s": 0.0
+    },
+    "visa_resource": "TCPIP0::169.254.113.151::5025::SOCKET"
+  },
+  "default_buffers_after_discard": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "default_buffers_after_run": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "default_buffers_before": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "default_buffers_final": {
+    "defbuffer1": "12867\t100000\t1\t12867",
+    "defbuffer2": "0\t100000\t0\t0"
+  },
+  "discarded_previous_proof_record_count": 1,
+  "empty_after_discard": {
+    "capacity_records": 16,
+    "end_index": null,
+    "record_count": 0,
+    "start_index": null
+  },
+  "event_counts_after_archive": {
+    "errors": 0,
+    "information": 0,
+    "warnings": 0
+  },
+  "event_counts_after_run": {
+    "errors": 0,
+    "information": 7,
+    "warnings": 2
+  },
+  "event_counts_before": {
+    "errors": 0,
+    "information": 0,
+    "warnings": 0
+  },
+  "events": [
+    {
+      "parsed": {
+        "event_number": 1811,
+        "message": "Setting digio line 3 to digital has reset a trigger setting for digio line",
+        "node_id": 2,
+        "severity": 2,
+        "utc_nanoseconds_part": 626839780,
+        "utc_seconds": 1793622476
+      },
+      "raw": "1811\tSetting digio line 3 to digital has reset a trigger setting for digio line\t2\t2\t1793622476\t626839780"
+    },
+    {
+      "parsed": {
+        "event_number": 1811,
+        "message": "Setting digio line 3 to digital has reset a trigger setting for digio line",
+        "node_id": 2,
+        "severity": 2,
+        "utc_nanoseconds_part": 27289720,
+        "utc_seconds": 1793622477
+      },
+      "raw": "1811\tSetting digio line 3 to digital has reset a trigger setting for digio line\t2\t2\t1793622477\t27289720"
+    },
+    {
+      "parsed": {
+        "event_number": 2753,
+        "message": "Trigger model is not optimized for speed due to multiple blocks waiting on same event",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 27427960,
+        "utc_seconds": 1793622477
+      },
+      "raw": "2753\tTrigger model is not optimized for speed due to multiple blocks waiting on same event\t4\t2\t1793622477\t27427960"
+    },
+    {
+      "parsed": {
+        "event_number": 2731,
+        "message": "Trigger model path #1 has been initiated",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 27464240,
+        "utc_seconds": 1793622477
+      },
+      "raw": "2731\tTrigger model path #1 has been initiated\t4\t2\t1793622477\t27464240"
+    },
+    {
+      "parsed": {
+        "event_number": 2734,
+        "message": "TM path #1 block #7 logged: OE_TS_PRE_BUSY:2026110205",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 643628400,
+        "utc_seconds": 1793622494
+      },
+      "raw": "2734\tTM path #1 block #7 logged: OE_TS_PRE_BUSY:2026110205\t4\t2\t1793622494\t643628400"
+    },
+    {
+      "parsed": {
+        "event_number": 2735,
+        "message": "TM path #1 block #9 logged: OE_TS_POST_BUSY:2026110205",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 643654980,
+        "utc_seconds": 1793622494
+      },
+      "raw": "2735\tTM path #1 block #9 logged: OE_TS_POST_BUSY:2026110205\t4\t2\t1793622494\t643654980"
+    },
+    {
+      "parsed": {
+        "event_number": 2736,
+        "message": "TM path #1 block #12 logged: OE_TS_PRE_MEASURE:2026110205",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 646092860,
+        "utc_seconds": 1793622494
+      },
+      "raw": "2736\tTM path #1 block #12 logged: OE_TS_PRE_MEASURE:2026110205\t4\t2\t1793622494\t646092860"
+    },
+    {
+      "parsed": {
+        "event_number": 2737,
+        "message": "TM path #1 block #14 logged: OE_TS_POST_MEASURE:2026110205",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 687112500,
+        "utc_seconds": 1793622494
+      },
+      "raw": "2737\tTM path #1 block #14 logged: OE_TS_POST_MEASURE:2026110205\t4\t2\t1793622494\t687112500"
+    },
+    {
+      "parsed": {
+        "event_number": 2732,
+        "message": "Trigger model path #1 has been idled",
+        "node_id": 2,
+        "severity": 4,
+        "utc_nanoseconds_part": 689007560,
+        "utc_seconds": 1793622494
+      },
+      "raw": "2732\tTrigger model path #1 has been idled\t4\t2\t1793622494\t689007560"
+    }
+  ],
+  "fresh_session_raw_chunk": {
+    "offset": 0,
+    "records": [
+      {
+        "buffer_relative_time_s": 0.0,
+        "measured_voltage_v": 0.10250782967,
+        "measurement_status": 8,
+        "sample_index": 0,
+        "source_current_a": 0.0010000133188,
+        "source_status": 200
+      }
+    ],
+    "records_sha256": "1075ae91ec0b9af060874a566a124b85ff242ce754b46b532c5c28795f133a1c",
+    "schema": "ophyd-electrochemistry/k2460-buffer-proof-v1",
+    "total_records": 1
+  },
+  "fresh_session_reading": {
+    "fractional_seconds": 0.68699796,
+    "line_frequency_hz": 50,
+    "nplc": 1.0,
+    "relative_timestamp_s": 0.0,
+    "utc_seconds": 1793622494
+  },
+  "fresh_session_terminal": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_IDLE",
+    "model_substate": "trigger.STATE_IDLE",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "complete",
+    "timer_overrun": false
+  },
+  "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "initial": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_IDLE",
+    "model_substate": "trigger.STATE_IDLE",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": true,
+    "state": "idle",
+    "timer_overrun": false
+  },
+  "old_record_before_authorized_discard": {
+    "offset": 0,
+    "records": [
+      {
+        "buffer_relative_time_s": 0.0,
+        "measured_voltage_v": 0.1024916172,
+        "measurement_status": 8,
+        "sample_index": 0,
+        "source_current_a": 0.0010000148322,
+        "source_status": 200
+      }
+    ],
+    "records_sha256": "9ff21364fda4f59bd84300bbb3ac648c20fa63dc0abe7b735a4fde0d8e3925f0",
+    "schema": "ophyd-electrochemistry/k2460-buffer-proof-v1",
+    "total_records": 1
+  },
+  "phase": "complete_archived_fresh_session_matched_recovered_idle_off_zero_new_record_retained",
+  "physical_confirmations": {
+    "generator": "Agilent 33120A continuous square, 0.01 Hz, 50% duty, reconnected through 1 kohm to pin 3, ground pin 9",
+    "load": "Previously confirmed front-terminal four-wire nominal 100 ohm resistor; unchanged setup in current lab session.",
+    "scope_reported_edge": "clean; user confirmed entire edge remains within -0.25 to +5.25 V limits",
+    "scope_reported_high_v": 4.5,
+    "scope_reported_low_v": 0.075
+  },
+  "prepared": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_BUILDING",
+    "model_substate": "trigger.STATE_BUILDING",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "prepared",
+    "timer_overrun": false
+  },
+  "proof_run_id": 2026110205,
+  "queries": [
+    {
+      "command": "print(oe_m4_runtime_build)",
+      "response": "m4-finite-current-hold-v14"
+    },
+    {
+      "command": "print(oe_m4_runtime_abi)",
+      "response": "oe-k2460-m4-hold-v1"
+    },
+    {
+      "command": "print(oe_m4_c4c40686bf2016f5c55c820b == nil)",
+      "response": "false"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "response": "0"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "response": "0\t100000\t0\t0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "response": "0"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "response": "0\t100000\t0\t0"
+    },
+    {
+      "command": "print(smu.measure.sense)",
+      "response": "smu.SENSE_4WIRE"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "response": "0\t100000\t0\t0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "response": "7"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "response": "2"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "1811\tSetting digio line 3 to digital has reset a trigger setting for digio line\t2\t2\t1793622476\t626839780"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "1811\tSetting digio line 3 to digital has reset a trigger setting for digio line\t2\t2\t1793622477\t27289720"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2753\tTrigger model is not optimized for speed due to multiple blocks waiting on same event\t4\t2\t1793622477\t27427960"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2731\tTrigger model path #1 has been initiated\t4\t2\t1793622477\t27464240"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2734\tTM path #1 block #7 logged: OE_TS_PRE_BUSY:2026110205\t4\t2\t1793622494\t643628400"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2735\tTM path #1 block #9 logged: OE_TS_POST_BUSY:2026110205\t4\t2\t1793622494\t643654980"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2736\tTM path #1 block #12 logged: OE_TS_PRE_MEASURE:2026110205\t4\t2\t1793622494\t646092860"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2737\tTM path #1 block #14 logged: OE_TS_POST_MEASURE:2026110205\t4\t2\t1793622494\t687112500"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ALL))",
+      "response": "2732\tTrigger model path #1 has been idled\t4\t2\t1793622494\t689007560"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "response": "0"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "response": "0"
+    },
+    {
+      "command": "print(defbuffer1.n, defbuffer1.capacity, defbuffer1.startindex, defbuffer1.endindex)",
+      "response": "12867\t100000\t1\t12867"
+    },
+    {
+      "command": "print(defbuffer2.n, defbuffer2.capacity, defbuffer2.startindex, defbuffer2.endindex)",
+      "response": "0\t100000\t0\t0"
+    }
+  ],
+  "raw_chunk": {
+    "offset": 0,
+    "records": [
+      {
+        "buffer_relative_time_s": 0.0,
+        "measured_voltage_v": 0.10250782967,
+        "measurement_status": 8,
+        "sample_index": 0,
+        "source_current_a": 0.0010000133188,
+        "source_status": 200
+      }
+    ],
+    "records_sha256": "1075ae91ec0b9af060874a566a124b85ff242ce754b46b532c5c28795f133a1c",
+    "schema": "ophyd-electrochemistry/k2460-buffer-proof-v1",
+    "total_records": 1
+  },
+  "reading": {
+    "fractional_seconds": 0.68699796,
+    "line_frequency_hz": 50,
+    "nplc": 1.0,
+    "relative_timestamp_s": 0.0,
+    "utc_seconds": 1793622494
+  },
+  "recovered": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_IDLE",
+    "model_substate": "trigger.STATE_IDLE",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "idle",
+    "timer_overrun": false
+  },
+  "request": {
+    "current_a": 0.001,
+    "measurement_count": 1,
+    "measurement_profile": "k2460_0p2v_1nplc_v1",
+    "source_range_a": 0.001,
+    "start_mode": "external_trigger",
+    "voltage_limit_v": 0.2
+  },
+  "resource": "TCPIP0::169.254.113.151::5025::SOCKET",
+  "retained_idle_raw_chunk": {
+    "offset": 0,
+    "records": [
+      {
+        "buffer_relative_time_s": 0.0,
+        "measured_voltage_v": 0.10250782967,
+        "measurement_status": 8,
+        "sample_index": 0,
+        "source_current_a": 0.0010000133188,
+        "source_status": 200
+      }
+    ],
+    "records_sha256": "1075ae91ec0b9af060874a566a124b85ff242ce754b46b532c5c28795f133a1c",
+    "schema": "ophyd-electrochemistry/k2460-buffer-proof-v1",
+    "total_records": 1
+  },
+  "runtime": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "build": "m4-finite-current-hold-v14",
+    "script_name": "oe_m4_c4c40686bf2016f5c55c820b",
+    "sha256": "c4c40686bf2016f5c55c820b5d0bd34f78915dd10e6a77823d0a9cad245c6e82"
+  },
+  "schema": "ophyd-electrochemistry/k2460-timestamp-repeat-v1",
+  "showevents_mask": 0,
+  "source_level_after_a": 0.0,
+  "start_low_observed_at_utc": "2026-11-02T11:18:32.131865+00:00",
+  "started_at_utc": "2026-11-02T11:18:31.683867+00:00",
+  "terminal": {
+    "abi": "oe-k2460-m4-hold-v1",
+    "busy_level": 0,
+    "last_block": 17,
+    "model_state": "trigger.STATE_IDLE",
+    "model_substate": "trigger.STATE_IDLE",
+    "output_enabled": false,
+    "ready_level": 0,
+    "start_level": -1,
+    "start_overrun": false,
+    "state": "complete",
+    "timer_overrun": false
+  },
+  "terminal_observed_at_utc": "2026-11-02T11:18:50.035791+00:00"
+}

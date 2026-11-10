@@ -1,0 +1,72 @@
+{
+  "errors_remaining": 0,
+  "events_consumed_and_archived": [
+    {
+      "event_number": 1811,
+      "message": "Setting digio line 3 to digital has reset a trigger setting for digio line",
+      "node_id": 2,
+      "severity": 2,
+      "utc_nanoseconds_part": 922657940,
+      "utc_seconds": 1793619343
+    },
+    {
+      "event_number": -286,
+      "message": "TSP Runtime error at line 535: START input is asserted before arm",
+      "node_id": 2,
+      "severity": 1,
+      "utc_nanoseconds_part": 922787080,
+      "utc_seconds": 1793619343
+    }
+  ],
+  "identity": "KEITHLEY INSTRUMENTS,MODEL 2460,04686198,1.7.16a",
+  "information_remaining": 0,
+  "observed_at_utc": "2026-11-02T10:29:44.240751+00:00",
+  "queries": [
+    {
+      "command": "print(oe_m4_status())",
+      "response": "oe-k2460-m4-hold-v1\tidle\ttrigger.STATE_BUILDING\ttrigger.STATE_BUILDING\t0\tsmu.OFF\t0\t0\t-1\tfalse\tfalse"
+    },
+    {
+      "command": "print(smu.source.level)",
+      "response": "0"
+    },
+    {
+      "command": "print(digio.line[3].mode)",
+      "response": "digio.MODE_DIGITAL_IN"
+    },
+    {
+      "command": "print(digio.line[3].state)",
+      "response": "digio.STATE_LOW"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "response": "1"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_WARN))",
+      "response": "1811\tSetting digio line 3 to digital has reset a trigger setting for digio line\t2\t2\t1793619343\t922657940"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "response": "1"
+    },
+    {
+      "command": "print(eventlog.next(eventlog.SEV_ERROR))",
+      "response": "-286\tTSP Runtime error at line 535: START input is asserted before arm\t1\t2\t1793619343\t922787080"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_INFO))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_WARN))",
+      "response": "0"
+    },
+    {
+      "command": "print(eventlog.getcount(eventlog.SEV_ERROR))",
+      "response": "0"
+    }
+  ],
+  "start_input_state": "digio.STATE_LOW",
+  "warnings_remaining": 0
+}
