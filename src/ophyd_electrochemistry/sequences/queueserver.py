@@ -5,10 +5,13 @@
 The RE Manager worker is the one process that owns the instrument. A session
 TOML file (``OE_SESSION``) fixes the backend, data directory and safety limits
 for every queued run. A queue item names one run-sheet row and the sheet's
-SHA-256 at enqueue time; the plan refuses a sheet that changed since. For a
-hardware session the operator confirms every run when enqueuing it, by typing
-its measurement ID after reviewing its summary. Requires the ``experiment`` and
-``queueserver`` extras (and ``visa`` for the 2460).
+SHA-256 at enqueue time; the plan refuses a sheet that changed since.
+
+The session file is where the operator fixes the set-up (instrument, terminals,
+data folder) and the operational limits; starting the RE Manager with it and
+opening the environment is the confirmation for every run in that session. Each
+run is then validated against those limits, not confirmed again. Requires the
+``experiment`` and ``queueserver`` extras (and ``visa`` for the 2460).
 """
 
 import argparse
@@ -29,7 +32,7 @@ from .backend import SequenceBackend, SequenceRequest, SimulatedSequenceBackend
 from .callbacks import RunFileWriter
 from .flyer import SequenceFlyer, archive_retained
 from .models import SafetyLimits
-from .notebook import require_confirmation, run_summary
+from .notebook import run_summary
 from .plans import run_sequence
 from .run_sheet import load_run_sheet
 
@@ -136,16 +139,13 @@ def build_namespace(session: Session, *, backend: SequenceBackend | None = None)
     )
 
     def run_from_sheet(
-        run_sheet: str, measurement_id: str, sheet_sha256: str, confirm_measurement_id: str = ""
+        run_sheet: str, measurement_id: str, sheet_sha256: str
     ) -> Generator[Msg, Any, str | None]:
         """Run one run-sheet row, validated against the session limits.
 
-        The sheet must be byte-identical to the one enqueued. Hardware sessions
-        need confirm_measurement_id equal to measurement_id (the enqueue command
-        asks the operator for it).
+        The sheet must be byte-identical to the one enqueued.
         """
         request = load_request(session, run_sheet, measurement_id, sheet_sha256)
-        require_confirmation(request, confirm_measurement_id, hardware=session.hardware)
         return (yield from run_sequence(flyer, request))
 
     def recover_sequencer() -> Generator[Msg, Any, None]:
@@ -176,10 +176,12 @@ def queue_items(
     run_sheet: str | Path,
     measurement_ids: list[str],
     *,
-    prompt: Callable[[str], str] = input,
     show: Callable[[str], None] = print,
 ) -> list[dict[str, Any]]:
-    """Validate the sheet, review every run and collect the operator's confirmations."""
+    """Validate the sheet and every selected row, show each summary, build the items.
+
+    Nothing is enqueued unless every row is valid for the session.
+    """
     sheet = Path(run_sheet).resolve()
     digest = sheet_digest(sheet)
     runs = load_run_sheet(sheet, session.limits)
@@ -192,14 +194,6 @@ def queue_items(
     for measurement_id in measurement_ids:
         request = SequenceRequest.from_run_spec(runs[measurement_id], session.limits)
         show(run_summary(request))
-        confirmed = ""
-        if session.hardware:
-            confirmed = prompt(
-                f"Check the cell, wiring, voltage window, current limit and output-off mode "
-                f"HIGH-Z for this run, then type {measurement_id!r} to confirm: "
-            ).strip()
-            if confirmed != measurement_id:
-                raise ValidationError(f"{measurement_id} not confirmed; nothing was enqueued")
         items.append(
             {
                 "name": PLAN_NAME,
@@ -207,7 +201,6 @@ def queue_items(
                     "run_sheet": str(sheet),
                     "measurement_id": measurement_id,
                     "sheet_sha256": digest,
-                    "confirm_measurement_id": confirmed,
                 },
             }
         )
@@ -215,7 +208,7 @@ def queue_items(
 
 
 def enqueue(items: Iterable[Mapping[str, Any]], zmq_control_addr: str, *, api: Any = None) -> None:
-    """Append the items to the queue, in order (only after every run was confirmed)."""
+    """Append the items to the queue, in order."""
     from bluesky_queueserver_api import BPlan  # type: ignore[import-untyped]
     from bluesky_queueserver_api.zmq import REManagerAPI  # type: ignore[import-untyped]
 
@@ -304,7 +297,7 @@ def archive_main(argv: list[str] | None = None) -> int:
 
 
 def enqueue_main(argv: list[str] | None = None) -> int:
-    """Enqueue run-sheet rows into a running RE Manager (one confirmation per hardware run)."""
+    """Validate run-sheet rows against the session and enqueue them into a running RE Manager."""
     parser = argparse.ArgumentParser(prog="oe-enqueue", description=enqueue_main.__doc__)
     parser.add_argument("run_sheet", type=Path)
     parser.add_argument("measurement_ids", nargs="+")

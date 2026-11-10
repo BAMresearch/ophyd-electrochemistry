@@ -4,6 +4,19 @@
 
 ## Unreleased
 
+- Start a sequence's leading 0 A rest on the lowest current range by default
+  (`SequencerProfile.start_on_lowest_range`), which removes the output-ON dip
+  seen on cells.
+
+- Confirm the set-up and limits once per session instead of per run:
+  `oe-enqueue`, `run_from_sheet` and the per-run notebook no longer ask for a
+  typed measurement ID (`require_confirmation` and the `confirm_measurement_id`
+  plan argument are removed).
+
+- Reorganize the documentation into a README introduction, a user guide
+  (`docs/user/`), technical documentation (`docs/technical/`) and an archive of
+  the revision-0.2 design (`docs/archive/`).
+
 - Add a read-only run viewer notebook with a run index, live SWMR follow,
   full-resolution review, and voltage overlays against time or signed charge.
   Display sampling preserves bin extrema so short pulses stay visible.

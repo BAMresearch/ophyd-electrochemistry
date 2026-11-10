@@ -1,4 +1,4 @@
-"""QueueServer session, startup namespace and enqueue confirmation (no RE Manager)."""
+"""QueueServer session, startup namespace and enqueue (no RE Manager)."""
 
 import math
 from pathlib import Path
@@ -95,17 +95,11 @@ def test_run_from_sheet_refuses_a_changed_sheet(session, sheet):
     assert namespace["run_file_writer"].path is None
 
 
-def test_hardware_session_plan_requires_confirmation(session, sheet):
+def test_hardware_session_runs_without_a_per_run_confirmation(session, sheet):
+    # The session file (set-up and limits) is the confirmation; rows only validate.
     backend = SimulatedSequenceBackend(speed=math.inf)
     namespace = build_namespace(hardware(session), backend=backend)
-    with pytest.raises(ValidationError, match="CONFIRM_MEASUREMENT_ID"):
-        namespace["RE"](
-            namespace["run_from_sheet"](str(sheet), "example-rest", sheet_digest(sheet))
-        )
-    plan = namespace["run_from_sheet"](
-        str(sheet), "example-rest", sheet_digest(sheet), confirm_measurement_id="example-rest"
-    )
-    namespace["RE"](plan)
+    namespace["RE"](namespace["run_from_sheet"](str(sheet), "example-rest", sheet_digest(sheet)))
     assert read_run_file(namespace["run_file_writer"].path)["run"]["outcome"] == "completed"
 
 
@@ -199,9 +193,12 @@ def test_archive_command_uses_the_session(tmp_path, session, monkeypatch, capsys
     assert str(backend.archived[0]) in capsys.readouterr().out
 
 
-def test_simulator_items_need_no_prompt(session, sheet):
+@pytest.mark.parametrize("hardware_session", [False, True])
+def test_items_are_built_without_a_prompt(session, sheet, hardware_session, monkeypatch):
+    monkeypatch.setattr("builtins.input", pytest.fail)
     shown = []
-    items = queue_items(session, sheet, ["example-rest"], prompt=pytest.fail, show=shown.append)
+    chosen = hardware(session) if hardware_session else session
+    items = queue_items(chosen, sheet, ["example-rest"], show=shown.append)
     assert items == [
         {
             "name": "run_from_sheet",
@@ -209,32 +206,15 @@ def test_simulator_items_need_no_prompt(session, sheet):
                 "run_sheet": str(sheet.resolve()),
                 "measurement_id": "example-rest",
                 "sheet_sha256": sheet_digest(sheet),
-                "confirm_measurement_id": "",
             },
         }
     ]
     assert "measurement_id: example-rest" in shown[0]
 
 
-def test_hardware_items_need_every_run_typed(session, sheet):
-    answers = iter(["example-rest", "wrong"])
-    with pytest.raises(ValidationError, match="not confirmed; nothing was enqueued"):
-        queue_items(
-            hardware(session),
-            sheet,
-            ["example-rest", "example-rest"],
-            prompt=lambda _: next(answers),
-            show=lambda _: None,
-        )
-    items = queue_items(
-        hardware(session), sheet, ["example-rest"], prompt=lambda q: " example-rest ", show=print
-    )
-    assert items[0]["kwargs"]["confirm_measurement_id"] == "example-rest"
-
-
-def test_unknown_ids_are_reported_before_any_prompt(session, sheet):
+def test_unknown_ids_are_reported_before_anything_is_built(session, sheet):
     with pytest.raises(ValidationError, match="Not in the sheet: nope"):
-        queue_items(hardware(session), sheet, ["nope"], prompt=pytest.fail)
+        queue_items(hardware(session), sheet, ["nope"], show=pytest.fail)
 
 
 def test_enqueue_adds_plans_in_order(session, sheet):

@@ -38,15 +38,20 @@ Tier 1 — **resistor / passive dummy load** (resistor, RC dummy cell):
   reconnect by inspection and confirm output OFF first.
 
 Tier 2 — **batteries / electrochemical cells**:
-- Every energized run needs explicit user confirmation of the cell, wiring,
-  voltage window, current limit and output-off mode for that run, run sheet or
-  exploration series.
-- An exploration series is confirmed once, at its start: a page in `bench/`
-  (e.g. `bench/plan-b2-explore.md`) holds the limits, stop rules and time limit,
-  and the user confirms them with the runner's `authorize`. The setup then stays
-  physically untouched, and the agent may run anything inside those limits. The
-  runner refuses the rest. A changed limit needs a new confirmation. On a stop
-  rule or an unexpected state, stop and report: no retry, reset or power cycle.
+- Confirmation is per **environment**, not per run or plan (user, 10 Nov). The
+  environment is a session file (`OE_SESSION` TOML, or the per-run notebook's
+  settings cell): it fixes the instrument, terminals and operational limits
+  (voltage window, current limit, duration, records), and the cell and wiring
+  are named in its header. Loading it (the user starts the RE Manager with it,
+  or names it for the agent to load) is the confirmation. Within it any run that
+  validates against its limits may run; there is no typed per-run confirmation.
+- The agent never writes, widens or edits a cell environment's limits or set-up
+  description and then loads it on its own: a new or changed cell environment
+  needs the user to say it matches what is connected.
+- An exploration series (`bench/explore.py`, a page in `bench/`) adds stop rules
+  and a time limit on top of an environment; the user starts it with the
+  runner's `authorize`. On a stop rule or an unexpected state, stop and report:
+  no retry, reset or power cycle.
 - Output-off mode must be HIGH-Z for cells; never NORMAL/ZERO (they force the
   terminals toward 0 V and discharge or sodiate the cell).
 - Voltage cutoffs must be instrument-local. Never source into an unknown DUT.
@@ -72,7 +77,7 @@ scripted runners, so a bench day is spent executing, not designing.
 
 ## Development workflow
 
-- Use `uv` with the committed `uv.lock` and the commands in `docs/development.md`
+- Use `uv` with the committed `uv.lock` and the commands in `docs/technical/development.md`
   (Python 3.14). Run tests, ruff and mypy before reporting work done.
 - Inspect `git status` first; preserve unrelated user changes.
 - Work happens on the `mvp-sprint` branch. Leave pushes, merges and releases to

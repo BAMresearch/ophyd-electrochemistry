@@ -3,9 +3,9 @@
 The RE Manager worker owns the 2460 for the whole session: do not run a
 notebook against the instrument at the same time. Every queued run is one
 run-sheet row, validated against the session limits when it is enqueued and
-again when it runs; the plan refuses a sheet that changed in between. For a
-hardware session, the enqueue command asks you to confirm each run by typing
-its measurement ID after reviewing its summary.
+again when it runs; the plan refuses a sheet that changed in between. The
+session file fixes the set-up and limits; loading it is the confirmation for
+every run in the session. The operator procedure is in `docs/user/beamtime.md`.
 
 ```sh
 uv sync --locked --extra experiment --extra visa --extra queueserver
@@ -26,7 +26,7 @@ In another terminal:
 uv run --locked oe-validate runs.xlsx --session ~/k2460-session.toml   # every row; no I/O
 uv run --locked qserver environment open        # sets HIGH-Z; connect cells after this
 uv run --locked oe-enqueue runs.xlsx R5-001 R5-002 \
-  --session ~/k2460-session.toml                 # summary + typed confirmation per run
+  --session ~/k2460-session.toml                 # validates, prints a summary per run
 uv run --locked qserver queue start
 uv run --locked qserver status
 ```

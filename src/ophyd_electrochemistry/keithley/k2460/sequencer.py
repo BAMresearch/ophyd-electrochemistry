@@ -57,11 +57,12 @@ class SequencerProfile:
     max_call_chars: int = 900
     voltage_ranges_v: tuple[float, ...] = (0.2, 2, 7, 10, 20, 100)
     current_ranges_a: tuple[float, ...] = (1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 0.1, 1, 4, 5, 7)
-    # Under test (9 Nov): the source sinks about 1.5 % of its range for ~30 ms at
-    # output ON. With this set, a leading 0 A rest outside the repeat block gets
-    # its own entry on the lowest current range; the range then changes, output
-    # ON, at the next step.
-    start_on_lowest_range: bool = False
+    # Output ON closes the relay onto the cell; on a large current range the
+    # source then draws a brief current (up to -220 mV dip on a cell, 9 Nov
+    # DC1-DC3). A leading 0 A rest outside the repeat block therefore gets its own
+    # entry on the lowest current range; the range changes, output ON, at the
+    # next step (no dip, output stays ON). Costs ~50 ms on the first sample.
+    start_on_lowest_range: bool = True
 
     def __post_init__(self) -> None:
         lines = (self.ready_line, self.busy_line, self.marker_line, self.start_line)

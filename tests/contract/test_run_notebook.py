@@ -26,6 +26,7 @@ def execute(
     measurement_id="example-rest",
     namespace=None,
     output=None,
+    stop_before=None,
 ):
     sheet = make_template(tmp_path / "runs.xlsx")
     data_dir = tmp_path / "data"
@@ -46,6 +47,8 @@ def execute(
         for cell in nbformat.read(TEMPLATE, as_version=4).cells:
             if cell.cell_type != "code":
                 continue
+            if stop_before is not None and stop_before in cell.source:
+                break
             source = cell.source
             for before, after in replacements.items():
                 source = source.replace(before, after)
@@ -73,10 +76,9 @@ def test_simulator_notebook_end_to_end(monkeypatch, tmp_path):
     assert live and "completed" in live[-1].layout.title.text
 
 
-def test_unconfirmed_hardware_run_stops_before_io_and_file_creation(monkeypatch, tmp_path):
+def test_hardware_cells_before_the_run_do_no_io_and_create_no_file(monkeypatch, tmp_path):
     namespace = {}
-    with pytest.raises(ValidationError, match="CONFIRM_MEASUREMENT_ID = 'example-rest'"):
-        execute(monkeypatch, tmp_path, backend="k2460", namespace=namespace)
+    execute(monkeypatch, tmp_path, backend="k2460", namespace=namespace, stop_before="RunEngine(")
     assert not namespace["backend"]._transport.connected
     assert not (tmp_path / "data").exists()
 

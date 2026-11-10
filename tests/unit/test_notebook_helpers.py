@@ -16,7 +16,6 @@ from ophyd_electrochemistry.sequences.notebook import (
     main,
     new_run_notebook,
     preview_figure,
-    require_confirmation,
     run_summary,
 )
 from ophyd_electrochemistry.sequences.run_sheet import load_run_sheet, make_template
@@ -75,27 +74,6 @@ def test_preview_is_the_seeded_simulation(request_spec):
     np.testing.assert_array_equal(figure.data[1].y, result.readout["current_a"])
 
 
-@pytest.mark.parametrize("confirmed", ["", "wrong", "example-rest-other"])
-def test_confirmation_names_operator_checks(request_spec, confirmed):
-    require_confirmation(request_spec, confirmed, hardware=False)
-    with pytest.raises(ValidationError) as error:
-        require_confirmation(request_spec, confirmed, hardware=True)
-    for word in (
-        "CONFIRM_MEASUREMENT_ID",
-        "cell",
-        "wiring",
-        "voltage window",
-        "current limit",
-        "output-off mode HIGH-Z",
-        "example-rest",
-    ):
-        assert word in str(error.value)
-
-
-def test_confirmation_exact_match_with_whitespace(request_spec):
-    require_confirmation(request_spec, " \texample-rest\n", hardware=True)
-
-
 def test_copy_fills_settings_clears_outputs_and_refuses_overwrite(tmp_path, sheet, limits):
     original = nbformat.read(TEMPLATE, as_version=4)
     for cell in original.cells:
@@ -139,7 +117,6 @@ def test_copy_runs_with_the_validated_limits_beside_its_file(tmp_path, sheet):
     assert "DUMMY-CELL" not in settings.source
     # Settings the generator does not own are kept.
     assert namespace["BACKEND"] == "simulator"
-    assert namespace["CONFIRM_MEASUREMENT_ID"] == ""
 
 
 def test_copy_validates_before_writing(tmp_path, sheet, limits):

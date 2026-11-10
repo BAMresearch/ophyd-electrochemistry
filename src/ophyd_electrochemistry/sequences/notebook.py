@@ -53,15 +53,6 @@ def preview_figure(
     )
 
 
-def require_confirmation(request: SequenceRequest, confirmed_id: str, *, hardware: bool) -> None:
-    """Gate each hardware request on the operator's measurement-ID confirmation."""
-    if hardware and confirmed_id.strip() != request.measurement_id:
-        raise ValidationError(
-            "Check the cell, wiring, voltage window, current limit and output-off mode HIGH-Z "
-            f"for this run, then set CONFIRM_MEASUREMENT_ID = {request.measurement_id!r}."
-        )
-
-
 def _replace_assignments(source: str, replacements: dict[str, str]) -> str:
     """Replace whole top-level assignments (multi-line ones included) by name."""
     lines = source.splitlines()

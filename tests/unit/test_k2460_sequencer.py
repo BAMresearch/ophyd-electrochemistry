@@ -347,6 +347,7 @@ def test_ranges_dedup_and_compliance(limits):
             )
         ),
         limits,
+        SequencerProfile(start_on_lowest_range=False),  # dedup of the two rests
     )
     assert len(p.sources) == 3
     assert len(p.measures) == 2
@@ -737,8 +738,9 @@ def test_hard_carbon_reference_cycle_compiles():
 
 def test_start_on_lowest_range_gives_the_leading_rest_its_own_entry(limits):
     sequence = pulse_train_sequence(0.004, 0.1, 3, rest_s=0.5, pre_rest_s=1)
-    plain = compile_program(sequence, limits)
-    settled = compile_program(sequence, limits, SequencerProfile(start_on_lowest_range=True))
+    plain = compile_program(sequence, limits, SequencerProfile(start_on_lowest_range=False))
+    settled = compile_program(sequence, limits)  # the default since 10 Nov
+    assert SequencerProfile().start_on_lowest_range is True
     assert [s.range for s in plain.sources] == [0.01, 0.01]
     assert [(s.level, s.range) for s in settled.sources] == [(0, 1e-6), (0.004, 0.01), (0, 0.01)]
     assert [p.source_entry for p in settled.steps] == [1, 2, 3]
