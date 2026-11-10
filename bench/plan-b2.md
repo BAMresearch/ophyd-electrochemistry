@@ -97,7 +97,9 @@ expected. `archive_retained` holds the records the 2460 kept.
 
 ## 3. Coin cell (`--load cell`, tier 2)
 
-**Every cell run is confirmed by you,** by typing its measurement ID in
+**Superseded 10 Nov:** confirmation is now once per session (`AGENTS.md`,
+tier 2); `oe-enqueue` no longer asks for a typed measurement ID. At the time
+of this plan, every cell run was confirmed by typing its measurement ID in
 `oe-enqueue` after checking:
 - the cell ID;
 - the wiring: **HC on HI (force and sense), Na on LO**;

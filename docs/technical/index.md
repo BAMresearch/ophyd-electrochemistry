@@ -93,12 +93,16 @@ The sequencer's block layout, timing, cutoffs and runtime API are described in
 ## Safety layers
 
 1. **Host validation:** every row against the session limits (`validate`), and
-   compilation (ranges, sampling feasibility, block budget), before any I/O.
+   compilation (ranges, sampling feasibility, block budget) in `oe-validate`,
+   `oe-enqueue` and again at prepare, before any I/O.
 2. **Runtime validation:** the TSP checks every uploaded value against the
    limits configured at prepare, so a host bug cannot upload an out-of-window
    level.
-3. **Instrument-local cutoffs:** the absolute window is a STOP branch after
-   every reading; compliance sits 0.1 V outside the window.
+3. **Instrument-local cutoffs:** in current and rest steps the absolute
+   window is a STOP branch after every voltage reading, and compliance sits
+   0.1 V outside it. Voltage (CV) steps measure current: their level is inside
+   the window by validation, compliance is `i_max_abs`, and the only branch is
+   the taper cutoff.
 4. **Output state:** HIGH-Z for both source functions; output OFF at end, stop
    and abort, confirmed by read-back (with a function-toggle fallback for a stale
    ON reading).

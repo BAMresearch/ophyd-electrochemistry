@@ -63,7 +63,10 @@ not cost blocks (the instrument counts them itself), but every step and every
 change of sampling rate does. `oe-validate` reports the block count and refuses
 a row that does not fit. In practice:
 
-- `pulse_train`, `soc_position`, `rest` and single cycles always fit.
+- `rest`, `soc_position` and single cycles fit. A `pulse_train` usually fits,
+  but not always: each step sampled at two rates costs about 14 blocks, and
+  `rest_end_v` and an external start add more. For example, 1 s pulses with
+  3 s rests, `rest_end_v` and an external start need 65 blocks.
 - A `bipolar_pulse` row fits only when `fast_window_s` is at least `pulse_s`
   and `rest_s`, so every step samples at one rate. Otherwise use one
   `pulse_train` row per direction.
@@ -99,7 +102,8 @@ oe-validate runs.xlsx hc01-sod-pulse --session my-session.toml
 
 One line per row: protocol, start mode, duration, maximum readings, trigger
 blocks and integration time (NPLC). Fix every `FAIL` line. Validation needs no
-instrument.
+instrument. `oe-enqueue` repeats the same checks and queues nothing if any
+named row fails.
 
 **Do not edit the sheet after its runs are queued:** a queued run refuses to
 start if the file has changed since it was enqueued (it compares a checksum).

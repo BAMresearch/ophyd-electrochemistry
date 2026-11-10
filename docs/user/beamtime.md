@@ -67,8 +67,9 @@ qserver queue get         # what is queued
 qserver queue start       # runs the queue in order
 ```
 
-`oe-enqueue` validates the named rows against the session, prints a summary of
-each and adds them in order; if any row is invalid, nothing is queued. The
+`oe-enqueue` validates the named rows against the session, checks that each
+fits the 2460's trigger model, prints a summary of each and adds them in order;
+if any row fails, nothing is queued. The
 `--session` file must be the one the RE Manager runs with. You can add rows
 while the queue runs.
 
@@ -78,8 +79,8 @@ normally, and the queue continues with the next row.
 ### External start
 
 An `external` row arms the 2460, raises READY (line 1) and waits with the
-output OFF for a rising edge on START (line 6). The run then starts within
-about 0.1 ms, and its time zero is that edge. If the session sets
+output OFF for a rising edge on START (line 6). The run then starts, and its
+time zero is logged within about 0.1 ms of that edge. If the session sets
 `start_timeout_s`, the run aborts when no START arrives in time.
 
 ## 5. Watch

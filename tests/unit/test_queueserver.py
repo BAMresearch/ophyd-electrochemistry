@@ -24,7 +24,10 @@ from ophyd_electrochemistry.sequences.queueserver import (  # noqa: E402
     sheet_digest,
 )
 from ophyd_electrochemistry.sequences.run_file import read_run_file  # noqa: E402
-from ophyd_electrochemistry.sequences.run_sheet import make_template  # noqa: E402
+from ophyd_electrochemistry.sequences.run_sheet import (  # noqa: E402
+    make_template,
+    write_run_sheet,
+)
 from ophyd_electrochemistry.state import DeviceState  # noqa: E402
 
 QSERVER = Path(__file__).parents[2] / "qserver"
@@ -210,6 +213,28 @@ def test_items_are_built_without_a_prompt(session, sheet, hardware_session, monk
         }
     ]
     assert "measurement_id: example-rest" in shown[0]
+
+
+@pytest.mark.parametrize("hardware_session", [False, True])
+def test_rows_the_2460_cannot_run_are_not_enqueued(session, tmp_path, hardware_session):
+    # Valid for the session limits, but 65 trigger blocks (Codex brief 11).
+    row = {
+        "measurement_id": "too-many-blocks",
+        "protocol": "pulse_train",
+        "start_mode": "external",
+        "current_a": -0.001,
+        "pulse_s": 1,
+        "pre_rest_s": 1,
+        "rest_s": 3,
+        "repeats": 2,
+        "rest_end_v": 0.005,
+    }
+    rows = [{**row, "measurement_id": "fits", "start_mode": "immediate", "rest_end_v": None}, row]
+    sheet = write_run_sheet(tmp_path / "blocks.xlsx", rows)
+    chosen = hardware(session) if hardware_session else session
+    assert len(queue_items(chosen, sheet, ["fits"], show=lambda _: None)) == 1
+    with pytest.raises(ValidationError, match="too-many-blocks: 65 trigger blocks exceed 63"):
+        queue_items(chosen, sheet, ["fits", "too-many-blocks"], show=lambda _: None)
 
 
 def test_unknown_ids_are_reported_before_anything_is_built(session, sheet):

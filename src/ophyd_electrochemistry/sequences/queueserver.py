@@ -171,6 +171,20 @@ def build_namespace(session: Session, *, backend: SequenceBackend | None = None)
     }
 
 
+def compile_for_2460(session: Session, request: SequenceRequest) -> Any:
+    """Compile the request for the 2460 sequencer; raises if it cannot run there.
+
+    Checks what session validation cannot: sampling feasibility, ranges and the
+    63-trigger-block budget. Done for simulator sessions too, so a sheet that
+    runs on the simulator also runs on the instrument.
+    """
+    from ..keithley.k2460.sequencer import compile_program
+
+    return compile_program(
+        request.sequence, session.limits, external_start=request.start_mode == "external"
+    )
+
+
 def queue_items(
     session: Session,
     run_sheet: str | Path,
@@ -178,9 +192,10 @@ def queue_items(
     *,
     show: Callable[[str], None] = print,
 ) -> list[dict[str, Any]]:
-    """Validate the sheet and every selected row, show each summary, build the items.
+    """Validate and compile every selected row, show each summary, build the items.
 
-    Nothing is enqueued unless every row is valid for the session.
+    Nothing is enqueued unless every row is valid for the session and fits the
+    2460 sequencer.
     """
     sheet = Path(run_sheet).resolve()
     digest = sheet_digest(sheet)
@@ -193,6 +208,10 @@ def queue_items(
     items = []
     for measurement_id in measurement_ids:
         request = SequenceRequest.from_run_spec(runs[measurement_id], session.limits)
+        try:
+            compile_for_2460(session, request)
+        except ValidationError as exc:
+            raise ValidationError(f"{measurement_id}: {exc}; nothing was enqueued") from exc
         show(run_summary(request))
         items.append(
             {
@@ -230,7 +249,6 @@ def validate_rows(
     sequencer (sampling feasibility, ranges, trigger-block budget). No
     instrument or RE Manager is contacted. A sheet-level error raises.
     """
-    from ..keithley.k2460.sequencer import compile_program
     from .models import expected_records, nominal_duration_s
 
     runs = load_run_sheet(Path(run_sheet), session.limits)
@@ -242,11 +260,7 @@ def validate_rows(
             continue
         try:
             request = SequenceRequest.from_run_spec(runs[measurement_id], session.limits)
-            program = compile_program(
-                request.sequence,
-                session.limits,
-                external_start=request.start_mode == "external",
-            )
+            program = compile_for_2460(session, request)
         except ValidationError as exc:
             results.append((measurement_id, str(exc), ""))
             continue

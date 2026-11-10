@@ -61,10 +61,15 @@ max_records = 1000000          # per run (the 2460 buffer holds 1,000,000)
 - **Before a run:** every row is checked against them (`oe-validate`,
   `oe-enqueue`, and again when the run starts). A row that asks for more current,
   a threshold outside the window or a longer run is refused.
-- **During a run:** the 2460 compares every reading with the voltage window and
-  stops the run with the output OFF on the first reading outside it,
-  independently of the row's own thresholds. Its voltage compliance is set
-  0.1 V outside the window, so the cutoff acts before compliance does.
+- **During a run:** in current and rest steps the 2460 compares every voltage
+  reading with the window and stops the run with the output OFF on the first
+  reading outside it, independently of the row's own thresholds. Its voltage
+  compliance is set 0.1 V outside the window, so the cutoff acts before
+  compliance does.
+- In a voltage hold (CV) the 2460 measures current, not voltage. The held
+  voltage is checked against the window before the run; during the hold the
+  current is limited to `i_max_abs` (compliance) and the hold ends on its
+  taper current (`cv_i_abs_min_a`) or its time limit.
 - Between readings the instrument does not watch the voltage; only the
   compliance limit applies there.
 - The cell's rest voltage must be inside the window before a run.

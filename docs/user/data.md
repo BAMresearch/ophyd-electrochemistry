@@ -28,10 +28,16 @@ run["run_sheet_row"], run["equipment"]
 Other HDF5 tools (HDF5 1.10 or later) read completed files directly. For a file
 whose writer crashed, `repair_run_file` makes a copy they can open.
 
-**Timing:** times come from the 2460's own reading timestamps. `t_s = 0` is the
-START edge (external start) or the start of the program, and its UTC time is
-known to about 1 ms. The MARKER pulse at each step start lets beamline data be
-aligned to the steps.
+**Timing:** times come from the 2460's own reading timestamps. `t_s = 0` is an
+event-log entry (`OE_T0`) that the trigger model writes as it starts: right
+after the START edge for an external start (within about 0.1 ms on the scope,
+3 Nov), or when the program starts for an immediate start. Its UTC time
+(`time_origin_utc`) comes from mapping the instrument clock to the laptop's
+clock before the run; the offset and its uncertainty (about half a ping round
+trip, typically under 1 ms on the direct cable) are stored as
+`clock_offset_s` and `clock_uncertainty_s` in `equipment`. The laptop clock
+itself is only as good as its NTP. The MARKER pulse at each step start lets
+beamline data be aligned to the steps.
 
 ## The viewer notebook
 
