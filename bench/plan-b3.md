@@ -76,7 +76,10 @@ Procedure:
    panel). The run file stays `incomplete` with the readings so far. Then
    unplug the Ethernet. Do not let a running RE Manager sleep with the laptop:
    when it wakes, its read fails and its error handling aborts the run if the
-   2460 is still sourcing.
+   2460 is still sourcing. On 10 Nov the Mac idle-slept 63 min into `hc-p0`; the
+   2460 had dropped the connection, so the plan failed without reaching it and
+   the run continued. The start script now runs `caffeinate` while the RE
+   Manager runs; still, do not close the lid before step 6.
 
 The 2460 runs every step itself (each CC step ends at its voltage or after
 8 h), ends with the 30 min rest after the second sodiation and switches the

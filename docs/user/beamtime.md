@@ -41,7 +41,10 @@ It starts redis if needed, prints the session's limits and runs the RE Manager
 in this terminal. Leave it open: it shows each run's progress. To keep it
 running when the terminal or editor closes, start it detached instead:
 `qserver/start-k2460-re-manager.sh --detach S.toml` (log in
-`~/k2460-data/re-manager.log`). Stop it normally with `qserver manager stop`;
+`~/k2460-data/re-manager.log`). Either way the script keeps the Mac from
+sleeping while the RE Manager runs (`caffeinate`; closing the lid still sleeps
+it): after a sleep the connection to the 2460 is gone and the run in progress
+fails. Stop it normally with `qserver manager stop`;
 `qserver/kill-re-manager.sh` instead kills it and its worker without cleanup,
 leaving a running sequence to finish on the 2460 alone (then archive in the
 morning, step 6).

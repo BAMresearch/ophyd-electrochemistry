@@ -8,8 +8,11 @@
 #       ~/k2460-data/re-manager.log; the group ID goes to
 #       ~/k2460-data/re-manager.pgid for qserver/kill-re-manager.sh, which
 #       detaches from a running sequence without cleanup (the 2460 continues).
-# The session sets the voltage window, so it has no default. `redis-cli shutdown`
-# stops redis.
+# Either way, macOS `caffeinate -is -w PID` keeps the Mac from idle or system
+# sleep (system sleep only on AC power) while the RE Manager runs: after a sleep
+# the connection to the 2460 is gone and the run fails (B3, 10 Nov). Closing the
+# lid still sleeps the Mac. The session sets the voltage window, so it has no
+# default. `redis-cli shutdown` stops redis.
 set -euo pipefail
 
 detach=0
@@ -44,7 +47,18 @@ manager=(.venv/bin/start-re-manager --startup-dir qserver/startup
     --existing-plans-devices ~/k2460-data/existing_plans_and_devices.yaml
     --user-group-permissions qserver/startup/user_group_permissions.yaml)
 
+# Keep the Mac awake until process $1 exits (no-op where caffeinate is missing).
+stay_awake() {
+    if command -v caffeinate >/dev/null; then
+        nohup caffeinate -is -w "$1" >/dev/null 2>&1 </dev/null &
+        echo "caffeinate: no idle sleep while the RE Manager runs (do not close the lid)"
+    else
+        echo "WARNING: no caffeinate; keep this computer from sleeping" >&2
+    fi
+}
+
 if [[ $detach -eq 0 ]]; then
+    stay_awake $$      # exec keeps this PID
     exec "${manager[@]}"
 fi
 
@@ -56,4 +70,5 @@ nohup .venv/bin/python -c 'import os, sys; os.setsid(); os.execv(sys.argv[1], sy
     "${manager[@]}" >>"$state/re-manager.log" 2>&1 </dev/null &
 pgid=$!
 echo "$pgid" >"$state/re-manager.pgid"
+stay_awake "$pgid"
 echo "RE Manager detached: process group $pgid, log $state/re-manager.log"
