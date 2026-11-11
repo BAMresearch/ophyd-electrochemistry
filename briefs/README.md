@@ -33,3 +33,4 @@ Rules that apply to every brief (Codex: follow these):
 | `10-review-runtime-block-bound.md` | Review only: runtime `oe_seq_begin` 63-block bound (264c63c), before bench install | 09 |
 | `11-review-default-start-and-session-confirmation.md` | Review only: 1 µA start default and per-session confirmation (0b35831); docs accuracy | 10 |
 | `12-review-follow-enqueue-b3.md` | Review only: enqueue compile (0cc63c3), Follow status (7ca66c0), B3 sheets and overnight plan (92e4881) | 11 |
+| `13-review-c5-p0-and-caffeinate.md` | Review only: C/5 P0 row (a17b4d8), stay-awake script (ad2a4ca), 10 Nov sleep incident | 12 |
