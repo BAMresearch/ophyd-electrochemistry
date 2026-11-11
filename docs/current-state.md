@@ -89,18 +89,20 @@ trigger wiring changes. Nothing else is pending on the resistor (9 Nov).
 
 ## Last known hardware state (reconfirm before use)
 
-9 Nov, 15:06 UTC: K2460 serial `04686198`, firmware 1.7.16a, TSP,
-`169.254.113.151:5025`, runtime `seq-v2` installed, HIGH-Z, output OFF, model
-idle, RE Manager stopped. Wiring: READY line 1, BUSY 2, MARKER 4, START 6 (DB-9
-pin 8). Coin cell `Richard-HC400-rev` on the front terminals, 0.976 V and rising
-(net −5 µAh today on top of about 48 µAh still sodiated since 6 Nov).
+10 Nov, 16:08 UTC: K2460 serial `04686198`, TSP, `169.254.113.151:5025`,
+runtime `seq-v2`, HIGH-Z. **`hc-p0` running alone** on AlCe Test Cell 1 (front
+terminals) since 14:59:20 UTC, about 17–19 h. The Mac idle-slept at 16:00; on
+wake the read failed (2460 had reset the connection), so the plan failed without
+reaching the 2460 and its run file ends at 16:02. RE Manager killed 16:08;
+`hc-p0` is back at the queue front (remove, never start). Wiring: READY line 1,
+BUSY 2, MARKER 4, START 6 (DB-9 pin 8).
 
 ## Next steps
 
-1. Healthy cell: P0 overnight sodiation, then the draft beamtime pulses
-   (`bench/plan-b3.md`, sheets from `bench/b3_sheets.py`; tier 2, session files
-   in `bench/b3/` need the cell ID).
-2. Offline: Codex review of the day's code (brief 12); step-stretch analysis;
+1. Healthy cell (AlCe Test Cell 1, 0.712 mAh): after P0 (C/5 to 5 mV with CV,
+   to 2.5 V, to 5 mV with CV, one row) `oe-diagnose`, `oe-archive-retained`;
+   then the draft beamtime pulses (`bench/plan-b3.md`; tier 2).
+2. Offline: Codex review brief 13; step-stretch analysis;
    B3 dress-rehearsal matrix with the beamline trigger once its signal is known;
    explore reference stop rule.
 3. Beamtime run sheet: regenerate `b3-pulse.xlsx` with Jonas's answers.
@@ -110,4 +112,4 @@ pin 8). Coin cell `Richard-HC400-rev` on the front terminals, 0.976 V and rising
 `docs/beamtime-concept.md`: whether desodiation runs also end at the relaxed
 limit, and how the relaxed end treats the rest history (9 Nov rehearsal); the
 rate, cell count. Beamline trigger signal (level, polarity, connector).
-RC dummy values. A healthy cell: this one tests the method only.
+RC dummy values.

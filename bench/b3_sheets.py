@@ -2,9 +2,12 @@
 
 Two sheets, one per session (bench/plan-b3.md):
 
-- ``b3-p0.xlsx`` (``b3/session-b3-p0.toml``, 0-3 V, 100 uA): OCV, then P0, the
-  overnight sodiation at C/10 to 5 mV with a 30 min rest; ``hc-p0-cv`` adds a
-  CV hold at 5 mV instead (open question 3 in docs/beamtime-concept.md).
+- ``b3-p0.xlsx`` (``b3/session-b3-p0.toml``, 0-3 V, 200 uA): OCV, then P0 as one
+  row the 2460 runs alone overnight (10 Nov, Jonas): C/5 sodiation to 5 mV with a
+  CV hold to C/50, C/5 desodiation to 2.5 V, then C/5 sodiation to 5 mV again
+  (CV, rest), so the cell ends sodiated for the pulse day. It is a ``cycling``
+  row starting with desodiation: on a cell delivered at or above 2.5 V that first
+  half ends at its first reading and its 30 min rest is the OCV.
 - ``b3-pulse.xlsx`` (``b3/session-b3-pulse.toml``, -3..3 V, 30 mA): the beamtime
   protocol in small, a draft until Jonas answers the open questions:
   desodiation pulses ending on the relaxed voltage (P2d), then sodiation pulses
@@ -30,21 +33,14 @@ SHEETS = {
     "b3-p0.xlsx": "session-b3-p0.toml",
     "b3-pulse.xlsx": "session-b3-pulse.toml",
 }
-P0_C_RATE = 10  # C/10: about 10 h from 2.5 V for the whole capacity
-P0_MAX_S = 14 * 3600
+P0_C_RATE = 5  # C/5: about 5 h per half for the reversible capacity
+P0_MAX_S = 8 * 3600  # per CC step: the first sodiation adds the irreversible loss
+P0_V_LOW, P0_V_HIGH = 0.005, 2.5
 
 
 def p0_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
-    """OCV, then CC sodiation at C/10 to 5 mV and a 30 min rest (P0)."""
+    """OCV, then P0: C/5 to 5 mV (CV to C/50), C/5 to 2.5 V, C/5 to 5 mV (CV)."""
     c1 = capacity_mah * 1e-3
-    sodiate = dict(
-        protocol="soc_position",
-        current_a=-c1 / P0_C_RATE,
-        target_v=0.005,
-        max_step_s=P0_MAX_S,
-        rest_s=1800,
-        interval_s=1,
-    )
     rows: list[dict[str, object]] = [
         # The first second at 6 ms records the output-ON transient (1 uA-range start).
         dict(
@@ -55,19 +51,32 @@ def p0_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
             fast_window_s=1,
             interval_s=1,
         ),
-        dict(sodiate, measurement_id="hc-p0"),
-        # Alternative: hold 5 mV until |I| < C/50 (at most 2 h); the session's
-        # 100 uA caps the hold current.
+        # Two cycles starting with desodiation: [to 2.5 V, rest] [to 5 mV, CV, rest]
+        # [to 2.5 V, rest] [to 5 mV, CV, rest]. The first half only tops the cell up
+        # to 2.5 V (or ends at once), so the sequence is sodiate, desodiate,
+        # sodiate, with no host step in between. The CV hold is at most 1 h; its
+        # current limit is the session's i_max_abs.
         dict(
-            sodiate,
-            measurement_id="hc-p0-cv",
+            measurement_id="hc-p0",
+            protocol="cycling",
+            current_a=c1 / P0_C_RATE,
+            v_low=P0_V_LOW,
+            v_high=P0_V_HIGH,
+            cycles=2,
+            start_with="desodiation",
             cv_i_abs_min_a=c1 / 50,
-            cv_max_s=7200,
+            cv_after="sodiation",
+            rest_s=1800,
+            max_step_s=P0_MAX_S,
+            interval_s=1,
         ),
     ]
     for row in rows:
         row["sample_id"] = sample_id
-        row["notes"] = f"B3 P0, capacity {capacity_mah:g} mAh assumed (1C = {c1:.3g} A)"
+        row["notes"] = (
+            f"B3 P0 at C/5, capacity {capacity_mah:g} mAh assumed (1C = {c1:.3g} A): "
+            f"to {P0_V_LOW:g} V (CV to C/50), to {P0_V_HIGH:g} V, to {P0_V_LOW:g} V (CV)"
+        )
     return rows
 
 
@@ -173,7 +182,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--overwrite", action="store_true", help="replace existing sheets")
     args = parser.parse_args(argv)
     if not 0.05 <= args.capacity_mah <= 1:
-        parser.error("--capacity-mah must be in 0.05..1 (the sessions' 100 uA and 30 mA)")
+        parser.error("--capacity-mah must be in 0.05..1 (the sessions' 200 uA and 30 mA)")
     if not 5 <= args.rate_c <= 40:
         parser.error("--rate-c must be in 5..40 (lower rates exceed the record budget)")
     # Checked before writing either sheet (Codex brief 12): currents within each session.

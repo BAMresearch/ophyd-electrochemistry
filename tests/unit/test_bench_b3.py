@@ -33,15 +33,17 @@ def test_every_row_validates_against_its_session(sheets, tmp_path, capsys, optio
     assert sorted(p.name for p in tmp_path.glob("*.xlsx")) == sorted(sheets.SHEETS)
 
 
-def test_p0_is_c10_to_5_mv_inside_a_narrow_session(sheets):
-    rows = {row["measurement_id"]: row for row in sheets.p0_rows(0.6, "cell")}
-    assert rows["hc-p0"]["current_a"] == pytest.approx(-60e-6)
-    assert rows["hc-p0"]["target_v"] == 0.005
-    assert rows["hc-p0-cv"]["cv_i_abs_min_a"] == pytest.approx(12e-6)
+def test_p0_is_c5_sodiate_desodiate_sodiate_in_one_row(sheets):
+    rows = {row["measurement_id"]: row for row in sheets.p0_rows(0.712, "cell")}
+    p0 = rows["hc-p0"]
+    assert p0["current_a"] == pytest.approx(142.4e-6)
+    assert (p0["v_low"], p0["v_high"], p0["cycles"]) == (0.005, 2.5, 2)
+    assert (p0["start_with"], p0["cv_after"]) == ("desodiation", "sodiation")
+    assert p0["cv_i_abs_min_a"] == pytest.approx(14.24e-6)
     from ophyd_electrochemistry.sequences.queueserver import load_session
 
     limits = load_session(BENCH / "b3" / "session-b3-p0.toml").limits
-    assert (limits.v_min_abs, limits.v_max_abs, limits.i_max_abs) == (0.0, 3.0, 1e-4)
+    assert (limits.v_min_abs, limits.v_max_abs, limits.i_max_abs) == (0.0, 3.0, 2e-4)
 
 
 def test_pulse_rows_end_on_the_relaxed_voltage(sheets):
