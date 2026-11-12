@@ -1,6 +1,6 @@
 # Template validation record
 
-Updated: 2026-11-09. Scope: contracts, transport/runtime commissioning, bounded
+Updated: 2026-11-12. Scope: contracts, transport/runtime commissioning, bounded
 nominal-100-ohm tests, a narrow target-buffer proof, and the first operational
 simulator-backed M6 Flyer; not operational hardware sourcing or acquisition.
 
@@ -11,6 +11,58 @@ JSON files** parsed. The software check record is
 `evidence/k2460-2026-11-02-timed-v17-software-validation.json`
 (repository-relative path). These checks do not override the failed hardware
 cadence result.
+
+## B3 healthy coin cell: P0, characterisation and ICI (10–12 November 2026)
+
+Cell `AlCe Test Cell 1`: HC against Na, 1.78 mg (0.712 mAh nominal at
+400 mAh/g). Tier 2, HC on HI, Na on LO, HIGH-Z; sessions `session-b3-p0.toml`
+(0–3 V, 200 µA) and `session-b3-explore.toml` (−3…3 V, 10.4 mA). One cell, two
+electrodes: every number includes the Na counter electrode.
+
+- **P0** (`hc-p0`, C/5 = 142 µA, one `cycling` row): first sodiation 418 µAh
+  (CC 337 + CV 81), desodiation 259 µAh, second sodiation 261 µAh (CC 201 + CV
+  61), 9.6 h. Both CV holds ended on the 1 h limit at 44–51 µA. So about
+  **0.26 mAh reversible** (145 mAh/g), 62 % first-cycle efficiency. The Mac
+  idle-slept 63 min in; the plan failed without reaching the 2460, which
+  finished alone; archived 12 Nov (`retained-20261112T082536Z.npz`). Fixed by
+  `caffeinate` in the start script (`ad2a4ca`).
+- **Characterisation series** (`bench/plan-b3-explore.md`, `explore.py --series
+  b3`): 30 runs, 08:44–10:30 UTC, no stop rule, net +10.4 µAh, up to 10.4 mA
+  (40C on 0.26 mAh). OCV 0.230 V after 2 days. Series resistance 25–35 Ω; fit
+  η = I·Rs + b·asinh(I/2I₀) at 0.5 s: I₀ 19 µA at 0.23–0.30 V (about 2.4 kΩ small
+  signal) against 360–370 µA at 0.50–0.57 V (about 200 Ω). Pulses within 10–30 s
+  of each other lower the next one's resistance (−29 % after 1 s, −5 % after
+  30 s, none after 100–300 s). Desodiation switch-on overshoot (+0.39 V at
+  36 ms, 1C) at the sodiated end only, gone from 10C. 40C, 0.5 s pulses ran
+  both ways (about 0.8 V overpotential).
+- **Full-range ICI** (`b3-ici.xlsx`, C/2 = 130 µA, 120 s on, 10 s pauses):
+  209.2 µAh out to 2.5 V under load, 209.8 µAh back to 5 mV under load. Pause-end
+  voltage 0.15–1.9 V, sloping throughout: no plateau reached at C/2. R_first
+  (switch-off step to the first sample, 6 ms) about 100 Ω above 0.5 V, up to
+  975 Ω near 0.29 V; R and k fall on one curve against the pause-end voltage for
+  both directions. The papers' R0 (√t-fit intercept) is 60–180 Ω higher below
+  about 0.9 V and turns negative above 1.1 V (V not linear in √t over 0.1–1 s),
+  so R_first is reported. Hysteresis
+  0.18–0.24 V (10 s pauses, not relaxed).
+- **Network cable out during `ici-full-s`** (13:31 UTC): the status read timed
+  out, the session was invalidated and no abort was sent; the plan failed with
+  `ShutdownUnconfirmed` and the 2460 finished the run alone. The RE Manager was
+  killed with the link down, so the 2460 kept the dead session and ignored a new
+  one (`*IDN?` timed out; Reference Manual p. 2-21: one controlling
+  connection) until the dead session was closed through the dead-socket port 5030
+  (p. 2-22, after the run had ended); all 22,566 records
+  were then archived (`retained-20261112T145240Z.npz`).
+
+Reports (PDF, not in the repository):
+`~/k2460-data/b3/hc-p0-retained.pdf`,
+`~/k2460-data/b3/explore/b3-cell-characterisation-2026-11-12.pdf`,
+`~/k2460-data/b3/b3-ici-2026-11-12.pdf`. Regenerate with
+`bench/b3_analysis.py series-report` / `ici-report --npz-current-mode` (first-page texts beside
+the data: `b3-series-summary.txt`, `b3-ici-summary.txt`).
+
+Evidence: [`k2460-2026-11-12-b3-cell.json`](evidence/k2460-2026-11-12-b3-cell.json)
+(run checks of every run file; `store-d`, the overnight C/20 storage run, was
+still running).
 
 ## Cell rehearsal and the output-ON dip (9 November 2026)
 

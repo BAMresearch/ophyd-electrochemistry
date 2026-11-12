@@ -126,6 +126,20 @@ time zero is logged within about 0.1 ms of that edge. If the session sets
   Without a running QueueServer, `oe-archive-retained --session S.toml` does the
   same. The run's own file stays `incomplete`; the archive holds every reading
   the 2460 kept.
+- **After the network link dropped during a run** (cable out, switch, sleep):
+  the run fails on the laptop without anything reaching the 2460, which
+  finishes on its own. The 2460 may keep the dead connection and ignore new
+  ones: `oe-diagnose` then reports `*IDN?` timing out although ping works (12 Nov).
+  Once the front panel shows the output OFF, close the dead connection through
+  the dead-socket port (Reference Manual p. 2-22; it closes every Ethernet
+  connection):
+
+  ```sh
+  nc -z -G 3 169.254.113.151 5030
+  ```
+
+  Then `oe-diagnose` and `oe-archive-retained` as above. Whether port 5030 is
+  safe while a run is still active is unverified: wait for output OFF.
 - **Never repeat a run whose state is unclear.** First check that the output is
   OFF (front panel, or `oe-diagnose` once the QueueServer is stopped).
 

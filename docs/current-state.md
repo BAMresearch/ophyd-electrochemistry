@@ -1,6 +1,6 @@
 # Current project state
 
-Updated: 2026-11-10. Branch: `mvp-sprint`. Plan: [MVP sprint plan](mvp-plan.md).
+Updated: 2026-11-12. Branch: `mvp-sprint`. Plan: [MVP sprint plan](mvp-plan.md).
 
 Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 (October–2 November bench narrative) is preserved in commit `e04ebc6`, in
@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1320 tests pass, including 58 contract tests against a real RE Manager. Pure models/compiler, independent simulator,
+- **Offline:** 1332 tests pass, including 58 contract tests against a real RE Manager. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -68,8 +68,12 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   run sheets, sessions, beamtime procedure, data, reference) and
   `docs/technical/` (overview and division of tasks, sequencer, simulator,
   testing, development); pre-sprint design in `docs/archive/`.
-- **Exploration runner:** `bench/explore.py` checks each row against the limits
-  in a `bench/` page, runs it and applies stop rules (59 runs on 6 Nov).
+- **Exploration runner:** `bench/explore.py --series b2|b3` checks each row
+  against the limits in a `bench/` page, runs it and applies stop rules (59 runs
+  on 6 Nov, 30 on 12 Nov on a healthy cell).
+- **Healthy cell (B3, 10–12 Nov):** P0, a 40C characterisation series and a
+  full-range ICI ran on `AlCe Test Cell 1`; results in `docs/validation.md` and
+  the beamtime consequences in `docs/beamtime-concept.md` ("B3 findings").
 
 ## What is broken or missing
 
@@ -78,7 +82,9 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 - Each step runs about 1 % long (R9); cause open.
 - Follow during an external-START wait: fixed offline 10 Nov (status line until
   the first readings, then the plot); confirm on the next bench day.
-- The explore reference stop rule compares across voltages.
+- If the link drops while the RE Manager is connected and the manager is then
+  killed, the 2460 keeps the dead session and ignores new ones (12 Nov); the
+  dead-socket port 5030 clears it after output OFF (`docs/user/beamtime.md` §6).
 - Timed-hold runtime v17 is superseded; do not develop it. `runtime.tsp` uses
   OFFMODE_NORMAL and must not touch a cell.
 
@@ -89,27 +95,26 @@ trigger wiring changes. Nothing else is pending on the resistor (9 Nov).
 
 ## Last known hardware state (reconfirm before use)
 
-10 Nov, 16:08 UTC: K2460 serial `04686198`, TSP, `169.254.113.151:5025`,
-runtime `seq-v2`, HIGH-Z. **`hc-p0` running alone** on AlCe Test Cell 1 (front
-terminals) since 14:59:20 UTC, about 17–19 h. The Mac idle-slept at 16:00; on
-wake the read failed (2460 had reset the connection), so the plan failed without
-reaching the 2460 and its run file ends at 16:02. RE Manager killed 16:08;
-`hc-p0` is back at the queue front (remove, never start). Wiring: READY line 1,
-BUSY 2, MARKER 4, START 6 (DB-9 pin 8).
+12 Nov, 15:13 UTC: K2460 serial `04686198`, TSP, `169.254.113.151:5025`,
+runtime `seq-v2`, HIGH-Z. AlCe Test Cell 1 on the front terminals. **`store-d`
+running** (C/20 = 13 µA desodiation to 2.5 V under load, then 30 min rest; about
+20 h, bound 30.5 h) through the RE Manager with `session-b3-p0.toml`; the cell
+ends desodiated for storage, output OFF. Earlier runs archived
+(`retained-20261112T082536Z.npz`, `retained-20261112T145240Z.npz`). Wiring:
+READY line 1, BUSY 2, MARKER 4, START 6 (DB-9 pin 8).
 
 ## Next steps
 
-1. Healthy cell (AlCe Test Cell 1, 0.712 mAh): after P0 (C/5 to 5 mV with CV,
-   to 2.5 V, to 5 mV with CV, one row) `oe-diagnose`, `oe-archive-retained`;
-   then the draft beamtime pulses (`bench/plan-b3.md`; tier 2).
-2. Offline: Codex review brief 13; step-stretch analysis;
-   B3 dress-rehearsal matrix with the beamline trigger once its signal is known;
-   explore reference stop rule.
-3. Beamtime run sheet: regenerate `b3-pulse.xlsx` with Jonas's answers.
+1. After `store-d`: `oe-diagnose`, `oe-archive-retained` if the RE Manager was
+   killed; disconnect the cell for storage.
+2. Jonas: the questions in `docs/beamtime-concept.md` (desodiation end, rate,
+   plateau, measured capacities, rests). Then regenerate `b3-pulse.xlsx` and the
+   pulse session for the beamtime cells.
+3. Offline: Codex brief 14 (today's `explore.py`, `b3_sheets.py`,
+   `b2_monitor.py` and `b3_analysis.py`); step-stretch analysis; dress-rehearsal matrix with the beamline trigger.
 
 ## Information still needed from the user
 
-`docs/beamtime-concept.md`: whether desodiation runs also end at the relaxed
-limit, and how the relaxed end treats the rest history (9 Nov rehearsal); the
-rate, cell count. Beamline trigger signal (level, polarity, connector).
+`docs/beamtime-concept.md` questions 1–8, and how the relaxed sodiation end
+treats the rest history (9 Nov rehearsal). Beamline trigger signal (level, polarity, connector).
 RC dummy values.

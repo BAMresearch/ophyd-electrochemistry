@@ -294,21 +294,93 @@ These come from abstracts and excerpts, not full texts; check the details
 before citing. The ICI papers and Li et al. 2017 are the most directly useful
 for designing and interpreting the pulses.
 
+## B3 findings on a healthy cell (10–12 Nov) and what they change
+
+One healthy coin cell, `AlCe Test Cell 1` (HC 1.78 mg against Na), measured on
+the 2460 over three days: P0 at C/5, a 2 h characterisation series (up to 40C)
+and a full-range ICI at C/2. Details and numbers: `docs/validation.md` (B3) and
+the PDF reports named there. Two electrodes, so every number includes the Na
+counter electrode.
+
+1. **Capacity must be measured, not taken from the mass.**
+   - At 400 mAh/g the cell should hold 0.712 mAh. It held **0.26 mAh**
+     reversibly at C/5 (145 mAh/g), with 62 % first-cycle efficiency.
+   - A sheet built on the nominal value would have pulsed at 2.7× the intended
+     C-rate.
+   - The beamtime sheets therefore take the capacity measured on the cycler
+     before transport.
+2. **No low-voltage plateau was reached.**
+   - After C/5 with a 1 h CV hold at 5 mV, the cell relaxed to 0.11 V, and to
+     0.23 V after two days.
+   - At C/2 the voltage at the end of a 10 s pause never went below 0.15 V, and
+     it sloped throughout.
+   - Two consequences:
+     - the SAXS case rests on the plateau (pore filling, below about
+       0.1–0.15 V), so it is unclear whether this cell reaches the regime of
+       interest;
+     - the planned relaxed desodiation end at 0.2 V would end the run at its
+       first pulse, because the sodiated cell already rests above 0.2 V.
+3. **The resistance depends on the voltage, not on the direction.**
+   - Above 0.5 V it is about 100 Ω, of which 25–35 Ω is series resistance.
+   - Below about 0.35 V it rises to 0.8–1 kΩ.
+   - At the sodiated end the exchange current is about 19 µA, against about
+     360 µA at 0.5 V.
+   - At 40C (10.4 mA on this cell), the drop under load was about 0.8 V at
+     0.5 s in both directions. Sodiation pulses read as low as −0.25 V under
+     load, well inside a −3 V session window.
+4. **Pulses influence each other for 10–30 s.**
+   - A preceding pulse lowers the next pulse's resistance: by 29 % after a 1 s
+     rest, 5 % after 30 s, and not at all after 100 s.
+   - With 60 s rests each pulse is nearly, but not fully, independent. 5 min
+     rests are fully independent.
+   - This matters if pulse-to-pulse changes are to be read as structure.
+5. **Desodiation from the sodiated end shows a switch-on overshoot.**
+   - At 1C the voltage overshoots by +0.39 V at about 36 ms, then falls. The
+     overshoot is gone from 10C up, and absent at 0.5 V.
+   - It looks like nucleation, probably on the Na counter electrode. It falls
+     within the first SAXS frames of every pulse at low rate.
+6. **Rate.** 1 s pulses at 10–40C run within the sessions on this cell. 40C
+   gives the largest signal for SAXS. 10C gives a quarter of the drop under
+   load and four times the number of pulses per half-cycle.
+
+What this changes in the plan, pending Jonas's answers below:
+
+- **Desodiation pulse run (`p2d-desod`):** end it by charge, not by voltage.
+  The `repeats` count of a `pulse_train` is a charge budget (n pulses of 1 s at
+  I). For example, 20–30 % of the measured capacity, with the 2.5 V window as
+  the safety limit. Alternatively, end at a relaxed voltage set relative to the
+  cell's rest voltage after P0.
+- **P0 the night before:** keep C/5 with the CV hold. If the cells must reach
+  the plateau, a slower CC (C/10 or C/20) or a longer CV hold is needed. That
+  needs more than one night, or the cycler.
+- **Sheets:** `bench/b3_sheets.py --capacity-mah` takes the measured capacity.
+  `b3-pulse.xlsx` must be regenerated before the next pulse day; it still uses
+  0.712 mAh.
+
 ## Questions for the material scientists
 
 Answered on 4 Nov: unipolar pulses, the capacity, SAXS frame times, rests of
 1 min at zero current, the run end at the voltage limit, both directions, and
-short high-rate pulses for the beamtime.
+short high-rate pulses for the beamtime. Decided 10 Nov: P0 at C/5 with a CV
+hold to C/50 (at most 1 h).
 
-1. **End condition at high rate:** sodiation is decided (see "Ending a
-   high-rate pulse run"). Do desodiation runs end the same way, at the relaxed
-   upper limit after the rest?
-2. **Rate:** the highest rate worth trying (40C?), after the B2 rate check.
-3. **Fully sodiated start:** C/10 overnight acceptable, or start earlier or use
-   your cycler? A CV hold at 5 mV at the end?
-4. **Non-pulsed comparison:** at the pulse rate (CC at nC) or at C/20?
-5. How many cells, and which material in which cell.
-6. Beamtime days, and what else the beamline records.
+1. **End condition of desodiation runs:** sodiation is decided (see "Ending a
+   high-rate pulse run"). The relaxed 0.2 V end does not work on the B3 cell
+   (finding 2). End by charge (a share of the measured capacity), or at a
+   relaxed voltage relative to the start?
+2. **Rate:** B3 ran 10–40C without trouble. Which rate for the beamtime?
+   - 40C: about 0.8 V drop under load, about 90 pulses per half-cycle;
+   - 10C: about 360 pulses per half-cycle.
+3. **Plateau:** do the beamtime cells reach the low-voltage plateau on your
+   cycler, at which rate, and at what rest voltage? The B3 cell did not.
+4. **Capacity:** please send the measured reversible capacity of each beamtime
+   cell (not the mass), and its last cycler voltage curve.
+5. **Rests:** are 60 s rests acceptable, given that each pulse still lowers the
+   next pulse's resistance by a few percent (finding 4)? 5 min rests remove
+   this, but give a fifth of the pulses per hour.
+6. **Non-pulsed comparison:** at the pulse rate (CC at nC) or at C/20?
+7. How many cells, and which material in which cell.
+8. Beamtime days, and what else the beamline records.
 
 ## Next steps
 

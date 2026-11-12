@@ -1,0 +1,2723 @@
+{
+  "test_matrix": "bench/plan-b3.md",
+  "load": "cell",
+  "written_utc": "2026-11-12T15:14:13+00:00",
+  "data_dirs": [
+    "/Users/bpauw/k2460-data/b3",
+    "/Users/bpauw/k2460-data/b3/explore"
+  ],
+  "runs": [
+    {
+      "file": "/Users/bpauw/k2460-data/b3/store-d_20261112T151249Z.h5",
+      "measurement_id": "store-d",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "soc_position",
+      "start_utc": "2026-11-12T15:12:49.911322Z",
+      "duration_s": 80.02931088,
+      "records": 8,
+      "outcome": "incomplete",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "store-d",
+        "outcome": "incomplete",
+        "records": 8,
+        "duration_s": 80.02931088,
+        "spacing_s": {
+          "10s": {
+            "n": 7,
+            "median": 10.000374399999998,
+            "p99": 10.0003801336,
+            "max": 10.00038034
+          }
+        },
+        "spacing_max_s": 10.00038034,
+        "rest_v_first_last": null,
+        "v_min_max": [
+          0.239612579345703,
+          0.242565155029297
+        ],
+        "i_min_max": [
+          1.30005792016163e-05,
+          1.30008847918361e-05
+        ],
+        "events": [
+          "0.000 step_start "
+        ],
+        "apparent_r_ohm": -813914.8388854453,
+        "median_v_over_i_ohm": 18538.878274719274
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/ici-full-s_20261112T130041Z.h5",
+      "measurement_id": "ici-full-s",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T13:00:41.136241Z",
+      "duration_s": 1812.68984996,
+      "records": 6459,
+      "outcome": "error",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "Status(obj=SequenceFlyer(prefix='', name='k2460', read_attrs=[], configuration_attrs=[]), done=True, success=False)",
+      "checks": {
+        "measurement_id": "ici-full-s",
+        "outcome": "error",
+        "records": 6459,
+        "duration_s": 1812.68984996,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 4627,
+            "median": 0.005977500000000191,
+            "p99": 0.006046976000015434,
+            "max": 0.007433020000007673
+          },
+          "0.00868s": {
+            "n": 6,
+            "median": 0.008675210000006928,
+            "p99": 0.008898706999951855,
+            "max": 0.008904899999947702
+          },
+          "0.0107s": {
+            "n": 6,
+            "median": 0.010743120000000772,
+            "p99": 0.011796996000009585,
+            "max": 0.011813500000016575
+          },
+          "0.0134s": {
+            "n": 6,
+            "median": 0.01339852000000974,
+            "p99": 0.01546574099999134,
+            "max": 0.015471359999992274
+          },
+          "0.0169s": {
+            "n": 3,
+            "median": 0.016910859999999417,
+            "p99": 0.017690273599999785,
+            "max": 0.017706179999999794
+          },
+          "1s": {
+            "n": 1783,
+            "median": 1.0000741999999718,
+            "p99": 1.0414784968000186,
+            "max": 1.041620560000183
+          }
+        },
+        "spacing_max_s": 1.041620560000183,
+        "rest_v_first_last": [
+          2.26490783691406,
+          0.663173675537109
+        ],
+        "v_min_max": [
+          0.590305328369141,
+          2.26490783691406
+        ],
+        "i_min_max": [
+          -0.00013000110629946,
+          2.06055119633675e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.127 step_start ",
+          "130.235 step_start ",
+          "140.283 step_start ",
+          "260.339 step_start ",
+          "270.389 step_start ",
+          "390.447 step_start ",
+          "400.497 step_start ",
+          "520.558 step_start ",
+          "530.610 step_start ",
+          "650.670 step_start ",
+          "660.724 step_start ",
+          "780.787 step_start ",
+          "790.845 step_start ",
+          "910.908 step_start ",
+          "920.959 step_start ",
+          "1041.016 step_start ",
+          "1051.064 step_start ",
+          "1171.122 step_start ",
+          "1181.175 step_start ",
+          "1301.233 step_start ",
+          "1311.289 step_start ",
+          "1431.354 step_start ",
+          "1441.408 step_start ",
+          "1561.474 step_start ",
+          "1571.522 step_start ",
+          "1691.578 step_start ",
+          "1701.629 step_start "
+        ],
+        "apparent_r_ohm": 671.6496855434831,
+        "median_v_over_i_ohm": -5547.526198902481
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/ici-full-d_20261112T111555Z.h5",
+      "measurement_id": "ici-full-d",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T11:15:55.164848Z",
+      "duration_s": 6284.59516932,
+      "records": 22547,
+      "outcome": "stopped_cutoff",
+      "cutoffs": 1,
+      "stops": 1,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "v_max",
+      "checks": {
+        "measurement_id": "ici-full-d",
+        "outcome": "stopped_cutoff",
+        "records": 22547,
+        "duration_s": 6284.59516932,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 16201,
+            "median": 0.005975820000003296,
+            "p99": 0.0060456600003817584,
+            "max": 0.007400580000648915
+          },
+          "0.00783s": {
+            "n": 15,
+            "median": 0.00782887999957893,
+            "p99": 0.009059133599812412,
+            "max": 0.009085979999781557
+          },
+          "0.0105s": {
+            "n": 18,
+            "median": 0.010517680000162954,
+            "p99": 0.011526595999941946,
+            "max": 0.011528839999982665
+          },
+          "0.0131s": {
+            "n": 19,
+            "median": 0.013077340000563709,
+            "p99": 0.014442616399994676,
+            "max": 0.01446817999999439
+          },
+          "0.0158s": {
+            "n": 14,
+            "median": 0.015832670000008875,
+            "p99": 0.01823086879974653,
+            "max": 0.018303699999705714
+          },
+          "0.0187s": {
+            "n": 1,
+            "median": 0.01870076000022891,
+            "p99": 0.01870076000022891,
+            "max": 0.01870076000022891
+          },
+          "1s": {
+            "n": 6181,
+            "median": 1.0000765800000408,
+            "p99": 1.041475043999526,
+            "max": 1.0493565199999466
+          }
+        },
+        "spacing_max_s": 1.0493565199999466,
+        "rest_v_first_last": [
+          0.264244079589844,
+          1.87572479248047
+        ],
+        "v_min_max": [
+          0.264244079589844,
+          2.50269317626953
+        ],
+        "i_min_max": [
+          -6.51925802230835e-09,
+          0.000130018568597734
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.118 step_start ",
+          "130.225 step_start ",
+          "140.273 step_start ",
+          "260.329 step_start ",
+          "270.378 step_start ",
+          "390.434 step_start ",
+          "400.487 step_start ",
+          "520.544 step_start ",
+          "530.602 step_start ",
+          "650.657 step_start ",
+          "660.711 step_start ",
+          "780.775 step_start ",
+          "790.825 step_start ",
+          "910.881 step_start ",
+          "920.939 step_start ",
+          "1041.003 step_start ",
+          "1051.052 step_start ",
+          "1171.110 step_start ",
+          "1181.158 step_start ",
+          "1301.213 step_start ",
+          "1311.269 step_start ",
+          "1431.330 step_start ",
+          "1441.379 step_start ",
+          "1561.434 step_start ",
+          "1571.491 step_start ",
+          "1691.554 step_start ",
+          "1701.605 step_start ",
+          "1821.665 step_start ",
+          "1831.725 step_start ",
+          "1951.787 step_start ",
+          "1961.841 step_start ",
+          "2081.902 step_start ",
+          "2091.950 step_start ",
+          "2212.005 step_start ",
+          "2222.058 step_start ",
+          "2342.125 step_start ",
+          "2352.175 step_start ",
+          "2472.230 step_start ",
+          "2482.280 step_start ",
+          "2602.336 step_start ",
+          "2612.391 step_start ",
+          "2732.451 step_start ",
+          "2742.508 step_start ",
+          "2862.572 step_start ",
+          "2872.627 step_start ",
+          "2992.697 step_start ",
+          "3002.746 step_start ",
+          "3122.800 step_start ",
+          "3132.858 step_start "
+        ],
+        "apparent_r_ohm": 54.606527346518426,
+        "median_v_over_i_ohm": 5799.143581923579
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/hc-p0_20261110T145920Z.h5",
+      "measurement_id": "hc-p0",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "cycling",
+      "start_utc": "2026-11-10T14:59:20.204671Z",
+      "duration_s": 3666.37786534,
+      "records": 3666,
+      "outcome": "error",
+      "cutoffs": 1,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "Status(obj=SequenceFlyer(prefix='', name='k2460', read_attrs=[], configuration_attrs=[]), done=True, success=False)",
+      "checks": {
+        "measurement_id": "hc-p0",
+        "outcome": "error",
+        "records": 3666,
+        "duration_s": 3666.37786534,
+        "spacing_s": {
+          "1s": {
+            "n": 3663,
+            "median": 1.0000936799997362,
+            "p99": 1.0001264192001236,
+            "max": 1.0008892199998627
+          }
+        },
+        "spacing_max_s": 1.0008892199998627,
+        "rest_v_first_last": [
+          2.43557357788086,
+          2.28715896606445
+        ],
+        "v_min_max": [
+          0.423194885253906,
+          2.68045806884766
+        ],
+        "i_min_max": [
+          -0.000142392120324075,
+          0.000142399221658707
+        ],
+        "events": [
+          "0.000 step_start ",
+          "1.022 cutoff v_max",
+          "1.022 step_start ",
+          "1801.196 step_start "
+        ],
+        "apparent_r_ohm": 12269.420196419253,
+        "median_v_over_i_ohm": -3424.264920911278
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/hc-ocv_20261110T145417Z.h5",
+      "measurement_id": "hc-ocv",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "rest",
+      "start_utc": "2026-11-10T14:54:17.919739Z",
+      "duration_s": 300.10945804,
+      "records": 466,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "hc-ocv",
+        "outcome": "completed",
+        "records": 466,
+        "duration_s": 300.10945804,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 165,
+            "median": 0.0059770199999999996,
+            "p99": 0.006011992000000026,
+            "max": 0.006034479999999953
+          },
+          "0.0168s": {
+            "n": 1,
+            "median": 0.016828319999999897,
+            "p99": 0.016828319999999897,
+            "max": 0.016828319999999897
+          },
+          "1s": {
+            "n": 299,
+            "median": 1.0000828800000363,
+            "p99": 1.0001151744000072,
+            "max": 1.0416156600000002
+          }
+        },
+        "spacing_max_s": 1.0416156600000002,
+        "rest_v_first_last": [
+          2.25202941894531,
+          2.25453567504883
+        ],
+        "v_min_max": [
+          2.25202941894531,
+          2.25454330444336
+        ],
+        "i_min_max": [
+          -5.45696821063757e-12,
+          3.63797880709171e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/ref-04s_20261112T102906Z.h5",
+      "measurement_id": "ref-04s",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T10:29:06.254611Z",
+      "duration_s": 73.35354142,
+      "records": 1829,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-04s",
+        "outcome": "completed",
+        "records": 1829,
+        "duration_s": 73.35354142,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1156,
+            "median": 0.0059845199999992715,
+            "p99": 0.006059242999998738,
+            "max": 0.006579940000000173
+          },
+          "0.00949s": {
+            "n": 2,
+            "median": 0.009494950000002333,
+            "p99": 0.010035155400003326,
+            "max": 0.010046180000003346
+          },
+          "0.0139s": {
+            "n": 4,
+            "median": 0.013941979999999354,
+            "p99": 0.016359757199997632,
+            "max": 0.0164329799999976
+          },
+          "0.1s": {
+            "n": 656,
+            "median": 0.10000295000000037,
+            "p99": 0.1000258870000014,
+            "max": 0.10005106000000019
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14151452999999847,
+            "p99": 0.14153533779999997,
+            "max": 0.14153572000000003
+          }
+        },
+        "spacing_max_s": 0.14153572000000003,
+        "rest_v_first_last": [
+          0.262622833251953,
+          0.258090972900391
+        ],
+        "v_min_max": [
+          0.0200614929199219,
+          0.262680053710938
+        ],
+        "i_min_max": [
+          -0.000260010594502091,
+          2.23517417907715e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.124 step_start ",
+          "11.182 step_start ",
+          "31.225 step_start ",
+          "32.236 step_start ",
+          "52.290 step_start ",
+          "53.302 step_start "
+        ],
+        "apparent_r_ohm": 859.5418817126099,
+        "median_v_over_i_ohm": -104.15324880005751
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/ref-04d_20261112T102744Z.h5",
+      "measurement_id": "ref-04d",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T10:27:44.969611Z",
+      "duration_s": 73.34550966,
+      "records": 1829,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-04d",
+        "outcome": "completed",
+        "records": 1829,
+        "duration_s": 73.34550966,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1156,
+            "median": 0.005980429999997483,
+            "p99": 0.006055663999999883,
+            "max": 0.006528019999997525
+          },
+          "0.00763s": {
+            "n": 2,
+            "median": 0.007634830000002424,
+            "p99": 0.007727430199999326,
+            "max": 0.007729319999999262
+          },
+          "0.0152s": {
+            "n": 4,
+            "median": 0.015247690000002478,
+            "p99": 0.016219800000001533,
+            "max": 0.016243800000001585
+          },
+          "0.1s": {
+            "n": 656,
+            "median": 0.10000500999999673,
+            "p99": 0.10005966300000013,
+            "max": 0.10057230000000317
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14155751999999833,
+            "p99": 0.14157559879999992,
+            "max": 0.14157584
+          }
+        },
+        "spacing_max_s": 0.14157584,
+        "rest_v_first_last": [
+          0.259262084960938,
+          0.263099670410156
+        ],
+        "v_min_max": [
+          0.259262084960938,
+          0.48980712890625
+        ],
+        "i_min_max": [
+          -5.93718141317368e-09,
+          0.000260006869211793
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.118 step_start ",
+          "11.177 step_start ",
+          "31.221 step_start ",
+          "32.229 step_start ",
+          "52.283 step_start ",
+          "53.291 step_start "
+        ],
+        "apparent_r_ohm": 775.7125341240763,
+        "median_v_over_i_ohm": 1798.859847757259
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/rest-300s_20261112T101111Z.h5",
+      "measurement_id": "rest-300s",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T10:11:11.668722Z",
+      "duration_s": 963.55225694,
+      "records": 10729,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "rest-300s",
+        "outcome": "completed",
+        "records": 10729,
+        "duration_s": 963.55225694,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1155,
+            "median": 0.005981479999945805,
+            "p99": 0.006021600799991802,
+            "max": 0.006850359999987177
+          },
+          "0.0121s": {
+            "n": 3,
+            "median": 0.012102820000002623,
+            "p99": 0.012558245600020114,
+            "max": 0.012567540000020472
+          },
+          "0.015s": {
+            "n": 4,
+            "median": 0.01504646000003973,
+            "p99": 0.0177550580000024,
+            "max": 0.017835440000000036
+          },
+          "0.1s": {
+            "n": 9556,
+            "median": 0.10001348000002963,
+            "p99": 0.10008785800000482,
+            "max": 0.10136441999998169
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14155623999997624,
+            "p99": 0.14157331379997884,
+            "max": 0.1415738399999782
+          }
+        },
+        "spacing_max_s": 0.1415738399999782,
+        "rest_v_first_last": [
+          0.253047943115234,
+          0.25921630859375
+        ],
+        "v_min_max": [
+          0.253047943115234,
+          0.489776611328125
+        ],
+        "i_min_max": [
+          -5.355104804039e-09,
+          0.000260008266195655
+        ],
+        "events": [
+          "0.000 step_start ",
+          "60.129 step_start ",
+          "61.183 step_start ",
+          "361.309 step_start ",
+          "362.322 step_start ",
+          "662.419 step_start ",
+          "663.431 step_start "
+        ],
+        "apparent_r_ohm": 831.3262054048308,
+        "median_v_over_i_ohm": 1820.872364879778
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/rest-100s_20261112T100500Z.h5",
+      "measurement_id": "rest-100s",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T10:05:00.067539Z",
+      "duration_s": 363.40515852,
+      "records": 4729,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "rest-100s",
+        "outcome": "completed",
+        "records": 4729,
+        "duration_s": 363.40515852,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.005980260000001181,
+            "p99": 0.006055446399997777,
+            "max": 0.007326000000034583
+          },
+          "0.0151s": {
+            "n": 5,
+            "median": 0.015094779999998309,
+            "p99": 0.016345168800000066,
+            "max": 0.016396920000000037
+          },
+          "0.1s": {
+            "n": 3556,
+            "median": 0.10001129999999847,
+            "p99": 0.10007880899999363,
+            "max": 0.10164528000001383
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14155556999999952,
+            "p99": 0.14156805640001666,
+            "max": 0.1415683000000172
+          }
+        },
+        "spacing_max_s": 0.1415683000000172,
+        "rest_v_first_last": [
+          0.247386932373047,
+          0.253044128417969
+        ],
+        "v_min_max": [
+          0.247364044189453,
+          0.471748352050781
+        ],
+        "i_min_max": [
+          -6.51925802230835e-09,
+          0.000260007451288402
+        ],
+        "events": [
+          "0.000 step_start ",
+          "60.124 step_start ",
+          "61.174 step_start ",
+          "161.248 step_start ",
+          "162.262 step_start ",
+          "262.331 step_start ",
+          "263.339 step_start "
+        ],
+        "apparent_r_ohm": 799.0025653132745,
+        "median_v_over_i_ohm": 1769.643246805812
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/rest-30s_20261112T100218Z.h5",
+      "measurement_id": "rest-30s",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T10:02:18.744196Z",
+      "duration_s": 153.3669918,
+      "records": 2629,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "rest-30s",
+        "outcome": "completed",
+        "records": 2629,
+        "duration_s": 153.3669918,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1156,
+            "median": 0.005979129999997723,
+            "p99": 0.0060252960000006794,
+            "max": 0.006689780000002088
+          },
+          "0.0106s": {
+            "n": 2,
+            "median": 0.010572290000002482,
+            "p99": 0.01065995100000329,
+            "max": 0.010661740000003306
+          },
+          "0.0152s": {
+            "n": 3,
+            "median": 0.01520839999999879,
+            "p99": 0.01656317160000455,
+            "max": 0.01659082000000467
+          },
+          "0.0182s": {
+            "n": 1,
+            "median": 0.018150120000000047,
+            "p99": 0.018150120000000047,
+            "max": 0.018150120000000047
+          },
+          "0.1s": {
+            "n": 1456,
+            "median": 0.10000632000000209,
+            "p99": 0.10003278900000367,
+            "max": 0.10085632000000544
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14155316999999779,
+            "p99": 0.14944415959999927,
+            "max": 0.14968801999999926
+          }
+        },
+        "spacing_max_s": 0.14968801999999926,
+        "rest_v_first_last": [
+          0.242450714111328,
+          0.247531890869141
+        ],
+        "v_min_max": [
+          0.242183685302734,
+          0.473358154296875
+        ],
+        "i_min_max": [
+          -5.93718141317368e-09,
+          0.000260007684119046
+        ],
+        "events": [
+          "0.000 step_start ",
+          "60.123 step_start ",
+          "61.175 step_start ",
+          "91.231 step_start ",
+          "92.242 step_start ",
+          "122.299 step_start ",
+          "123.313 step_start "
+        ],
+        "apparent_r_ohm": 790.1140482345835,
+        "median_v_over_i_ohm": 1741.8816244346704
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/rest-10s_20261112T100035Z.h5",
+      "measurement_id": "rest-10s",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T10:00:35.091609Z",
+      "duration_s": 93.3630634,
+      "records": 2029,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "rest-10s",
+        "outcome": "completed",
+        "records": 2029,
+        "duration_s": 93.3630634,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1155,
+            "median": 0.005979579999994655,
+            "p99": 0.006044511599999949,
+            "max": 0.006741220000002102
+          },
+          "0.00951s": {
+            "n": 2,
+            "median": 0.009514460000005442,
+            "p99": 0.01025610440000861,
+            "max": 0.010271240000008675
+          },
+          "0.0129s": {
+            "n": 1,
+            "median": 0.012859579999997095,
+            "p99": 0.012859579999997095,
+            "max": 0.012859579999997095
+          },
+          "0.0172s": {
+            "n": 4,
+            "median": 0.017238979999999793,
+            "p99": 0.01897553239999681,
+            "max": 0.019004359999996723
+          },
+          "0.1s": {
+            "n": 856,
+            "median": 0.10000338999999592,
+            "p99": 0.10003653599999965,
+            "max": 0.10073171999999886
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14152803000000347,
+            "p99": 0.1415421452000003,
+            "max": 0.1415423600000001
+          }
+        },
+        "spacing_max_s": 0.1415423600000001,
+        "rest_v_first_last": [
+          0.236953735351563,
+          0.243400573730469
+        ],
+        "v_min_max": [
+          0.236122131347656,
+          0.482105255126953
+        ],
+        "i_min_max": [
+          -6.51925802230835e-09,
+          0.000260007218457758
+        ],
+        "events": [
+          "0.000 step_start ",
+          "60.123 step_start ",
+          "61.174 step_start ",
+          "71.230 step_start ",
+          "72.243 step_start ",
+          "82.296 step_start ",
+          "83.307 step_start "
+        ],
+        "apparent_r_ohm": 802.4725926292172,
+        "median_v_over_i_ohm": 1735.1997904563607
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/rest-3s_20261112T095913Z.h5",
+      "measurement_id": "rest-3s",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T09:59:13.840349Z",
+      "duration_s": 72.35544142,
+      "records": 1819,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "rest-3s",
+        "outcome": "completed",
+        "records": 1819,
+        "duration_s": 72.35544142,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1155,
+            "median": 0.005979980000006435,
+            "p99": 0.006048859999999081,
+            "max": 0.006697379999998532
+          },
+          "0.0109s": {
+            "n": 3,
+            "median": 0.010879160000001775,
+            "p99": 0.01107008359999213,
+            "max": 0.011073979999991934
+          },
+          "0.0166s": {
+            "n": 4,
+            "median": 0.01656796999999799,
+            "p99": 0.018332165199995813,
+            "max": 0.018375219999995807
+          },
+          "0.1s": {
+            "n": 646,
+            "median": 0.10000186000000078,
+            "p99": 0.10003646499999981,
+            "max": 0.10081598000000014
+          },
+          "0.141s": {
+            "n": 4,
+            "median": 0.1414873300000039,
+            "p99": 0.1415370828000003,
+            "max": 0.1415385
+          }
+        },
+        "spacing_max_s": 0.1415385,
+        "rest_v_first_last": [
+          0.227283477783203,
+          0.2408447265625
+        ],
+        "v_min_max": [
+          0.226734161376953,
+          0.496616363525391
+        ],
+        "i_min_max": [
+          -6.51925802230835e-09,
+          0.000260008848272264
+        ],
+        "events": [
+          "0.000 step_start ",
+          "60.122 step_start ",
+          "61.175 step_start ",
+          "64.227 step_start ",
+          "65.238 step_start ",
+          "68.290 step_start ",
+          "69.301 step_start "
+        ],
+        "apparent_r_ohm": 823.6553085440866,
+        "median_v_over_i_ohm": 1714.1020665841609
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/rest-1s_20261112T095757Z.h5",
+      "measurement_id": "rest-1s",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T09:57:57.473173Z",
+      "duration_s": 66.23482198,
+      "records": 1759,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "rest-1s",
+        "outcome": "completed",
+        "records": 1759,
+        "duration_s": 66.23482198,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1155,
+            "median": 0.0059796000000034155,
+            "p99": 0.006022950799998341,
+            "max": 0.006107260000007386
+          },
+          "0.0124s": {
+            "n": 1,
+            "median": 0.012379180000003487,
+            "p99": 0.012379180000003487,
+            "max": 0.012379180000003487
+          },
+          "0.0166s": {
+            "n": 6,
+            "median": 0.016596529999997722,
+            "p99": 0.01724232199999918,
+            "max": 0.01726487999999904
+          },
+          "0.1s": {
+            "n": 589,
+            "median": 0.10000493999999804,
+            "p99": 0.10003431520000007,
+            "max": 0.10005982000000024
+          },
+          "0.142s": {
+            "n": 1,
+            "median": 0.14153083999999994,
+            "p99": 0.14153083999999994,
+            "max": 0.14153083999999994
+          }
+        },
+        "spacing_max_s": 0.14153083999999994,
+        "rest_v_first_last": [
+          0.200752258300781,
+          0.238132476806641
+        ],
+        "v_min_max": [
+          0.200752258300781,
+          0.532394409179688
+        ],
+        "i_min_max": [
+          -5.93718141317368e-09,
+          0.000260007451288402
+        ],
+        "events": [
+          "0.000 step_start ",
+          "60.122 step_start ",
+          "61.176 step_start ",
+          "62.188 step_start ",
+          "63.199 step_start ",
+          "64.212 step_start ",
+          "65.223 step_start "
+        ],
+        "apparent_r_ohm": 879.741360844171,
+        "median_v_over_i_ohm": 1692.5523741381455
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/ici-s_20261112T093938Z.h5",
+      "measurement_id": "ici-s",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T09:39:38.467086Z",
+      "duration_s": 1062.05195062,
+      "records": 15467,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ici-s",
+        "outcome": "completed",
+        "records": 15467,
+        "duration_s": 1062.05195062,
+        "spacing_s": {
+          "0.00599s": {
+            "n": 5121,
+            "median": 0.005985440000017661,
+            "p99": 0.006047243999967122,
+            "max": 0.007276320000016767
+          },
+          "0.0076s": {
+            "n": 1,
+            "median": 0.007598579999978483,
+            "p99": 0.007598579999978483,
+            "max": 0.007598579999978483
+          },
+          "0.0106s": {
+            "n": 10,
+            "median": 0.010573989999983269,
+            "p99": 0.012493084400004762,
+            "max": 0.012541940000005525
+          },
+          "0.0144s": {
+            "n": 9,
+            "median": 0.014442959999996674,
+            "p99": 0.015805704799950037,
+            "max": 0.015857099999948332
+          },
+          "0.0174s": {
+            "n": 5,
+            "median": 0.01738843999999995,
+            "p99": 0.019045536799999922,
+            "max": 0.019050179999998917
+          },
+          "0.1s": {
+            "n": 10259,
+            "median": 0.10001909999999725,
+            "p99": 0.10004799680000076,
+            "max": 0.11340192000000116
+          },
+          "0.142s": {
+            "n": 31,
+            "median": 0.14155058000005738,
+            "p99": 0.1415996739999855,
+            "max": 0.1416072399999848
+          }
+        },
+        "spacing_max_s": 0.1416072399999848,
+        "rest_v_first_last": [
+          0.502902984619141,
+          0.170066833496094
+        ],
+        "v_min_max": [
+          -0.123680114746094,
+          0.502925872802734
+        ],
+        "i_min_max": [
+          -0.000260011292994022,
+          2.17696651816368e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.128 step_start ",
+          "70.243 step_start ",
+          "80.300 step_start ",
+          "140.371 step_start ",
+          "150.430 step_start ",
+          "210.499 step_start ",
+          "220.555 step_start ",
+          "280.621 step_start ",
+          "290.673 step_start ",
+          "350.753 step_start ",
+          "360.807 step_start ",
+          "420.873 step_start ",
+          "430.927 step_start ",
+          "490.992 step_start ",
+          "501.043 step_start ",
+          "561.108 step_start ",
+          "571.169 step_start ",
+          "631.243 step_start ",
+          "641.299 step_start ",
+          "701.369 step_start ",
+          "711.431 step_start ",
+          "771.494 step_start ",
+          "781.549 step_start ",
+          "841.619 step_start ",
+          "851.674 step_start ",
+          "911.736 step_start ",
+          "921.793 step_start ",
+          "981.868 step_start ",
+          "991.929 step_start ",
+          "1052.001 step_start "
+        ],
+        "apparent_r_ohm": 317.5203896674061,
+        "median_v_over_i_ohm": -946.0488474521159
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/ref-03d_20261112T093757Z.h5",
+      "measurement_id": "ref-03d",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T09:37:57.962233Z",
+      "duration_s": 73.347469,
+      "records": 1829,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-03d",
+        "outcome": "completed",
+        "records": 1829,
+        "duration_s": 73.347469,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.00598006000000062,
+            "p99": 0.006047988000000028,
+            "max": 0.007004419999999456
+          },
+          "0.00919s": {
+            "n": 1,
+            "median": 0.009194919999998774,
+            "p99": 0.009194919999998774,
+            "max": 0.009194919999998774
+          },
+          "0.015s": {
+            "n": 3,
+            "median": 0.015020279999999886,
+            "p99": 0.015229294399999977,
+            "max": 0.01523355999999998
+          },
+          "0.0189s": {
+            "n": 1,
+            "median": 0.01894965999999698,
+            "p99": 0.01894965999999698,
+            "max": 0.01894965999999698
+          },
+          "0.1s": {
+            "n": 656,
+            "median": 0.10000421000000159,
+            "p99": 0.10002974499999909,
+            "max": 0.10071045999998773
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14154461000000018,
+            "p99": 0.14156289840000041,
+            "max": 0.14156346000000042
+          }
+        },
+        "spacing_max_s": 0.14156346000000042,
+        "rest_v_first_last": [
+          0.500446319580078,
+          0.503822326660156
+        ],
+        "v_min_max": [
+          0.500373840332031,
+          0.570411682128906
+        ],
+        "i_min_max": [
+          -6.51925802230835e-09,
+          0.000260008266195655
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.117 step_start ",
+          "11.166 step_start ",
+          "31.220 step_start ",
+          "32.226 step_start ",
+          "52.283 step_start ",
+          "53.293 step_start "
+        ],
+        "apparent_r_ohm": 215.46589131186064,
+        "median_v_over_i_ohm": 2174.176200917066
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/ocv-02_20261112T092753Z.h5",
+      "measurement_id": "ocv-02",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "rest",
+      "start_utc": "2026-11-12T09:27:53.394746Z",
+      "duration_s": 600.08932638,
+      "records": 600,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ocv-02",
+        "outcome": "completed",
+        "records": 600,
+        "duration_s": 600.08932638,
+        "spacing_s": {
+          "1s": {
+            "n": 599,
+            "median": 1.0000998000000152,
+            "p99": 1.0001359043999938,
+            "max": 1.0007461199999739
+          }
+        },
+        "spacing_max_s": 1.0007461199999739,
+        "rest_v_first_last": [
+          0.470218658447266,
+          0.500453948974609
+        ],
+        "v_min_max": [
+          0.470218658447266,
+          0.501068115234375
+        ],
+        "i_min_max": [
+          4.00177668780088e-11,
+          7.82165443524718e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/amp-02s-40C_20261112T092704Z.h5",
+      "measurement_id": "amp-02s-40C",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T09:27:04.062772Z",
+      "duration_s": 41.813677,
+      "records": 968,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "amp-02s-40C",
+        "outcome": "completed",
+        "records": 968,
+        "duration_s": 41.813677,
+        "spacing_s": {
+          "0.00594s": {
+            "n": 579,
+            "median": 0.0059392199999983575,
+            "p99": 0.005979204799999209,
+            "max": 0.0066521399999999176
+          },
+          "0.0107s": {
+            "n": 1,
+            "median": 0.010655679999999279,
+            "p99": 0.010655679999999279,
+            "max": 0.010655679999999279
+          },
+          "0.0133s": {
+            "n": 1,
+            "median": 0.013326619999999068,
+            "p99": 0.013326619999999068,
+            "max": 0.013326619999999068
+          },
+          "0.1s": {
+            "n": 376,
+            "median": 0.10000279000000001,
+            "p99": 0.10003165000000025,
+            "max": 0.10059329999999989
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14153992000000137,
+            "p99": 0.14156497139999993,
+            "max": 0.14156573999999988
+          }
+        },
+        "spacing_max_s": 0.14156573999999988,
+        "rest_v_first_last": [
+          0.528251647949219,
+          0.460659027099609
+        ],
+        "v_min_max": [
+          -0.248878479003906,
+          0.528682708740234
+        ],
+        "i_min_max": [
+          -0.0103998333215714,
+          5.21540641784668e-07
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.115 step_start ",
+          "10.663 step_start ",
+          "20.713 step_start ",
+          "21.219 step_start ",
+          "31.265 step_start ",
+          "31.772 step_start "
+        ],
+        "apparent_r_ohm": 64.24416244170386,
+        "median_v_over_i_ohm": 21.165791905775265
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/amp-02s-10C_20261112T092602Z.h5",
+      "measurement_id": "amp-02s-10C",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T09:26:02.255113Z",
+      "duration_s": 41.81450994,
+      "records": 968,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "amp-02s-10C",
+        "outcome": "completed",
+        "records": 968,
+        "duration_s": 41.81450994,
+        "spacing_s": {
+          "0.00593s": {
+            "n": 579,
+            "median": 0.005933799999997547,
+            "p99": 0.006008644399999917,
+            "max": 0.00645240000000058
+          },
+          "0.00926s": {
+            "n": 1,
+            "median": 0.009261220000002623,
+            "p99": 0.009261220000002623,
+            "max": 0.009261220000002623
+          },
+          "0.0168s": {
+            "n": 1,
+            "median": 0.016847900000000138,
+            "p99": 0.016847900000000138,
+            "max": 0.016847900000000138
+          },
+          "0.1s": {
+            "n": 376,
+            "median": 0.10000334000000022,
+            "p99": 0.10002901500000005,
+            "max": 0.10092687999999939
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.1415556899999979,
+            "p99": 0.14156699619999993,
+            "max": 0.14156728000000007
+          }
+        },
+        "spacing_max_s": 0.14156728000000007,
+        "rest_v_first_last": [
+          0.548198699951172,
+          0.525005340576172
+        ],
+        "v_min_max": [
+          0.185630798339844,
+          0.548210144042969
+        ],
+        "i_min_max": [
+          -0.00259997881948948,
+          4.4703483581543e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.116 step_start ",
+          "10.663 step_start ",
+          "20.717 step_start ",
+          "21.222 step_start ",
+          "31.267 step_start ",
+          "31.773 step_start "
+        ],
+        "apparent_r_ohm": 116.70118451744635,
+        "median_v_over_i_ohm": -78.03378962893441
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/amp-02s-2C_20261112T092512Z.h5",
+      "measurement_id": "amp-02s-2C",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T09:25:12.914112Z",
+      "duration_s": 41.81896208,
+      "records": 968,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "amp-02s-2C",
+        "outcome": "completed",
+        "records": 968,
+        "duration_s": 41.81896208,
+        "spacing_s": {
+          "0.00593s": {
+            "n": 579,
+            "median": 0.005932480000002016,
+            "p99": 0.006011420400000015,
+            "max": 0.007161920000001487
+          },
+          "0.0104s": {
+            "n": 1,
+            "median": 0.01038001999999949,
+            "p99": 0.01038001999999949,
+            "max": 0.01038001999999949
+          },
+          "0.0163s": {
+            "n": 1,
+            "median": 0.016346719999999593,
+            "p99": 0.016346719999999593,
+            "max": 0.016346719999999593
+          },
+          "0.1s": {
+            "n": 376,
+            "median": 0.10000155999999905,
+            "p99": 0.10002785000000003,
+            "max": 0.10048799999999858
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14155334999999947,
+            "p99": 0.1415637203999955,
+            "max": 0.14156399999999536
+          }
+        },
+        "spacing_max_s": 0.14156399999999536,
+        "rest_v_first_last": [
+          0.567787170410156,
+          0.549110412597656
+        ],
+        "v_min_max": [
+          0.445491790771484,
+          0.56781005859375
+        ],
+        "i_min_max": [
+          -0.000520008732564747,
+          2.29338183999062e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.116 step_start ",
+          "10.664 step_start ",
+          "20.717 step_start ",
+          "21.223 step_start ",
+          "31.269 step_start ",
+          "31.776 step_start "
+        ],
+        "apparent_r_ohm": 165.49751487590325,
+        "median_v_over_i_ohm": -883.5338682558286
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/amp-02d-40C_20261112T092422Z.h5",
+      "measurement_id": "amp-02d-40C",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T09:24:22.626909Z",
+      "duration_s": 41.8127677,
+      "records": 968,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "amp-02d-40C",
+        "outcome": "completed",
+        "records": 968,
+        "duration_s": 41.8127677,
+        "spacing_s": {
+          "0.00594s": {
+            "n": 579,
+            "median": 0.005936720000001117,
+            "p99": 0.005998766799999622,
+            "max": 0.007085700000001083
+          },
+          "0.0134s": {
+            "n": 1,
+            "median": 0.013360919999996668,
+            "p99": 0.013360919999996668,
+            "max": 0.013360919999996668
+          },
+          "0.0187s": {
+            "n": 1,
+            "median": 0.01865209999999884,
+            "p99": 0.01865209999999884,
+            "max": 0.01865209999999884
+          },
+          "0.1s": {
+            "n": 376,
+            "median": 0.09999821000000086,
+            "p99": 0.10003173000000087,
+            "max": 0.10065835999999884
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.1415350100000008,
+            "p99": 0.1415565749999952,
+            "max": 0.14155703999999503
+          }
+        },
+        "spacing_max_s": 0.14155703999999503,
+        "rest_v_first_last": [
+          0.530181884765625,
+          0.575382232666016
+        ],
+        "v_min_max": [
+          0.528011322021484,
+          1.41809463500977
+        ],
+        "i_min_max": [
+          -1.49011611938477e-08,
+          0.0104011297225952
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.108 step_start ",
+          "10.655 step_start ",
+          "20.710 step_start ",
+          "21.216 step_start ",
+          "31.265 step_start ",
+          "31.771 step_start "
+        ],
+        "apparent_r_ohm": 70.66101126198843,
+        "median_v_over_i_ohm": 130.4993366716281
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/amp-02d-10C_20261112T092333Z.h5",
+      "measurement_id": "amp-02d-10C",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T09:23:33.155470Z",
+      "duration_s": 41.80960788,
+      "records": 968,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "amp-02d-10C",
+        "outcome": "completed",
+        "records": 968,
+        "duration_s": 41.80960788,
+        "spacing_s": {
+          "0.00593s": {
+            "n": 578,
+            "median": 0.0059308599999998435,
+            "p99": 0.005974540800000945,
+            "max": 0.006039099999998854
+          },
+          "0.00787s": {
+            "n": 1,
+            "median": 0.007874920000002561,
+            "p99": 0.007874920000002561,
+            "max": 0.007874920000002561
+          },
+          "0.0124s": {
+            "n": 1,
+            "median": 0.012371180000002369,
+            "p99": 0.012371180000002369,
+            "max": 0.012371180000002369
+          },
+          "0.019s": {
+            "n": 1,
+            "median": 0.0190267999999989,
+            "p99": 0.0190267999999989,
+            "max": 0.0190267999999989
+          },
+          "0.1s": {
+            "n": 376,
+            "median": 0.1000009400000006,
+            "p99": 0.10002583999999937,
+            "max": 0.10023282000000222
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14157027999999955,
+            "p99": 0.14157648620000032,
+            "max": 0.14157662000000037
+          }
+        },
+        "spacing_max_s": 0.14157662000000037,
+        "rest_v_first_last": [
+          0.516380310058594,
+          0.532779693603516
+        ],
+        "v_min_max": [
+          0.516059875488281,
+          0.903324127197266
+        ],
+        "i_min_max": [
+          -4.84287738800049e-08,
+          0.00260012969374657
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.108 step_start ",
+          "10.654 step_start ",
+          "20.709 step_start ",
+          "21.213 step_start ",
+          "31.262 step_start ",
+          "31.768 step_start "
+        ],
+        "apparent_r_ohm": 123.80969420373928,
+        "median_v_over_i_ohm": 340.41246232768503
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/step-02s_20261112T092142Z.h5",
+      "measurement_id": "step-02s",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T09:21:42.477413Z",
+      "duration_s": 75.32602182,
+      "records": 1941,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "step-02s",
+        "outcome": "completed",
+        "records": 1941,
+        "duration_s": 75.32602182,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 495,
+            "median": 0.00598141999999946,
+            "p99": 0.0060260360000000904,
+            "max": 0.00609971999999992
+          },
+          "0.0144s": {
+            "n": 2,
+            "median": 0.014351739999999724,
+            "p99": 0.015483012799999635,
+            "max": 0.015506099999999634
+          },
+          "0.0182s": {
+            "n": 1,
+            "median": 0.018203100000000916,
+            "p99": 0.018203100000000916,
+            "max": 0.018203100000000916
+          },
+          "0.05s": {
+            "n": 1437,
+            "median": 0.050024800000002756,
+            "p99": 0.05006355200000087,
+            "max": 0.052219520000001296
+          },
+          "0.0916s": {
+            "n": 3,
+            "median": 0.09155898000000007,
+            "p99": 0.0915838915999986,
+            "max": 0.09158439999999857
+          }
+        },
+        "spacing_max_s": 0.09158439999999857,
+        "rest_v_first_last": [
+          0.525409698486328,
+          0.517143249511719
+        ],
+        "v_min_max": [
+          0.452335357666016,
+          0.525444030761719
+        ],
+        "i_min_max": [
+          -0.000260009779594839,
+          2.06055119633675e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.123 step_start ",
+          "15.227 step_start "
+        ],
+        "apparent_r_ohm": 200.35999685952618,
+        "median_v_over_i_ohm": -1785.377070290128
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/step-02d_20261112T092021Z.h5",
+      "measurement_id": "step-02d",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T09:20:21.035556Z",
+      "duration_s": 75.3231948,
+      "records": 1941,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "step-02d",
+        "outcome": "completed",
+        "records": 1941,
+        "duration_s": 75.3231948,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 495,
+            "median": 0.005982939999999992,
+            "p99": 0.006010371599999687,
+            "max": 0.006108439999999993
+          },
+          "0.0169s": {
+            "n": 3,
+            "median": 0.01687616000000003,
+            "p99": 0.018167388399999197,
+            "max": 0.01819373999999918
+          },
+          "0.05s": {
+            "n": 1437,
+            "median": 0.050028980000000445,
+            "p99": 0.050071043200002094,
+            "max": 0.05131287999999756
+          },
+          "0.0916s": {
+            "n": 3,
+            "median": 0.0915705200000001,
+            "p99": 0.09157163719999963,
+            "max": 0.09157165999999961
+          }
+        },
+        "spacing_max_s": 0.09157165999999961,
+        "rest_v_first_last": [
+          0.526153564453125,
+          0.525844573974609
+        ],
+        "v_min_max": [
+          0.525562286376953,
+          0.600330352783203
+        ],
+        "i_min_max": [
+          -4.19095158576965e-09,
+          0.000260008964687586
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.121 step_start ",
+          "15.222 step_start "
+        ],
+        "apparent_r_ohm": 216.12073312045635,
+        "median_v_over_i_ohm": 2259.6769043683166
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/ref-02s_20261112T091859Z.h5",
+      "measurement_id": "ref-02s",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T09:18:59.673655Z",
+      "duration_s": 73.36530156,
+      "records": 1829,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-02s",
+        "outcome": "completed",
+        "records": 1829,
+        "duration_s": 73.36530156,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1157,
+            "median": 0.005983999999999767,
+            "p99": 0.006044785599998051,
+            "max": 0.006743480000000801
+          },
+          "0.015s": {
+            "n": 5,
+            "median": 0.015037239999998064,
+            "p99": 0.016022423199999806,
+            "max": 0.01604339999999982
+          },
+          "0.1s": {
+            "n": 656,
+            "median": 0.10000295000000214,
+            "p99": 0.10002536700000038,
+            "max": 0.10697488000000277
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14155232000000129,
+            "p99": 0.1415604659999967,
+            "max": 0.1415605799999966
+          }
+        },
+        "spacing_max_s": 0.1415605799999966,
+        "rest_v_first_last": [
+          0.538173675537109,
+          0.526515960693359
+        ],
+        "v_min_max": [
+          0.468193054199219,
+          0.538185119628906
+        ],
+        "i_min_max": [
+          -0.000260011292994022,
+          2.11875885725021e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.127 step_start ",
+          "11.186 step_start ",
+          "31.238 step_start ",
+          "32.246 step_start ",
+          "52.304 step_start ",
+          "53.312 step_start "
+        ],
+        "apparent_r_ohm": 194.30915781146825,
+        "median_v_over_i_ohm": -1831.64529852918
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/ref-02d_20261112T091738Z.h5",
+      "measurement_id": "ref-02d",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T09:17:38.632561Z",
+      "duration_s": 73.3580726,
+      "records": 1829,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-02d",
+        "outcome": "completed",
+        "records": 1829,
+        "duration_s": 73.3580726,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1155,
+            "median": 0.005982320000001096,
+            "p99": 0.006046774399999997,
+            "max": 0.006162379999999912
+          },
+          "0.00815s": {
+            "n": 2,
+            "median": 0.008150239999999087,
+            "p99": 0.008755821199997058,
+            "max": 0.008768179999997017
+          },
+          "0.0159s": {
+            "n": 4,
+            "median": 0.01587350000000054,
+            "p99": 0.016601650799999187,
+            "max": 0.016609559999999135
+          },
+          "0.0181s": {
+            "n": 1,
+            "median": 0.01810739999999811,
+            "p99": 0.01810739999999811,
+            "max": 0.01810739999999811
+          },
+          "0.1s": {
+            "n": 656,
+            "median": 0.1000036900000012,
+            "p99": 0.10002692300000185,
+            "max": 0.10039495999999914
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14157040999999992,
+            "p99": 0.14158444300000317,
+            "max": 0.14158462000000327
+          }
+        },
+        "spacing_max_s": 0.14158462000000327,
+        "rest_v_first_last": [
+          0.552276611328125,
+          0.539493560791016
+        ],
+        "v_min_max": [
+          0.539493560791016,
+          0.611873626708984
+        ],
+        "i_min_max": [
+          -5.93718141317368e-09,
+          0.000260008033365011
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.119 step_start ",
+          "11.177 step_start ",
+          "31.231 step_start ",
+          "32.238 step_start ",
+          "52.293 step_start ",
+          "53.302 step_start "
+        ],
+        "apparent_r_ohm": 195.16430232397144,
+        "median_v_over_i_ohm": 2320.449296977241
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/ici-d_20261112T085921Z.h5",
+      "measurement_id": "ici-d",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T08:59:21.755102Z",
+      "duration_s": 1062.02547354,
+      "records": 15467,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ici-d",
+        "outcome": "completed",
+        "records": 15467,
+        "duration_s": 1062.02547354,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 5123,
+            "median": 0.005980420000014419,
+            "p99": 0.006025193600062266,
+            "max": 0.006727080000018759
+          },
+          "0.0086s": {
+            "n": 3,
+            "median": 0.008602740000014819,
+            "p99": 0.008786470400036706,
+            "max": 0.008790220000037152
+          },
+          "0.0106s": {
+            "n": 4,
+            "median": 0.010569399999951656,
+            "p99": 0.011674265400001644,
+            "max": 0.011704440000002592
+          },
+          "0.013s": {
+            "n": 11,
+            "median": 0.013003339999997365,
+            "p99": 0.015241880000030506,
+            "max": 0.01524240000003374
+          },
+          "0.0166s": {
+            "n": 5,
+            "median": 0.016583920000016406,
+            "p99": 0.019196621599998024,
+            "max": 0.019261119999999465
+          },
+          "0.1s": {
+            "n": 10259,
+            "median": 0.10002293999991707,
+            "p99": 0.1000835427999209,
+            "max": 0.10485140000000115
+          },
+          "0.142s": {
+            "n": 31,
+            "median": 0.14156697999999324,
+            "p99": 0.14159843600000385,
+            "max": 0.14160068000001047
+          }
+        },
+        "spacing_max_s": 0.14160068000001047,
+        "rest_v_first_last": [
+          0.297771453857422,
+          0.569480895996094
+        ],
+        "v_min_max": [
+          0.293632507324219,
+          0.643287658691406
+        ],
+        "i_min_max": [
+          -5.355104804039e-09,
+          0.000260008382610977
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.118 step_start ",
+          "70.233 step_start ",
+          "80.292 step_start ",
+          "140.359 step_start ",
+          "150.415 step_start ",
+          "210.481 step_start ",
+          "220.540 step_start ",
+          "280.613 step_start ",
+          "290.669 step_start ",
+          "350.732 step_start ",
+          "360.794 step_start ",
+          "420.856 step_start ",
+          "430.911 step_start ",
+          "490.980 step_start ",
+          "501.033 step_start ",
+          "561.100 step_start ",
+          "571.159 step_start ",
+          "631.230 step_start ",
+          "641.286 step_start ",
+          "701.355 step_start ",
+          "711.406 step_start ",
+          "771.467 step_start ",
+          "781.528 step_start ",
+          "841.602 step_start ",
+          "851.660 step_start ",
+          "911.728 step_start ",
+          "921.779 step_start ",
+          "981.841 step_start ",
+          "991.899 step_start ",
+          "1051.972 step_start "
+        ],
+        "apparent_r_ohm": 193.45519234112723,
+        "median_v_over_i_ohm": 1944.9835592579036
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/amp-01d-40C_20261112T085817Z.h5",
+      "measurement_id": "amp-01d-40C",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T08:58:17.504060Z",
+      "duration_s": 41.81306884,
+      "records": 968,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "amp-01d-40C",
+        "outcome": "completed",
+        "records": 968,
+        "duration_s": 41.81306884,
+        "spacing_s": {
+          "0.00594s": {
+            "n": 579,
+            "median": 0.005936860000002042,
+            "p99": 0.0060203959999997995,
+            "max": 0.00659943999999868
+          },
+          "0.0116s": {
+            "n": 1,
+            "median": 0.01159245999999925,
+            "p99": 0.01159245999999925,
+            "max": 0.01159245999999925
+          },
+          "0.0157s": {
+            "n": 1,
+            "median": 0.015744360000001123,
+            "p99": 0.015744360000001123,
+            "max": 0.015744360000001123
+          },
+          "0.1s": {
+            "n": 376,
+            "median": 0.09999849999999988,
+            "p99": 0.10002517500000163,
+            "max": 0.10553791999999973
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14153811999999877,
+            "p99": 0.14155017340000076,
+            "max": 0.14155054000000078
+          }
+        },
+        "spacing_max_s": 0.14155054000000078,
+        "rest_v_first_last": [
+          0.267917633056641,
+          0.314811706542969
+        ],
+        "v_min_max": [
+          0.265117645263672,
+          1.14926910400391
+        ],
+        "i_min_max": [
+          -7.45058059692383e-08,
+          0.0104010999202728
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.108 step_start ",
+          "10.655 step_start ",
+          "20.707 step_start ",
+          "21.213 step_start ",
+          "31.266 step_start ",
+          "31.772 step_start "
+        ],
+        "apparent_r_ohm": 77.1615968251847,
+        "median_v_over_i_ohm": 108.65505226480846
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/amp-01d-20C_20261112T085718Z.h5",
+      "measurement_id": "amp-01d-20C",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T08:57:18.391361Z",
+      "duration_s": 41.80777928,
+      "records": 968,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "amp-01d-20C",
+        "outcome": "completed",
+        "records": 968,
+        "duration_s": 41.80777928,
+        "spacing_s": {
+          "0.00594s": {
+            "n": 578,
+            "median": 0.005936249999999532,
+            "p99": 0.0059899256000004895,
+            "max": 0.006064240000000609
+          },
+          "0.00753s": {
+            "n": 1,
+            "median": 0.007533519999999072,
+            "p99": 0.007533519999999072,
+            "max": 0.007533519999999072
+          },
+          "0.011s": {
+            "n": 1,
+            "median": 0.011026080000000604,
+            "p99": 0.011026080000000604,
+            "max": 0.011026080000000604
+          },
+          "0.0163s": {
+            "n": 1,
+            "median": 0.01625769999999882,
+            "p99": 0.01625769999999882,
+            "max": 0.01625769999999882
+          },
+          "0.1s": {
+            "n": 376,
+            "median": 0.09999943000000044,
+            "p99": 0.10002260499999949,
+            "max": 0.10002962000000082
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14154053999999938,
+            "p99": 0.1415734502,
+            "max": 0.14157445999999996
+          }
+        },
+        "spacing_max_s": 0.14157445999999996,
+        "rest_v_first_last": [
+          0.250064849853516,
+          0.276565551757813
+        ],
+        "v_min_max": [
+          0.248500823974609,
+          0.969074249267578
+        ],
+        "i_min_max": [
+          -5.40167093276978e-08,
+          0.00520008895546198
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.109 step_start ",
+          "10.656 step_start ",
+          "20.707 step_start ",
+          "21.212 step_start ",
+          "31.259 step_start ",
+          "31.766 step_start "
+        ],
+        "apparent_r_ohm": 122.3610341456326,
+        "median_v_over_i_ohm": 177.08261092022957
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/amp-01d-10C_20261112T085619Z.h5",
+      "measurement_id": "amp-01d-10C",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T08:56:19.780345Z",
+      "duration_s": 41.80049418,
+      "records": 968,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "amp-01d-10C",
+        "outcome": "completed",
+        "records": 968,
+        "duration_s": 41.80049418,
+        "spacing_s": {
+          "0.00594s": {
+            "n": 579,
+            "median": 0.005935319999999966,
+            "p99": 0.005991432399999755,
+            "max": 0.00659616000000085
+          },
+          "0.008s": {
+            "n": 1,
+            "median": 0.00800163999999981,
+            "p99": 0.00800163999999981,
+            "max": 0.00800163999999981
+          },
+          "0.0134s": {
+            "n": 1,
+            "median": 0.013427499999998815,
+            "p99": 0.013427499999998815,
+            "max": 0.013427499999998815
+          },
+          "0.1s": {
+            "n": 376,
+            "median": 0.09999966999999987,
+            "p99": 0.10003045499999907,
+            "max": 0.10019742000000065
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14153699999999958,
+            "p99": 0.14155162980000008,
+            "max": 0.14155176000000003
+          }
+        },
+        "spacing_max_s": 0.14155176000000003,
+        "rest_v_first_last": [
+          0.240467071533203,
+          0.254947662353516
+        ],
+        "v_min_max": [
+          0.239643096923828,
+          0.842075347900391
+        ],
+        "i_min_max": [
+          -4.2840838432312e-08,
+          0.00260014273226261
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.109 step_start ",
+          "10.655 step_start ",
+          "20.705 step_start ",
+          "21.210 step_start ",
+          "31.254 step_start ",
+          "31.758 step_start "
+        ],
+        "apparent_r_ohm": 198.6014030145689,
+        "median_v_over_i_ohm": 298.58343725459224
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/amp-01d-5C_20261112T085518Z.h5",
+      "measurement_id": "amp-01d-5C",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T08:55:18.650436Z",
+      "duration_s": 41.79934112,
+      "records": 968,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "amp-01d-5C",
+        "outcome": "completed",
+        "records": 968,
+        "duration_s": 41.79934112,
+        "spacing_s": {
+          "0.00594s": {
+            "n": 579,
+            "median": 0.0059406800000001425,
+            "p99": 0.006064295200000629,
+            "max": 0.0065146600000005606
+          },
+          "0.00834s": {
+            "n": 2,
+            "median": 0.008338030000000884,
+            "p99": 0.009044757000001269,
+            "max": 0.009059180000001277
+          },
+          "0.1s": {
+            "n": 376,
+            "median": 0.09999884999999864,
+            "p99": 0.10002473500000075,
+            "max": 0.1004881200000014
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14153420999999877,
+            "p99": 0.14153607719999986,
+            "max": 0.14153609999999994
+          }
+        },
+        "spacing_max_s": 0.14153609999999994,
+        "rest_v_first_last": [
+          0.236114501953125,
+          0.243698120117188
+        ],
+        "v_min_max": [
+          0.235378265380859,
+          0.759151458740234
+        ],
+        "i_min_max": [
+          -3.72529029846191e-08,
+          0.00130015797913074
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.108 step_start ",
+          "10.657 step_start ",
+          "20.699 step_start ",
+          "21.205 step_start ",
+          "31.250 step_start ",
+          "31.758 step_start "
+        ],
+        "apparent_r_ohm": 326.0318812262412,
+        "median_v_over_i_ohm": 515.2990133881203
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/amp-01d-2C_20261112T085429Z.h5",
+      "measurement_id": "amp-01d-2C",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T08:54:29.295483Z",
+      "duration_s": 41.811671079999996,
+      "records": 968,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "amp-01d-2C",
+        "outcome": "completed",
+        "records": 968,
+        "duration_s": 41.811671079999996,
+        "spacing_s": {
+          "0.00593s": {
+            "n": 579,
+            "median": 0.0059339000000004916,
+            "p99": 0.006038648399999574,
+            "max": 0.006842239999999222
+          },
+          "0.0137s": {
+            "n": 2,
+            "median": 0.013745839999999454,
+            "p99": 0.014001717999999795,
+            "max": 0.014006939999999801
+          },
+          "0.1s": {
+            "n": 376,
+            "median": 0.0999976900000007,
+            "p99": 0.10002195500000077,
+            "max": 0.1008055799999994
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14153073999999943,
+            "p99": 0.14155541039999986,
+            "max": 0.14155613999999994
+          }
+        },
+        "spacing_max_s": 0.14155613999999994,
+        "rest_v_first_last": [
+          0.232818603515625,
+          0.23724365234375
+        ],
+        "v_min_max": [
+          0.232696533203125,
+          0.659465789794922
+        ],
+        "i_min_max": [
+          -5.93718141317368e-09,
+          0.00052002293523401
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.108 step_start ",
+          "10.656 step_start ",
+          "20.707 step_start ",
+          "21.213 step_start ",
+          "31.263 step_start ",
+          "31.769 step_start "
+        ],
+        "apparent_r_ohm": 624.8625845423182,
+        "median_v_over_i_ohm": 1086.207038580094
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/step-01d_20261112T085251Z.h5",
+      "measurement_id": "step-01d",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T08:52:51.079127Z",
+      "duration_s": 75.32344706,
+      "records": 1941,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "step-01d",
+        "outcome": "completed",
+        "records": 1941,
+        "duration_s": 75.32344706,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 495,
+            "median": 0.00597907999999947,
+            "p99": 0.0060144640000002305,
+            "max": 0.006495939999998868
+          },
+          "0.0181s": {
+            "n": 3,
+            "median": 0.018119179999999346,
+            "p99": 0.0181236879999998,
+            "max": 0.01812377999999981
+          },
+          "0.05s": {
+            "n": 1437,
+            "median": 0.05003070000000065,
+            "p99": 0.050076110400001636,
+            "max": 0.05195225999999309
+          },
+          "0.0915s": {
+            "n": 3,
+            "median": 0.09154378000000007,
+            "p99": 0.09158827199999972,
+            "max": 0.09158917999999971
+          }
+        },
+        "spacing_max_s": 0.09158917999999971,
+        "rest_v_first_last": [
+          0.228134155273438,
+          0.233428955078125
+        ],
+        "v_min_max": [
+          0.228134155273438,
+          0.618087768554688
+        ],
+        "i_min_max": [
+          -4.19095158576965e-09,
+          0.000260007916949689
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.120 step_start ",
+          "15.219 step_start "
+        ],
+        "apparent_r_ohm": 1027.7593031460658,
+        "median_v_over_i_ohm": 1921.8428860285214
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/ref-01s_20261112T085108Z.h5",
+      "measurement_id": "ref-01s",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T08:51:08.501001Z",
+      "duration_s": 73.36652384,
+      "records": 1829,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-01s",
+        "outcome": "completed",
+        "records": 1829,
+        "duration_s": 73.36652384,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1155,
+            "median": 0.005984019999999979,
+            "p99": 0.006041360400001068,
+            "max": 0.006833979999999684
+          },
+          "0.00852s": {
+            "n": 2,
+            "median": 0.008523839999998728,
+            "p99": 0.009317914399998344,
+            "max": 0.009334119999998336
+          },
+          "0.0146s": {
+            "n": 4,
+            "median": 0.014613939999996717,
+            "p99": 0.01522013539999989,
+            "max": 0.015223100000000045
+          },
+          "0.0182s": {
+            "n": 1,
+            "median": 0.01820899999999881,
+            "p99": 0.01820899999999881,
+            "max": 0.01820899999999881
+          },
+          "0.1s": {
+            "n": 656,
+            "median": 0.1000027699999988,
+            "p99": 0.10004059899999902,
+            "max": 0.10057575999999813
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.1415326600000002,
+            "p99": 0.14154760460000007,
+            "max": 0.14154788000000007
+          }
+        },
+        "spacing_max_s": 0.14154788000000007,
+        "rest_v_first_last": [
+          0.232948303222656,
+          0.225776672363281
+        ],
+        "v_min_max": [
+          -0.199851989746094,
+          0.232994079589844
+        ],
+        "i_min_max": [
+          -0.000260010245256126,
+          2.17696651816368e-08
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.125 step_start ",
+          "11.187 step_start ",
+          "31.240 step_start ",
+          "32.250 step_start ",
+          "52.303 step_start ",
+          "53.314 step_start "
+        ],
+        "apparent_r_ohm": 1330.7009248877703,
+        "median_v_over_i_ohm": 638.8131533360404
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/ref-01d_20261112T084947Z.h5",
+      "measurement_id": "ref-01d",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "pulse_train",
+      "start_utc": "2026-11-12T08:49:47.575058Z",
+      "duration_s": 73.36011042,
+      "records": 1829,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ref-01d",
+        "outcome": "completed",
+        "records": 1829,
+        "duration_s": 73.36011042,
+        "spacing_s": {
+          "0.00598s": {
+            "n": 1155,
+            "median": 0.00598031999999904,
+            "p99": 0.006036473999999359,
+            "max": 0.00612509999999844
+          },
+          "0.00822s": {
+            "n": 2,
+            "median": 0.008217799999998832,
+            "p99": 0.00861652279999884,
+            "max": 0.00862465999999884
+          },
+          "0.0165s": {
+            "n": 5,
+            "median": 0.01647937999999982,
+            "p99": 0.01757996319999947,
+            "max": 0.01761233999999945
+          },
+          "0.1s": {
+            "n": 656,
+            "median": 0.10000379000000592,
+            "p99": 0.10002938300000057,
+            "max": 0.10119892000000164
+          },
+          "0.142s": {
+            "n": 4,
+            "median": 0.14154126999999828,
+            "p99": 0.1415518858000009,
+            "max": 0.1415519800000009
+          }
+        },
+        "spacing_max_s": 0.1415519800000009,
+        "rest_v_first_last": [
+          0.229557037353516,
+          0.233577728271484
+        ],
+        "v_min_max": [
+          0.229557037353516,
+          0.631671905517578
+        ],
+        "i_min_max": [
+          -5.355104804039e-09,
+          0.000260008149780333
+        ],
+        "events": [
+          "0.000 step_start ",
+          "10.119 step_start ",
+          "11.179 step_start ",
+          "31.235 step_start ",
+          "32.244 step_start ",
+          "52.298 step_start ",
+          "53.306 step_start "
+        ],
+        "apparent_r_ohm": 942.2053932400548,
+        "median_v_over_i_ohm": 1842.0866126572553
+      }
+    },
+    {
+      "file": "/Users/bpauw/k2460-data/b3/explore/ocv-01_20261112T084418Z.h5",
+      "measurement_id": "ocv-01",
+      "sample_id": "AlCe Test Cell 1",
+      "protocol": "rest",
+      "start_utc": "2026-11-12T08:44:18.276224Z",
+      "duration_s": 300.11705062,
+      "records": 466,
+      "outcome": "completed",
+      "cutoffs": 0,
+      "stops": 0,
+      "aborts": 0,
+      "errors": 0,
+      "detail": "",
+      "checks": {
+        "measurement_id": "ocv-01",
+        "outcome": "completed",
+        "records": 466,
+        "duration_s": 300.11705062,
+        "spacing_s": {
+          "0.00599s": {
+            "n": 165,
+            "median": 0.005986640000000043,
+            "p99": 0.006016640799999977,
+            "max": 0.006077700000000075
+          },
+          "0.0189s": {
+            "n": 1,
+            "median": 0.01886790000000005,
+            "p99": 0.01886790000000005,
+            "max": 0.01886790000000005
+          },
+          "1s": {
+            "n": 299,
+            "median": 1.0000933999999972,
+            "p99": 1.0002092356000003,
+            "max": 1.04162518
+          }
+        },
+        "spacing_max_s": 1.04162518,
+        "rest_v_first_last": [
+          0.229339599609375,
+          0.229629516601563
+        ],
+        "v_min_max": [
+          0.229339599609375,
+          0.229629516601563
+        ],
+        "i_min_max": [
+          3.09228198602796e-11,
+          7.6397554948926e-11
+        ],
+        "events": [
+          "0.000 step_start "
+        ]
+      }
+    }
+  ],
+  "monitor": null
+}
