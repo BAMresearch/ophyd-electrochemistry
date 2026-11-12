@@ -1,12 +1,13 @@
-"""Exploration series on the coin cell: every run is checked against the authorization.
+"""Exploration series on a coin cell: every run is checked against the authorization.
 
-bench/plan-b2-explore.md holds the limits and stop rules. The operator runs
+Each series has a page with its limits and stop rules (``SERIES``: b2 is
+bench/plan-b2-explore.md, b3 bench/plan-b3-explore.md). The operator runs
 ``authorize`` once; the agent then uses ``check`` and ``run``. ``run`` refuses
 anything outside the limits, runs one row, and exits non-zero on a stop rule.
 
-    uv run --locked --extra experiment python bench/explore.py authorize
-    uv run --locked --extra experiment python bench/explore.py check '{"measurement_id": ...}'
-    uv run --locked --extra experiment python bench/explore.py run '{"measurement_id": ...}'
+    uv run --locked --extra experiment python bench/explore.py --series b3 authorize
+    uv run --locked --extra experiment python bench/explore.py --series b3 check '{...}'
+    uv run --locked --extra experiment python bench/explore.py --series b3 run '{...}'
 """
 
 import argparse
@@ -16,6 +17,7 @@ import re
 import subprocess
 import sys
 import time
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -26,19 +28,63 @@ from ophyd_electrochemistry.sequences.run_file import read_run_file
 from ophyd_electrochemistry.sequences.run_sheet import write_run_sheet
 
 REPO = Path(__file__).parents[1]
-SESSION = REPO / "bench/b2/session-cell-explore.toml"
 BIN = REPO / ".venv/bin"
-SAMPLE = "Richard-HC400-rev"
 
-I_MAX_A = 0.0192  # 40C of the assumed 0.48 mAh
-PULSE_S = (0.05, 60.0)
-REST_S = (1.0, 600.0)
-RUN_CHARGE_UAH = 60.0
-NET_CHARGE_UAH = 40.0
-SERIES_S = 7200.0
+
+@dataclass(frozen=True)
+class Series:
+    """The limits of one authorized series; its page in bench/ says why."""
+
+    page: str
+    session: Path
+    sample: str
+    i_max_a: float  # pulses shorter than long_pulse_s
+    i_max_long_a: float  # pulses of long_pulse_s and longer
+    long_pulse_s: float
+    pulse_s: tuple[float, float]
+    rest_s: tuple[float, float]
+    run_charge_uah: float
+    net_uah: tuple[float, float]  # allowed net charge over the series, + = desodiation
+    v_high: float  # default upper cutoff of current rows
+    v_low: float | None  # default lower cutoff of current rows
+
+
+SERIES = {
+    "b2": Series(
+        page="bench/plan-b2-explore.md",
+        session=REPO / "bench/b2/session-cell-explore.toml",
+        sample="Richard-HC400-rev",
+        i_max_a=0.0192,  # 40C of the assumed 0.48 mAh
+        i_max_long_a=0.0192,
+        long_pulse_s=1.0,
+        pulse_s=(0.05, 60.0),
+        rest_s=(1.0, 600.0),
+        run_charge_uah=60.0,
+        net_uah=(-40.0, 40.0),
+        v_high=2.9,
+        v_low=None,
+    ),
+    "b3": Series(
+        page="bench/plan-b3-explore.md",
+        session=REPO / "bench/b3/session-b3-explore.toml",
+        sample="AlCe Test Cell 1",
+        i_max_a=0.0104,  # 40C of the measured 0.26 mAh, pulses under 1 s only
+        i_max_long_a=0.0013,  # 5C from 1 s on
+        long_pulse_s=1.0,
+        pulse_s=(0.05, 120.0),
+        rest_s=(1.0, 600.0),
+        run_charge_uah=80.0,
+        net_uah=(-15.0, 150.0),  # starts sodiated: little further sodiation
+        v_high=2.9,
+        v_low=-2.9,
+    ),
+}
+CFG = SERIES["b2"]  # main() selects the series
+
 MAX_BLOCKS = 63  # firmware 1.7.16a; kept as a second check of the compiler default
-V_HIGH = 2.9
+SERIES_S = 7200.0
 REFERENCE_FACTOR = 2.0  # stop if the reference 1 s resistance changes by more
+REFERENCE_DV = 0.05  # compare references only within this pre-pulse voltage
 SHORT_OHM = 20.0  # stop if a pulse sees less than this
 REST_A = 1e-6
 
@@ -66,25 +112,34 @@ def check_row(row: dict[str, Any], net_uah: float, elapsed_s: float, nominal_s: 
         raise Refused(f"protocol {protocol!r} is not in the authorization")
     if row.get("start_mode", "immediate") != "immediate":
         raise Refused("immediate start only")
-    if row.get("sample_id", SAMPLE) != SAMPLE:
+    if row.get("sample_id", CFG.sample) != CFG.sample:
         raise Refused("another sample")
     rests = [row["rest_s"]] + ([row["pre_rest_s"]] if "pre_rest_s" in row else [])
-    if not all(REST_S[0] <= r <= REST_S[1] for r in rests):
-        raise Refused(f"rests {rests} outside {REST_S} s")
+    if not all(CFG.rest_s[0] <= r <= CFG.rest_s[1] for r in rests):
+        raise Refused(f"rests {rests} outside {CFG.rest_s} s")
     if protocol != "rest":
-        if abs(row["current_a"]) > I_MAX_A:
-            raise Refused(f"|I| {abs(row['current_a'])} A above {I_MAX_A} A")
-        if not PULSE_S[0] <= row["pulse_s"] <= PULSE_S[1]:
-            raise Refused(f"pulse {row['pulse_s']} s outside {PULSE_S} s")
+        if not CFG.pulse_s[0] <= row["pulse_s"] <= CFG.pulse_s[1]:
+            raise Refused(f"pulse {row['pulse_s']} s outside {CFG.pulse_s} s")
+        cap = CFG.i_max_long_a if row["pulse_s"] >= CFG.long_pulse_s else CFG.i_max_a
+        if abs(row["current_a"]) > cap:
+            raise Refused(f"|I| {abs(row['current_a'])} A above {cap} A")
         if protocol == "bipolar_pulse" and row.get("start_with", "charge") != "charge":
             raise Refused("bipolar rows start with desodiation")
+        # The page's cutoffs, not the wider session window (brief 14): prepare()
+        # fills them in, so a missing or wider cutoff is refused here.
+        if row.get("v_high") is None or row["v_high"] > CFG.v_high:
+            raise Refused(f"v_high {row.get('v_high')} must be at most {CFG.v_high} V")
+        if CFG.v_low is not None and (row.get("v_low") is None or row["v_low"] < CFG.v_low):
+            raise Refused(f"v_low {row.get('v_low')} must be at least {CFG.v_low} V")
         total, net = run_charge_uah(row)
-        if total > RUN_CHARGE_UAH:
-            raise Refused(f"{total:.1f} uAh in one run, above {RUN_CHARGE_UAH}")
+        if total > CFG.run_charge_uah:
+            raise Refused(f"{total:.1f} uAh in one run, above {CFG.run_charge_uah}")
         each = abs(row["current_a"]) * row["pulse_s"] / 3600 * 1e6
-        reach = abs(net_uah + net) if protocol == "pulse_train" else abs(net_uah) + each
-        if reach > NET_CHARGE_UAH:
-            raise Refused(f"net charge would reach {reach:.1f} uAh, above {NET_CHARGE_UAH}")
+        low, high = CFG.net_uah
+        # bipolar: desodiation first, so each pair goes up by one pulse and back
+        reach = [net_uah + net] if protocol == "pulse_train" else [net_uah + each, net_uah]
+        if not all(low <= r <= high for r in reach):
+            raise Refused(f"net charge would reach {reach} uAh, outside {CFG.net_uah}")
     if elapsed_s + 1.02 * nominal_s > SERIES_S:
         raise Refused(f"{elapsed_s + nominal_s:.0f} s would pass the {SERIES_S:.0f} s series limit")
 
@@ -168,13 +223,25 @@ def net_charge_uah(directory: Path) -> float:
     return total
 
 
-def reference_ohm(directory: Path, direction: str) -> float | None:
-    """The first reference row of this direction: ``ref-01d`` or ``ref-01s``."""
+def reference_ohm(
+    directory: Path, direction: str, v_pre: float | None = None, exclude: Path | None = None
+) -> float | None:
+    """The first reference row of this direction (``ref-01d`` or ``ref-01s``).
+
+    With ``v_pre`` (the newest reference's first pre-pulse voltage) only an
+    earlier reference starting within REFERENCE_DV of it counts: the resistance
+    depends on the state of charge, so references at other voltages are not
+    comparable (6 Nov: the rule stopped on a low-voltage reference). ``exclude``
+    is the newest run itself, which must not be its own baseline (brief 14).
+    None means no comparable baseline: the caller reports it.
+    """
     for path in run_files(directory):
         name = path.name.rsplit("_", 1)[0]
+        if exclude is not None and path.resolve() == exclude.resolve():
+            continue
         if name.startswith("ref") and name.endswith(direction):
             table = pulses(read_run_file(path))
-            if table:
+            if table and (v_pre is None or abs(table[0]["v_pre"] - v_pre) <= REFERENCE_DV):
                 return float(np.median([abs(p["r_end_ohm"]) for p in table]))
     return None
 
@@ -204,15 +271,17 @@ def manager_session() -> str:
 
 def prepare(row: dict[str, Any], session: Any, series: dict[str, Any]) -> tuple[Path, float]:
     """Write the row's sheet after every check; returns it and its nominal duration."""
-    row = {"sample_id": SAMPLE, **row}
+    row = {"sample_id": CFG.sample, **row}
     if row.get("protocol") != "rest":
-        row.setdefault("v_high", V_HIGH)
+        row.setdefault("v_high", CFG.v_high)
+        if CFG.v_low is not None:
+            row.setdefault("v_low", CFG.v_low)
     directory = session.data_dir / "sheets"
     directory.mkdir(parents=True, exist_ok=True)
     sheet = directory / f"{row['measurement_id']}.xlsx"
     if sheet.exists():
         raise Refused(f"{row['measurement_id']} was used already")
-    write_run_sheet(sheet, [row], notes=[("Explore", "bench/plan-b2-explore.md")])
+    write_run_sheet(sheet, [row], notes=[("Explore", CFG.page)])
     try:
         ((_, problem, summary),) = validate_rows(session, sheet)
         if problem:
@@ -233,7 +302,7 @@ def prepare(row: dict[str, Any], session: Any, series: dict[str, Any]) -> tuple[
 
 
 def run(row: dict[str, Any], session: Any, series: dict[str, Any]) -> int:
-    if Path(manager_session()).resolve() != SESSION:
+    if Path(manager_session()).resolve() != CFG.session:
         raise Refused(f"the RE Manager runs {manager_session()!r}, not the explore session")
     state = status()
     if state.get("manager_state") != "idle" or state.get("items_in_queue") != "0":
@@ -241,7 +310,7 @@ def run(row: dict[str, Any], session: Any, series: dict[str, Any]) -> int:
     sheet, nominal = prepare(row, session, series)
     name = row["measurement_id"]
     done = subprocess.run(
-        [BIN / "oe-enqueue", sheet, name, "--session", SESSION],
+        [BIN / "oe-enqueue", sheet, name, "--session", CFG.session],
         input=f"{name}\n",
         capture_output=True,
         text=True,
@@ -268,7 +337,12 @@ def run(row: dict[str, Any], session: Any, series: dict[str, Any]) -> int:
         print("No run file")
         return STOP_UNSURE
     data = read_run_file(path)
-    problems = assess(data, reference_ohm(session.data_dir, name[-1]))
+    table = pulses(data)
+    v_pre = table[0]["v_pre"] if table else None
+    baseline = reference_ohm(session.data_dir, name[-1], v_pre, exclude=path)
+    if name.startswith("ref") and baseline is None:
+        print(f"No earlier reference within {REFERENCE_DV} V of {v_pre}: no factor-2 check")
+    problems = assess(data, baseline)
     entry = {
         "utc": datetime.datetime.now(datetime.UTC).isoformat(timespec="seconds"),
         "row": row,
@@ -289,12 +363,17 @@ def run(row: dict[str, Any], session: Any, series: dict[str, Any]) -> int:
 
 
 def authorize(session: Any, series_path: Path) -> int:
-    print(f"Cell {SAMPLE}: HC on HI (force and sense), Na on LO, output-off HIGH-Z.")
-    print(f"Window {session.limits.v_min_abs} to {session.limits.v_max_abs} V, |I| <= {I_MAX_A} A.")
-    print(f"Pulses {PULSE_S} s, rests {REST_S} s, {RUN_CHARGE_UAH} uAh per run,")
+    print(f"Series page {CFG.page}; session {CFG.session.relative_to(REPO)}.")
+    print(f"Cell {CFG.sample}: HC on HI (force and sense), Na on LO, output-off HIGH-Z.")
+    print(
+        f"Window {session.limits.v_min_abs} to {session.limits.v_max_abs} V; rows stop at "
+        f"{CFG.v_low} / {CFG.v_high} V."
+    )
+    print(f"|I| <= {CFG.i_max_a} A under {CFG.long_pulse_s} s, <= {CFG.i_max_long_a} A from it.")
+    print(f"Pulses {CFG.pulse_s} s, rests {CFG.rest_s} s, {CFG.run_charge_uah} uAh per run,")
     started = json.loads(series_path.read_text())["start_utc"] if series_path.exists() else None
-    print(f"+-{NET_CHARGE_UAH} uAh net, {SERIES_S / 3600:g} h in total, from {started or 'now'}.")
-    if input(f"Type {SAMPLE!r} to authorize this series: ").strip() != SAMPLE:
+    print(f"net {CFG.net_uah} uAh, {SERIES_S / 3600:g} h in total, from {started or 'now'}.")
+    if input(f"Type {CFG.sample!r} to authorize this series: ").strip() != CFG.sample:
         print("Not authorized")
         return 1
     now = datetime.datetime.now(datetime.UTC).isoformat(timespec="seconds")
@@ -304,11 +383,14 @@ def authorize(session: Any, series_path: Path) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    global CFG
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--series", choices=sorted(SERIES), default="b2")
     parser.add_argument("command", choices=("authorize", "check", "run"))
     parser.add_argument("row", nargs="?", help="the run-sheet row as JSON")
     args = parser.parse_args(argv)
-    session = load_session(SESSION)
+    CFG = SERIES[args.series]
+    session = load_session(CFG.session)
     session.data_dir.mkdir(parents=True, exist_ok=True)
     series_path = session.data_dir / "series.json"
     if args.command == "authorize":

@@ -117,6 +117,7 @@ TRAIN = dict(
     pulse_s=1,
     rest_s=10,
     repeats=60,
+    v_high=2.9,
 )
 
 
@@ -147,6 +148,8 @@ def test_explore_accepts_the_edges_of_the_authorization(explore):
     edge = {**TRAIN, "current_a": -0.0048, "pulse_s": 1, "rest_s": 600, "repeats": 29}
     explore.check_row(edge, 0, 0, 3600)
     explore.check_row({**TRAIN, "protocol": "bipolar_pulse"}, 30, 0, 670)
+    with pytest.raises(explore.Refused, match="v_high"):
+        explore.check_row({**TRAIN, "v_high": 3.0}, 0, 0, 670)
     assert explore.run_charge_uah(TRAIN) == pytest.approx((8, 8))
     assert explore.run_charge_uah({**TRAIN, "protocol": "bipolar_pulse"}) == pytest.approx((16, 0))
 
@@ -183,3 +186,75 @@ def test_explore_pulses_survive_a_first_sample_and_a_cutoff(explore):
     assert pulse["i_a"] == pytest.approx(1e-3)
     assert pulse["r_end_ohm"] == pytest.approx(1000)
     assert explore.assess(data, None) == []
+
+
+B3_TRAIN = dict(
+    measurement_id="x",
+    protocol="pulse_train",
+    sample_id="AlCe Test Cell 1",
+    current_a=0.0104,
+    pulse_s=0.5,
+    rest_s=10,
+    repeats=3,
+    v_high=2.9,
+    v_low=-2.9,
+)
+
+
+@pytest.fixture
+def explore_b3(explore, monkeypatch):
+    monkeypatch.setattr(explore, "CFG", explore.SERIES["b3"])
+    return explore
+
+
+@pytest.mark.parametrize(
+    ("change", "net", "message"),
+    [
+        ({"current_a": 0.0105}, 0, "above"),
+        ({"pulse_s": 1, "current_a": 0.0014}, 0, "above"),  # 5C from 1 s on
+        ({"pulse_s": 121, "current_a": 0.001}, 0, "outside"),
+        ({"current_a": -0.0104}, -14, "net charge"),  # starts sodiated
+        ({"pulse_s": 60, "current_a": 0.00026, "repeats": 15}, 140, "net charge"),
+        ({"pulse_s": 60, "current_a": 0.0013, "repeats": 4}, 0, "one run"),
+        ({"sample_id": "Richard-HC400-rev"}, 0, "sample"),
+        ({"v_high": 3.0}, 0, "v_high"),
+        ({"v_low": -3.0}, 0, "v_low"),
+        ({"v_low": None}, 0, "v_low"),
+    ],
+)
+def test_explore_b3_refuses_rows_outside_its_page(explore_b3, change, net, message):
+    with pytest.raises(explore_b3.Refused, match=message):
+        explore_b3.check_row({**B3_TRAIN, **change}, net, 0, 60)
+
+
+def test_explore_b3_accepts_its_planned_rows(explore_b3):
+    explore_b3.check_row(B3_TRAIN, 0, 0, 60)  # 40C, 0.5 s
+    ici = {**B3_TRAIN, "current_a": 0.00026, "pulse_s": 60, "repeats": 15}
+    explore_b3.check_row(ici, 0, 0, 1100)  # 65 uAh desodiation
+    explore_b3.check_row({**ici, "current_a": -0.00026}, 65, 0, 1100)
+    # bipolar, desodiation first: -14.5 -> -13.5 -> -14.5 uAh never reaches -15.5
+    explore_b3.check_row(
+        {**B3_TRAIN, "protocol": "bipolar_pulse", "current_a": 0.0072}, -14.5, 0, 60
+    )
+    from ophyd_electrochemistry.sequences.queueserver import load_session
+
+    limits = load_session(explore_b3.CFG.session).limits
+    assert (limits.v_min_abs, limits.v_max_abs, limits.i_max_abs) == (-3.0, 3.0, 0.0104)
+
+
+def test_explore_references_compare_only_at_a_similar_voltage(explore, tmp_path, monkeypatch):
+    tables = {"ref-01d_1.h5": 0.10, "ref-02d_2.h5": 0.40}
+    for name in tables:
+        (tmp_path / name).touch()
+    monkeypatch.setattr(explore, "read_run_file", lambda path: path.name)
+    monkeypatch.setattr(
+        explore,
+        "pulses",
+        lambda name: [{"v_pre": tables[name], "r_end_ohm": 1000.0 * (1 + tables[name])}],
+    )
+    assert explore.reference_ohm(tmp_path, "d") == pytest.approx(1100)
+    assert explore.reference_ohm(tmp_path, "d", 0.42) == pytest.approx(1400)
+    assert explore.reference_ohm(tmp_path, "d", 0.25) is None
+    # the newest reference is never its own baseline (brief 14)
+    newest = tmp_path / "ref-02d_2.h5"
+    assert explore.reference_ohm(tmp_path, "d", 0.40, exclude=newest) is None

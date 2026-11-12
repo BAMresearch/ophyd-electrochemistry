@@ -1,0 +1,22 @@
+# B3 exploration series (tier 2, bench/plan-b3-explore.md): characterise
+# AlCe Test Cell 1 (hard carbon 1.78 mg against Na; measured 0.26 mAh reversible
+# at C/5, 1-s resistance 1.3-3.6 kOhm, 10-11 Nov). Front terminals, four-wire,
+# HC on HI (force + sense), Na on LO, output-off HIGH-Z. Window -3..3 V (as
+# Jonas, 6 Nov): rows stop at -2.9 / +2.9 V first. 10.4 mA = 40C of 0.26 mAh,
+# for pulses under 1 s only (bench/explore.py caps 1 s and longer at 5C).
+# Run only through `bench/explore.py --series b3`. Loading this session
+# confirms set-up and limits.
+# qserver/start-k2460-re-manager.sh bench/b3/session-b3-explore.toml
+backend = "k2460"
+data_dir = "~/k2460-data/b3/explore"
+resource = "TCPIP0::169.254.113.151::5025::SOCKET"
+serial = "04686198"
+terminals = "front"
+poll_period_s = 1.0
+
+[limits]
+v_min_abs = -3.0
+v_max_abs = 3.0
+i_max_abs = 0.0104
+max_duration_s = 7200.0
+max_records = 1000000
