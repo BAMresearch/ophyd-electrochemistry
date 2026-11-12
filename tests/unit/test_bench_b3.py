@@ -65,3 +65,24 @@ def test_existing_sheets_are_not_overwritten(sheets, tmp_path):
     assert sheets.main(["--out", str(tmp_path)]) == 0
     with pytest.raises(Exception, match="exists"):
         sheets.main(["--out", str(tmp_path)])
+
+
+def test_ici_rows_sweep_the_whole_range_at_c2(sheets):
+    d, s = sheets.ici_rows(0.26, "cell")
+    assert d["current_a"] == pytest.approx(130e-6) and s["current_a"] == pytest.approx(-130e-6)
+    assert (d["v_high"], s["v_low"]) == (2.5, 0.005)
+    assert d["repeats"] * d["pulse_s"] * 130e-6 / 3.6e-3 > 1.2 * 260  # uAh: cutoff ends it
+
+
+def test_store_row_desodiates_at_c20_to_the_upper_limit(sheets):
+    (row,) = sheets.store_rows(0.26, "cell")
+    assert row["protocol"] == "soc_position" and row["target_v"] == 2.5
+    assert row["current_a"] == pytest.approx(13e-6)  # positive: desodiation
+    assert row["max_step_s"] * 13e-6 / 3.6e-3 > 1.4 * 260  # uAh: the cutoff ends it
+
+
+@pytest.mark.parametrize("value", ["-0.26", "nan", "0"])
+def test_ici_capacity_must_be_positive_and_finite(sheets, tmp_path, value):
+    with pytest.raises(SystemExit):
+        sheets.main(["--out", str(tmp_path), "--ici-capacity-mah", value])
+    assert not list(tmp_path.iterdir())

@@ -8,6 +8,10 @@ Two sheets, one per session (bench/plan-b3.md):
   (CV, rest), so the cell ends sodiated for the pulse day. It is a ``cycling``
   row starting with desodiation: on a cell delivered at or above 2.5 V that first
   half ends at its first reading and its 30 min rest is the OCV.
+- ``b3-ici.xlsx`` (``b3/session-b3-p0.toml``): resistance, diffusion slope and
+  quasi-OCV against state of charge (ICI: Lacey 2017; Chien et al. 2023), on the
+  measured capacity (``--ici-capacity-mah``, 0.26 mAh after P0, 12 Nov): C/2 for
+  120 s, 10 s pauses, desodiation to 2.5 V, then sodiation to 5 mV under load.
 - ``b3-pulse.xlsx`` (``b3/session-b3-pulse.toml``, -3..3 V, 30 mA): the beamtime
   protocol in small, a draft until Jonas answers the open questions:
   desodiation pulses ending on the relaxed voltage (P2d), then sodiation pulses
@@ -32,6 +36,8 @@ HERE = Path(__file__).parent / "b3"
 SHEETS = {
     "b3-p0.xlsx": "session-b3-p0.toml",
     "b3-pulse.xlsx": "session-b3-pulse.toml",
+    "b3-ici.xlsx": "session-b3-p0.toml",
+    "b3-store.xlsx": "session-b3-p0.toml",
 }
 P0_C_RATE = 5  # C/5: about 5 h per half for the reversible capacity
 P0_MAX_S = 8 * 3600  # per CC step: the first sodiation adds the irreversible loss
@@ -78,6 +84,54 @@ def p0_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
             f"to {P0_V_LOW:g} V (CV to C/50), to {P0_V_HIGH:g} V, to {P0_V_LOW:g} V (CV)"
         )
     return rows
+
+
+def ici_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
+    """Full-range ICI at C/2: 120 s current, 10 s pauses, 6 ms for 1 s at each edge."""
+    c1 = capacity_mah * 1e-3
+    step = dict(
+        protocol="pulse_train",
+        pulse_s=120,
+        rest_s=10,
+        pre_rest_s=10,
+        repeats=80,  # 4.3 uAh steps for 0.26 mAh: a 1.3x bound; the cutoff ends it
+        fast_window_s=1,
+        interval_s=1,
+    )
+    rows: list[dict[str, object]] = [
+        dict(step, measurement_id="ici-full-d", current_a=c1 / 2, v_high=P0_V_HIGH),
+        dict(step, measurement_id="ici-full-s", current_a=-c1 / 2, v_low=P0_V_LOW),
+    ]
+    for row in rows:
+        row["sample_id"] = sample_id
+        row["notes"] = (
+            f"B3 ICI at C/2 on {capacity_mah:g} mAh (measured): 120 s on, 10 s pauses; "
+            f"desodiation to {P0_V_HIGH:g} V, sodiation to {P0_V_LOW:g} V under load"
+        )
+    return rows
+
+
+STORE_C_RATE = 20
+STORE_MAX_S = 30 * 3600  # about 20 h for the reversible capacity at C/20
+
+
+def store_rows(capacity_mah: float, sample_id: str) -> list[dict[str, object]]:
+    """Storage: desodiate at C/20 until the voltage under load reaches 2.5 V, rest 30 min."""
+    c1 = capacity_mah * 1e-3
+    return [
+        dict(
+            measurement_id="store-d",
+            protocol="soc_position",
+            current_a=c1 / STORE_C_RATE,
+            target_v=P0_V_HIGH,
+            max_step_s=STORE_MAX_S,
+            rest_s=1800,
+            interval_s=10,
+            sample_id=sample_id,
+            notes=f"B3 storage: C/{STORE_C_RATE} on {capacity_mah:g} mAh (measured) to "
+            f"{P0_V_HIGH:g} V under load, then 30 min rest; output OFF (HIGH-Z) at the end",
+        )
+    ]
 
 
 def pulse_rows(
@@ -158,6 +212,8 @@ def write(out: Path, args: argparse.Namespace) -> int:
             sod_early_v=args.sod_early_v,
             external=args.external,
         ),
+        ici_rows(args.ici_capacity_mah, args.sample_id),
+        store_rows(args.ici_capacity_mah, args.sample_id),
     )
     failed = 0
     for (name, session), sheet_rows in zip(SHEETS.items(), rows, strict=True):
@@ -174,6 +230,9 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--capacity-mah", type=float, default=0.6, help="cell capacity")
     parser.add_argument("--sample-id", default="HC-coin-B3")
+    parser.add_argument(
+        "--ici-capacity-mah", type=float, default=0.26, help="measured capacity for the ICI sheet"
+    )
     parser.add_argument("--rate-c", type=float, default=10, help="pulse rate (1 s pulses)")
     parser.add_argument("--desod-end-v", type=float, default=0.2, help="relaxed upper end")
     parser.add_argument("--sod-early-v", type=float, default=0.05, help="end of the 1 min row")
@@ -181,13 +240,22 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", type=Path, default=Path.home() / "k2460-data" / "b3")
     parser.add_argument("--overwrite", action="store_true", help="replace existing sheets")
     args = parser.parse_args(argv)
-    if not 0.05 <= args.capacity_mah <= 1:
-        parser.error("--capacity-mah must be in 0.05..1 (the sessions' 200 uA and 30 mA)")
+    # Also refuses NaN and negative values, which would flip the current signs (brief 14).
+    for option in ("capacity_mah", "ici_capacity_mah"):
+        if not 0.05 <= getattr(args, option) <= 1:
+            parser.error(
+                f"--{option.replace('_', '-')} must be in 0.05..1 (the sessions' 200 uA and 30 mA)"
+            )
     if not 5 <= args.rate_c <= 40:
         parser.error("--rate-c must be in 5..40 (lower rates exceed the record budget)")
     # Checked before writing either sheet (Codex brief 12): currents within each session.
     c1 = args.capacity_mah * 1e-3
-    for name, current in (("b3-p0.xlsx", c1 / P0_C_RATE), ("b3-pulse.xlsx", args.rate_c * c1)):
+    for name, current in (
+        ("b3-p0.xlsx", c1 / P0_C_RATE),
+        ("b3-pulse.xlsx", args.rate_c * c1),
+        ("b3-ici.xlsx", args.ici_capacity_mah * 1e-3 / 2),
+        ("b3-store.xlsx", args.ici_capacity_mah * 1e-3 / STORE_C_RATE),
+    ):
         i_max = load_session(HERE / SHEETS[name]).limits.i_max_abs
         if current > i_max:
             parser.error(

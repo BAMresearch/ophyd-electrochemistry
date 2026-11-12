@@ -207,9 +207,11 @@ def monitor_summary(csv_path: Path) -> dict[str, Any]:
     }
 
 
-def evidence(load: str, data_dirs: list[Path], csv_path: Path | None, tag: str | None) -> Path:
+def evidence(
+    load: str, data_dirs: list[Path], csv_path: Path | None, tag: str | None, bench: str = "b2"
+) -> Path:
     date = datetime.date.today().isoformat()
-    name = f"k2460-{date}-b2-{load}{f'-{tag}' if tag else ''}.json"
+    name = f"k2460-{date}-{bench}-{load}{f'-{tag}' if tag else ''}.json"
     runs = []
     for data_dir in data_dirs:
         index = run_index(data_dir)
@@ -222,7 +224,7 @@ def evidence(load: str, data_dirs: list[Path], csv_path: Path | None, tag: str |
                     entry["checks"] = {"error": str(exc)}
             runs.append(entry)
     result = {
-        "test_matrix": "bench/plan-b2.md",
+        "test_matrix": f"bench/plan-{bench}.md",
         "load": load,
         "written_utc": datetime.datetime.now(datetime.UTC).isoformat(timespec="seconds"),
         "data_dirs": [str(d) for d in data_dirs],
@@ -248,12 +250,14 @@ def main(argv: list[str] | None = None) -> int:
     e.add_argument("--load", choices=("resistor", "cell", "sim"), required=True)
     e.add_argument("--csv", type=Path, help="the watch CSV")
     e.add_argument("--tag")
+    e.add_argument("--bench", default="b2", help="bench day: names the file and the plan")
     args = parser.parse_args(argv)
     if args.command == "watch":
         watch(args.data_dir.expanduser(), args.csv.expanduser(), args.period_s, args.count)
     else:
         dirs = [d.expanduser() for d in args.data_dirs]
-        print(evidence(args.load, dirs, args.csv and args.csv.expanduser(), args.tag))
+        csv_path = args.csv and args.csv.expanduser()
+        print(evidence(args.load, dirs, csv_path, args.tag, args.bench))
     return 0
 
 
