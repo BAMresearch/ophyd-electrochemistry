@@ -31,7 +31,13 @@ from ophyd_electrochemistry.sequences.recovery import (
     main,
     recover_run_file,
 )
-from ophyd_electrochemistry.sequences.run_file import READOUT_FIELDS, RunFile, read_run_file
+from ophyd_electrochemistry.sequences.run_file import (
+    READOUT_FIELDS,
+    SCHEMA,
+    SCHEMA_V1,
+    RunFile,
+    read_run_file,
+)
 from ophyd_electrochemistry.sequences.simulator import CellModel, simulate_sequence
 
 LIMITS = SafetyLimits(-2, 2.5, 0.005, 1e6, 999984, 0.001)
@@ -79,6 +85,7 @@ def make_run(
     meta=None,
     shift_s=0,
     origin=True,
+    schema=SCHEMA,
 ):
     """A run file holding the first ``cut`` records (as the live backend wrote them)
     and the archive of every record (as archive_retained saves them)."""
@@ -116,6 +123,8 @@ def make_run(
     if outcome:
         writer.finalize(outcome, "Status(... success=False)")
     writer.close()
+    if schema == SCHEMA_V1:
+        to_v1(run_path)
     clock = r["t_s"] + EPOCH_FRACTION
     metadata = {
         "identity": IDENTITY,
@@ -139,12 +148,43 @@ def make_run(
     return run_path, archive, sim
 
 
+def to_v1(path):
+    """Rewrite a v2 file in the v1 layout (as files written before 13 Nov are)."""
+    data = read_run_file(path)
+    with h5py.File(path, "r") as source:
+        run = source["entry/run"]
+        json_text = {
+            k: run[k].asstr()[()] for k in ("sequence", "safety_limits", "run_sheet_row", "extra")
+        }
+        groups = {}
+        for group in ("readout", "events"):
+            groups[group] = {
+                name: (d.asstr()[:] if h5py.check_string_dtype(d.dtype) else d[:], d.dtype)
+                for name, d in source[f"entry/{group}"].items()
+            }
+    path.unlink()
+    with h5py.File(path, "x", libver=("v110", "v110")) as file:
+        file.attrs.update({**data["attrs"], "schema": SCHEMA_V1})
+        file.create_group("equipment").attrs.update(data["equipment"])
+        run = file.create_group("run")
+        run.attrs.update(data["run"])
+        for key in ("expected_records", "nominal_duration_s"):
+            del run.attrs[key]
+        for name, text in json_text.items():
+            run.create_dataset(name, data=text, dtype=h5py.string_dtype("utf-8"))
+        for group, values in groups.items():
+            target = file.create_group(group)
+            for name, (array, dtype) in values.items():
+                target.create_dataset(name, data=array, dtype=dtype, maxshape=(None,), chunks=True)
+
+
+@pytest.mark.parametrize("schema", [SCHEMA, SCHEMA_V1])
 @pytest.mark.parametrize(
     ("case", "prediction"),
     [("pulse", "completed"), ("cc_cv", "completed"), ("cc_stop", "stopped_cutoff")],
 )
-def test_recovery_restores_every_record_and_event(tmp_path, case, prediction):
-    run_path, archive, sim = make_run(tmp_path, case)
+def test_recovery_restores_every_record_and_event(tmp_path, case, prediction, schema):
+    run_path, archive, sim = make_run(tmp_path, case, schema=schema)
     before = run_path.read_bytes(), archive.read_bytes()
     path, provenance = recover_run_file(run_path, archive)
     assert path == tmp_path / f"m-{case}-recovered_20261112T151249Z.h5"
@@ -165,8 +205,10 @@ def test_recovery_restores_every_record_and_event(tmp_path, case, prediction):
     assert data["run"]["outcome"] == "incomplete"  # never reported as completed
     assert f"replay predicts {prediction}" in data["run"]["outcome_detail"]
     assert provenance["records_added"] == len(sim.readout["t_s"]) - provenance["records_in_file"]
+    assert data["attrs"]["schema"] == schema  # the layout is kept
+    group = "entry/run" if schema == SCHEMA else "run"
     with h5py.File(path, "r") as file:  # plain HDF5 tools open it
-        stored = json.loads(file["run/recovery"].asstr()[()])
+        stored = json.loads(file[f"{group}/recovery"].asstr()[()])
     assert stored["archive_sha256"] == provenance["archive_sha256"]
     assert (run_path.read_bytes(), archive.read_bytes()) == before
 
@@ -252,7 +294,7 @@ def test_cli_writes_beside_the_run(tmp_path, capsys):
 def test_a_field_left_longer_by_a_killed_writer_is_cut_back(tmp_path):
     run_path, archive, sim = make_run(tmp_path)
     with h5py.File(run_path, "r+", libver=("v110", "v110")) as file:  # one extra timestamp
-        times = file["readout/t_s"]
+        times = file["entry/readout/t_s"]
         times.resize((len(times) + 1,))
         times[-1] = times[-2] + 0.006
     path, _ = recover_run_file(run_path, archive)

@@ -106,6 +106,26 @@ def test_failed_run_reports_file_outcome_and_off_state(monkeypatch, tmp_path):
     assert "Output confirmed OFF: True" in output.getvalue()
 
 
+def test_a_sheet_edited_after_selection_is_refused(monkeypatch, tmp_path):
+    # Codex brief 17: the file must not record a newer sheet's hash than the row run.
+    import openpyxl
+
+    namespace = {}
+    execute(monkeypatch, tmp_path, namespace=namespace, stop_before="RunEngine(")
+    sheet = namespace["RUN_SHEET"]
+    book = openpyxl.load_workbook(sheet)
+    book.worksheets[0]["A1"] = "edited"
+    book.save(sheet)
+    run_cell = next(
+        cell.source
+        for cell in nbformat.read(TEMPLATE, as_version=4).cells
+        if "RunEngine(" in cell.source
+    )
+    with pytest.raises(ValidationError, match="changed since the row was selected"):
+        exec(compile(run_cell, "run cell", "exec"), namespace)
+    assert not (tmp_path / "data").exists()
+
+
 def test_unknown_id_lists_available_runs(monkeypatch, tmp_path):
     with pytest.raises(ValidationError, match="available IDs:.*example-rest"):
         execute(monkeypatch, tmp_path, measurement_id="missing")

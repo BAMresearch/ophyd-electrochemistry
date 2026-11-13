@@ -36,3 +36,5 @@ Rules that apply to every brief (Codex: follow these):
 | `13-review-c5-p0-and-caffeinate.md` | Review only: C/5 P0 row (a17b4d8), stay-awake script (ad2a4ca), 10 Nov sleep incident | 12 |
 | `14-review-b3-explore-ici-store-analysis.md` | Review only: B3 series runner, ICI and storage sheets, evidence `--bench`, `b3_analysis.py` (uncommitted, 12 Nov); network-out incident | 13 |
 | `15-review-recover-run.md` | Review only: `oe-recover-run` (`sequences/recovery.py`, `SequencerProfile.from_settings`, `Replayer.predicted`; uncommitted, 13 Nov) | 14 |
+| `16-review-plan-nexish-run-file.md` | Plan review only: run file v2 under `/entry` with instrument/sample/provenance subgroups, units and descriptions | 15 |
+| `17-review-run-file-v2.md` | Review only: run file v2 (`run_file.py`, `run_file_fields.py`, session `[sample]` and metadata, writer provenance, recovery on both layouts; uncommitted, 13 Nov) | 16 |

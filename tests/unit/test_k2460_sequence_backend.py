@@ -390,6 +390,17 @@ def test_earlier_instrument_events_are_recorded_not_fatal(backend, instrument, l
     assert backend.equipment()["pre_run_instrument_events"] == "-363 Input buffer overrun"
 
 
+def test_every_equipment_key_has_a_described_place_in_the_run_file(backend, instrument, limits):
+    from ophyd_electrochemistry.sequences.run_file_fields import instrument_place
+
+    instrument.g.push_event(-363, "Input buffer overrun", 1, 0)
+    backend.prepare(pulse_request(limits))
+    equipment = backend.equipment()
+    assert "clock_offset_s" in equipment and "pre_run_instrument_events" in equipment
+    for key in equipment:
+        assert instrument_place(key, equipment)[0] != "other", key
+
+
 # Runs
 
 

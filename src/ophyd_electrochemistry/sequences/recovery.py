@@ -12,7 +12,8 @@ data plus the rest.
 Both inputs are only read (their SHA-256 is checked before and after). The
 outcome is not changed: the archive holds no instrument event log, so a
 recovered run is never reported as completed. The replay's prediction, the
-inputs and their hashes are stored in ``run/recovery`` (JSON) and summarised in
+inputs and their hashes are stored in the run group's ``recovery`` dataset (JSON;
+``/run`` in v1 files, ``/entry/run`` in v2; the layout is kept) and summarised in
 ``outcome_detail``. Concept from Codex's one-off recovery of ``store-d`` (13 Nov).
 """
 
@@ -191,19 +192,21 @@ def recover_run_file(
     try:
         repair_run_file(source, partial)
         with h5py.File(partial, "r+", libver=("v110", "v110")) as file:
+            writer = RunFile(file)  # knows the v1 and v2 group paths
+            run_attrs = file[writer.layout.run]
             # A writer killed mid-append can leave one field longer than the rest
             # (read_run_file returns whole records): cut back to them (brief 15).
             for group, fields, size in (
-                ("readout", READOUT_FIELDS, prefix),
-                ("events", _EVENT_FIELDS, len(saved_events)),
+                (writer.layout.readout, READOUT_FIELDS, prefix),
+                (writer.layout.events, _EVENT_FIELDS, len(saved_events)),
             ):
                 for name in fields:
                     file[group][name].resize((size,))
-            file["run"].create_dataset(
+            recovery = run_attrs.create_dataset(
                 "recovery", data=json.dumps(provenance), dtype=h5py.string_dtype("utf-8")
             )
-            file["run"].attrs["outcome_detail"] = detail
-            writer = RunFile(file)
+            recovery.attrs["description"] = "oe-recover-run provenance (JSON)"
+            run_attrs.attrs["outcome_detail"] = detail
             if count > prefix:
                 writer.append_readout({k: v[prefix:] for k, v in readout.items()})
             for event in added_events:
@@ -218,6 +221,7 @@ def recover_run_file(
         )
         _require(check["run"]["outcome"] == run["outcome"], "outcome changed")
         _require(check["equipment"] == equipment, "equipment metadata changed")
+        _require(check["attrs"]["schema"] == saved["attrs"]["schema"], "layout changed")
         _require((_sha256(source), _sha256(archive)) == hashes, "an input changed")
         os.link(partial, target)  # fails if the destination appeared meanwhile
     finally:

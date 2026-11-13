@@ -4,14 +4,24 @@
 
 Every run writes one HDF5 file to the session's `data_dir`, named
 `<measurement_id>_<UTC start>.h5`. The file is written while the run goes on
-and flushed after every read, so it can be opened at any time. Its groups:
+and flushed after every read, so it can be opened at any time. Everything is
+under `/entry`, and every value carries a `description` attribute and, where
+it has one, `units` (NeXus style, so h5web, silx and HDFView show them;
+`/entry/readout` opens as a voltage-against-time plot):
 
 | Group | Content |
 |---|---|
-| `readout` | Every reading: `t_s` (s from the run's time zero), `voltage_v`, `current_a`, `step_index`, `repeat_index`, `source_status`, `measure_status` |
+| `readout` | Every reading: `t_s` (s from the run's time zero), `voltage_v`, `current_a`, `step_index`, `repeat_index`, `source_status`, `measure_status` (the 2460's status bits, listed in the attribute) |
 | `events` | `step_start`, `cutoff`, `stop`, `abort` and `error`, each with `t_s`, step, repeat and detail |
-| `run` | Attributes: start mode, sample ID, notes, start and finish (UTC), `time_origin_utc` (the UTC time of `t_s = 0`), `outcome`. Datasets (JSON): the full run-sheet row, the sequence as run, the session limits |
-| `equipment` | Instrument identity, ranges, integration times and the other settings the 2460 used |
+| `run` | Attributes: start and finish (UTC), `outcome`, `outcome_detail`. Datasets: start mode, notes, `time_origin_epoch_s` (UTC of `t_s = 0`, Unix epoch; NaN until the first reading), expected records and duration; JSON: the sequence, the session limits, the run-sheet row, other run metadata (`extra`); `recovery` after `oe-recover-run` |
+| `sample` | `name` (the sample ID), `session_description` (the session file's header comment) and the session's `[sample]` table, with units from the key ([Sessions](sessions.md#the-sample-table)) |
+| `instrument` | What the 2460 and its program used, in groups: `identity`, `runtime`, `clock`, `wiring`, `digital_io`, `limits`, `timing`, `program`, `source_1`…, `measure_1`…, `eventlog` (`simulator` for the simulator) |
+| `session` | The session file as loaded (`text`, `path`, `sha256`) and its resolved settings |
+| `provenance` | Bluesky `bluesky_uid` and `scan_id`, the run sheet's path and SHA-256, host, git revision and package versions |
+
+Files written before 13 Nov 2026 (`schema` …`run-file.v1`) have `readout`,
+`events`, `run` and a flat `equipment` group at the top level instead;
+`read_run_file` reads both.
 
 `outcome` is `completed`, `stopped_cutoff` (a threshold ended it; normal),
 `aborted` or `error`. `incomplete` means the run is still being written, or its
@@ -22,8 +32,13 @@ from ophyd_electrochemistry.sequences.run_file import read_run_file
 
 run = read_run_file(path)
 run["readout"]["voltage_v"], run["events"]["kind"], run["run"]["outcome"]
-run["run_sheet_row"], run["equipment"]
+run["run_sheet_row"], run["equipment"]  # equipment: the instrument groups, flattened
+run["sample"], run["session"], run["provenance"]  # empty for v1 files
 ```
+
+To refer to a run from a SAXS NeXus file, link its entry with a relative file
+name, e.g. `saxs["entry/electrochemistry"] = h5py.ExternalLink("hc01-sodiate_20261201T101500Z.h5", "/entry")`.
+Absolute time of a reading: `time_origin_epoch_s + t_s` (UTC, laptop clock).
 
 Other HDF5 tools (HDF5 1.10 or later) read completed files directly. For a file
 whose writer crashed, `repair_run_file` makes a copy they can open.
@@ -32,10 +47,10 @@ whose writer crashed, `repair_run_file` makes a copy they can open.
 event-log entry (`OE_T0`) that the trigger model writes as it starts: right
 after the START edge for an external start (within about 0.1 ms on the scope,
 3 Nov), or when the program starts for an immediate start. Its UTC time
-(`time_origin_utc`) comes from mapping the instrument clock to the laptop's
+(`time_origin_epoch_s`; `read_run_file` also gives `time_origin_utc`) comes from mapping the instrument clock to the laptop's
 clock before the run; the offset and its uncertainty (about half a ping round
 trip, typically under 1 ms on the direct cable) are stored as
-`clock_offset_s` and `clock_uncertainty_s` in `equipment`. The laptop clock
+`clock_offset_s` and `clock_uncertainty_s` in `instrument/clock`. The laptop clock
 itself is only as good as its NTP. The MARKER pulse at each step start lets
 beamline data be aligned to the steps.
 

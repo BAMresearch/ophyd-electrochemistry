@@ -1,6 +1,6 @@
 # Current project state
 
-Updated: 2026-11-12. Branch: `mvp-sprint`. Plan: [MVP sprint plan](mvp-plan.md).
+Updated: 2026-11-13. Branch: `mvp-sprint`. Plan: [MVP sprint plan](mvp-plan.md).
 
 Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 (October–2 November bench narrative) is preserved in commit `e04ebc6`, in
@@ -8,7 +8,7 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
 
 ## What works
 
-- **Offline:** 1332 tests pass, including 58 contract tests against a real RE Manager. Pure models/compiler, independent simulator,
+- **Offline:** 1390 tests pass, including 58 contract tests against a real RE Manager. Pure models/compiler, independent simulator,
   measurement schema v4, and a classic-ophyd `Keithley2460Device` Flyer running
   under a real RunEngine against the simulator (galvanostatic hold, current
   pulse train). Quickstart notebook runs on the simulator.
@@ -53,9 +53,11 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   `run_from_sheet`, `recover_sequencer` and `archive_retained` permitted.
   `qserver/start-k2460-re-manager.sh` starts it; `environment open` sets HIGH-Z.
   Ran on the 2460 in B2, including host-crash recovery and a 300k-record soak.
-- **Run files:** incremental HDF5 writer/reader with separate equipment/run
-  metadata, compressed readouts and events; exclusive creation, per-append flush
-  and explicit terminal outcomes. SWMR mode (HDF5 1.10 format): other
+- **Run files:** incremental HDF5 writer/reader; exclusive creation, per-append
+  flush and explicit terminal outcomes. v2 (13 Nov): "NeX-ish" layout under
+  `/entry`, `description`/`units` on every value, plus session text and hash,
+  `[sample]`, Bluesky uid, run sheet, host and versions (`docs/user/data.md`);
+  `read_run_file` reads v1 and v2. Not yet written by the 2460. SWMR mode (HDF5 1.10 format): other
   processes read live snapshots while a run is written. After a killed kernel
   `read_run_file` reads all flushed data (outcome `incomplete`); other HDF5
   tools need the `repair_run_file` copy. Write run files to local disk.
@@ -68,10 +70,6 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   and overlays voltage against time or signed charge. Bin-extrema display
   sampling preserves short pulses; corrupt files stay visible in the index.
   Tested offline with completed, cutoff, aborted and incomplete runs.
-- **Documentation (10 Nov):** README introduction; `docs/user/` (quickstart,
-  run sheets, sessions, beamtime procedure, data, reference) and
-  `docs/technical/` (overview and division of tasks, sequencer, simulator,
-  testing, development); pre-sprint design in `docs/archive/`.
 - **Exploration runner:** `bench/explore.py --series b2|b3` checks each row
   against the limits in a `bench/` page, runs it and applies stop rules (59 runs
   on 6 Nov, 30 on 12 Nov on a healthy cell).
@@ -108,13 +106,13 @@ BUSY 2, MARKER 4, START 6 (DB-9 pin 8).
 
 ## Next steps
 
-1. Commit `oe-recover-run` (brief 15 findings applied; `hc-p0`, `ici-full-s`
-   and `store-d` recovered beside their files on 13 Nov).
+1. Codex brief 17 (code review of run file v2), apply findings, commit. Then
+   one real 2460 run in v2 before the freeze (resistor, or a cell at rest with
+   its session's `[sample]` filled in): read back, open in h5web, recover once.
 2. Jonas: the questions in `docs/beamtime-concept.md` (desodiation end, rate,
    plateau, measured capacities, rests). Then regenerate `b3-pulse.xlsx` and the
    pulse session for the beamtime cells.
-3. Offline: Codex brief 14 (today's `explore.py`, `b3_sheets.py`,
-   `b2_monitor.py` and `b3_analysis.py`); step-stretch analysis; dress-rehearsal matrix with the beamline trigger.
+3. Offline: step-stretch analysis; dress-rehearsal matrix with the beamline trigger.
 
 ## Information still needed from the user
 

@@ -19,8 +19,10 @@ from ophyd_electrochemistry.sequences import (
     sequence_from_dict,
     to_dict,
 )
+from ophyd_electrochemistry.sequences.models import expected_records, nominal_duration_s
 from ophyd_electrochemistry.sequences.run_file import (
     READOUT_FIELDS,
+    SCHEMA,
     RunFile,
     read_run_file,
     repair_run_file,
@@ -74,7 +76,7 @@ def test_round_trip_several_chunks_metadata_and_events(tmp_path, settings):
         writer.finalize("stopped_cutoff", "upper voltage limit")
 
     result = read_run_file(path)
-    assert result["attrs"]["schema"] == "ophyd-electrochemistry.run-file.v1"
+    assert result["attrs"]["schema"] == SCHEMA
     assert result["attrs"]["measurement_id"] == "pulse-001"
     assert result["attrs"]["package_version"] == __version__
     assert_utc(result["attrs"]["created_utc"])
@@ -88,6 +90,8 @@ def test_round_trip_several_chunks_metadata_and_events(tmp_path, settings):
         finished_utc=result["run"]["finished_utc"],
         outcome="stopped_cutoff",
         outcome_detail="upper voltage limit",
+        expected_records=expected_records(settings["sequence"]),
+        nominal_duration_s=nominal_duration_s(settings["sequence"]),
     )
     assert_utc(result["run"]["started_utc"])
     assert_utc(result["run"]["finished_utc"])
@@ -111,11 +115,12 @@ def test_round_trip_several_chunks_metadata_and_events(tmp_path, settings):
         np.testing.assert_array_equal(result["events"][name], expected)
 
     with h5py.File(path, "r") as file:
-        assert set(file) == {"equipment", "run", "readout", "events"}
+        assert set(file) == {"entry"}
+        assert set(file["entry"]) >= {"run", "sample", "instrument", "readout", "events"}
         for index, (name, units) in enumerate(
             zip(READOUT_FIELDS, ("s", "V", "A", "", "", "", ""), strict=True)
         ):
-            dataset = file["readout"][name]
+            dataset = file["entry/readout"][name]
             assert dataset.ndim == 1
             assert dataset.maxshape == (None,)
             assert dataset.chunks is not None
@@ -128,8 +133,8 @@ def test_round_trip_several_chunks_metadata_and_events(tmp_path, settings):
             run_sheet_row=row,
             extra=extra,
         ).items():
-            assert file["run"][name].shape == ()
-            assert file["run"][name].asstr()[()] == json.dumps(metadata, sort_keys=True)
+            assert file["entry/run"][name].shape == ()
+            assert file["entry/run"][name].asstr()[()] == json.dumps(metadata, sort_keys=True)
 
 
 def test_refuse_existing_path_without_changing_content(tmp_path, settings):
@@ -165,8 +170,8 @@ def test_snapshot_mid_append_returns_whole_records_only(tmp_path, settings):
         writer.append_event(0.0, 0, 0, "step_start")
         writer.finalize("completed")
     with h5py.File(path, "r+") as file:
-        file["readout"]["voltage_v"].resize((5,))
-        file["events"]["kind"].resize((2,))
+        file["entry/readout"]["voltage_v"].resize((5,))
+        file["entry/events"]["kind"].resize((2,))
     snapshot = read_run_file(path)
     assert {len(values) for values in snapshot["readout"].values()} == {3}
     assert {len(values) for values in snapshot["events"].values()} == {1}
@@ -201,7 +206,7 @@ os._exit(0)
     repaired = tmp_path / "repaired.h5"
     repair_run_file(path, repaired)
     with h5py.File(repaired, "r") as file:
-        assert len(file["readout"]["t_s"]) == 1500
+        assert len(file["entry/readout"]["t_s"]) == 1500
     copy = read_run_file(repaired)
     for name in ("attrs", "equipment", "run", "sequence", "safety_limits", "events"):
         assert repr(copy[name]) == repr(result[name])
@@ -227,6 +232,8 @@ with RunFile.create(
     for index in range(4):
         writer.append_readout({{name: np.arange(100) for name in READOUT_FIELDS}})
         writer.append_event(float(index), 0, index, "step_start", "é" * index)
+        if index == 1:
+            writer.set_time_origin(1794482155.25)
         print(index, flush=True)
         sys.stdin.readline()
     writer.finalize("completed")
@@ -244,6 +251,10 @@ with RunFile.create(
             assert len(snapshot["readout"]["t_s"]) == 100 * (index + 1)
             assert list(snapshot["events"]["detail"]) == ["é" * i for i in range(index + 1)]
             assert snapshot["run"]["outcome"] == "incomplete"
+            # The v2 time origin is a numeric dataset written under SWMR.
+            assert snapshot["run"].get("time_origin_epoch_s") == (
+                None if index < 1 else 1794482155.25
+            )
             writer.stdin.write("\n")
             writer.stdin.flush()
         assert writer.wait(timeout=60) == 0
@@ -251,7 +262,7 @@ with RunFile.create(
         writer.kill()
     assert read_run_file(path)["run"]["outcome"] == "completed"
     with h5py.File(path, "r") as file:  # Closed normally: plain readers work.
-        assert len(file["readout"]["t_s"]) == 400
+        assert len(file["entry/readout"]["t_s"]) == 400
 
 
 @pytest.mark.parametrize("exception", [False, True])

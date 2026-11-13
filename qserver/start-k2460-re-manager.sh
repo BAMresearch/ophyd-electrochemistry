@@ -40,6 +40,8 @@ fi
 
 echo "Session: $session"
 grep -E '^(v_min_abs|v_max_abs|i_max_abs)' "$session"
+# The optional [sample] table (descriptive only; written to each run file).
+awk '/^\[/ {show = ($0 ~ /^\[sample\]/)} show && NF' "$session"
 echo "Next, in another terminal: qserver environment open"
 
 export OE_SESSION=$session

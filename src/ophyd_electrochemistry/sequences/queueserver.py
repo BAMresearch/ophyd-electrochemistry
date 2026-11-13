@@ -16,9 +16,10 @@ run is then validated against those limits, not confirmed again. Requires the
 
 import argparse
 import hashlib
+import math
 import tomllib
 from collections.abc import Callable, Generator, Iterable, Mapping
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, field, fields
 from pathlib import Path
 from typing import Any, Literal
 
@@ -31,9 +32,10 @@ from ..validation import positive, text
 from .backend import SequenceBackend, SequenceRequest, SimulatedSequenceBackend
 from .callbacks import RunFileWriter
 from .flyer import SequenceFlyer, archive_retained
-from .models import SafetyLimits
+from .models import SafetyLimits, to_dict
 from .notebook import run_summary
 from .plans import run_sequence
+from .run_file_fields import check_sample
 from .run_sheet import load_run_sheet
 
 PLAN_NAME = "run_from_sheet"
@@ -52,6 +54,13 @@ class Session:
     start_timeout_s: float | None = None
     poll_period_s: float = 1.0
     sim_speed: float = 1.0
+    # The optional [sample] table: descriptive only, written to each run file's
+    # /entry/sample; nothing in a run reads it.
+    sample: Mapping[str, Any] = field(default_factory=dict)
+    # The file as loaded (set by load_session), stored in each run file.
+    source_path: Path | None = field(default=None, compare=False, repr=False)
+    source_text: str | None = field(default=None, compare=False, repr=False)
+    source_sha256: str | None = field(default=None, compare=False, repr=False)
 
     def __post_init__(self) -> None:
         if self.backend not in ("simulator", "k2460"):
@@ -65,19 +74,30 @@ class Session:
         positive(self.poll_period_s, "poll_period_s")
         if not isinstance(self.limits, SafetyLimits):
             raise ValidationError("limits must be SafetyLimits")
+        object.__setattr__(self, "sample", check_sample(dict(self.sample)))
 
     @property
     def hardware(self) -> bool:
         return self.backend != "simulator"
 
 
+_SOURCE_FIELDS = {"source_path", "source_text", "source_sha256"}
+
+
 def load_session(path: str | Path) -> Session:
-    """Read a session TOML file: top-level settings and a ``[limits]`` table."""
-    data = tomllib.loads(Path(path).read_text(encoding="utf-8"))
+    """Read a session TOML file: top-level settings, a ``[limits]`` table and an
+    optional ``[sample]`` table (text, numbers, true/false; units by key suffix,
+    e.g. ``mass_mg``). The bytes read are kept, with their SHA-256, for the run files."""
+    raw = Path(path).read_bytes()
+    try:
+        source_text = raw.decode("utf-8")
+        data = tomllib.loads(source_text)
+    except (UnicodeError, tomllib.TOMLDecodeError) as exc:
+        raise ValidationError(f"invalid session file: {exc}") from exc
     limits = data.pop("limits", None)
     if not isinstance(limits, dict):
         raise ValidationError("session file needs a [limits] table")
-    known = {f.name for f in fields(Session)} - {"limits"}
+    known = {f.name for f in fields(Session)} - {"limits"} - _SOURCE_FIELDS
     unknown = data.keys() - known
     if unknown:
         raise ValidationError(f"unknown session settings: {', '.join(sorted(unknown))}")
@@ -85,9 +105,46 @@ def load_session(path: str | Path) -> Session:
         raise ValidationError("session file needs data_dir")
     data["data_dir"] = Path(data["data_dir"]).expanduser()
     try:
-        return Session(limits=SafetyLimits(**limits), **data)
+        return Session(
+            limits=SafetyLimits(**limits),
+            source_path=Path(path).expanduser().resolve(),
+            source_text=source_text,
+            source_sha256=hashlib.sha256(raw).hexdigest(),
+            **data,
+        )
     except TypeError as exc:
         raise ValidationError(f"invalid session file: {exc}") from exc
+
+
+def session_metadata(session: Session) -> dict[str, Any]:
+    """What a run file stores about the session (``RunFile.create(session=...)``).
+
+    A session from ``load_session`` is a TOML file (path, text and hash as loaded);
+    one built in a per-run notebook's settings cell has only its resolved settings
+    (the executed notebook is kept beside the run file).
+    """
+    loaded = session.source_text is not None
+    return {
+        "format": "toml" if loaded else "notebook",
+        "path": str(session.source_path) if session.source_path else None,
+        "sha256": session.source_sha256,
+        "text": session.source_text,
+        "settings": {
+            "backend": session.backend,
+            "data_dir": str(session.data_dir),
+            "resource": session.resource,
+            "serial": session.serial,
+            "terminals": session.terminals,
+            "start_timeout_s": session.start_timeout_s,
+            "poll_period_s": session.poll_period_s,
+            # inf (no waiting) is not JSON: kept as text
+            "sim_speed": session.sim_speed
+            if math.isfinite(session.sim_speed)
+            else str(session.sim_speed),
+            "limits": to_dict(session.limits),
+        },
+        "sample": dict(session.sample),
+    }
 
 
 def sheet_digest(path: str | Path) -> str:
@@ -124,7 +181,7 @@ def build_namespace(session: Session, *, backend: SequenceBackend | None = None)
     if that cannot be confirmed: operators connect cells only after this.
     """
     engine = RunEngine({})
-    writer = RunFileWriter(session.data_dir)
+    writer = RunFileWriter(session.data_dir, session=session_metadata(session))
     engine.subscribe(writer)
     if backend is None:
         backend = make_backend(session)
@@ -146,7 +203,8 @@ def build_namespace(session: Session, *, backend: SequenceBackend | None = None)
         The sheet must be byte-identical to the one enqueued.
         """
         request = load_request(session, run_sheet, measurement_id, sheet_sha256)
-        return (yield from run_sequence(flyer, request))
+        md = {"run_sheet": str(run_sheet), "sheet_sha256": sheet_sha256}
+        return (yield from run_sequence(flyer, request, md=md))
 
     def recover_sequencer() -> Generator[Msg, Any, None]:
         """After an abort or error: confirm output OFF and return the sequencer to IDLE."""
@@ -319,6 +377,8 @@ def enqueue_main(argv: list[str] | None = None) -> int:
     parser.add_argument("--zmq", default="tcp://127.0.0.1:60615")
     args = parser.parse_args(argv)
     session = load_session(args.session)
+    if session.sample:
+        print("Sample: " + ", ".join(f"{k} = {v}" for k, v in session.sample.items()))
     items = queue_items(session, args.run_sheet, args.measurement_ids)
     enqueue(items, args.zmq)
     print(f"Enqueued {len(items)} run(s): {', '.join(args.measurement_ids)}")

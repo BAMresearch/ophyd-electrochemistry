@@ -45,6 +45,12 @@ v_max_abs = 3.0
 i_max_abs = 0.03               # A; also the current limit of a CV hold
 max_duration_s = 172800.0      # per run
 max_records = 1000000          # per run (the 2460 buffer holds 1,000,000)
+
+[sample]                       # optional; only written to the run files
+cell = "hc01"
+hc_mass_mg = 1.78
+capacity_mah = 0.26
+electrolyte = "1 M NaPF6 in diglyme"
 ```
 
 | Setting | Meaning |
@@ -55,6 +61,20 @@ max_records = 1000000          # per run (the 2460 buffer holds 1,000,000)
 | `terminals` | `front` or `rear` |
 | `start_timeout_s` | Optional. An external-start run aborts if no START comes in time |
 | `[limits]` | The window, maximum current, and per-run duration and record bounds |
+| `[sample]` | Optional description of the cell (below) |
+
+### The sample table
+
+`[sample]` describes the cell for the run files (`/entry/sample`); nothing in a
+run reads it. Values are text, numbers or `true`/`false`, one level deep (no
+sub-tables, lists or dates). Keys are lower case; a key ending in a unit gets
+that unit in the file: `_mg`, `_g`, `_mah`, `_uah`, `_cm2`, `_mm`, `_um`, `_ul`,
+`_v`, `_mv`, `_a`, `_ma`, `_ua`, `_s`, `_h`, `_degc`, `_pct`. `name` and
+`session_description` are taken (the run sheet's sample ID and the file's header
+comment). The start script and `oe-enqueue` print it. Like the rest of the
+file, it is part of what you confirm by loading the session: keep it matching
+the cell that is connected. The whole file, header comment included, is stored
+in every run file.
 
 ## What the limits do
 

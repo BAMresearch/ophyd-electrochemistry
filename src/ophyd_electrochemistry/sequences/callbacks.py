@@ -2,6 +2,7 @@
 
 # mypy: disable-error-code="no-untyped-call,misc"
 
+import json
 import math
 import re
 import time
@@ -20,7 +21,54 @@ from plotly.subplots import make_subplots  # type: ignore[import-untyped]
 from ..validation import integer, positive
 from .backend import READOUT_FIELDS
 from .models import limits_from_dict, sequence_from_dict
-from .run_file import RunFile, read_run_file
+from .run_file import RunFile, host_provenance, read_run_file
+
+# RunStart keys stored in their own place in the run file; every other key
+# (custom metadata, RunEngine md) goes to /entry/run/extra.
+_START_KEYS = {
+    "measurement_id",
+    "sample_id",
+    "notes",
+    "start_mode",
+    "sequence",
+    "safety_limits",
+    "run_sheet_row",
+    "equipment",
+    "expected_records",
+    "nominal_duration_s",
+    "plan_name",
+    "uid",
+    "scan_id",
+    "time",
+    "versions",
+    "run_sheet",
+    "sheet_sha256",
+}
+
+
+def _jsonable(value: Any) -> Any:
+    """JSON-safe copy of RunStart metadata; anything else is kept as its repr."""
+    try:
+        return json.loads(json.dumps(value, allow_nan=False))
+    except (TypeError, ValueError, OverflowError):
+        if isinstance(value, Mapping):
+            return {str(k): _jsonable(v) for k, v in value.items()}
+        if isinstance(value, list | tuple):
+            return [_jsonable(v) for v in value]
+        return repr(value)
+
+
+def _provenance(doc: Mapping[str, Any]) -> dict[str, Any]:
+    # The RunStart "versions" (bluesky, ophyd) are in host_provenance's software.
+    return {
+        "bluesky_uid": doc.get("uid"),
+        "scan_id": doc.get("scan_id"),
+        "run_start_time": doc.get("time"),
+        "plan_name": doc.get("plan_name"),
+        "run_sheet_path": doc.get("run_sheet"),
+        "run_sheet_sha256": doc.get("sheet_sha256"),
+        **host_provenance(),
+    }
 
 
 class _SequenceCallback(CallbackBase):
@@ -51,11 +99,20 @@ class _SequenceCallback(CallbackBase):
 
 
 class RunFileWriter(_SequenceCallback):
-    """Incrementally persist all readout pages; errors propagate to the RunEngine."""
+    """Incrementally persist all readout pages; errors propagate to the RunEngine.
 
-    def __init__(self, directory: str | PathLike[str]) -> None:
+    ``session`` is what each file stores about the environment
+    (``queueserver.session_metadata``). The RunStart uid, scan_id and time, the
+    run sheet (``run_sheet``/``sheet_sha256`` metadata), host and software versions
+    go to ``/entry/provenance``; other RunStart metadata to ``/entry/run/extra``.
+    """
+
+    def __init__(
+        self, directory: str | PathLike[str], *, session: Mapping[str, Any] | None = None
+    ) -> None:
         super().__init__()
         self.directory = Path(directory)
+        self.session = dict(session or {})
         self.path: Path | None = None
         self._file: RunFile | None = None
         self._origin_set = False
@@ -91,6 +148,9 @@ class RunFileWriter(_SequenceCallback):
                 sample_id=metadata.get("sample_id"),
                 notes=metadata.get("notes"),
                 run_sheet_row=metadata["run_sheet_row"],
+                extra={k: _jsonable(v) for k, v in metadata.items() if k not in _START_KEYS},
+                session=self.session,
+                provenance=_provenance(metadata),
             )
         except BaseException:
             self._close()
