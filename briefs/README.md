@@ -35,3 +35,4 @@ Rules that apply to every brief (Codex: follow these):
 | `12-review-follow-enqueue-b3.md` | Review only: enqueue compile (0cc63c3), Follow status (7ca66c0), B3 sheets and overnight plan (92e4881) | 11 |
 | `13-review-c5-p0-and-caffeinate.md` | Review only: C/5 P0 row (a17b4d8), stay-awake script (ad2a4ca), 10 Nov sleep incident | 12 |
 | `14-review-b3-explore-ici-store-analysis.md` | Review only: B3 series runner, ICI and storage sheets, evidence `--bench`, `b3_analysis.py` (uncommitted, 12 Nov); network-out incident | 13 |
+| `15-review-recover-run.md` | Review only: `oe-recover-run` (`sequences/recovery.py`, `SequencerProfile.from_settings`, `Replayer.predicted`; uncommitted, 13 Nov) | 14 |

@@ -59,6 +59,10 @@ Keep this file short (see `AGENTS.md`). The detailed pre-sprint diary
   processes read live snapshots while a run is written. After a killed kernel
   `read_run_file` reads all flushed data (outcome `incomplete`); other HDF5
   tools need the `repair_run_file` copy. Write run files to local disk.
+- **Recovery (13 Nov):** `oe-recover-run RUN.h5 retained.npz` folds an
+  archive into a new copy of the run file after checking the replay reproduces
+  the saved part and its absolute instrument times; outcome unchanged. Used on
+  `hc-p0`, `ici-full-s`, `store-d`.
 - **Read-only viewer (O11):** `notebooks/k2460_view.ipynb` indexes run files,
   follows live SWMR data in one output, reviews full-resolution V/I and events,
   and overlays voltage against time or signed charge. Bin-extrema display
@@ -95,18 +99,17 @@ trigger wiring changes. Nothing else is pending on the resistor (9 Nov).
 
 ## Last known hardware state (reconfirm before use)
 
-12 Nov, 15:13 UTC: K2460 serial `04686198`, TSP, `169.254.113.151:5025`,
-runtime `seq-v2`, HIGH-Z. AlCe Test Cell 1 on the front terminals. **`store-d`
-running** (C/20 = 13 µA desodiation to 2.5 V under load, then 30 min rest; about
-20 h, bound 30.5 h) through the RE Manager with `session-b3-p0.toml`; the cell
-ends desodiated for storage, output OFF. Earlier runs archived
-(`retained-20261112T082536Z.npz`, `retained-20261112T145240Z.npz`). Wiring:
-READY line 1, BUSY 2, MARKER 4, START 6 (DB-9 pin 8).
+13 Nov, 09:46 UTC: K2460 serial `04686198`, TSP, `169.254.113.151:5025`,
+runtime `seq-v2`, output OFF, HIGH-Z, RE Manager stopped. AlCe Test Cell 1
+desodiated for storage: `store-d` (C/20) reached 2.5 V after 17.8 h and
+230.8 µAh, rested to 1.43 V; archived (`retained-20261113T094609Z.npz`) and
+recovered (`store-d-recovered_20261112T151249Z.h5`). Wiring: READY line 1,
+BUSY 2, MARKER 4, START 6 (DB-9 pin 8).
 
 ## Next steps
 
-1. After `store-d`: `oe-diagnose`, `oe-archive-retained` if the RE Manager was
-   killed; disconnect the cell for storage.
+1. Commit `oe-recover-run` (brief 15 findings applied; `hc-p0`, `ici-full-s`
+   and `store-d` recovered beside their files on 13 Nov).
 2. Jonas: the questions in `docs/beamtime-concept.md` (desodiation end, rate,
    plateau, measured capacities, rests). Then regenerate `b3-pulse.xlsx` and the
    pulse session for the beamtime cells.
