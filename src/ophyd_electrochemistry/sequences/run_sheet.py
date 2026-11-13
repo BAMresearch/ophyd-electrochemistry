@@ -77,11 +77,11 @@ _COLUMNS = {
     "in V, then rest_s at zero current.",
     "cycles": "cycling: number of cycles; each starts with the half set by start_with.",
     "cv_i_abs_min_a": "cycling, soc_position: after a constant-current step, hold its end "
-    "voltage until |current| falls to this value in A (at most 3600 s; soc_position: at "
-    "most cv_max_s). cycling: which step is set by cv_after. Blank = no voltage hold.",
+    "voltage until |current| falls to this value in A (at most cv_max_s). cycling: which "
+    "step is set by cv_after. Blank = no voltage hold.",
     "cv_after": "cycling with cv_i_abs_min_a: hold after the charge / desodiation (at "
     "v_high) or after the discharge / sodiation (at v_low). Blank = charge.",
-    "cv_max_s": "soc_position with cv_i_abs_min_a: time limit of the voltage hold in s. "
+    "cv_max_s": "cycling, soc_position with cv_i_abs_min_a: time limit of the voltage hold in s. "
     "Its current limit is the session's i_max_abs. Blank = 3600.",
     "max_step_s": "Time limit in s for each constant-current step; the step ends then "
     "even if its voltage was not reached. cycling: blank = 86400. soc_position: required.",
@@ -255,6 +255,7 @@ def _build_sequence(row: Mapping[str, object]) -> Sequence:
             count("cycles"),
             rest_s=value("rest_s", 600),
             cv_i_abs_min=optional("cv_i_abs_min_a"),
+            cv_max_s=value("cv_max_s", 3600),
             max_step_s=value("max_step_s", 86400),
             start=choice("start_with"),
             cv_after=choice("cv_after"),

@@ -555,3 +555,29 @@ def test_pulse_train_row_with_a_relaxed_end(tmp_path):
     check = run.sequence.steps[-1]
     assert (check.v_min, check.v_max, check.duration_s) == (0.005, None, 1)
     assert run.sequence.steps[2].duration_s == 299
+
+
+def test_cycling_voltage_hold_takes_cv_max_s(tmp_path):
+    from ophyd_electrochemistry.sequences.run_sheet import write_run_sheet
+
+    limits = SafetyLimits(0, 3, 0.001, 1e6, 10**6)
+    row = dict(
+        measurement_id="cyc",
+        protocol="cycling",
+        current_a=3e-5,
+        v_low=0.005,
+        v_high=2.5,
+        cycles=2,
+        start_with="sodiation",
+        cv_after="sodiation",
+        cv_i_abs_min_a=1.5e-5,
+        cv_max_s=14400,
+        rest_s=60,
+    )
+    path = tmp_path / "cyc.xlsx"
+    write_run_sheet(path, [row, {**row, "measurement_id": "default", "cv_max_s": None}])
+    runs = load_run_sheet(path, limits)
+    steps = runs["cyc"].sequence.steps
+    assert [step.mode.value for step in steps] == ["current", "voltage", "rest", "current", "rest"]
+    assert steps[0].level < 0 and steps[1].duration_s == 14400
+    assert runs["default"].sequence.steps[1].duration_s == 3600
