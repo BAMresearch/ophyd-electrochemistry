@@ -1,0 +1,29 @@
+# B4 weekend: the first two cycles of a new HC/Na coin cell (tier 2).
+# Cell: AlCe test cell 2, 2025 coin cell (1.55 mg hard carbon; basis 400 mAh/g = 0.62 mAh, C/20 = 31 uA,
+# C/40 = 15.5 uA). Front terminals, four-wire, HC on HI (force + sense), Na on LO.
+# Window 0-3 V: a reversed cell (negative OCV) or one above 3 V stops at the first
+# reading. 100 uA covers C/20 and caps the CV holds at 5 mV. 133 h covers the
+# cycling row's bound (four CC steps of at most 30 h, two CV holds of at most
+# 4 h, four 30 min rests). Loading this session confirms set-up and limits.
+# qserver/start-k2460-re-manager.sh --detach bench/b4/session-b4-weekend.toml
+backend = "k2460"
+data_dir = "~/k2460-data/b4"
+resource = "TCPIP0::169.254.113.151::5025::SOCKET"
+serial = "04686198"
+terminals = "front"
+poll_period_s = 1.0
+
+[limits]
+v_min_abs = 0.0
+v_max_abs = 3.0
+i_max_abs = 0.0001
+max_duration_s = 480000.0
+max_records = 1000000
+
+[sample]
+cell = "AlCe test cell 2"
+case = "2025 coin cell"
+hc_mass_mg = 1.55
+nominal_capacity_mah = 0.62
+capacity_basis = "400 mAh/g of hard carbon"
+history = "new cell; first cycles (no initial desodiation)"
