@@ -125,7 +125,22 @@ time zero is logged within about 0.1 ms of that edge. If the session sets
 
   Without a running QueueServer, `oe-archive-retained --session S.toml` does the
   same. The run's own file stays `incomplete`; the archive holds every reading
-  the 2460 kept.
+  the 2460 kept. To get one file with the whole run:
+
+  ```sh
+  oe-recover-run ~/data/hc01-sodiate_<stamp>.h5 ~/data/retained-<UTC>.npz
+  ```
+
+  It replays the archive through the run's own program and writes
+  `hc01-sodiate-recovered_<stamp>.h5` beside it (both inputs untouched). It
+  refuses unless the archive's absolute instrument times match the file's (its
+  UTC time origin plus the measured clock offset) and the replay reproduces every
+  reading and event already in the file. So it also refuses a file that logged
+  an instrument error or an abort (the replay cannot produce those), and an
+  archive that does not start at record 1. The
+  outcome stays `incomplete` or `error`: the archive has no instrument log, so
+  the replay's prediction (completed or stopped at a cutoff) is only noted in
+  the outcome detail.
 - **After the network link dropped during a run** (cable out, switch, sleep):
   the run fails on the laptop without anything reaching the 2460, which
   finishes on its own. The 2460 may keep the dead connection and ignore new

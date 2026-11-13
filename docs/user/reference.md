@@ -17,6 +17,7 @@ Run from the repository folder with its environment active
 | Abort now | `qserver re pause immediate`, `qserver re abort`, `qserver queue item remove front` |
 | Recover after an abort or error | `qserver queue add plan front '{"name": "recover_sequencer"}'`, `qserver queue start` |
 | Save readings after a crash | `qserver queue add plan front '{"name": "archive_retained"}'`, `qserver queue start`; or `oe-archive-retained --session S.toml` with the QueueServer stopped |
+| Put them back into the run's file | `oe-recover-run RUN.h5 retained-<UTC>.npz`: writes `<id>-recovered_<stamp>.h5` beside it. Refuses unless the archive's instrument times and readings match the file's (time origin plus clock offset), the archive holds the whole run, and the file has no events the replay cannot produce (instrument errors, aborts). The outcome stays as it was |
 | Status | `qserver status`, `qserver queue get`, `qserver history get` |
 | One notebook per run | `oe-new-run runs.xlsx ID FOLDER --v-min … --v-max … --i-max … --max-duration-s … --max-records …` |
 | Shut down | `qserver environment close`, `qserver manager stop`, `redis-cli shutdown` |
@@ -32,7 +33,7 @@ Only three plans can be queued: `run_from_sheet` (added by `oe-enqueue`),
 | `stopped_cutoff` | A row threshold (`v_low`, `v_high`, `rest_end_v`) ended it, output OFF | Normal; the queue continues |
 | `aborted` | Stopped by you, or no external START in time | Remove the item, queue `recover_sequencer` |
 | `error` | Instrument or software error; output OFF confirmed | Read terminal 1, remove the item, queue `recover_sequencer` |
-| `incomplete` (file) | Still running, or the writer crashed | After a crash: `archive_retained` |
+| `incomplete` (file) | Still running, or the writer crashed | After a crash: `archive_retained`, then `oe-recover-run` |
 
 A reading outside the session's voltage window also stops the run
 (`stopped_cutoff`; its `stop` event names the limit that was crossed).

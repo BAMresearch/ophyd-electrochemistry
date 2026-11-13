@@ -5,7 +5,7 @@ communicates with an instrument; only the packaged runtime interprets its tables
 """
 
 from collections.abc import Mapping
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field, fields, replace
 from enum import IntEnum
 from types import MappingProxyType
 from typing import Any, Literal
@@ -97,6 +97,30 @@ class SequencerProfile:
                 if value > maximum:
                     raise ValidationError(f"{name} exceeds runtime maximum {maximum}")
             object.__setattr__(self, name, tuple(sorted(set(ranges))))
+
+    @classmethod
+    def from_settings(cls, settings: Mapping[str, object]) -> "SequencerProfile":
+        """The profile recorded by ``SequencerProgram.settings()`` (run-file equipment).
+
+        The range tables are not recorded and keep their defaults: a caller that
+        needs the exact program recompiles it and compares ``settings()``.
+        """
+        recorded = {f.name for f in fields(cls)} - {"reading_s", *_UNRECORDED}
+        kwargs: dict[str, Any] = {name: settings[name] for name in recorded if name in settings}
+        reading_s = {
+            float(key.removeprefix(_READING_KEY).replace("p", ".")): float(value)  # type: ignore[arg-type]
+            for key, value in settings.items()
+            if key.startswith(_READING_KEY)
+        }
+        if reading_s:
+            kwargs["reading_s"] = reading_s
+        return cls(**kwargs)
+
+
+# Profile fields that SequencerProgram.settings() does not record, and its key prefix
+# for the timing table (Bluesky metadata keys may not contain '.': 0.1 -> 0p1).
+_UNRECORDED = ("voltage_ranges_v", "current_ranges_a")
+_READING_KEY = "reading_s_nplc_"
 
 
 class BlockKind(IntEnum):
@@ -230,7 +254,7 @@ class SequencerProgram:
             result[name] = getattr(self.limits, name)
         # Bluesky metadata keys may not contain '.': 0.1 NPLC -> reading_s_nplc_0p1.
         for nplc, seconds in sorted(self.profile.reading_s.items()):
-            result[f"reading_s_nplc_{nplc:g}".replace(".", "p")] = seconds
+            result[f"{_READING_KEY}{nplc:g}".replace(".", "p")] = seconds
         for i, source in enumerate(self.sources, 1):
             for name in ("mode", "level", "range", "limit"):
                 result[f"source_{i}_{name}"] = getattr(source, name)
@@ -660,6 +684,11 @@ class Replayer:
                     self._phase += 1
                     self._sample = 0
         return result, events
+
+    @property
+    def predicted(self) -> str:
+        """``running``, ``completed`` (past the last step) or ``stop`` (a stopping cutoff)."""
+        return self._predicted
 
     def finish(self, logged: Literal["end", "stop"] | None) -> tuple[str, str]:
         if logged is None:
